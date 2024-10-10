@@ -15,7 +15,7 @@ function App() {
     return currentUser ? (children) : <Navigate to="/login"/>
   }
 
-  console.log("hello")
+  console.log(currentUser)
 
   return (
     <>
