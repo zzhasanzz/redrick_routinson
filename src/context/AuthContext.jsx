@@ -3,6 +3,7 @@ import AuthReducer from "./AuthReducer";
 
 const INITIAL_STATE = {
   currentUser: JSON.parse(localStorage.getItem("user")) || null,
+  role: JSON.parse(localStorage.getItem("role")) || null,
 };
 
 export const AuthContext = createContext(INITIAL_STATE);
@@ -12,10 +13,11 @@ export const AuthContextProvider = ({ children }) => {
 
   useEffect(() => {
     localStorage.setItem("user", JSON.stringify(state.currentUser));
-  }, [state.currentUser]);
+    localStorage.setItem("role", JSON.stringify(state.role));
+  }, [state.currentUser , state.role]);
 
   return (
-    <AuthContext.Provider value={{ currentUser: state.currentUser, dispatch }}>
+    <AuthContext.Provider value={{ currentUser: state.currentUser,role: state.role, dispatch }}>
       {children}
     </AuthContext.Provider>
   );
