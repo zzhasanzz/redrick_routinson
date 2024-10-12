@@ -1,18 +1,23 @@
 import { useContext, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import { BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
 import Login from "./pages/login/Login";
-import Home from "./pages/home/Home";
+import StudentHome from "./pages/home/StudentHome";
+import TeacherHome from "./pages/home/TeacherHome";
 import { AuthContext } from './context/AuthContext';
 
 function App() {
   
-  const{currentUser} = useContext(AuthContext)
+  const{currentUser ,role} = useContext(AuthContext)
 
-  const RequireAuth = ({children})=>{
-    return currentUser ? (children) : <Navigate to="/login"/>
+  const RequireAuth = ({children, allowedRoles})=>{
+    if(!currentUser){
+      return<Navigate to="/login"/>;
+    }
+    if(!allowedRoles.includes(role)){
+      return<Navigate to="/login"/>;
+    }
+    return children;
   }
 
   console.log(currentUser)
@@ -21,20 +26,27 @@ function App() {
     <>
      <Router>
       <Routes>
-      <Route path="/">
-      
+        
         <Route path="/login" element={<Login />} />
 
         <Route
-              index
+              path="/student-home"
               element={
-                <RequireAuth>
-                  <Home />
+                <RequireAuth allowedRoles={["student"]}>
+                  <StudentHome/>
                 </RequireAuth>
+
               }
         />
+        <Route
+              path="/teacher-home"
+              element={
+                <RequireAuth allowedRoles={["teacher"]}>
+                  <TeacherHome/>
+                </RequireAuth>
 
-      </Route>
+              }
+        />
       </Routes>
     </Router>
     </>
