@@ -1,10 +1,15 @@
 import { useContext, useState } from 'react'
 import './App.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
+import { AuthContext } from './context/AuthContext';
 import Login from "./pages/login/Login";
 import StudentHome from "./pages/home/StudentHome";
 import TeacherHome from "./pages/home/TeacherHome";
-import { AuthContext } from './context/AuthContext';
+import AdminHome from './pages/home/AdminHome';
+import ForgotPassword from './pages/login/ForgotPassword';
+
+
 
 function App() {
   
@@ -26,23 +31,34 @@ function App() {
     <>
      <Router>
       <Routes>
-        
+        <Route path="/" element={<Navigate to="/login" />} /> 
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         <Route
-              path="/student-home"
+              path="/admin-home"
               element={
-                <RequireAuth allowedRoles={["student"]}>
-                  <StudentHome/>
+                <RequireAuth allowedRoles={["admin"]}>
+                  <AdminHome/>
                 </RequireAuth>
 
               }
         />
+        
         <Route
               path="/teacher-home"
               element={
                 <RequireAuth allowedRoles={["teacher"]}>
                   <TeacherHome/>
+                </RequireAuth>
+
+              }
+        />
+        <Route
+              path="/student-home"
+              element={
+                <RequireAuth allowedRoles={["student"]}>
+                  <StudentHome/>
                 </RequireAuth>
 
               }
