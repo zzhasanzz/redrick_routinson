@@ -1,34 +1,89 @@
-.login{
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.login {
+  height: 100vh;
+  display: flex;
+  flex-direction: column; /* Allow stacking vertically */
+  align-items: center;
+  justify-content: center;
+  background-color: #f7f7f7; /* Light background for contrast */
+}
 
-    form{
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px; /* Space below the form */
+}
 
-      input{
-        width: 200px;
-        height: 30px;
-        margin: 10px;
-      }
+input {
+  width: 250px;
+  height: 40px;
+  margin: 10px 0;
+  padding: 0 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
 
-      button{
-        width: 200px;
-        height: 30px;
-        border: none;
-        background-color: purple;
-        color: white;
-        font-weight: bold;
-        cursor: pointer;
-      }
+button {
+  width: 250px;
+  height: 40px;
+  border: none;
+  background-color: purple;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
 
-      span{
-        font-size: 12px;
-        color: red;
-        margin-top: 10px;
-      }
-    }
+button:hover {
+  background-color: darkpurple;
+}
+
+span {
+  font-size: 14px;
+  color: red;
+  margin-top: 10px;
+}
+
+button.secondary {
+  background-color: transparent;
+  color: purple;
+  border: 1px solid purple;
+  margin-top: 10px;
+}
+
+button.secondary:hover {
+  background-color: purple;
+  color: white;
+}
+
+.loading-spinner {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #555;
+  text-align: center;
+}
+
+/* Ensure buttons are stacked below the form */
+.login-buttons {
+  display: flex;
+  flex-direction: column; /* Stack buttons vertically */
+  align-items: center;
+  margin-top: 10px;
+}
+.forgot-password-link {
+  color: blue; /* Link color */
+  cursor: pointer; /* Change cursor to pointer */
+  text-decoration: underline; /* Underline for link appearance */
+  margin-top: 10px; /* Space above the link */
+}
+
+.forgot-password-link:hover {
+  color: darkblue; /* Darker color on hover */
 }
