@@ -5,17 +5,6 @@ import axios from 'axios';
 
 const TeacherDashboard = () => {
 
-    const handleGenerateRoutine = async () => {
-        try {
-            const response = await axios.post('http://localhost:5000/teacher-home/teacher-dashboard');
-
-            console.log(response.data.message); // Log the success message
-            // Navigate to the new window (you can specify your target URL)
-            window.open('/new_window', '_blank'); // Adjust the URL as needed
-        } catch (error) {
-            console.error('Error generating routine:', error.response.data.error);
-        }
-    };
 
     return (
         <Box p={8}>
