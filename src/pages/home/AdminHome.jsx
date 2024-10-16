@@ -1,12 +1,14 @@
-import React from "react";
+import { Outlet } from "react-router-dom";
+import AdminSidebar from "./sidebars/AdminSidebar.jsx";
 
-const AdminHome = () => {
-  return (
-    <div>
-      <h1>Welcome Admin!</h1>
-      {/* Add more student-specific content here */}
-    </div>
-  );
+const StudentHome= () => {
+    return <div style={{
+        padding: '50px 0px 0px 370px'
+    }}>
+        <AdminSidebar />
+        <Outlet />
+
+    </div>;
 };
 
-export default AdminHome;
+export default StudentHome;

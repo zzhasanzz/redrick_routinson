@@ -12,6 +12,7 @@ import StudentDashboard from "./pages/home/dashboards/StudentDashbord.jsx";
 import Blank from "./pages/Blank.jsx";
 import {ChakraProvider} from "@chakra-ui/react";
 import TeacherDashboard from "./pages/home/dashboards/TeacherDashboard.jsx";
+import AdminDashboard from "./pages/home/dashboards/AdminDashboard.jsx";
 
 
 
@@ -49,7 +50,42 @@ function App() {
                 </RequireAuth>
 
               }
-        />
+        >
+            <Route index element={<Blank />} />
+            <Route path="/admin-home/admin-dashboard" element={
+                <RequireAuth allowedRoles={["admin"]}>
+                    <AdminDashboard/>
+                </RequireAuth>
+
+            }/>
+            <Route path="/admin-home/myevents" element={
+                <RequireAuth allowedRoles={["admin"]}>
+                    <Blank/>
+                </RequireAuth>
+
+            }/>
+
+            <Route path="/admin-home/calendar" element={
+                <RequireAuth allowedRoles={["admin"]}>
+                    <Blank/>
+                </RequireAuth>
+
+            }/>
+
+            <Route path="/admin-home/user" element={
+                <RequireAuth allowedRoles={["admin"]}>
+                    <Blank/>
+                </RequireAuth>
+
+            }/>
+            <Route path="/admin-home/logout" element={
+                <RequireAuth allowedRoles={["admin"]}>
+                    <Blank/>
+                </RequireAuth>
+
+            }/>
+
+        </Route>
 
         <Route path="/student-home" element={
             <RequireAuth allowedRoles={["student"]}>
@@ -101,10 +137,37 @@ function App() {
 
           }
           >
+              <Route index element={<Blank />} />
               <Route path="/teacher-home/teacher-dashboard" element={
                   <RequireAuth allowedRoles={["teacher"]}>
                       <TeacherDashboard/>
                   </RequireAuth>
+              }/>
+              <Route path="/teacher-home/myevents" element={
+                  <RequireAuth allowedRoles={["teacher"]}>
+                      <Blank/>
+                  </RequireAuth>
+
+              }/>
+
+              <Route path="/teacher-home/calendar" element={
+                  <RequireAuth allowedRoles={["teacher"]}>
+                      <Blank/>
+                  </RequireAuth>
+
+              }/>
+
+              <Route path="/teacher-home/user" element={
+                  <RequireAuth allowedRoles={["teacher"]}>
+                      <Blank/>
+                  </RequireAuth>
+
+              }/>
+              <Route path="/teacher-home/logout" element={
+                  <RequireAuth allowedRoles={["teacher"]}>
+                      <Blank/>
+                  </RequireAuth>
+
               }/>
 
           </Route>
