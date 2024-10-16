@@ -6,12 +6,17 @@ import { AuthContext } from './context/AuthContext';
 import Login from "./pages/login/Login";
 import StudentHome from "./pages/home/StudentHome";
 import TeacherHome from "./pages/home/TeacherHome";
+import AdminHome from './pages/home/AdminHome.jsx';
 import ForgotPassword from './pages/login/ForgotPassword';
 import StudentDashboard from "./pages/home/dashboards/StudentDashbord.jsx";
 import Blank from "./pages/Blank.jsx";
 import {ChakraProvider} from "@chakra-ui/react";
 import TeacherDashboard from "./pages/home/dashboards/TeacherDashboard.jsx";
 import AdminDashboard from './pages/home/dashboards/AdminDashboard.jsx';
+import AdminManageRoutine from './pages/features/AdminManageRoutine.jsx';
+import AdminGenerateRoutine from './pages/features/AdminGenerateRoutine.jsx';
+import AdminManageUsers from './pages/features/AdminManageUsers.jsx';
+import AdminGenerateSeatPlan from './pages/features/AdminManageSeatPlan.jsx';
 
 
 
@@ -42,44 +47,59 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
         <Route
-              path="/admin-dashboard"
+              path="/admin-home"
+              element={
+                <RequireAuth allowedRoles={["admin"]}>
+                  <AdminHome/>
+                </RequireAuth>
+
+              }
+        >
+        <Route
+              path="/admin-home/admin-dashboard"
               element={
                 <RequireAuth allowedRoles={["admin"]}>
                   <AdminDashboard/>
                 </RequireAuth>
 
               }
-        >
-            <Route index element={<Blank />} />
-            <Route path="/admin-dashboard/myevents" element={
+        />
+            
+            <Route path="/admin-home/admin-manage-users" element={
+                <RequireAuth allowedRoles={["admin"]}>
+                    <AdminManageUsers/>
+                </RequireAuth>
+
+            }/>
+
+            <Route path="/admin-home/admin-manage-routine" element={
+                <RequireAuth allowedRoles={["admin"]}>
+                    <AdminManageRoutine/>
+                </RequireAuth>
+
+            }/>
+
+            <Route path="/admin-home/admin-generate-seat-plan" element={
+                <RequireAuth allowedRoles={["admin"]}>
+                    <AdminGenerateSeatPlan/>
+                </RequireAuth>
+
+            }/>
+            <Route path="/admin-home/admin-generate-routine" element={
+                  <RequireAuth allowedRoles={["admin"]}>
+                    <AdminGenerateRoutine/>
+                  </RequireAuth>
+
+              }/>
+            <Route path="/admin-home/logout" element={
                 <RequireAuth allowedRoles={["admin"]}>
                     <Blank/>
                 </RequireAuth>
 
             }/>
 
-            <Route path="/admin-dashboard/calendar" element={
-                <RequireAuth allowedRoles={["admin"]}>
-                    <Blank/>
-                </RequireAuth>
-
-            }/>
-
-            <Route path="/admin-dashboard/user" element={
-                <RequireAuth allowedRoles={["admin"]}>
-                    <Blank/>
-                </RequireAuth>
-
-            }/>
-            <Route path="/admin-dashboard/logout" element={
-                <RequireAuth allowedRoles={["admin"]}>
-                    <Blank/>
-                </RequireAuth>
-
-            }/>
-
+        
         </Route>
-
         <Route path="/student-home" element={
             <RequireAuth allowedRoles={["student"]}>
                   <StudentHome/>
@@ -129,13 +149,17 @@ function App() {
               </RequireAuth>
 
           }
-          >
+          >     
+              
               <Route index element={<Blank />} />
               <Route path="/teacher-home/teacher-dashboard" element={
                   <RequireAuth allowedRoles={["teacher"]}>
                       <TeacherDashboard/>
                   </RequireAuth>
               }/>
+
+             
+              
               <Route path="/teacher-home/myevents" element={
                   <RequireAuth allowedRoles={["teacher"]}>
                       <Blank/>

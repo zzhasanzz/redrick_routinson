@@ -92,7 +92,7 @@ const AdminDashboard = () => {
                 </Button>
             </Link>
 
-            <Link to="/others">
+            <Link to="/admin-home/admin-generate-routine">
                 <Button
                     height="250px"
                     width={["100%", "450px"]}
