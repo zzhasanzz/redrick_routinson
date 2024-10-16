@@ -1,12 +1,21 @@
 .sidebar {
-  position: fixed;
-  margin-top: 0;
-  padding-top: 0;
-  top: 0;
-  left: 0;
-  height: 100px;
-  width: 320px;
-  background-color: #fff;
+  background-image: url('../assets/sidebar2.png'); /* Adjust the path if necessary */
+  background-size: cover;         /* Ensure the image covers the whole sidebar */
+  background-position: center;    /* Center the background image */
+  background-repeat: no-repeat;   /* Ensure the image doesn't repeat */
+  
+  min-height: 100vh;              /* Full height of the viewport */
+  width: 320px;                   /* Sidebar width */
+  
+  position: fixed;                /* Keep it fixed to the side */
+  top: 0;                         /* Align to the top */
+  left: 0;                        /* Align to the left */
+  
+  padding: 0;                     /* No internal padding */
+  margin: 0;                      /* No external margin */
+  
+  background-color: #fff;         /* Set a background color (optional, depending on your design) */
+
 
   &__logo {
     display: grid;
