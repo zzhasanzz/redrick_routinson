@@ -4,102 +4,56 @@ import { FaCalendarAlt, FaComments, FaChair, FaBoxOpen, FaClipboardList, FaBook 
 
 const StudentDashboard = () => {
     return (
-        <Box p={8}>
-            <Text fontSize="4xl" mb={10} textAlign="left" fontWeight="bold">Student</Text>
-            <SimpleGrid columns={[1, 2, 3]} spacing={8} justifyItems="center">
+        <Box p={10}
+        pt={0}
+        backgroundImage="url('/assets/backgroud.png')" // Path to your background image
+        backgroundSize="cover" // Makes the image cover the entire container
+        backgroundPosition="center" // Centers the image
+        backgroundRepeat="no-repeat" // Prevents repeating
+        minHeight="100vh" // Ensures the background covers the full viewport height
+        >
+            
+            <Text fontSize="4xl" mb={10}>Student</Text>
+            <SimpleGrid columns={[2, null, 3]} spacing={8}>
                 <Link to="/class-routine">
-                    <Button
-                        height="250px"
-                        width={["100%", "450px"]}
-                        flexDirection="column"
-                        justifyContent="center"
-                        borderRadius="30px"
-                        bg="gray.100"
-                        _hover={{ transform: 'translateY(-5px)', boxShadow: 'lg',bg: 'rgb(48,142,254)', }}
-                        boxShadow="md"
-                    >
-                        <Icon as={FaCalendarAlt} boxSize={20} color="gray.700" />
-                        <Text fontSize="2xl" fontWeight="600" color="gray.700">Class Routine</Text>
+                    <Button height="250px" width="450px" flexDirection="column" justifyContent="center" borderRadius="30px ">
+                        <Icon as={FaCalendarAlt} boxSize={20} />
+                        <Text fontSize="2xl">Class Routine</Text>
                     </Button>
                 </Link>
 
                 <Link to="/forum">
-                    <Button
-                        height="250px"
-                        width={["100%", "450px"]}
-                        flexDirection="column"
-                        justifyContent="center"
-                        borderRadius="30px"
-                        bg="gray.100"
-                        _hover={{ transform: 'translateY(-5px)', boxShadow: 'lg' }}
-                        boxShadow="md"
-                    >
-                        <Icon as={FaComments} boxSize={20} color="gray.700" />
-                        <Text fontSize="2xl" fontWeight="600" color="gray.700">Forum</Text>
+                    <Button height="250px" width="450px" flexDirection="column" justifyContent="center" borderRadius="30px">
+                        <Icon as={FaComments} boxSize={20} />
+                        <Text fontSize="2xl">Forum</Text>
                     </Button>
                 </Link>
 
                 <Link to="/event">
-                    <Button
-                        height="250px"
-                        width={["100%", "450px"]}
-                        flexDirection="column"
-                        justifyContent="center"
-                        borderRadius="30px"
-                        bg="gray.100"
-                        _hover={{ transform: 'translateY(-5px)', boxShadow: 'lg' }}
-                        boxShadow="md"
-                    >
-                        <Icon as={FaClipboardList} boxSize={20} color="gray.700" />
-                        <Text fontSize="2xl" fontWeight="600" color="gray.700">Event</Text>
+                    <Button height="250px" width="450px" flexDirection="column" justifyContent="center" borderRadius="30px">
+                        <Icon as={FaClipboardList} boxSize={20} />
+                        <Text fontSize="2xl">Event</Text>
                     </Button>
                 </Link>
 
                 <Link to="/lost-and-found">
-                    <Button
-                        height="250px"
-                        width={["100%", "450px"]}
-                        flexDirection="column"
-                        justifyContent="center"
-                        borderRadius="30px"
-                        bg="gray.100"
-                        _hover={{ transform: 'translateY(-5px)', boxShadow: 'lg' }}
-                        boxShadow="md"
-                    >
-                        <Icon as={FaBoxOpen} boxSize={20} color="gray.700" />
-                        <Text fontSize="2xl" fontWeight="600" color="gray.700">Lost and Found</Text>
+                    <Button height="250px" width="450px" flexDirection="column" justifyContent="center" borderRadius="30px">
+                        <Icon as={FaBoxOpen} boxSize={20} />
+                        <Text fontSize="2xl">Lost and Found</Text>
                     </Button>
                 </Link>
 
                 <Link to="/seat-plan">
-                    <Button
-                        height="250px"
-                        width={["100%", "450px"]}
-                        flexDirection="column"
-                        justifyContent="center"
-                        borderRadius="30px"
-                        bg="gray.100"
-                        _hover={{ transform: 'translateY(-5px)', boxShadow: 'lg' }}
-                        boxShadow="md"
-                    >
-                        <Icon as={FaChair} boxSize={20} color="gray.700" />
-                        <Text fontSize="2xl" fontWeight="600" color="gray.700">Seat Plan</Text>
+                    <Button height="250px" width="450px" flexDirection="column" justifyContent="center" borderRadius="30px">
+                        <Icon as={FaChair} boxSize={20} />
+                        <Text fontSize="2xl">Seat Plan</Text>
                     </Button>
                 </Link>
 
                 <Link to="/others">
-                    <Button
-                        height="250px"
-                        width={["100%", "450px"]}
-                        flexDirection="column"
-                        justifyContent="center"
-                        borderRadius="30px"
-                        bg="gray.100"
-                        _hover={{ transform: 'translateY(-5px)', boxShadow: 'lg' }}
-                        boxShadow="md"
-                    >
-                        <Icon as={FaBook} boxSize={20} color="gray.700" />
-                        <Text fontSize="2xl" fontWeight="600" color="gray.700">Others</Text>
+                    <Button height="250px" width="450px" flexDirection="column" justifyContent="center" borderRadius="30px">
+                        <Icon as={FaBook} boxSize={20} />
+                        <Text fontSize="2xl">Others</Text>
                     </Button>
                 </Link>
             </SimpleGrid>
