@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from "react";
-import "./login.css";
+import './login.scss';
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../firebase";
 import { useNavigate, useLocation } from "react-router-dom";

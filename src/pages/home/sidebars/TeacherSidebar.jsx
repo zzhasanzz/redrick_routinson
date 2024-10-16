@@ -1,41 +1,41 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import './studentSIdebar.scss';
+import './teacherSidebar.scss';
 
 const sidebarNavItems = [
     {
         display: 'Dashboard',
         icon: <i className='bx bx-home'></i>,
-        to: '/student-home/student-dashboard', // Full route path
+        to: '/teacher-home/teacher-dashboard',
         section: 'dashboard'
     },
     {
         display: 'My Events',
         icon: <i className='bx bx-star'></i>,
-        to: '/student-home/myevents', // Add full path
+        to: '/myevents',
         section: 'myevents'
     },
     {
-        display: 'Calendar',
+        display: 'Calender',
         icon: <i className='bx bx-calendar'></i>,
-        to: '/student-home/calendar', // Add full path
+        to: '/calendar',
         section: 'calendar'
     },
     {
         display: 'User',
         icon: <i className='bx bx-user'></i>,
-        to: '/student-home/user', // Add full path
+        to: '/user',
         section: 'user'
     },
     {
         display: 'Logout',
         icon: <i className='bx bx-receipt'></i>,
-        to: '/student-home/logout', // Add full path
+        to: '/logout',
         section: 'logout'
     },
-];
+]
 
-const Sidebar = () => {
+const TeacherSidebar = () => {
     const [activeIndex, setActiveIndex] = useState(0);
     const [stepHeight, setStepHeight] = useState(0);
     const sidebarRef = useRef();
@@ -43,38 +43,34 @@ const Sidebar = () => {
     const location = useLocation();
 
     useEffect(() => {
-        // Set the initial height of the indicator based on the first menu item
-        const sidebarItem = sidebarRef.current.querySelector('.sidebar__menu__item');
-        if (sidebarItem) {
+        setTimeout(() => {
+            const sidebarItem = sidebarRef.current.querySelector('.sidebar__menu__item');
             indicatorRef.current.style.height = `${sidebarItem.clientHeight}px`;
             setStepHeight(sidebarItem.clientHeight);
-        }
+        }, 50);
     }, []);
 
-    // Update active index based on the current route
+    // change active index
     useEffect(() => {
-        const curPath = window.location.pathname;
-        const activeItem = sidebarNavItems.findIndex(item => curPath.includes(item.to));
-        setActiveIndex(activeItem === -1 ? 0 : activeItem); // Default to first if no match
+        const curPath = window.location.pathname.split('/')[1];
+        const activeItem = sidebarNavItems.findIndex(item => item.section === curPath);
+        setActiveIndex(curPath.length === 0 ? 0 : activeItem);
     }, [location]);
 
-    return (
-        <div className='sidebar'>
-            <div className="sidebar__logo">
-                RoutineSon
-            </div>
-            <div ref={sidebarRef} className="sidebar__menu">
-                {/* Indicator bar */}
-                <div
-                    ref={indicatorRef}
-                    className="sidebar__menu__indicator"
-                    style={{
-                        transform: `translateX(-50%) translateY(${activeIndex * stepHeight}px)`
-                    }}
-                ></div>
-
-                {/* Render Sidebar Items */}
-                {sidebarNavItems.map((item, index) => (
+    return <div className='sidebar'>
+        <div className="sidebar__logo">
+            RoutineSon
+        </div>
+        <div ref={sidebarRef} className="sidebar__menu">
+            <div
+                ref={indicatorRef}
+                className="sidebar__menu__indicator"
+                style={{
+                    transform: `translateX(-50%) translateY(${activeIndex * stepHeight}px)`
+                }}
+            ></div>
+            {
+                sidebarNavItems.map((item, index) => (
                     <Link to={item.to} key={index}>
                         <div className={`sidebar__menu__item ${activeIndex === index ? 'active' : ''}`}>
                             <div className="sidebar__menu__item__icon">
@@ -85,10 +81,10 @@ const Sidebar = () => {
                             </div>
                         </div>
                     </Link>
-                ))}
-            </div>
+                ))
+            }
         </div>
-    );
+    </div>;
 };
 
-export default Sidebar;
+export default TeacherSidebar;
