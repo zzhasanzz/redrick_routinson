@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react'
-import './App.css'
+import './App.scss'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
@@ -8,6 +8,12 @@ import StudentHome from "./pages/home/StudentHome";
 import TeacherHome from "./pages/home/TeacherHome";
 import AdminHome from './pages/home/AdminHome';
 import ForgotPassword from './pages/login/ForgotPassword';
+import StudentDashboard from "./pages/home/dashboards/StudentDashbord.jsx";
+import Blank from "./pages/Blank.jsx";
+import {ChakraProvider} from "@chakra-ui/react";
+import TeacherDashboard from "./pages/home/dashboards/TeacherDashboard.jsx";
+
+
 
 
 
@@ -28,7 +34,7 @@ function App() {
   console.log(currentUser)
 
   return (
-    <>
+    <ChakraProvider>
      <Router>
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} /> 
@@ -44,28 +50,69 @@ function App() {
 
               }
         />
-        
-        <Route
-              path="/teacher-home"
-              element={
-                <RequireAuth allowedRoles={["teacher"]}>
-                  <TeacherHome/>
-                </RequireAuth>
 
-              }
-        />
-        <Route
-              path="/student-home"
-              element={
-                <RequireAuth allowedRoles={["student"]}>
+        <Route path="/student-home" element={
+            <RequireAuth allowedRoles={["student"]}>
                   <StudentHome/>
                 </RequireAuth>
 
               }
-        />
+        >
+            <Route index element={<Blank />} />
+            <Route path="/student-home/student-dashboard" element={
+                <RequireAuth allowedRoles={["student"]}>
+                    <StudentDashboard/>
+                </RequireAuth>
+
+            }/>
+            <Route path="/student-home/myevents" element={
+                <RequireAuth allowedRoles={["student"]}>
+                    <Blank/>
+                </RequireAuth>
+
+            }/>
+
+            <Route path="/student-home/calendar" element={
+                <RequireAuth allowedRoles={["student"]}>
+                    <Blank/>
+                </RequireAuth>
+
+            }/>
+
+            <Route path="/student-home/user" element={
+                <RequireAuth allowedRoles={["student"]}>
+                    <Blank/>
+                </RequireAuth>
+
+            }/>
+            <Route path="/student-home/logout" element={
+                <RequireAuth allowedRoles={["student"]}>
+                    <Blank/>
+                </RequireAuth>
+
+            }/>
+
+        </Route>
+
+          <Route path="/teacher-home" element={
+              <RequireAuth allowedRoles={["teacher"]}>
+                  <TeacherHome/>
+              </RequireAuth>
+
+          }
+          >
+              <Route path="/teacher-home/teacher-dashboard" element={
+                  <RequireAuth allowedRoles={["teacher"]}>
+                      <TeacherDashboard/>
+                  </RequireAuth>
+              }/>
+
+          </Route>
+
       </Routes>
     </Router>
-    </>
+
+    </ChakraProvider>
   )
 }
 
