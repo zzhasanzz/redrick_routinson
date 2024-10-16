@@ -69,7 +69,8 @@ const Sidebar = () => {
                     ref={indicatorRef}
                     className="sidebar__menu__indicator"
                     style={{
-                        transform: `translateX(-50%) translateY(${activeIndex * stepHeight}px)`
+                        transform: `translateX(-50%) translateY(${activeIndex * stepHeight}px)`,
+                        backgroundColor : '#d9f3fc'
                     }}
                 ></div>
 
