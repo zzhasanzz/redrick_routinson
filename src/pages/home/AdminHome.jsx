@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import AdminSidebar from "./sidebars/AdminSidebar.jsx";
 
-const StudentHome= () => {
+const AdminHome= () => {
     return <div style={{
         padding: '50px 0px 0px 370px'
     }}>
@@ -11,4 +11,4 @@ const StudentHome= () => {
     </div>;
 };
 
-export default StudentHome;
+export default AdminHome;
