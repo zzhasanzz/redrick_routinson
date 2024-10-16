@@ -6,13 +6,12 @@ import { AuthContext } from './context/AuthContext';
 import Login from "./pages/login/Login";
 import StudentHome from "./pages/home/StudentHome";
 import TeacherHome from "./pages/home/TeacherHome";
-import AdminHome from './pages/home/AdminHome';
 import ForgotPassword from './pages/login/ForgotPassword';
 import StudentDashboard from "./pages/home/dashboards/StudentDashbord.jsx";
 import Blank from "./pages/Blank.jsx";
 import {ChakraProvider} from "@chakra-ui/react";
 import TeacherDashboard from "./pages/home/dashboards/TeacherDashboard.jsx";
-import AdminDashboard from "./pages/home/dashboards/AdminDashboard.jsx";
+import AdminDashboard from './pages/home/dashboards/AdminDashboard.jsx';
 
 
 
@@ -43,42 +42,36 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
         <Route
-              path="/admin-home"
+              path="/admin-dashboard"
               element={
                 <RequireAuth allowedRoles={["admin"]}>
-                  <AdminHome/>
+                  <AdminDashboard/>
                 </RequireAuth>
 
               }
         >
             <Route index element={<Blank />} />
-            <Route path="/admin-home/admin-dashboard" element={
-                <RequireAuth allowedRoles={["admin"]}>
-                    <AdminDashboard/>
-                </RequireAuth>
-
-            }/>
-            <Route path="/admin-home/myevents" element={
+            <Route path="/admin-dashboard/myevents" element={
                 <RequireAuth allowedRoles={["admin"]}>
                     <Blank/>
                 </RequireAuth>
 
             }/>
 
-            <Route path="/admin-home/calendar" element={
+            <Route path="/admin-dashboard/calendar" element={
                 <RequireAuth allowedRoles={["admin"]}>
                     <Blank/>
                 </RequireAuth>
 
             }/>
 
-            <Route path="/admin-home/user" element={
+            <Route path="/admin-dashboard/user" element={
                 <RequireAuth allowedRoles={["admin"]}>
                     <Blank/>
                 </RequireAuth>
 
             }/>
-            <Route path="/admin-home/logout" element={
+            <Route path="/admin-dashboard/logout" element={
                 <RequireAuth allowedRoles={["admin"]}>
                     <Blank/>
                 </RequireAuth>
