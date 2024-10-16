@@ -10,21 +10,21 @@ const sidebarNavItems = [
         section: 'dashboard'
     },
     {
-        display: 'My Events',
+        display: 'Manage Users',
         icon: <i className='bx bx-star'></i>,
-        to: '/admin-home/myevents', // Add full path
+        to: '/admin-home/admin-manage-users', // Add full path
         section: 'myevents'
     },
     {
-        display: 'Calendar',
+        display: 'Manage Routine',
         icon: <i className='bx bx-calendar'></i>,
-        to: '/admin-home/calendar', // Add full path
+        to: '/admin-home/admin-manage-routine', // Add full path
         section: 'calendar'
     },
     {
-        display: 'User',
+        display: 'Manage Seat Plan',
         icon: <i className='bx bx-user'></i>,
-        to: '/admin-home/user', // Add full path
+        to: '/admin-home/admin-manage-seat-plan', // Add full path
         section: 'user'
     },
     {
