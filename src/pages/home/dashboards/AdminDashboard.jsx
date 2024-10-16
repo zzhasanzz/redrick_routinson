@@ -2,10 +2,10 @@ import { Box, SimpleGrid, Button, Text, Icon } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { FaCalendarAlt, FaComments, FaChair, FaBoxOpen, FaClipboardList, FaBook } from 'react-icons/fa';
 
-const StudentDashboard = () => {
+const AdminDashboard= () => {
     return (
         <Box p={8}>
-            <Text fontSize="4xl" mb={10} textAlign="left" fontWeight="bold">Student</Text>
+            <Text fontSize="4xl" mb={10} textAlign="left" fontWeight="bold">Admin</Text>
             <SimpleGrid columns={[1, 2, 3]} spacing={8} justifyItems="center">
                 <Link to="/class-routine">
                     <Button
@@ -107,4 +107,4 @@ const StudentDashboard = () => {
     );
 };
 
-export default StudentDashboard;
+export default AdminDashboard;
