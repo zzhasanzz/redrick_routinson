@@ -1,12 +1,14 @@
-import React from "react";
+import { Outlet } from "react-router-dom";
+import Sidebar from "./sidebars/StudentSidebar.jsx";
 
-const StudentHome = () => {
-  return (
-    <div>
-      <h1>Welcome Student!</h1>
-      {/* Add more student-specific content here */}
-    </div>
-  );
+const StudentHome= () => {
+    return <div style={{
+        padding: '50px 0px 0px 370px'
+    }}>
+        <Sidebar />
+        <Outlet />
+
+    </div>;
 };
 
 export default StudentHome;
