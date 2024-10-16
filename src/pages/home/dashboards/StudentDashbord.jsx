@@ -7,9 +7,8 @@ const StudentDashboard = () => {
         <Box
             p={0} // Removes all padding from Box
             m={0} // Removes all margin from Box
-            color= '#F5FCFEff'
             height="100vh" // Full viewport height
-            backgroundImage="url('/assets/backgroud.png')" // Path to your background image
+            backgroundImage="url('../assets/background2.png')" // Path to your background image
             backgroundSize="cover" // Ensures the image covers the entire container
             backgroundPosition="center" // Centers the image
             backgroundRepeat="no-repeat" // Prevents repeating
