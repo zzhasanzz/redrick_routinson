@@ -1,41 +1,41 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import './teacherSidebar.scss';
+import './adminSidebar.scss';
 
 const sidebarNavItems = [
     {
         display: 'Dashboard',
         icon: <i className='bx bx-home'></i>,
-        to: '/teacher-home/teacher-dashboard', // Full route path
+        to: '/admin-home/admin-dashboard', // Full route path
         section: 'dashboard'
     },
     {
         display: 'My Events',
         icon: <i className='bx bx-star'></i>,
-        to: '/teacher-home/myevents', // Add full path
+        to: '/admin-home/myevents', // Add full path
         section: 'myevents'
     },
     {
         display: 'Calendar',
         icon: <i className='bx bx-calendar'></i>,
-        to: '/teacher-home/calendar', // Add full path
+        to: '/admin-home/calendar', // Add full path
         section: 'calendar'
     },
     {
         display: 'User',
         icon: <i className='bx bx-user'></i>,
-        to: '/teacher-home/user', // Add full path
+        to: '/admin-home/user', // Add full path
         section: 'user'
     },
     {
         display: 'Logout',
         icon: <i className='bx bx-receipt'></i>,
-        to: '/teacher-home/logout', // Add full path
+        to: '/admin-home/logout', // Add full path
         section: 'logout'
     },
 ];
 
-const TeacherSidebar = () => {
+const AdminSidebar = () => {
     const [activeIndex, setActiveIndex] = useState(0);
     const [stepHeight, setStepHeight] = useState(0);
     const sidebarRef = useRef();
@@ -91,4 +91,4 @@ const TeacherSidebar = () => {
     );
 };
 
-export default TeacherSidebar;
+export default AdminSidebar;
