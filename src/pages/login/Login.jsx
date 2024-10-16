@@ -58,13 +58,13 @@ const Login = () => {
         dispatch({ type: "LOGIN", payload: { user, role: userRole } });
 
         if (userRole === "teacher") {
-          navigate("/teacher-home");
+          navigate("/teacher-home/teacher-dashboard");
         }
         else if (userRole === "admin") {
-          navigate("/admin-home");
+          navigate("/admin-home/admin-dashboard");
         }
         else if (userRole === "student"){
-          navigate("/student-home");
+          navigate("/student-home/student-dashboard");
         }
       } else {
         navigate("/login", { state: { error: "No account associated with this email." } });

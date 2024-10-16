@@ -4,7 +4,15 @@ import { FaCalendarAlt, FaComments, FaChair, FaBoxOpen, FaClipboardList, FaBook 
 
 const StudentDashboard = () => {
     return (
-        <Box p={8}>
+        <Box p={10}
+        pt={0}
+        backgroundImage="url('/assets/backgroud.png')" // Path to your background image
+        backgroundSize="cover" // Makes the image cover the entire container
+        backgroundPosition="center" // Centers the image
+        backgroundRepeat="no-repeat" // Prevents repeating
+        minHeight="100vh" // Ensures the background covers the full viewport height
+        >
+            
             <Text fontSize="4xl" mb={10}>Student</Text>
             <SimpleGrid columns={[2, null, 3]} spacing={8}>
                 <Link to="/class-routine">
