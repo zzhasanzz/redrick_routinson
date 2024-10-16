@@ -4,7 +4,19 @@ import { useNavigate } from "react-router-dom";
 import { Box, SimpleGrid, Button, Icon, Text } from "@chakra-ui/react";
 import { FaCalendarAlt, FaComments, FaClipboardList, FaBoxOpen, FaChair, FaBook } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
+const handleGenerateRoutine = async () => {
+    try {
+        const response = await axios.post('http://localhost:5000/teacher-home/teacher-dashboard');
+
+        console.log(response.data.message); // Log the success message
+        // Navigate to the new window (you can specify your target URL)
+        window.open('/admin-home/admin-generate-routine'); // Adjust the URL as needed
+    } catch (error) {
+        console.error('Error generating routine:', error.response.data.error);
+    }
+};
 
 
 const AdminDashboard = () => {
@@ -101,10 +113,12 @@ const AdminDashboard = () => {
                     borderRadius="30px"
                     bg="gray.100"
                     _hover={{ transform: 'translateY(-5px)', boxShadow: 'lg' }}
+
                     boxShadow="md"
-                >
+                    onClick={handleGenerateRoutine}
+                >   
                     <Icon as={FaBook} boxSize={20} color="gray.700" />
-                    <Text fontSize="2xl" fontWeight="600" color="gray.700">Others</Text>
+                    <Text fontSize="2xl" fontWeight="600" color="gray.700">Generate Routine</Text>
                 </Button>
             </Link>
         </SimpleGrid>
