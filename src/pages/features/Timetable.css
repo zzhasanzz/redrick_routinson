@@ -1,40 +1,39 @@
 .timetable-container {
-    margin: 20px auto;
-    padding: 20px;
-    max-width: 1000px;
-    text-align: center;
-  }
-  
-  table.timetable {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    font-size: 1.1em;
-    font-family: 'Arial', sans-serif;
-  }
-  
-  table.timetable thead tr {
-    background-color: #009879;
-    color: white;
-    text-align: left;
-    font-weight: bold;
-  }
-  
-  table.timetable th,
-  table.timetable td {
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-  }
-  
-  table.timetable tbody tr {
-    border-bottom: 1px solid #dddddd;
-  }
-  
-  table.timetable tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
-  }
-  
-  table.timetable tbody tr:last-of-type {
-    border-bottom: 2px solid #009879;
-  }
-  
+  margin: 20px auto;
+  padding: 20px;
+  max-width: 1000px;
+  text-align: center;
+}
+
+table.timetable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 1.1em;
+  font-family: 'Arial', sans-serif;
+}
+
+table.timetable thead tr {
+  background-color: #009879;
+  color: white;
+  text-align: left;
+  font-weight: bold;
+}
+
+table.timetable th,
+table.timetable td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+}
+
+table.timetable tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+table.timetable tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
+
+table.timetable tbody tr:last-of-type {
+  border-bottom: 2px solid #009879;
+}
