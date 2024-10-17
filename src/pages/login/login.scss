@@ -1,98 +1,83 @@
 .login {
+  background-image: url('../assets/loginbg.png');
+  display: flex;
   height: 100vh;
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  background-color: #f0f8ff; /* Light blue background to match the dashboard */
+  justify-content: start; // Align to the left of the screen
+
+  .form-container {
+    width: 700px; // Increase the form section width
+    height : 700px;
+    margin-left: 200px;
+    background: transparent;
+    box-shadow: 0 2px 10px #688eb6;
+    border-radius: 8px;
+    border-color: #dae7eb;
+    padding: 30px;
+
+    .form-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      h2 {
+        margin-bottom: 40px;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        input {
+          margin-bottom: 15px;
+          padding: 10px 0;
+          border: none;
+          border-bottom: 2px solid #ccc;
+          font-size: 16px;
+          outline: none;
+          transition: border-color 0.3s;
+          font-size: 23px;
+        }
+
+        button {
+          padding: 12px;
+          background-color: #688eb6;
+          color: white;
+          border: none;
+          border-radius: 7px;
+          cursor: pointer;
+          margin-top: 50px;
+          height : 50px;
+          transition: background-color 0.3s;
+
+          &:hover {
+            background-color: darkpurple;
+          }
+        }
+
+        .error {
+          color: red;
+          font-size: 14px;
+          margin-top: 10px;
+        }
+      }
+
+      .login-buttons {
+        margin-top: 20px;
+
+        .forgot-password-link {
+          color: blue;
+          cursor: pointer;
+          text-decoration: underline;
+          margin-top: 10px;
+
+          &:hover {
+            color: darkblue;
+          }
+        }
+      }
+    }
+  }
 }
 
-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: #ffffff;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Slightly stronger shadow for elevation */
-  margin-bottom: 20px;
-  border: 1px solid #d9e2ec; /* Soft border similar to dashboard panel edges */
-}
-
-input {
-  width: 250px;
-  height: 40px;
-  margin: 10px 0;
-  padding: 0 12px;
-  border: 1px solid #b3cde3; /* Light blue-gray border to match the theme */
-  border-radius: 5px;
-  font-size: 16px;
-  background-color: #f7fbfc; /* Very light background for inputs */
-}
-
-input:focus {
-  border-color: #5f9ea0; /* Soft focus color matching the overall theme */
-}
-
-button {
-  width: 250px;
-  height: 40px;
-  border: none;
-  background-color: #5f9ea0; /* Muted blue matching the dashboard icons */
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.3s;
-  margin-top: 10px;
-}
-
-button:hover {
-  background-color: #4682b4; /* Slightly darker blue for hover effect */
-}
-
-span {
-  font-size: 14px;
-  color: #b22222; /* Red error color */
-  margin-top: 10px;
-}
-
-button.secondary {
-  background-color: transparent;
-  color: #5f9ea0; /* Use the same blue tone */
-  border: 1px solid #5f9ea0;
-  margin-top: 10px;
-}
-
-button.secondary:hover {
-  background-color: #5f9ea0;
-  color: white;
-}
-button.secondary:active{
-  background-color: #4682b4;
-  color: white;
-}
-.loading-spinner {
-  margin-top: 20px;
-  font-size: 14px;
-  color: #555;
-  text-align: center;
-}
-
-.login-buttons {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 10px;
-}
-
-.forgot-password-link {
-  color: #4682b4; /* Blue link color to match the overall palette */
-  cursor: pointer;
-  text-decoration: underline;
-  margin-top: 10px;
-}
-
-.forgot-password-link:hover {
-  color: #2e8b57; /* Slightly darker on hover */
-}
