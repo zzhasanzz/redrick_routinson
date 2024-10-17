@@ -1,0 +1,53 @@
+/* Container for the routine */
+.routine-container {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling the table */
+table {
+    width: 100%;
+    border-collapse: collapse; /* Ensures borders are merged */
+    margin-top: 20px; /* Adds space above the table */
+}
+
+/* Styling table headers */
+th, td {
+    padding: 12px; /* Adds padding for cells */
+    text-align: left; /* Align text to the left */
+    border: 1px solid #ddd; /* Adds border to cells */
+}
+
+/* Adding background color to the headers */
+th {
+    background-color: #f4f4f4;
+    color: #333; /* Darker text for headers */
+}
+
+/* Hover effect for table rows */
+tr:hover {
+    background-color: #f1f1f1; /* Light gray background on hover */
+}
+
+/* Styling for empty class cells */
+td:empty {
+    background-color: #ffcccc; /* Light red for no classes */
+    text-align: center; /* Center align text */
+}
+
+/* General text styling */
+h1 {
+    font-size: 24px;
+    color: #333; /* Darker color for headings */
+    text-align: center; /* Center align the heading */
+}
+
+/* Styling for loading and error messages */
+.loading, .error-message {
+    text-align: center; /* Center align messages */
+    color: #666; /* Light gray for messages */
+    font-size: 18px; /* Slightly larger text */
+}
