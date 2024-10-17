@@ -7,7 +7,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/teacher-home/teacher-dashboard', methods=['POST'])
+@app.route('/admin-home/admin-dashboard', methods=['POST'])
 def generate_routine():
     try:
         # Execute the Python scripts sequentially
