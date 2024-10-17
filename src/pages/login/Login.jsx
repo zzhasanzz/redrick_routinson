@@ -7,8 +7,8 @@ import { AuthContext } from "../../context/AuthContext";
 import { getDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase";
 
-
 const Login = () => {
+  // State management
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -39,31 +39,25 @@ const Login = () => {
     e.preventDefault();
     setError("");
     setLoggingIn(true);
-    console.log("Email: ", email);
-    console.log("Password: ", password);
 
-    
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      
+
       const docRef = doc(db, "users", user.email);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
         const userData = docSnap.data();
         const userRole = userData.role;
-        console.log(userData , userRole);
 
         dispatch({ type: "LOGIN", payload: { user, role: userRole } });
 
         if (userRole === "teacher") {
           navigate("/teacher-home/teacher-dashboard");
-        }
-        else if (userRole === "admin") {
+        } else if (userRole === "admin") {
           navigate("/admin-home/admin-dashboard");
-        }
-        else if (userRole === "student"){
+        } else if (userRole === "student") {
           navigate("/student-home/student-dashboard");
         }
       } else {
@@ -83,7 +77,6 @@ const Login = () => {
         default:
           setError("Failed to login. Please check your credentials.");
       }
-      console.log("Error during login:", error.code, error.message);
       setLoggingIn(false);
     } finally {
       setLoggingIn(false);
@@ -95,7 +88,6 @@ const Login = () => {
     setEmail("");
     setPassword("");
     setError("");
-
 
     try {
       const result = await signInWithPopup(auth, provider);
@@ -114,69 +106,44 @@ const Login = () => {
           navigate("/teacher-home/teacher-dashboard");
         } else if (userRole === "student") {
           navigate("/student-home/student-dashboard");
-        } 
-        else if (userRole === "admin") {
+        } else if (userRole === "admin") {
           navigate("/admin-home/admin-dashboard");
-        }
-        else {
-          setError("No valid role found for this user.");
         }
       } else {
         setError("Email not found in the database.");
         await auth.signOut();
-        await user.delete();
       }
     } catch (error) {
-      if (error.code === "auth/popup-closed-by-user") {
-        setError("Google sign-in was canceled. Please try again.");
-      } else {
-        setError("Failed to sign in with Google.");
-      }
+      setError("Failed to sign in with Google.");
     } finally {
       setSigningIn(false);
     }
   };
 
-  // Change the button to a link-like appearance
   const handleForgetPassword = () => {
     navigate("/forgot-password");
   };
 
   return (
-    <div className="login">
-      <form onSubmit={handleLogin}>
-        <h2>Login</h2>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={handleEmailChange}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={handlePasswordChange}
-          required
-        />
-        <button type="submit" className={"secondary"} disabled={loggingIn} >
-          {loggingIn ? "Logging in..." : "Login"}
-        </button>
-        {error && <span className="error">{error}</span>}
-        <button className="secondary" onClick={handleGoogleLogin} disabled={signingIn}>
-          {signingIn ? "Signing in..." : "Sign in with Google"}
-        </button>
-      </form>
-
-      <div className="login-buttons">
-        <span className="forgot-password-link" onClick={handleForgetPassword}>
-          Forgot Password?
-        </span>
+      <div className="login">
+        <div className="form-container">
+          <div className="form-section">
+            <h2>RoutineSon</h2>
+            <form onSubmit={handleLogin}>
+              <input type="email" placeholder="Email" value={email} onChange={handleEmailChange} required />
+              <input type="password" placeholder="Password" value={password} onChange={handlePasswordChange} required />
+              <button type="submit" disabled={loggingIn}>{loggingIn ? "Logging in..." : "Login"}</button>
+              {error && <span className="error">{error}</span>}
+              <button onClick={handleGoogleLogin} disabled={signingIn}>
+                {signingIn ? "Signing in..." : "Sign in with Google"}
+              </button>
+            </form>
+            <div className="login-buttons">
+              <span className="forgot-password-link" onClick={handleForgetPassword}>Forgot Password?</span>
+            </div>
+          </div>
+        </div>
       </div>
-
-      {(signingIn || loggingIn) && <div className="loading-spinner">Loading...</div>}
-    </div>
   );
 };
 
