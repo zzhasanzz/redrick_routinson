@@ -9,6 +9,8 @@ import TeacherHome from "./pages/home/TeacherHome";
 import AdminHome from './pages/home/AdminHome.jsx';
 import ForgotPassword from './pages/login/ForgotPassword';
 import StudentDashboard from "./pages/home/dashboards/StudentDashbord.jsx";
+import StudentRoutine from './pages/features/StudentRoutine.jsx';
+
 import Blank from "./pages/Blank.jsx";
 import {ChakraProvider} from "@chakra-ui/react";
 import TeacherDashboard from "./pages/home/dashboards/TeacherDashboard.jsx";
@@ -17,6 +19,7 @@ import AdminManageRoutine from './pages/features/AdminManageRoutine.jsx';
 import AdminGenerateRoutine from './pages/features/AdminGenerateRoutine.jsx';
 import AdminManageUsers from './pages/features/AdminManageUsers.jsx';
 import AdminGenerateSeatPlan from './pages/features/AdminManageSeatPlan.jsx';
+
 
 
 
@@ -106,7 +109,7 @@ function App() {
                 </RequireAuth>
 
               }
-        >
+        >   
             <Route index element={<Blank />} />
             <Route path="/student-home/student-dashboard" element={
                 <RequireAuth allowedRoles={["student"]}>
@@ -114,6 +117,13 @@ function App() {
                 </RequireAuth>
 
             }/>
+            <Route path="/student-home/student-routine" element={
+                <RequireAuth allowedRoles={["student"]}>
+                    <StudentRoutine/>
+                </RequireAuth>
+
+            }/>
+
             <Route path="/student-home/myevents" element={
                 <RequireAuth allowedRoles={["student"]}>
                     <Blank/>

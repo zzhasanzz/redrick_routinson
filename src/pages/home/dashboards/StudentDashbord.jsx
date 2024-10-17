@@ -14,7 +14,7 @@ const StudentDashboard = () => {
             backgroundRepeat="no-repeat" // Prevents repeating
         >
             <SimpleGrid columns={[2, null, 3]} spacing={8}>
-                <Link to="/class-routine">
+                <Link to="/student-home/student-routine">
                     <Button
                         height="250px"
                         width="450px"
