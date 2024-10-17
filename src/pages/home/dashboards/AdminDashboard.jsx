@@ -8,7 +8,7 @@ import axios from "axios";
 
 const handleGenerateRoutine = async () => {
     try {
-        const response = await axios.post('http://localhost:5000/teacher-home/teacher-dashboard');
+        const response = await axios.post('http://localhost:5000/admin-home/admin-dashboard');
 
         console.log(response.data.message); // Log the success message
         // Navigate to the new window (you can specify your target URL)
