@@ -3,7 +3,7 @@ import { sendPasswordResetEmail } from "firebase/auth";
 import { auth, db } from "../../firebase"; // Import Firestore database
 import { getDoc, doc } from "firebase/firestore"; // Import Firestore functions
 import { Link } from "react-router-dom";
-import "./forgotPassword.css"; // Apply your styles here
+import "./forgotPassword.scss"; // Apply your styles here
 
 export default function ForgotPassword() {
   const emailRef = useRef();

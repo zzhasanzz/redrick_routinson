@@ -16,13 +16,13 @@ const sidebarNavItems = [
         section: 'myevents'
     },
     {
-        display: 'Manage Routine',
+        display: 'Courses',
         icon: <i className='bx bx-calendar'></i>,
         to: '/admin-home/admin-manage-routine', // Add full path
         section: 'calendar'
     },
     {
-        display: 'Manage Seat Plan',
+        display: 'Seat Plan',
         icon: <i className='bx bx-user'></i>,
         to: '/admin-home/admin-manage-seat-plan', // Add full path
         section: 'user'
@@ -30,7 +30,7 @@ const sidebarNavItems = [
     {
         display: 'Logout',
         icon: <i className='bx bx-receipt'></i>,
-        to: '/admin-home/logout', // Add full path
+        to: '/login', // Add full path
         section: 'logout'
     },
 ];
@@ -69,7 +69,8 @@ const AdminSidebar = () => {
                     ref={indicatorRef}
                     className="sidebar__menu__indicator"
                     style={{
-                        transform: `translateX(-50%) translateY(${activeIndex * stepHeight}px)`
+                        transform: `translateX(-50%) translateY(${activeIndex * stepHeight}px)`,
+                        backgroundColor : '#d9f3fc'
                     }}
                 ></div>
 

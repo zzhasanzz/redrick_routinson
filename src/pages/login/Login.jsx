@@ -160,7 +160,7 @@ const Login = () => {
           onChange={handlePasswordChange}
           required
         />
-        <button type="submit" className={"secondary"} disabled={loggingIn}>
+        <button type="submit" className={"secondary"} disabled={loggingIn} >
           {loggingIn ? "Logging in..." : "Login"}
         </button>
         {error && <span className="error">{error}</span>}

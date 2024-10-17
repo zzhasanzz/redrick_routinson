@@ -24,7 +24,7 @@ const sidebarNavItems = [
     {
         display: 'User',
         icon: <i className='bx bx-user'></i>,
-        to: '/teacher-home/user', // Add full path
+        to: '/login', // Add full path
         section: 'user'
     },
     {
