@@ -1,7 +1,7 @@
 import { Box, SimpleGrid, Button, Text, Icon } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { FaCalendarAlt, FaComments, FaChair, FaBoxOpen, FaClipboardList, FaBook } from 'react-icons/fa';
-import axios from 'axios';
+
 
 const TeacherDashboard = () => {
 
@@ -46,7 +46,7 @@ const TeacherDashboard = () => {
                 </Link>
 
                 <Link to="/teacher-home/teacher-manage-routine">
-                    <Button height="250px" width="450px" flexDirection="column" justifyContent="center" borderRadius="30px" onClick={handleGenerateRoutine}>
+                    <Button height="250px" width="450px" flexDirection="column" justifyContent="center" borderRadius="30px">
                         <Icon as={FaBook} boxSize={20} />
                         <Text fontSize="2xl">Generate Routine</Text>
                     </Button>
