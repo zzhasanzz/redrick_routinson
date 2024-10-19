@@ -36,20 +36,48 @@ class ScheduleEntry:
     teacher: str  # Added teacher information
 
 # Define courses for each semester
-COURSES = {
-    1: [("Hum4145", 2), ("Math4141", 3), ("Phy4141", 3), ("CSE4105", 3), ("CSE4107", 3), ("Hum4147", 3), ("HUM4142", 1)],
-    3: [("Math4341", 3), ("EEE4383", 3), ("CSE4301", 3), ("CSE4303", 3), ("CSE4305", 3), ("CSE4307", 3)],
-    5: [("CSE4501", 3), ("CSE4503", 3), ("CSE4511", 3), ("CSE4513", 3), ("Math4541", 3), ("CSE4539", 3)],
-    7: [("Hum4743", 2), ("Math4741", 3), ("CSE4703", 3), ("CSE4709", 3), ("CSE4739", 3), ("CSE4733", 3)],
-}
+# COURSES = {
+#     1: [("Hum4145", 2), ("Math4141", 3), ("Phy4141", 3), ("CSE4105", 3), ("CSE4107", 3), ("Hum4147", 3), ("HUM4142", 1)],
+#     3: [("Math4341", 3), ("EEE4383", 3), ("CSE4301", 3), ("CSE4303", 3), ("CSE4305", 3), ("CSE4307", 3)],
+#     5: [("CSE4501", 3), ("CSE4503", 3), ("CSE4511", 3), ("CSE4513", 3), ("Math4541", 3), ("CSE4539", 3)],
+#     7: [("Hum4743", 2), ("Math4741", 3), ("CSE4703", 3), ("CSE4709", 3), ("CSE4739", 3), ("CSE4733", 3)],
+# }
 
-# Teachers for each course
-COURSE_TEACHERS = {
-    "Hum4145": ["BS"], "Math4141": ["MUA"], "Phy4141": ["FAK"], "CSE4105": ["KH"], "CSE4107": ["MM"], "Hum4147": ["MMH"], "HUM4142": ["AH"],
-    "Math4341": ["MKS"], "EEE4383": ["SHR"], "CSE4301": ["FH"], "CSE4303": ["SA"], "CSE4305": ["MHA"], "CSE4307": ["ARMK"],
-    "CSE4501": ["MRK"], "CSE4503": ["OR"], "CSE4511": ["SH"], "CSE4513": ["SAH"], "Math4541": ["AKA"], "CSE4539": ["MIA"],
-    "Hum4743": ["ZR"], "Math4741": ["MMA"], "CSE4703": ["AZM"], "CSE4709": ["MAMR"], "CSE4739": ["NY"], "CSE4733": ["MBH"],
-}
+# # Teachers for each course
+# COURSE_TEACHERS = {
+#     "Hum4145": ["BS"], "Math4141": ["MUA"], "Phy4141": ["FAK"], "CSE4105": ["KH"], "CSE4107": ["MM"], "Hum4147": ["MMH"], "HUM4142": ["AH"],
+#     "Math4341": ["MKS"], "EEE4383": ["SHR"], "CSE4301": ["FH"], "CSE4303": ["SA"], "CSE4305": ["MHA"], "CSE4307": ["ARMK"],
+#     "CSE4501": ["MRK"], "CSE4503": ["OR"], "CSE4511": ["SH"], "CSE4513": ["SAH"], "Math4541": ["AKA"], "CSE4539": ["MIA"],
+#     "Hum4743": ["ZR"], "Math4741": ["MMA"], "CSE4703": ["AZM"], "CSE4709": ["MAMR"], "CSE4739": ["NY"], "CSE4733": ["MBH"],
+# }
+
+def parse_input_file(filename):
+    courses = {}
+    teachers = {}
+
+    with open(filename, 'r') as file:
+        for line in file:
+            line = line.strip()  # Remove leading/trailing whitespace
+            if not line:  # Skip empty lines
+                continue
+            
+            parts = line.split(';')
+            if len(parts) != 4:
+                continue  # Skip any malformed lines
+
+            semester = int(parts[0])
+            course = parts[1].strip()
+            credits = int(parts[2])
+            teacher = parts[3].strip()
+
+            if semester not in courses:
+                courses[semester] = []
+            courses[semester].append((course, credits))
+
+            teachers[course] = [teacher]
+
+    return courses, teachers
+
 
 # GA parameters
 POPULATION_SIZE = 20
@@ -206,6 +234,7 @@ def write_schedule_to_file(schedule, filename="routine.txt"):
 
 
 if __name__ == "__main__":
+    COURSES, COURSE_TEACHERS = parse_input_file("input.txt")
     final_schedule = genetic_algorithm()
     write_schedule_to_file(final_schedule)  # Write the schedule to a file
 
