@@ -21,26 +21,26 @@ class Class:
         self.room = room
         self.teachers = teachers
 
-# Hardcode the lab assignments (first 16 courses)
-def hardcode_labs(scheduled):
-    lab_assignments = [
-        Class(1, "Phy4142", "Monday", ["10:30-11:45", "11:45-1:00"], 7, ["AZR", "DFS"]),
-        Class(1, "CSE4104", "Tuesday", ["10:30-11:45", "11:45-1:00"], 3, ["MKS", "AA"]),
-        Class(1, "CSE4108", "Wednesday", ["10:30-11:45", "11:45-1:00"], 4, ["SRR", "RHJ"]),
-        Class(3, "EEE4384", "Monday", ["2:30-3:45", "3:45-5:00"], 6, ["SHR", "HJA"]),
-        Class(3, "CSE4302", "Wednesday", ["8:00-9:15", "9:15-10:30"], 2, ["MAMR", "FJ"]),
-        Class(3, "CSE4304", "Friday", ["10:30-11:45", "11:45-1:00"], 5, ["RH", "AAR"]),
-        Class(3, "CSE4308", "Thursday", ["8:00-9:15", "9:15-10:30"], 3, ["TZF", "IT"]),
-        Class(5, "CSE4502", "Tuesday", ["10:30-11:45", "11:45-1:00"], 1, ["RH", "FI"]),
-        Class(5, "CSE4504", "Friday", ["2:30-3:45", "3:45-5:00"], 8, ["ASH", "FH"]),
-        Class(5, "CSE4508", "Tuesday", ["8:00-9:15", "9:15-10:30"], 2, ["FI", "TZF"]),
-        Class(5, "CSE4510", "Thursday", ["2:30-3:45", "3:45-5:00"], 4, ["SH", "HM"]),
-        Class(5, "CSE4512", "Monday", ["2:30-3:45", "3:45-5:00"], 6, ["SB", "TSA"]),
-        Class(5, "CSE4540", "Tuesday", ["2:30-3:45", "3:45-5:00"], 7, ["FI", "TSA"]),
-        Class(7, "CSE4710", "Friday", ["8:00-9:15", "9:15-10:30"], 3, ["NY", "NY"]),
-        Class(7, "CSE4734", "Monday", ["2:30-3:45", "3:45-5:00"], 5, ["MBH", "MAMR"]),
-        Class(7, "CSE4700", "Thursday", ["8:00-9:15", "9:15-10:30"], 1, ["KH", "HM"])
-    ]
+
+def read_lab_assignments_from_file(filename):
+    labs = []
+    with open(filename, 'r') as file:
+        for line in file.readlines():
+            parts = line.strip().split(';')
+            if len(parts) < 8:  # Ensure the line has all required fields
+                continue
+            semester = int(parts[0])
+            code = parts[1]
+            day = parts[2]
+            times = [parts[3], parts[4]]  # Two timeslots
+            room = int(parts[5])
+            teachers = [parts[6], parts[7]]  # Two teachers
+            labs.append(Class(semester, code, day, times, room, teachers))
+    return labs
+
+# Updated hardcode_labs function to read from the file
+def hardcode_labs(scheduled, filename='lab_assignments.txt'):
+    lab_assignments = read_lab_assignments_from_file(filename)
 
     # Mark the assigned time slots as busy
     for lab in lab_assignments:
@@ -49,6 +49,38 @@ def hardcode_labs(scheduled):
             room_slots[lab.room][lab.day][time] = True
             course_slots[lab.code] = {lab.day: time}
         scheduled.append(lab)
+
+
+# Read part-time teacher schedule from file and hardcode assignments
+def hardcode_part_time_teachers(scheduled, filename='input_pt.txt'):
+    with open(filename, 'r') as file:
+        for line in file:
+            parts = line.strip().split(";")
+            if len(parts) != 6:  # Expect 6 parts in the input line
+                continue  # Skip malformed lines
+            
+            semester = int(parts[0])
+            code = parts[1]
+            day = parts[2]
+            time = parts[3]  # Only one time slot
+            room = int(parts[4])
+            teachers = [parts[5]]  # Only one teacher for part-time classes
+
+            # Create class instance for part-time teacher
+            part_time_class = Class(semester, code, day, [time], room, teachers)
+
+            # Check for collision before scheduling
+            if not has_collision(part_time_class):
+                # Mark the assigned time slots as busy
+                semester_timeslots[part_time_class.semester][part_time_class.day][time] = True
+                room_slots[part_time_class.room][part_time_class.day][time] = True
+                course_slots[part_time_class.code] = {part_time_class.day: time}
+                scheduled.append(part_time_class)  # Add to scheduled classes
+            else:
+                print(f"Collision detected for part-time class {code} on {day} at {time}.")
+
+
+
 
 # Apply constraints to prevent scheduling on Wednesday from 3:45-5:00
 def apply_constraints():
@@ -183,7 +215,8 @@ def write_schedule_to_file(filename, scheduled_classes):
 # Main function to run the scheduling process
 def main():
     scheduled_classes = []
-    hardcode_labs(scheduled_classes)  # Hardcode lab assignments
+    hardcode_part_time_teachers(scheduled_classes, 'input_pt.txt')
+    hardcode_labs(scheduled_classes, 'lab_assignments.txt')  # Hardcode lab assignments
     remaining_classes = read_schedule_from_file('routine.txt')
     unscheduled_classes = schedule_remaining_classes(remaining_classes, scheduled_classes)
 
