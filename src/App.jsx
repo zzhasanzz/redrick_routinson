@@ -144,6 +144,13 @@ function App() {
                 </RequireAuth>
 
             }/>
+            <Route path="/student-home/event" element={
+                <RequireAuth allowedRoles={["student"]}>
+                    <Blank/>
+                </RequireAuth>
+
+            }/>
+
             <Route path="/student-home/logout" element={
                 <RequireAuth allowedRoles={["student"]}>
                     <Blank/>
