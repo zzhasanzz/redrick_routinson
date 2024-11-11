@@ -1,30 +1,64 @@
 import copy
 import random
-
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
 
 
+
 def write_routine_fire(scheduled_classes):
+
     cred = credentials.Certificate('./ServiceAccountKey.json')
     firebase_admin.initialize_app(cred)
     db = firestore.client()
 
+    
+    time_mapping = {
+        "8:00-9:15": 1,
+        "9:15-10:30": 2,
+        "10:30-11:45": 3,
+        "11:45-1:00": 4,
+        "2:30-3:45": 5,
+        "3:45-5:00": 6
+    }
+    day_mapping = {
+        "Monday": 0,
+        "Tuesday": 1,
+        "Wednesday": 2,
+        "Thursday": 3,
+        "Friday": 4,
+        "Saturday": 5,
+        "Sunday": 6
+    }
+
     for cls in scheduled_classes:
+        time_1 = cls.times[0] if len(cls.times) > 0 else ""
+        time_2 = cls.times[1] if len(cls.times) > 1 else ""
+
+        teacher_1 = cls.teachers[0] if len(cls.teachers) > 0 else ""
+        teacher_2 = cls.teachers[1] if len(cls.teachers) > 1 else ""
+        
+        # Calculate the sequential time_slot based on day and time
+        day_index = day_mapping.get(cls.day, -1)
+        time_index = time_mapping.get(time_1, 0)
+        time_slot = day_index * len(time_mapping) + time_index if day_index >= 0 else ""
+
+        
         data = {
+            'course-code':cls.code,
+            'course-title': "",
             'room': cls.room,
-            'course-title': '',
-            'teacher-1': "",
-            'teacher-2':"",
+            'teacher-1': teacher_1,
+            'teacher-2':teacher_2,
             'day': cls.day,
-            'time-1':"",
-            'time-2':"",
-            'time_slot':""
+            'time-1': time_1,
+            'time-2': time_2,
         }
-        doc_ref = db.collection('semester-'+str(cls.semester)).document(str(cls.code))
+        doc_ref = db.collection('semester-'+str(cls.semester)).document(str(time_slot))
         doc_ref.set(data)
+        
+
 
 # Days and time slots
 days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
@@ -224,7 +258,7 @@ def parse_schedule(file_content):
         semester = int(parts[0])
         code = parts[1]
         day = parts[2]
-        times = [parts[3]]
+        times = [parts[3],parts[3]]
         room = int(parts[4])
         teachers = parts[5].split("+")
         classes.append(Class(semester, code, day, times, room, teachers))
@@ -235,7 +269,6 @@ def write_schedule_to_file(filename, scheduled_classes):
     with open(filename, 'w') as file:
         for cls in scheduled_classes:     
             line = f"{cls.semester};{cls.code};{cls.day};{','.join(cls.times)};{cls.room};{' + '.join(cls.teachers)}\n"
-            write_routine_fire(scheduled_classes)
             file.write(line)
 
 # Main function to run the scheduling process
@@ -250,8 +283,10 @@ def main():
     # Sort the final schedule
     scheduled_classes.sort(key=sort_classes_key)
 
+
     # Write the optimized schedule to 'optimal.txt'
     write_schedule_to_file('optimal.txt', scheduled_classes)
+    write_routine_fire(scheduled_classes)
 
     # Check and display unscheduled classes
     display_unscheduled_classes(unscheduled_classes)
