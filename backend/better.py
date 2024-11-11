@@ -56,15 +56,15 @@ def hardcode_part_time_teachers(scheduled, filename='input_pt.txt'):
     with open(filename, 'r') as file:
         for line in file:
             parts = line.strip().split(";")
-            if len(parts) != 6:  # Expect 6 parts in the input line
+            if len(parts) != 7:  # Expect 6 parts in the input line
                 continue  # Skip malformed lines
-            
+
             semester = int(parts[0])
             code = parts[1]
-            day = parts[2]
-            time = parts[3]  # Only one time slot
-            room = int(parts[4])
-            teachers = [parts[5]]  # Only one teacher for part-time classes
+            day = parts[3]
+            time = parts[4]  # Only one time slot
+            room = int(parts[5])
+            teachers = [parts[6]]  # Only one teacher for part-time classes
 
             # Create class instance for part-time teacher
             part_time_class = Class(semester, code, day, [time], room, teachers)
