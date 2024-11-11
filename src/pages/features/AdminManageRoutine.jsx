@@ -1,28 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
-// AdminManageRoutine Component
 const AdminManageRoutine = () => {
   const [courses, setCourses] = useState([]);
   const [semesters, setSemesters] = useState({});
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-  // Fetch courses from the backend on component mount
+  // Fetch courses on component mount
   useEffect(() => {
     const fetchCourses = async () => {
-      setLoading(true); // Indicate loading has started
+      setLoading(true);
       try {
-        const response = await axios.get('http://localhost:5000/api/courses');
-        const coursesData = response.data.courses; // Make sure this matches your API response
-  
+        const response = await axios.get("http://localhost:5000/api/courses");
+        const coursesData = response.data.courses;
+
         setCourses(coursesData);
-  
+
         // Group courses by semester
         const groupedBySemester = {};
-        coursesData.forEach(course => {
+        coursesData.forEach((course) => {
           if (!groupedBySemester[course.semester]) {
             groupedBySemester[course.semester] = [];
           }
@@ -30,26 +29,26 @@ const AdminManageRoutine = () => {
         });
         setSemesters(groupedBySemester);
       } catch (error) {
-        console.error('Error fetching courses:', error); // Log error
-        setError('Error fetching courses. Please try again later.');
+        console.error("Error fetching courses:", error);
+        setError("Error fetching courses. Please try again later.");
       } finally {
-        setLoading(false); // Set loading to false after fetch
+        setLoading(false);
       }
     };
-  
+
     fetchCourses();
   }, []);
+
   
-  // Add Course function
+  // Add Course
   const addCourse = async (newCourse) => {
-    // Prepare data for the backend
     const data = {
       semester: newCourse.semester,
       name: newCourse.name,
       credit: newCourse.credit,
       teacher: newCourse.teacher,
       teacherType: newCourse.teacherType,
-      ...(newCourse.teacherType === 'Part-Time' && {
+      ...(newCourse.teacherType === "Part-Time" && {
         day1: newCourse.day1,
         time1: newCourse.time1,
         day2: newCourse.day2,
@@ -59,14 +58,12 @@ const AdminManageRoutine = () => {
     };
 
     try {
-      const response = await axios.post('http://localhost:5000/api/save', data);
-      console.log(response.data.message); // Handle success message
-      setSuccessMessage('Course added successfully!'); // Set success message
-      // Update the courses state with the newly added course
-      setCourses(prevCourses => [...prevCourses, newCourse]);
+      await axios.post("http://localhost:5000/api/save", data);
+      setSuccessMessage("Course added successfully!");
 
-      // Update the semesters state to include the new course
-      setSemesters(prevSemesters => {
+      // Update states
+      setCourses((prevCourses) => [...prevCourses, newCourse]);
+      setSemesters((prevSemesters) => {
         const updatedSemesters = { ...prevSemesters };
         if (!updatedSemesters[newCourse.semester]) {
           updatedSemesters[newCourse.semester] = [];
@@ -74,11 +71,89 @@ const AdminManageRoutine = () => {
         updatedSemesters[newCourse.semester].push(newCourse);
         return updatedSemesters;
       });
-
     } catch (error) {
-      setError('Error saving course data. Please try again.');
-      console.error('Error saving course data:', error);
+      console.error("Error saving course data:", error);
+      setError("Error saving course data. Please try again.");
     }
+  };
+
+  // Delete Course
+  const deleteCourse = async (semester, courseName, teacher) => {
+    try {
+      await axios.delete("http://localhost:5000/api/delete", {
+        data: { semester, name: courseName, teacher },
+      });
+      setSuccessMessage("Course deleted successfully!");
+
+      // Update states
+      setCourses((prevCourses) =>
+        prevCourses.filter(
+          (course) =>
+            !(
+              course.semester === semester &&
+              course.name === courseName &&
+              course.teacher === teacher
+            )
+        )
+      );
+      setSemesters((prevSemesters) => {
+        const updatedSemesters = { ...prevSemesters };
+        updatedSemesters[semester] = updatedSemesters[semester].filter(
+          (course) =>
+            !(course.name === courseName && course.teacher === teacher)
+        );
+        return updatedSemesters;
+      });
+    } catch (error) {
+      console.error("Error deleting course:", error);
+      setError("Error deleting course. Please try again.");
+    }
+  };
+
+  // Update Teacher
+  const updateTeacher = async (updatedData, clearForm) => {
+    try {
+      const response = await axios.put("http://localhost:5000/api/update", updatedData);
+      setSuccessMessage(response.data.message);
+  
+      // Update courses state
+      const updatedCourses = courses.map((course) =>
+        course.semester === updatedData.semester && course.name === updatedData.name
+          ? { ...course, teacher: updatedData.teacher }
+          : course
+      );
+      setCourses(updatedCourses);
+  
+      // Regenerate semesters state based on updated courses
+      const updatedSemesters = {};
+      updatedCourses.forEach((course) => {
+        if (!updatedSemesters[course.semester]) {
+          updatedSemesters[course.semester] = [];
+        }
+        updatedSemesters[course.semester].push(course);
+      });
+      setSemesters(updatedSemesters);
+  
+      clearForm(); // Clear the form fields
+    } catch (error) {
+      console.error("Error updating teacher:", error);
+      setError("Failed to update teacher.");
+    }
+  };
+
+  // Filter courses to remove duplicates
+  const filterUniqueCourses = (courses) => {
+    const uniqueCourses = [];
+    const courseNames = new Set();
+
+    courses.forEach((course) => {
+      if (!courseNames.has(course.name)) {
+        courseNames.add(course.name);
+        uniqueCourses.push(course);
+      }
+    });
+
+    return uniqueCourses;
   };
 
   return (
@@ -96,30 +171,47 @@ const AdminManageRoutine = () => {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <button onClick={() => setSearchTerm('')}>Clear Search</button>
+      <button onClick={() => setSearchTerm("")}>Clear Search</button>
+
+      {/* Update Teacher Form */}
+      <UpdateTeacherForm updateTeacher={updateTeacher} />
 
       {/* Loading State */}
       {loading ? (
         <p>Loading courses...</p>
       ) : (
         <div className="semester-list">
-          {Object.keys(semesters).map(semester => (
+          {Object.keys(semesters).map((semester) => (
             <div key={semester}>
-              <h3 style={{ cursor: 'pointer' }} onClick={() => {
-                const element = document.getElementById(semester);
-                if (element) {
-                  element.style.display = element.style.display === 'none' ? 'block' : 'none';
-                }
-              }}>
+              <h3
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  const element = document.getElementById(semester);
+                  if (element) {
+                    element.style.display =
+                      element.style.display === "none" ? "block" : "none";
+                  }
+                }}
+              >
                 {semester}
               </h3>
-              <div id={semester} style={{ display: 'none', marginLeft: '20px' }}>
-                {semesters[semester].filter(course => course.name.toLowerCase().includes(searchTerm.toLowerCase())).map(course => (
+              <div id={semester} style={{ display: "none", marginLeft: "20px" }}>
+                {filterUniqueCourses(
+                  semesters[semester].filter((course) =>
+                    course.name.toLowerCase().includes(searchTerm.toLowerCase())
+                  )
+                ).map((course) => (
                   <div key={`${course.name}-${course.teacher}`}>
-                    <p>{course.name} - {course.credit} credits - {course.teacher}</p>
-                    {course.teacherType === 'Part-Time' && (
-                      <p>Room: {course.room}, Day 1: {course.day1}, Time 1: {course.time1}</p>
-                    )}
+                    <p>
+                      {course.name} - {course.credit} credits - {course.teacher}{" "}
+                      <button
+                        onClick={() =>
+                          deleteCourse(course.semester, course.name, course.teacher)
+                        }
+                      >
+                        Delete
+                      </button>
+                    </p>
                   </div>
                 ))}
               </div>
@@ -134,29 +226,27 @@ const AdminManageRoutine = () => {
   );
 };
 
-// Form to Add New Course and Teacher
+// AddCourseForm Component
 const AddCourseForm = ({ addCourse }) => {
-  const [semester, setSemester] = useState('');
-  const [course, setCourse] = useState('');
-  const [credit, setCredit] = useState('');
-  const [teacher, setTeacher] = useState('');
-  const [teacherType, setTeacherType] = useState('Full-Time');
-  const [room, setRoom] = useState('');
-  const [day1, setDay1] = useState('');
-  const [time1, setTime1] = useState('');
-  const [day2, setDay2] = useState('');
-  const [time2, setTime2] = useState('');
+  const [semester, setSemester] = useState("");
+  const [course, setCourse] = useState("");
+  const [credit, setCredit] = useState("");
+  const [teacher, setTeacher] = useState("");
+  const [teacherType, setTeacherType] = useState("Full-Time");
+  const [room, setRoom] = useState("");
+  const [day1, setDay1] = useState("");
+  const [time1, setTime1] = useState("");
+  const [day2, setDay2] = useState("");
+  const [time2, setTime2] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Basic validation
     if (!semester || !course || !credit || !teacher) {
       alert("All fields are required!");
       return;
     }
 
-    // Ensure credit is a number
     if (isNaN(credit)) {
       alert("Credits must be a number.");
       return;
@@ -168,22 +258,22 @@ const AddCourseForm = ({ addCourse }) => {
       credit,
       teacher,
       teacherType,
-      ...(teacherType === 'Part-Time' && { day1, time1, day2, time2, room })
+      ...(teacherType === "Part-Time" && { day1, time1, day2, time2, room }),
     };
 
     addCourse(newCourse);
 
-    // Reset form after submission
-    setSemester('');
-    setCourse('');
-    setCredit('');
-    setTeacher('');
-    setTeacherType('Full-Time');
-    setRoom('');
-    setDay1('');
-    setTime1('');
-    setDay2('');
-    setTime2('');
+    // Reset form fields
+    setSemester("");
+    setCourse("");
+    setCredit("");
+    setTeacher("");
+    setTeacherType("Full-Time");
+    setRoom("");
+    setDay1("");
+    setTime1("");
+    setDay2("");
+    setTime2("");
   };
 
   return (
@@ -198,18 +288,19 @@ const AddCourseForm = ({ addCourse }) => {
       />
       <input
         type="text"
-        placeholder="Course"
+        placeholder="Course Name"
         value={course}
         onChange={(e) => setCourse(e.target.value)}
         required
       />
       <input
         type="text"
-        placeholder="Credit"
+        placeholder="Credits"
         value={credit}
         onChange={(e) => setCredit(e.target.value)}
         required
       />
+
       <input
         type="text"
         placeholder="Teacher Name"
@@ -217,13 +308,15 @@ const AddCourseForm = ({ addCourse }) => {
         onChange={(e) => setTeacher(e.target.value)}
         required
       />
-      <select value={teacherType} onChange={(e) => setTeacherType(e.target.value)}>
+      <select
+        value={teacherType}
+        onChange={(e) => setTeacherType(e.target.value)}
+      >
         <option value="Full-Time">Full-Time</option>
         <option value="Part-Time">Part-Time</option>
       </select>
 
-      {/* Additional fields for Part-Time teachers */}
-      {teacherType === 'Part-Time' && (
+      {teacherType === "Part-Time" && (
         <>
           <input
             type="text"
@@ -263,6 +356,67 @@ const AddCourseForm = ({ addCourse }) => {
         </>
       )}
       <button type="submit">Add Course</button>
+    </form>
+  );
+};
+
+// UpdateTeacherForm Component
+const UpdateTeacherForm = ({ updateTeacher }) => {
+  const [semester, setSemester] = useState("");
+  const [name, setName] = useState("");
+  const [teacher, setTeacher] = useState("");
+  const [teacherType, setTeacherType] = useState("Full-Time");
+
+  const clearForm = () => {
+    setSemester("");
+    setName("");
+    setTeacher("");
+    setTeacherType("Full-Time");
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!semester || !name || !teacher) {
+      alert("All fields are required!");
+      return;
+    }
+
+    updateTeacher({ semester, name, teacher, teacherType }, clearForm);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <h4>Update Teacher</h4>
+      <input
+        type="text"
+        placeholder="Semester"
+        value={semester}
+        onChange={(e) => setSemester(e.target.value)}
+        required
+      />
+      <input
+        type="text"
+        placeholder="Course Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        required
+      />
+      <input
+        type="text"
+        placeholder="New Teacher Name"
+        value={teacher}
+        onChange={(e) => setTeacher(e.target.value)}
+        required
+      />
+      <select
+        value={teacherType}
+        onChange={(e) => setTeacherType(e.target.value)}
+      >
+        <option value="Full-Time">Full-Time</option>
+        <option value="Part-Time">Part-Time</option>
+      </select>
+      <button type="submit">Update Teacher</button>
     </form>
   );
 };
