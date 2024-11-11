@@ -4,13 +4,13 @@ import { getFirestore } from "firebase/firestore";
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBux2VuIY0lo3GBbUGZKBcIFx42-vLK_Vs",
-  authDomain: "redbrick-18b6b.firebaseapp.com",
-  projectId: "redbrick-18b6b",
-  storageBucket: "redbrick-18b6b.appspot.com",
-  messagingSenderId: "564418787802",
-  appId: "1:564418787802:web:9e8bf4c67b7318c9b7a8e3",
-  measurementId: "G-Z3WX37SD0C"
+  apiKey: "AIzaSyBCd9S0rvxs8i2hKZ3iNj_ILHeCIMk5ARc",
+  authDomain: "demo2-f1c97.firebaseapp.com",
+  projectId: "demo2-f1c97",
+  storageBucket: "demo2-f1c97.firebasestorage.app",
+  messagingSenderId: "561462620151",
+  appId: "1:561462620151:web:be1c0090915bbc9fc108f2",
+  measurementId: "G-BWJ3DYHWJB"
 };
 
 // Initialize Firebase

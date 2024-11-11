@@ -11,29 +11,28 @@ CORS(app)
 def save_course():
     data = request.json  # Get JSON data from the request
 
-    if data['teacherType'] == 'Full-Time':
-        # Append to input.txt
-        try:
+    try:
+        if data['teacherType'] == 'Full-Time':
+            # Append to input.txt
             with open('input.txt', 'a') as f:
                 f.write(f"{data['semester']};{data['name']};{data['credit']};{data['teacher']}\n")
-        except Exception as e:
-            return jsonify({'status': 'error', 'message': str(e)}), 500
-    elif data['teacherType'] == 'Part-Time':
-        # Append to input_pt.txt for both timeslots
-        try:
-            with open('input_pt.txt', 'a') as f:
-                f.write(f"{data['semester']};{data['name']};{data['day1']};{data['time1']};{data['room']};{data['teacher']}\n")
-                f.write(f"{data['semester']};{data['name']};{data['day2']};{data['time2']};{data['room']};{data['teacher']}\n")
-        except Exception as e:
-            return jsonify({'status': 'error', 'message': str(e)}), 500
 
-    return jsonify({'status': 'success', 'message': 'Course data saved successfully.'})
+        elif data['teacherType'] == 'Part-Time':
+            # Append to input_pt.txt for both timeslots
+            with open('input_pt.txt', 'a') as f:
+                f.write(f"{data['semester']};{data['name']};{data['credit']};{data['day1']};{data['time1']};{data['room']};{data['teacher']}\n")
+                f.write(f"{data['semester']};{data['name']};{data['credit']};{data['day2']};{data['time2']};{data['room']};{data['teacher']}\n")
+
+        return jsonify({'status': 'success', 'message': 'Course data saved successfully.'})
+
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.route('/api/courses', methods=['GET'])
 def get_courses():
     courses = []
 
-    # Read from input.txt
+    # Read from input.txt (Full-Time courses)
     try:
         if not os.path.exists('input.txt'):
             raise FileNotFoundError('input.txt not found.')
@@ -54,7 +53,7 @@ def get_courses():
     except Exception as e:
         return jsonify({'status': 'error', 'message': f"Error reading input.txt: {str(e)}"}), 500
 
-    # Read from input_pt.txt
+    # Read from input_pt.txt (Part-Time courses)
     try:
         if not os.path.exists('input_pt.txt'):
             raise FileNotFoundError('input_pt.txt not found.')
@@ -62,22 +61,120 @@ def get_courses():
         with open('input_pt.txt', 'r') as f:
             for line in f:
                 parts = line.strip().split(';')
-                if len(parts) != 6:  # Ensure there are exactly 6 parts
+                if len(parts) != 7:  # Ensure there are exactly 7 parts
                     continue  # Skip malformed lines
-                semester, name, day, time, room, teacher = parts
+                semester, name, credit, day, time, room, teacher = parts
                 courses.append({
                     'semester': semester,
                     'name': name,
+                    'credit': credit,  # Add credit information
+                    'teacher': teacher,
+                    'teacherType': 'Part-Time',  # Mark as part-time
+                    # Optional: Remove the following fields if you don't need them
                     'day': day,
                     'time': time,
-                    'room': room,
-                    'teacher': teacher,
-                    'teacherType': 'Part-Time'  # Mark as part-time
+                    'room': room
                 })
     except Exception as e:
         return jsonify({'status': 'error', 'message': f"Error reading input_pt.txt: {str(e)}"}), 500
 
     return jsonify({'status': 'success', 'courses': courses})
+
+
+@app.route('/api/delete', methods=['DELETE'])
+def delete_course():
+    data = request.json
+    semester = data.get('semester')
+    name = data.get('name')
+    teacher = data.get('teacher')
+
+    try:
+        # Handle Full-Time courses
+        if os.path.exists('input.txt'):
+            with open('input.txt', 'r') as f:
+                lines = f.readlines()
+            with open('input.txt', 'w') as f:
+                for line in lines:
+                    if not line.startswith(f"{semester};{name};") or teacher not in line:
+                        f.write(line)
+
+        # Handle Part-Time courses
+        if os.path.exists('input_pt.txt'):
+            with open('input_pt.txt', 'r') as f:
+                lines = f.readlines()
+            with open('input_pt.txt', 'w') as f:
+                for line in lines:
+                    if not line.startswith(f"{semester};{name};") or teacher not in line:
+                        f.write(line)
+
+        return jsonify({'status': 'success', 'message': 'Course deleted successfully.'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': f"Error deleting course: {str(e)}"}), 500
+
+@app.route('/api/update', methods=['PUT'])
+def update_course():
+    data = request.json  # Get the updated data from the frontend
+
+    try:
+        semester = data['semester']
+        course = data['name']
+        new_teacher = data['teacher']
+        teacher_type = data['teacherType']
+
+        if teacher_type == 'Full-Time':
+            # Update in input.txt
+            updated_lines = []
+            found = False
+
+            with open('input.txt', 'r') as f:
+                for line in f:
+                    parts = line.strip().split(';')
+                    if len(parts) == 4:  # Ensure correct format
+                        line_semester, line_course, credit, teacher = parts
+                        if line_semester.strip() == semester.strip() and line_course.strip() == course.strip():
+                            updated_lines.append(f"{line_semester};{line_course};{credit};{new_teacher}\n")
+                            found = True
+                        else:
+                            updated_lines.append(line)
+                    else:
+                        updated_lines.append(line)
+
+            if not found:
+                return jsonify({'status': 'error', 'message': 'Course not found in input.txt'}), 404
+
+            # Write back to input.txt
+            with open('input.txt', 'w') as f:
+                f.writelines(updated_lines)
+
+        elif teacher_type == 'Part-Time':
+            # Update in input_pt.txt
+            updated_lines = []
+            found = False
+
+            with open('input_pt.txt', 'r') as f:
+                for line in f:
+                    parts = line.strip().split(';')
+                    if len(parts) == 7:  # Ensure correct format
+                        line_semester, line_course, credit, day, time, room, teacher = parts
+                        if line_semester.strip() == semester.strip() and line_course.strip() == course.strip():
+                            updated_lines.append(f"{line_semester};{line_course};{credit};{day};{time};{room};{new_teacher}\n")
+                            found = True
+                        else:
+                            updated_lines.append(line)
+                    else:
+                        updated_lines.append(line)
+
+            if not found:
+                return jsonify({'status': 'error', 'message': 'Course not found in input_pt.txt'}), 404
+
+            # Write back to input_pt.txt
+            with open('input_pt.txt', 'w') as f:
+                f.writelines(updated_lines)
+
+        return jsonify({'status': 'success', 'message': 'Teacher updated successfully.'})
+
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 
 # Endpoint to generate routine
