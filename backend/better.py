@@ -1,6 +1,31 @@
 import copy
 import random
 
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
+
+
+def write_routine_fire(scheduled_classes):
+    cred = credentials.Certificate('./ServiceAccountKey.json')
+    firebase_admin.initialize_app(cred)
+    db = firestore.client()
+
+    for cls in scheduled_classes:
+        data = {
+            'room': cls.room,
+            'course-title': '',
+            'teacher-1': "",
+            'teacher-2':"",
+            'day': cls.day,
+            'time-1':"",
+            'time-2':"",
+            'time_slot':""
+        }
+        doc_ref = db.collection('semester-'+str(cls.semester)).document(str(cls.code))
+        doc_ref.set(data)
+
 # Days and time slots
 days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 time_slots = ['8:00-9:15', '9:15-10:30', '10:30-11:45', '11:45-1:00', '2:30-3:45', '3:45-5:00']
@@ -208,12 +233,14 @@ def parse_schedule(file_content):
 # Write the optimized schedule to a file
 def write_schedule_to_file(filename, scheduled_classes):
     with open(filename, 'w') as file:
-        for cls in scheduled_classes:
+        for cls in scheduled_classes:     
             line = f"{cls.semester};{cls.code};{cls.day};{','.join(cls.times)};{cls.room};{' + '.join(cls.teachers)}\n"
+            write_routine_fire(scheduled_classes)
             file.write(line)
 
 # Main function to run the scheduling process
 def main():
+    # test_base()
     scheduled_classes = []
     hardcode_part_time_teachers(scheduled_classes, 'input_pt.txt')
     hardcode_labs(scheduled_classes, 'lab_assignments.txt')  # Hardcode lab assignments
