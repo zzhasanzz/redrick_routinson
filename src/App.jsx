@@ -23,6 +23,7 @@ import AdminManageRoutine from './pages/features/AdminManageRoutine.jsx';
 import AdminGenerateRoutine from './pages/features/AdminGenerateRoutine.jsx';
 import AdminManageUsers from './pages/features/AdminManageUsers.jsx';
 import AdminGenerateSeatPlan from './pages/features/AdminManageSeatPlan.jsx';
+import Event from "./pages/event/Event.jsx";
 
 
 
@@ -146,6 +147,12 @@ function App() {
             <Route path="/student-home/user" element={
                 <RequireAuth allowedRoles={["student"]}>
                     <Blank/>
+                </RequireAuth>
+
+            }/>
+            <Route path="/student-home/event" element={
+                <RequireAuth allowedRoles={["student"]}>
+                    <Event/>
                 </RequireAuth>
 
             }/>
