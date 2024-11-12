@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { db, auth } from "../../firebase";
-import { doc, getDoc ,collection} from "firebase/firestore";
+import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import TeacherSidebar from "../home/sidebars/TeacherSidebar";
 
 const TeacherRoutine = () => {
@@ -13,14 +13,13 @@ const TeacherRoutine = () => {
             const currentUser = auth.currentUser; // Get the currently logged-in user
             if (currentUser) {
                 const email = currentUser.email; // Get user's email
-                const userRef = doc(db, "users", currentUser.email);
-                const userSnap = await getDoc(userRef);
+                const teacherRef = doc(db, "users", email);
+                const teacherSnap = await getDoc(teacherRef);
                 
-                if (userSnap.exists) {
-                    setTeacherName(userSnap.data().name);
-                    console.log(userSnap);
+                if (teacherSnap.exists()) {
+                    setTeacherName(teacherSnap.data().name);
+                    console.log(teacherSnap.data().name);
                 }
-                
             }
         };
 
@@ -29,40 +28,29 @@ const TeacherRoutine = () => {
 
     useEffect(() => {
         const fetchSchedule = async () => {
-            let teacherSchedule = {};
-    
-            // Loop through each semester collection
-            const semesters = ["semester-1", "semester-3", "semester-5", "semester-7"];
-            for (let semester of semesters) {
-                for (let i = 1; i <= 30; i++) {
-                    const timeslotRef = doc(db, semester.toString(), i.toString());
-                    console.log(semester);
-                    const timeslotSnap = await getDoc(timeslotRef);
-    
-                    if (timeslotSnap.exists()) {
-                        const data = timeslotSnap.data();
-                        console.log(`Data found for timeslot ${i}`);
+            const teacherSchedule = {};
+            const teacherDocRef = doc(db, "teachers", teacherName.toString());
+            const coursesCollectionRef = collection(teacherDocRef, "courses");
+            const coursesSnapshot = await getDocs(coursesCollectionRef);
 
-                        
-                        // Check if data is defined and includes the fields you need
-                        if (data && (data['teacher-1'] === teacherName || data['teacher-2'] === teacherName)) {
-                            const day = data.day || "Unknown Day"; // Default to avoid undefined
-                            const timeSlot = {
-                                courseCode: data['course-code'] || "N/A",
-                                room: data.room || "N/A",
-                                time: data['time-1'] || data['time-2'] || "N/A",
-                            };
-    
-                            // Organize schedule by day
-                            if (!teacherSchedule[day]) teacherSchedule[day] = [];
-                            teacherSchedule[day].push(timeSlot);
-                        }
-                    } else {
-                        console.log(`No data found for ${semester}, timeslot ${i}`);
-                    }
+            coursesSnapshot.forEach((doc) => {
+                const courseData = doc.data();
+                const day = courseData.day;
+                
+                // Initialize an array for each day if not already present
+                if (!teacherSchedule[day]) {
+                    teacherSchedule[day] = [];
                 }
-            }
-    
+
+                // Add the course details to the day's schedule
+                teacherSchedule[day].push({
+                    courseCode: doc.id,
+                    courseTitle: courseData['assigned-course-title'],
+                    room: courseData['assigned-room'],
+                    time: `${courseData['time-1']} - ${courseData['time-2']}`,
+                });
+            });
+
             setSchedule(teacherSchedule);
         };
     
@@ -71,7 +59,6 @@ const TeacherRoutine = () => {
         }
     }, [teacherName]);
     
-
     // Render the schedule in a readable format
     const renderSchedule = () => {
         return Object.keys(schedule).map(day => (

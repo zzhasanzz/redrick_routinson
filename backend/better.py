@@ -59,7 +59,8 @@ def write_routine_fire(scheduled_classes):
             'full-name ':'',
             'assigned-course':cls.code,
             'assigned-course-title':'',
-            'assigned-time-slot': str(time_1)
+            'assigned-rooms'
+            'assigned-time-slots': time_slot
         }
 
         teacher_2_data = {
@@ -70,16 +71,42 @@ def write_routine_fire(scheduled_classes):
         }
 
         doc_ref = db.collection('semester-'+str(cls.semester)).document(str(time_slot))
-
-        if teacher_1 != "":
-            teacher_1_doc_ref = db.collection('teachers').document(str(teacher_1))
-            teacher_1_doc_ref.set(teacher_1_data)
-
-        if teacher_2 != "" :
-            teacher_2_doc_ref = db.collection('teachers').document(str(teacher_2))
-            teacher_2_doc_ref.set(teacher_2_data)
-
         doc_ref.set(data)
+        
+        if teacher_1 != "": # Only add if teacher exists (is not an empty string)
+            teacher_course_data = {
+                'assigned-course-title': '',
+                'assigned-room': cls.room,
+                'assigned-time-slot': time_slot,
+                'day': cls.day,
+                'time-1': time_1,
+                'time-2': time_2
+            }
+            teacher_doc_ref = db.collection('teachers').document(teacher_1)
+            teacher_course_ref = teacher_doc_ref.collection('courses').document(cls.code)
+            teacher_course_ref.set(teacher_course_data)
+        if teacher_2 != "": # Only add if teacher exists (is not an empty string)
+            teacher_course_data = {
+                'assigned-course-title': '',
+                'assigned-room': cls.room,
+                'assigned-time-slot': time_slot,
+                'day': cls.day,
+                'time-1': time_1,
+                'time-2': time_2
+            }
+            teacher_doc_ref = db.collection('teachers').document(teacher_2)
+            teacher_course_ref = teacher_doc_ref.collection('courses').document(cls.code)
+            teacher_course_ref.set(teacher_course_data)
+
+        # if teacher_1 != "":
+        #     teacher_1_doc_ref = db.collection('teachers').document(str(teacher_1))
+        #     teacher_1_doc_ref.set(teacher_1_data)
+
+        # if teacher_2 != "" :
+        #     teacher_2_doc_ref = db.collection('teachers').document(str(teacher_2))
+        #     teacher_2_doc_ref.set(teacher_2_data)
+
+        
         
         
         
