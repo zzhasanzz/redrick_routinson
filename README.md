@@ -32,12 +32,16 @@ npm i
 ```
 <p align="center">
 open an terminal and run
+</p>
+
 ```
-npm run dev
+ npm run dev
 ```
+<p align="center">
 then open the backend folder and run the app.py by running this command
+</p>
+
 ```
 python app.py
 ```
 
-</p>
