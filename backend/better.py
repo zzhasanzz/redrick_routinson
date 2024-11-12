@@ -4,16 +4,12 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
+cred = credentials.Certificate('./ServiceAccountKey.json')
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 
-
-def write_routine_fire(scheduled_classes):
-
-    cred = credentials.Certificate('./ServiceAccountKey.json')
-    firebase_admin.initialize_app(cred)
-    db = firestore.client()
-
-    
+def write_routine_to_firestore(scheduled_classes):
     time_mapping = {
         "8:00-9:15": 1,
         "9:15-10:30": 2,
@@ -32,49 +28,41 @@ def write_routine_fire(scheduled_classes):
         "Sunday": 6
     }
 
+    batch_limit = 500
+    batch_count = 0
+    batch = db.batch()
+    
     for cls in scheduled_classes:
         time_1 = cls.times[0] if len(cls.times) > 0 else ""
         time_2 = cls.times[1] if len(cls.times) > 1 else ""
-
         teacher_1 = cls.teachers[0] if len(cls.teachers) > 0 else ""
         teacher_2 = cls.teachers[1] if len(cls.teachers) > 1 else ""
-        
+
         # Calculate the sequential time_slot based on day and time
         day_index = day_mapping.get(cls.day, -1)
         time_index = time_mapping.get(time_1, 0)
         time_slot = day_index * len(time_mapping) + time_index if day_index >= 0 else ""
-
         
+        # Data for the semester collection
         data = {
-            'course-code':cls.code,
+            'course-code': cls.code,
             'course-title': "",
             'room': cls.room,
             'teacher-1': teacher_1,
-            'teacher-2':teacher_2,
+            'teacher-2': teacher_2,
             'day': cls.day,
             'time-1': time_1,
             'time-2': time_2,
         }
-        teacher_1_data = {
-            'full-name ':'',
-            'assigned-course':cls.code,
-            'assigned-course-title':'',
-            'assigned-rooms'
-            'assigned-time-slots': time_slot
-        }
-
-        teacher_2_data = {
-            'full-name ':'',
-            'assigned-course':cls.code,
-            'assigned-course-title':'',
-            'assigned-time-slot': str(time_1)
-        }
-
-        doc_ref = db.collection('semester-'+str(cls.semester)).document(str(time_slot))
-        doc_ref.set(data)
         
-        if teacher_1 != "": # Only add if teacher exists (is not an empty string)
-            teacher_course_data = {
+        doc_ref = db.collection(f'semester-{cls.semester}').document(str(time_slot))
+        batch.set(doc_ref, data)
+        batch_count += 1
+
+        # Data for each teacher's course collection
+        if teacher_1:
+            teacher_1_ref = db.collection('teachers').document(teacher_1).collection('courses').document(cls.code)
+            teacher_1_data = {
                 'assigned-course-title': '',
                 'assigned-room': cls.room,
                 'assigned-time-slot': time_slot,
@@ -82,11 +70,12 @@ def write_routine_fire(scheduled_classes):
                 'time-1': time_1,
                 'time-2': time_2
             }
-            teacher_doc_ref = db.collection('teachers').document(teacher_1)
-            teacher_course_ref = teacher_doc_ref.collection('courses').document(cls.code)
-            teacher_course_ref.set(teacher_course_data)
-        if teacher_2 != "": # Only add if teacher exists (is not an empty string)
-            teacher_course_data = {
+            batch.set(teacher_1_ref, teacher_1_data)
+            batch_count += 1
+
+        if teacher_2:
+            teacher_2_ref = db.collection('teachers').document(teacher_2).collection('courses').document(cls.code)
+            teacher_2_data = {
                 'assigned-course-title': '',
                 'assigned-room': cls.room,
                 'assigned-time-slot': time_slot,
@@ -94,17 +83,18 @@ def write_routine_fire(scheduled_classes):
                 'time-1': time_1,
                 'time-2': time_2
             }
-            teacher_doc_ref = db.collection('teachers').document(teacher_2)
-            teacher_course_ref = teacher_doc_ref.collection('courses').document(cls.code)
-            teacher_course_ref.set(teacher_course_data)
+            batch.set(teacher_2_ref, teacher_2_data)
+            batch_count += 1
 
-        # if teacher_1 != "":
-        #     teacher_1_doc_ref = db.collection('teachers').document(str(teacher_1))
-        #     teacher_1_doc_ref.set(teacher_1_data)
+        # Commit the batch if the batch limit is reached
+        if batch_count >= batch_limit:
+            batch.commit()
+            batch = db.batch()
+            batch_count = 0
 
-        # if teacher_2 != "" :
-        #     teacher_2_doc_ref = db.collection('teachers').document(str(teacher_2))
-        #     teacher_2_doc_ref.set(teacher_2_data)
+    # Commit any remaining writes in the final batch
+    if batch_count > 0:
+        batch.commit()
 
         
         
@@ -338,7 +328,7 @@ def main():
 
     # Write the optimized schedule to 'optimal.txt'
     write_schedule_to_file('optimal.txt', scheduled_classes)
-    write_routine_fire(scheduled_classes)
+    write_routine_to_firestore(scheduled_classes)
 
     # Check and display unscheduled classes
     display_unscheduled_classes(unscheduled_classes)
