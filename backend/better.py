@@ -59,6 +59,7 @@ def write_routine_to_firestore(scheduled_classes):
         batch.set(doc_ref, data)
         batch_count += 1
 
+
         # Data for each teacher's course collection
         if teacher_1:
             teacher_1_ref = db.collection('teachers').document(teacher_1).collection('courses').document(cls.code)
