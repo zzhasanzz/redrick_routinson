@@ -1,8 +1,43 @@
-# React + Vite
+<h1 align="center">Redrick-Routinson</h1>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<p align="center">
+Simplify your university life.
+</p>
 
-Currently, two official plugins are available:
+## Team Members
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [Aimaan Ahmed]()
+- [Afra Anika](https://github.com/afraanika21)
+- [Shufan Shahi](https://github.com/shufanshahi)
+- [Abdullah Al Jubaer Gem](https://github.com/jubaer36)
+- [Tanjil Hasan Khan](https://github.com/zzhasanzz)
+- [Asif or Alif Rashid ](https://github.com/alifrashid00)
+
+## Build and Run
+
+### Clone the repository
+To clone the repository, type the command in any folder.
+```
+git clone https://github.com/shufanshahi/redrick_routinson
+```
+This will create a folder 'redrick_routinson' in that directory. 
+It will have a complete copy of this repository. With a '.git' folder inside.
+
+### Download packages
+```
+pip install -r requirements.txt
+```
+```
+npm i
+```
+<p align="center">
+open an terminal and run
+```
+npm run dev
+```
+then open the backend folder and run the app.py by running this command
+```
+python app.py
+```
+
+</p>
