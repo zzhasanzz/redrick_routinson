@@ -70,7 +70,7 @@ const StudentDashboard = () => {
                     </Button>
                 </Link>
 
-                <Link to="/student-home/event">
+                <Link to="/event">
                     <Button
                         height="250px"
                         width="450px"
