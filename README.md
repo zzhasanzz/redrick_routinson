@@ -30,14 +30,14 @@ pip install -r requirements.txt
 ```
 npm i
 ```
-<p align="center">
+<p>
 open an terminal and run
 </p>
 
 ```
  npm run dev
 ```
-<p align="center">
+<p>
 then open the backend folder and run the app.py by running this command
 </p>
 
