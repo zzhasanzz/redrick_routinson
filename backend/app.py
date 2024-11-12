@@ -177,48 +177,55 @@ def update_course():
             with open('input_pt.txt', 'w') as f:
                 f.writelines(updated_lines)
 
-        
 
-
+                # Open and process the optimal.txt file
         with open("optimal.txt", 'r') as file:
             lines = file.readlines()
 
         updated = False  # Flag to check if any update was made
+        updated_lines = []  # List to store updated lines
 
-        # Process each line
-        updated_lines = []
-    
         for line in lines:
             # Strip newline characters and split by semicolon
             parts = line.strip().split(';')
 
-            # Check if the second column matches the oldCourse
-            if len(parts) >= 6 and parts[1] == oldCourse:
-                # Update the last column with the new teacher
-                original_teacher = parts[-1]
-                parts[-1] = newTeacher
-                updated_line = ';'.join(parts)
-                updated_lines.append(updated_line)
-                updated = True
-                print(f"Updated course {oldCourse}: '{original_teacher}' -> '{newTeacher}'")
+            # Ensure the line has at least the expected number of parts
+            if len(parts) >= 6:
+                line_semester = parts[0].strip()  # Trim whitespace
+                line_course = parts[1].strip()  # Trim whitespace
+                day = parts[2].strip()  # Trim whitespace
+                time = parts[3].strip()  # Trim whitespace
+                room = parts[4].strip()  # Trim whitespace
+                teachers = parts[5].strip()  # Trim whitespace
+
+                # Check if this line matches the course and semester being updated
+                if line_semester == semester.strip() and line_course.lower() == oldCourse.strip().lower():
+                    # Update the teacher(s)
+                    original_teachers = teachers
+                    updated_teachers = newTeacher.strip()  # Trim and set the new teacher
+                    updated_line = f"{line_semester};{line_course};{day};{time};{room};{updated_teachers}"
+                    updated_lines.append(updated_line)
+                    updated = True
+                    print(f"Updated optimal.txt: {line_course}, {original_teachers} -> {updated_teachers}")
+                else:
+                    # Keep the line unchanged
+                    updated_lines.append(line.strip())
             else:
-                # Keep the line unchanged
+                # Keep malformed or incomplete lines unchanged
                 updated_lines.append(line.strip())
 
         if not updated:
-            print(f"No entries found for course '{oldCourse}'. No updates made.")
-            return
+            print(f"No entries found for course '{oldCourse.strip()}' in optimal.txt. No updates made.")
+            return jsonify({'status': 'error', 'message': f"No entries found for course '{oldCourse.strip()}' in optimal.txt."}), 404
 
-        # Write the updated lines back to the file
+        # Write the updated lines back to optimal.txt
         with open("optimal.txt", 'w') as file:
             file.write('\n'.join(updated_lines) + '\n')  # Add a newline at the end
 
-        print("Update completed successfully.")
+        print("Update completed successfully in optimal.txt.")
+
         
         subprocess.run(['python', 'table.py'], check=True)
-
-
-
 
 
         return jsonify({'status': 'success', 'message': 'Teacher updated successfully.'})
