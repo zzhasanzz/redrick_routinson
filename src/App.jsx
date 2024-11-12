@@ -4,21 +4,26 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import Login from "./pages/login/Login";
-import StudentHome from "./pages/home/StudentHome";
-import TeacherHome from "./pages/home/TeacherHome";
-import AdminHome from './pages/home/AdminHome.jsx';
-import ForgotPassword from './pages/login/ForgotPassword';
-import StudentDashboard from "./pages/home/dashboards/StudentDashbord.jsx";
-import StudentRoutine from './pages/features/StudentRoutine.jsx';
-
 import Blank from "./pages/Blank.jsx";
 import {ChakraProvider} from "@chakra-ui/react";
+import ForgotPassword from './pages/login/ForgotPassword';
+
+import StudentDashboard from "./pages/home/dashboards/StudentDashbord.jsx";
+import StudentRoutine from './pages/features/StudentRoutine.jsx';
+import StudentHome from "./pages/home/StudentHome";
+
+import TeacherHome from "./pages/home/TeacherHome";
 import TeacherDashboard from "./pages/home/dashboards/TeacherDashboard.jsx";
+import TeacherRoutine from "./pages/features/TeacherRoutine.jsx";
+
+
+import AdminHome from './pages/home/AdminHome.jsx';
 import AdminDashboard from './pages/home/dashboards/AdminDashboard.jsx';
 import AdminManageRoutine from './pages/features/AdminManageRoutine.jsx';
 import AdminGenerateRoutine from './pages/features/AdminGenerateRoutine.jsx';
 import AdminManageUsers from './pages/features/AdminManageUsers.jsx';
 import AdminGenerateSeatPlan from './pages/features/AdminManageSeatPlan.jsx';
+
 
 
 
@@ -173,6 +178,12 @@ function App() {
               <Route path="/teacher-home/myevents" element={
                   <RequireAuth allowedRoles={["teacher"]}>
                       <Blank/>
+                  </RequireAuth>
+
+              }/>
+              <Route path="/teacher-home/teacher-routine" element={
+                  <RequireAuth allowedRoles={["teacher"]}>
+                    <TeacherRoutine/>
                   </RequireAuth>
 
               }/>

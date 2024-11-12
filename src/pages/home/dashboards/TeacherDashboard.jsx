@@ -45,10 +45,10 @@ const TeacherDashboard = () => {
                     </Button>
                 </Link>
 
-                <Link to="/teacher-home/teacher-manage-routine">
+                <Link to="/teacher-home/teacher-routine">
                     <Button height="250px" width="450px" flexDirection="column" justifyContent="center" borderRadius="30px">
                         <Icon as={FaBook} boxSize={20} />
-                        <Text fontSize="2xl">Generate Routine</Text>
+                        <Text fontSize="2xl">View Routine</Text>
                     </Button>
                 </Link>
             </SimpleGrid>
