@@ -58,6 +58,27 @@ def write_routine_to_firestore(scheduled_classes):
         doc_ref = db.collection(f'semester-{cls.semester}').document(str(time_slot))
         batch.set(doc_ref, data)
         batch_count += 1
+        
+        room_data = {
+            'course-code':cls.code,
+            'teacher-1':teacher_1,
+            'teacher-2':teacher_2,
+             
+        }
+        room_ref = db.collection('rooms').document(str(cls.room)).collection('timeslots').document(str(time_slot))
+        batch.set(room_ref, room_data)
+        batch_count += 1
+        
+        
+        rescheduled_courses_data = {
+            "temporary-rooms": firestore.ArrayUnion([cls.room]),
+            "temporary-time-slot": firestore.ArrayUnion([time_slot]),
+            "rescheduling-date":"Friday" 
+        }
+        
+        course_ref = db.collection('courses').document(str(cls.code))
+        batch.set(course_ref,rescheduled_courses_data)
+        
 
         # Data for each teacher's course collection
         if teacher_1:

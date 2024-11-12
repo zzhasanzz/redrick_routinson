@@ -6,7 +6,6 @@ import TeacherSidebar from "../home/sidebars/TeacherSidebar";
 const TeacherRoutine = () => {
     const [schedule, setSchedule] = useState({});
     const [teacherName, setTeacherName] = useState("");
-
     // Fetch teacher name using the logged-in user's email
     useEffect(() => {
         const fetchTeacherName = async () => {
