@@ -116,6 +116,8 @@ def update_course():
     data = request.json  # Get the updated data from the frontend
 
     try:
+        oldCourse= ""
+        newTeacher= ""
         semester = data['semester']
         course = data['name']
         new_teacher = data['teacher']
@@ -132,6 +134,8 @@ def update_course():
                     if len(parts) == 4:  # Ensure correct format
                         line_semester, line_course, credit, teacher = parts
                         if line_semester.strip() == semester.strip() and line_course.strip() == course.strip():
+                            oldCourse = line_course
+                            newTeacher =new_teacher
                             updated_lines.append(f"{line_semester};{line_course};{credit};{new_teacher}\n")
                             found = True
                         else:
@@ -157,6 +161,8 @@ def update_course():
                     if len(parts) == 7:  # Ensure correct format
                         line_semester, line_course, credit, day, time, room, teacher = parts
                         if line_semester.strip() == semester.strip() and line_course.strip() == course.strip():
+                            oldCourse = line_course
+                            newTeacher =new_teacher
                             updated_lines.append(f"{line_semester};{line_course};{credit};{day};{time};{room};{new_teacher}\n")
                             found = True
                         else:
@@ -170,6 +176,50 @@ def update_course():
             # Write back to input_pt.txt
             with open('input_pt.txt', 'w') as f:
                 f.writelines(updated_lines)
+
+        
+
+
+        with open("optimal.txt", 'r') as file:
+            lines = file.readlines()
+
+        updated = False  # Flag to check if any update was made
+
+        # Process each line
+        updated_lines = []
+    
+        for line in lines:
+            # Strip newline characters and split by semicolon
+            parts = line.strip().split(';')
+
+            # Check if the second column matches the oldCourse
+            if len(parts) >= 6 and parts[1] == oldCourse:
+                # Update the last column with the new teacher
+                original_teacher = parts[-1]
+                parts[-1] = newTeacher
+                updated_line = ';'.join(parts)
+                updated_lines.append(updated_line)
+                updated = True
+                print(f"Updated course {oldCourse}: '{original_teacher}' -> '{newTeacher}'")
+            else:
+                # Keep the line unchanged
+                updated_lines.append(line.strip())
+
+        if not updated:
+            print(f"No entries found for course '{oldCourse}'. No updates made.")
+            return
+
+        # Write the updated lines back to the file
+        with open("optimal.txt", 'w') as file:
+            file.write('\n'.join(updated_lines) + '\n')  # Add a newline at the end
+
+        print("Update completed successfully.")
+        
+        subprocess.run(['python', 'table.py'], check=True)
+
+
+
+
 
         return jsonify({'status': 'success', 'message': 'Teacher updated successfully.'})
 
