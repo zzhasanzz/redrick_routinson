@@ -31,6 +31,15 @@ pip install -r requirements.txt
 ```
 npm i
 ```
+```
+npm install @chakra-ui/react @emotion/react @emotion/styled framer-motion
+```
+```
+npm install @chakra-ui/icons
+```
+```
+npm install react-datepicker
+```
 <p>
 open an terminal and run
 </p>
@@ -39,7 +48,7 @@ open an terminal and run
  npm run dev
 ```
 <p>
-then open the backend folder and run the app.py by running this command
+then open another terminal at the backend folder and to run the app.py by running this command
 </p>
 
 ```
