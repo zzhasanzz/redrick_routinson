@@ -55,8 +55,33 @@ def write_routine_fire(scheduled_classes):
             'time-1': time_1,
             'time-2': time_2,
         }
+        teacher_1_data = {
+            'full-name ':'',
+            'assigned-course':cls.code,
+            'assigned-course-title':'',
+            'assigned-time-slot': str(time_1)
+        }
+
+        teacher_2_data = {
+            'full-name ':'',
+            'assigned-course':cls.code,
+            'assigned-course-title':'',
+            'assigned-time-slot': str(time_1)
+        }
+
         doc_ref = db.collection('semester-'+str(cls.semester)).document(str(time_slot))
+
+        if teacher_1 != "":
+            teacher_1_doc_ref = db.collection('teachers').document(str(teacher_1))
+            teacher_1_doc_ref.set(teacher_1_data)
+
+        if teacher_2 != "" :
+            teacher_2_doc_ref = db.collection('teachers').document(str(teacher_2))
+            teacher_2_doc_ref.set(teacher_2_data)
+
         doc_ref.set(data)
+        
+        
         
 
 
