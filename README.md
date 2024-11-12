@@ -24,6 +24,7 @@ This will create a folder 'redrick_routinson' in that directory.
 It will have a complete copy of this repository. With a '.git' folder inside.
 
 ### Download packages
+Open the terminal and run this two commands
 ```
 pip install -r requirements.txt
 ```
