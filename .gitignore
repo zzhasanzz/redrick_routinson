@@ -25,4 +25,6 @@ dist-ssr
 backend/*.csv
 backend/*.txt
 backend/softenv/*
+
 backend/ServiceAccountKey.json
+
