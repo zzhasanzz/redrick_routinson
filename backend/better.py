@@ -60,7 +60,7 @@ def write_routine_to_firestore(scheduled_classes):
             'perm_time_1': time_1,
             'perm_time_2': time_2,
             
-            'class_cancelled': 1,
+            'class_cancelled': 0,
             
             
             'temp_course_code': '',
