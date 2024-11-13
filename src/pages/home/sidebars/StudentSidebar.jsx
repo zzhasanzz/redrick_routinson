@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { AuthContext } from "../../../context/AuthContext"; // Import the AuthContext
 import './studentSIdebar.scss';
 
 const sidebarNavItems = [
@@ -36,6 +37,7 @@ const sidebarNavItems = [
 ];
 
 const Sidebar = () => {
+    const { currentUser } = useContext(AuthContext); // Access current user from context
     const [activeIndex, setActiveIndex] = useState(0);
     const [stepHeight, setStepHeight] = useState(0);
     const sidebarRef = useRef();
@@ -63,6 +65,22 @@ const Sidebar = () => {
             <div className="sidebar__logo">
                 RoutineSon
             </div>
+
+            {/* Display User Info (username, email, profile picture) */}
+            {currentUser && (
+                <div className="sidebar__user-info">
+                    <img 
+                        src={currentUser.photoURL} 
+                        alt="Profile"
+                        className="sidebar__user-info__image"
+                    />
+                    <div className="sidebar__user-info__details">
+                        <p className="sidebar__user-info__name">{currentUser.displayName}</p>
+                        <p className="sidebar__user-info__email">{currentUser.email}</p>
+                    </div>
+                </div>
+            )}
+
             <div ref={sidebarRef} className="sidebar__menu">
                 {/* Indicator bar */}
                 <div
