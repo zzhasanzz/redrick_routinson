@@ -18,6 +18,50 @@ const TeacherRoutine = () => {
         Wednesday: ["8:00-9:15", "9:15-10:30", "10:30-11:45", "11:45-1:00"],
     };
 
+    const timeMapping = {
+        1: "8:00-9:15",
+        2: "9:15-10:30",
+        3: "10:30-11:45",
+        4: "11:45-1:00",
+        5: "2:30-3:45",
+        6: "3:45-5:00"
+    };
+
+    const dayMapping = {
+        0: "Monday",
+        1: "Tuesday",
+        2: "Wednesday",
+        3: "Thursday",
+        4: "Friday",
+        5: "Saturday",
+        6: "Sunday"
+    };
+
+    const revTimeMapping = {
+        "8:00-9:15": 1,
+        "8:00-10:30": 1,
+        "9:15-10:30": 2,
+        "10:30-1:00":3,
+        "10:30-11:45": 3,
+        "11:45-1:00": 4,
+        "2:30-3:45": 5,
+        "2:30-5:00": 5,
+        "3:45-5:00": 6
+    };
+
+    const revDayMapping = {
+        "Monday": 0,
+        "Tuesday": 1,
+        "Wednesday": 2,
+        "Thursday": 3,
+        "Friday": 4,
+        "Saturday": 5,
+        "Sunday": 6
+    };
+
+
+
+
     // Fetch teacher name using the logged-in user's email
     useEffect(() => {
         const fetchTeacherName = async () => {
@@ -46,14 +90,80 @@ const TeacherRoutine = () => {
 
             coursesSnapshot.forEach((doc) => {
                 const courseData = doc.data();
-                teacherSchedule.push({
-                    id: doc.id,
-                    courseCode: doc.id,
-                    courseTitle: courseData["assigned-course-title"],
-                    day: courseData.day,
-                    room: courseData["assigned-room"],
-                    time: `${courseData["time-1"]} - ${courseData["time-2"]}`,
+                console.log(courseData);
+                const classCancelledStatus = courseData["class_cancelled_status"];
+                const tempClasses = courseData["assigned_temp_time_slots"];
+                console.log("Testing");
+                console.log(classCancelledStatus);
+                // const assignedRooms = courseData["assigned_room"];
+                classCancelledStatus.forEach((stat, index) => {
+                    if (String(stat) === "1") {
+                        // console.log(`Class at index ${index} is cancelled`);
+                        console.log(`Stat: ${stat}`);
+
+                    }
+                    else {
+                        console.log(`Class at index ${index} is not cancelled`);
+                        console.log(courseData["assigned_room"][index]); 0
+                        const totalSlotsPerDay = Object.keys(timeMapping).length;
+                        const timeSlot = courseData["assigned_time_slots"][index]
+                        const dayIndex = Math.floor((timeSlot - 1) / totalSlotsPerDay);
+                        var courseType = "theory";
+                        const timeIndex = (timeSlot - 1) % totalSlotsPerDay + 1;
+                        const startTime = timeMapping[timeIndex].split("-")[0]; // "8:00"
+                        var endTime = timeMapping[timeIndex].split("-")[1];
+                        if (courseData["course_type"] === "lab") {
+                            courseType = "lab";
+                            endTime = timeMapping[timeIndex + 1].split("-")[1];   // "10:30"
+                        }
+                        else {
+                            courseType = "theory";
+                        }
+                        teacherSchedule.push({
+
+                            courseCode: doc.id,
+                            courseTitle: courseData["assigned_course_title"],
+                            day: dayMapping[dayIndex],
+                            time: `${startTime}-${endTime}`,
+                            room: courseData["assigned_room"][index]
+
+                        })
+                    }
                 });
+                if (!(tempClasses && tempClasses.length === 0)) {
+                    tempClasses.forEach((tempTimeSlot, index) => {
+                        if (tempTimeSlot !== "") {
+                            console.log(courseData["assigned_temp_room"][index]);
+                            const totalSlotsPerDay = Object.keys(timeMapping).length;
+                            const timeSlot = tempTimeSlot;
+                            const dayIndex = Math.floor((timeSlot - 1) / totalSlotsPerDay);
+                            var courseType = "theory";
+                            const timeIndex = (timeSlot - 1) % totalSlotsPerDay + 1;
+                            const startTime = timeMapping[timeIndex].split("-")[0]; // "8:00"
+                            var endTime = timeMapping[timeIndex].split("-")[1];
+                            if (courseData["course_type"][index] === "lab") {
+                                courseType = "lab";
+                                endTime = timeMapping[timeIndex + 1].split("-")[1];   // "10:30"
+                            }
+                            else {
+                                courseType = "theory";
+                            }
+                            teacherSchedule.push({
+
+                                courseCode: doc.id,
+                                courseTitle: courseData["assigned-course-title"],
+                                day: dayMapping[dayIndex],
+                                time: `${startTime}-${endTime}`,
+                                room: courseData["assigned_temp_room"][index]
+
+                            })
+                        }
+
+
+
+                    });
+                }
+
             });
 
             setSchedule(teacherSchedule);
@@ -82,17 +192,48 @@ const TeacherRoutine = () => {
     };
 
     // Handle Cancel Class
-    const handleCancelClass = async (courseId) => {
-        // try {
-        //     const teacherDocRef = doc(db, "teachers", teacherName.toString());
-        //     const courseDocRef = doc(collection(teacherDocRef, "courses"), courseId);
-        //     await deleteDoc(courseDocRef); // Delete the course document
-        //     setSchedule((prev) => prev.filter((course) => course.id !== courseId));
-        //     alert("Class canceled successfully.");
-        // } catch (error) {
-        //     console.error("Error canceling class:", error);
-        //     alert("Failed to cancel class.");
-        // }
+    const handleCancelClass = async (courseId, day, time) => {
+
+        try {
+            
+            const courseRef = doc(db, "teachers", teacherName, "courses", courseId);
+            console.log(`Course Ref ${courseRef}`);
+            const courseSnapshot = await getDoc(courseRef);
+            console.log(`Course Snap ${courseSnapshot}`);
+            
+            const courseData = courseSnapshot.data(); 
+            console.log(`Course Data ${courseData}`);
+            
+            
+
+
+            console.log(`${courseData.id}`);
+            const timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
+            console.log(`Day: ${day}`);
+            console.log(`Day: ${revDayMapping[day]}`)
+            console.log(`Time: ${time}`);
+            console.log(`Time: ${revTimeMapping[time]}`)
+            console.log(`Time Slot: ${timeSlot}`);
+            const classCancelledStatus = courseData["class_cancelled_status"];
+            console.log(`${classCancelledStatus[0]}`);
+            
+
+            classCancelledStatus.forEach((stat, idx) => {
+                if (courseData["assigned_time_slots"][idx] === timeSlot) {
+                    classCancelledStatus[idx] = 1;
+                    console.log(`Cancelled Course Timeslot ${courseData["class_cancelled_status"][idx]}`);
+                }
+
+            });
+            await updateDoc(courseRef,{
+                class_cancelled_status:classCancelledStatus,
+            });
+
+
+        } catch (error) {
+            console.error("Error canceling class:", error);
+            alert("Failed to cancel class.");
+        }
     };
 
     // Handle Reschedule Class
@@ -132,6 +273,7 @@ const TeacherRoutine = () => {
     };
 
     // Render the table
+    // Render the table
     const renderTable = () => (
         <table border="1" style={{ borderCollapse: "collapse", width: "100%" }}>
             <thead>
@@ -145,13 +287,13 @@ const TeacherRoutine = () => {
             </thead>
             <tbody>
                 {schedule.map((slot) => (
-                    <tr key={slot.id}>
+                    <tr key={slot.courseCode}> {/* Using courseCode as a unique key */}
                         <td>{slot.courseCode}</td>
                         <td>{slot.day}</td>
                         <td>{slot.room}</td>
                         <td>{slot.time}</td>
                         <td>
-                            <button onClick={() => handleCancelClass(slot.id)}>Cancel Class</button>
+                            <button onClick={() => handleCancelClass(slot.courseCode, slot.day, slot.time)}>Cancel Class</button>
                             <button onClick={() => handleRescheduleClass(slot)}>Reschedule</button>
                         </td>
                     </tr>
@@ -159,6 +301,7 @@ const TeacherRoutine = () => {
             </tbody>
         </table>
     );
+
 
     return (
         <div style={{ padding: "10px 100px 0px 50px" }}>
