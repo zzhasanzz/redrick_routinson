@@ -8,7 +8,7 @@ cred = credentials.Certificate('./ServiceAccountKey.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-
+rooms = ["1" , "2" ,"3" , "4" ,"5" , "6" , "301", "302", "304", "204", "104", "105"]
 def write_routine_to_firestore(scheduled_classes):
     time_mapping = {
         "8:00-9:15": 1,
@@ -41,34 +41,85 @@ def write_routine_to_firestore(scheduled_classes):
         # Calculate the sequential time_slot based on day and time
         day_index = day_mapping.get(cls.day, -1)
         time_index = time_mapping.get(time_1, 0)
-        time_slot = day_index * len(time_mapping) + time_index if day_index >= 0 else ""
-        
+        time_slot_1 = day_index * len(time_mapping) + time_index if day_index >= 0 else ""
+        if time_2 !="":
+            course_type = "lab"
+        else:
+            course_type = "theory"
+            
+            
         # Data for the semester collection
         data = {
-            'course-code': cls.code,
-            'course-title': "",
-            'room': cls.room,
-            'teacher-1': teacher_1,
-            'teacher-2': teacher_2,
-            'day': cls.day,
-            'time-1': time_1,
-            'time-2': time_2,
+            'perm_course_code': cls.code,
+            'perm_course_title': "",
+            'perm_course_type':course_type,
+            'perm_room': cls.room,
+            'perm_teacher_1': teacher_1,
+            'perm_teacher_2': teacher_2,
+            'perm_day': cls.day,
+            'perm_time_1': time_1,
+            'perm_time_2': time_2,
+            
+            'class_cancelled': 1,
+            
+            
+            'temp_course_code': '',
+            'temp_course_title': '',
+            'temp_lab':0,
+            'temp_room': '',
+            'temp_teacher_1': '',
+            'temp_teacher_2': '',
+            'temp_day': '',
+            'temp_time_1': '',
+            'temp_time_2': ''
         }
         
-        doc_ref = db.collection(f'semester-{cls.semester}').document(str(time_slot))
+        
+        doc_ref = db.collection(f'semester_{cls.semester}').document(str(time_slot_1))
         batch.set(doc_ref, data)
+        if time_2 !="":
+            time_slot_2 = time_slot_1+1
+            doc_ref = db.collection(f'semester_{cls.semester}').document(str(time_slot_2))
+            batch.set(doc_ref, data)
+            batch_count += 1
         batch_count += 1
+        
+        time_slot_data = {
+            'perm_course_code': cls.code,
+            'perm_course_title': "",
+            'course_type':course_type,
+            'perm_teacher_1': teacher_1,
+            'perm_teacher_2': teacher_2,
+            'class_cancelled': 0,
+            
+            'temp_course_code': '',
+            'temp_course_title': '',
+            'temp_teacher_1': '',
+            'temp_teacher_2': '',
+             
+        }
+        time_slot_ref = db.collection('time_slots').document(str(time_slot_1)).collection('rooms').document(str(cls.room))
+        batch.set(time_slot_ref, time_slot_data)
+        batch_count += 1
+        if time_2!="":
+            time_slot_ref = db.collection('time_slots').document(str(time_slot_2)).collection('rooms').document(str(cls.room))
+            batch.set(time_slot_ref, time_slot_data)
+            batch_count += 1
+        
+        
+
 
         # Data for each teacher's course collection
         if teacher_1:
             teacher_1_ref = db.collection('teachers').document(teacher_1).collection('courses').document(cls.code)
             teacher_1_data = {
-                'assigned-course-title': '',
-                'assigned-room': cls.room,
-                'assigned-time-slot': time_slot,
-                'day': cls.day,
-                'time-1': time_1,
-                'time-2': time_2
+                'assigned_time_slots': firestore.ArrayUnion([time_slot_1]),
+                'assigned_room': firestore.ArrayUnion([cls.room]),
+                'course_type':course_type,
+                'class_cancelled_status':firestore.ArrayUnion([0]),
+                
+                'assigned_temp_time_slots': [],
+                'assigned_temp_room':[] 
             }
             batch.set(teacher_1_ref, teacher_1_data)
             batch_count += 1
@@ -76,12 +127,13 @@ def write_routine_to_firestore(scheduled_classes):
         if teacher_2:
             teacher_2_ref = db.collection('teachers').document(teacher_2).collection('courses').document(cls.code)
             teacher_2_data = {
-                'assigned-course-title': '',
-                'assigned-room': cls.room,
-                'assigned-time-slot': time_slot,
-                'day': cls.day,
-                'time-1': time_1,
-                'time-2': time_2
+                'assigned_time_slots': firestore.ArrayUnion([time_slot_1]),
+                'assigned_room': firestore.ArrayUnion([cls.room]),
+                'course_type':course_type,
+                'class_cancelled_status':firestore.ArrayUnion([0]),
+                
+                'assigned_temp_time_slots': [],
+                'assigned_temp_room':[] 
             }
             batch.set(teacher_2_ref, teacher_2_data)
             batch_count += 1
