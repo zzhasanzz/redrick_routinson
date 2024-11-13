@@ -194,21 +194,21 @@ const TeacherRoutine = () => {
     // Handle Cancel Class
     const handleCancelClass = async (courseId, day, time) => {
 
+        let room = "";
+        let timeSlot = 0;
         try {
             
             const courseRef = doc(db, "teachers", teacherName, "courses", courseId);
             console.log(`Course Ref ${courseRef}`);
             const courseSnapshot = await getDoc(courseRef);
             console.log(`Course Snap ${courseSnapshot}`);
-            
             const courseData = courseSnapshot.data(); 
             console.log(`Course Data ${courseData}`);
-            
             
 
 
             console.log(`${courseData.id}`);
-            const timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
+            timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
             console.log(`Day: ${day}`);
             console.log(`Day: ${revDayMapping[day]}`)
             console.log(`Time: ${time}`);
@@ -216,6 +216,8 @@ const TeacherRoutine = () => {
             console.log(`Time Slot: ${timeSlot}`);
             const classCancelledStatus = courseData["class_cancelled_status"];
             console.log(`${classCancelledStatus[0]}`);
+            room = courseData["assigned_room"].toString();
+            console.log(room);
             
 
             classCancelledStatus.forEach((stat, idx) => {
@@ -234,6 +236,37 @@ const TeacherRoutine = () => {
             console.error("Error canceling class:", error);
             alert("Failed to cancel class.");
         }
+        
+        try {
+            
+            
+            console.log(`Time Slot ${timeSlot}`);
+            console.log(`room ${room}`);
+            console.log(`room: ${room}, type: ${typeof room}`);
+
+            const roomRef = doc(db, `time_slots/${timeSlot}/rooms`, room.toString());
+            console.log(`room ref ${roomRef}`);
+            const roomSnapshot = await getDoc(roomRef);
+            
+            
+            
+            
+            const roomData = roomSnapshot.data(); 
+
+            console.log(`room Data ${roomData}`);
+            const classCancelledStatus = 1;
+            console.log(`Cancelled Course Timeslot ${roomData["class_cancelled"]}`);
+            await updateDoc(roomRef,{
+                class_cancelled:classCancelledStatus,
+            });
+
+
+        } catch (error) {
+            console.error("Error canceling class:", error);
+            alert("Failed to cancel class.");
+        }
+
+        
     };
 
     // Handle Reschedule Class
