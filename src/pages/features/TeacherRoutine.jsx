@@ -8,7 +8,7 @@ const TeacherRoutine = () => {
     const [teacherName, setTeacherName] = useState("");
     const [showRescheduleModal, setShowRescheduleModal] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState("");
-    const [availableRooms, setAvailableRooms] = useState([]);
+    // const [availableRooms, setAvailableRooms] = useState([]);
     const [availableTimeSlot, setAvailableTimeSlot] = useState("");
     const [selectedDay, setSelectedDay] = useState("");
     const [selectedTime, setSelectedTime] = useState("");
@@ -19,7 +19,16 @@ const TeacherRoutine = () => {
         default: ["8:00-9:15", "9:15-10:30", "10:30-11:45", "11:45-1:00", "2:30-3:45", "3:45-5:00"],
         Wednesday: ["8:00-9:15", "9:15-10:30", "10:30-11:45", "11:45-1:00"],
     };
-    const availableTimeSlots = [];
+    let availableTimeSlots = new Set();
+    let allTimeSlots = new Set();
+    let occupiedTimeSlots = new Set();
+    for (let i = 1; i <= 30 ; i++){
+        allTimeSlots.add(i);
+    }
+
+    let allRooms = new Set(["1", "2", "3", "4", "5", "6", "301", "302", "304", "204", "104", "105"]);
+
+    let availableRooms = [];
 
 
 
@@ -95,21 +104,21 @@ const TeacherRoutine = () => {
 
             coursesSnapshot.forEach((doc) => {
                 const courseData = doc.data();
-                console.log(courseData);
+                // console.log(courseData);
                 const classCancelledStatus = courseData["class_cancelled_status"];
                 const tempClasses = courseData["assigned_temp_time_slots"];
-                console.log("Testing");
-                console.log(classCancelledStatus);
+                // console.log("Testing");
+                // console.log(classCancelledStatus);
                 // const assignedRooms = courseData["assigned_room"];
                 classCancelledStatus.forEach((stat, index) => {
                     if (String(stat) === "1") {
                         // console.log(`Class at index ${index} is cancelled`);
-                        console.log(`Stat: ${stat}`);
+                        // console.log(`Stat: ${stat}`);
 
                     }
                     else {
-                        console.log(`Class at index ${index} is not cancelled`);
-                        console.log(courseData["assigned_room"][index]); 0
+                        // console.log(`Class at index ${index} is not cancelled`);
+                        // console.log(courseData["assigned_room"][index]); 0
                         const totalSlotsPerDay = Object.keys(timeMapping).length;
                         const timeSlot = courseData["assigned_time_slots"][index]
                         const dayIndex = Math.floor((timeSlot - 1) / totalSlotsPerDay);
@@ -138,7 +147,7 @@ const TeacherRoutine = () => {
                 if (!(tempClasses && tempClasses.length === 0)) {
                     tempClasses.forEach((tempTimeSlot, index) => {
                         if (tempTimeSlot !== "") {
-                            console.log(courseData["assigned_temp_room"][index]);
+                            // console.log(courseData["assigned_temp_room"][index]);
                             const totalSlotsPerDay = Object.keys(timeMapping).length;
                             const timeSlot = tempTimeSlot;
                             const dayIndex = Math.floor((timeSlot - 1) / totalSlotsPerDay);
@@ -179,66 +188,75 @@ const TeacherRoutine = () => {
         }
     }, [teacherName]);
 
-    // const findSemester = (selectedCourse) => {
-    //     // Find the index of the first digit by checking if each character is a number
-    //     let thirdFromLast = str.charAt(str.length - 3);
-    // };
+
 
     const fetchAvailableTimeSlots = async (day, time) => {
-
-        // setAvailableTimeSlot(revDayMapping[day] * 6 + revTimeMapping[time]);
-        console.log(`TimeSlot: ${availableTimeSlot}`);
-        console.log(`TimeSlot:fdsfsdfas`);
-        const sle = selectedCourse.toString();
-        console.log(`${sle}`);
-
         let sem = (selectedCourse.toString()).charAt((selectedCourse.toString()).length - 3);
         setSemester("semester_" + sem);
-        console.log(semester.toString());
-
-
-        const semesterRef = collection(db, semester.toString());
-        const timeSlotsSnapshot = await getDocs(timeS);
-        timeSlotsSnapshot.forEach(doc => {
+        const timeSlotRef = collection(db, semester.toString());
+        const timeSlotsSnapshot = await getDocs(timeSlotRef);
+        timeSlotsSnapshot.forEach(doc => { 
             const timeSlotData = doc.data();
+            const timeSlotID = Number(doc.id);
             if (timeSlotData["class_cancelled"] === 1) {
-                if (timeSlotData["temp_course_code" !== ""]) {
-                    availableTimeSlots.push(doc.id);
-                    console.log(doc.id);
+                if (timeSlotData["temp_course_code"] !== "") {
+                    availableTimeSlots.add(timeSlotID);
                 }
-
+                else{
+                    occupiedTimeSlots.add(timeSlotID);
+                }
             }
+            else{               
+                occupiedTimeSlots.add(timeSlotID);    
+            }
+            
         });
-
-
-        console.log(timeSlotsSnapshot);
-
-        console.log(`Semester : ${sem}`);
-
-
-
-
-
-
-
-
+        allTimeSlots.forEach(item =>{
+            if(!occupiedTimeSlots.has(item)){
+                availableTimeSlots.add(item);
+            }
+        });  
+        console.log(availableTimeSlots);
+        availableTimeSlots.forEach(it=>{
+            fetchAvailableRooms(it);
+            // console.log(typeof it);
+        });
+        console.log('');
+        console.log('');
+        console.log('');
     }
 
     // Fetch available rooms for the selected day and time
-    const fetchAvailableRooms = async (day, time) => {
-        const allRooms = ["101", "102", "103", "104", "105"]; // Example rooms
-        const unavailableRooms = []; // Collect unavailable rooms based on Firestore data
-
-        const coursesSnapshot = await getDocs(collection(db, "courses"));
-        coursesSnapshot.forEach((doc) => {
-            const courseData = doc.data();
-            if (courseData.day === day && courseData["time-1"] === time) {
-                unavailableRooms.push(courseData["assigned-room"]);
+    const fetchAvailableRooms = async (timeSlot) => {
+        let roomID = "";
+        console.log(timeSlot);
+        const roomsRef = collection(db, `time_slots/${timeSlot}/rooms`);
+        const roomsSnapshot = await getDocs(roomsRef);
+        roomsSnapshot.forEach((doc) => {
+            const roomData = doc.data();
+            roomID = doc.id.toString();
+            if (!roomData.perm_course_code && !roomData.temp_course_code) {
+                console.log(`Room ${doc.id} has both perm_course_code and temp_course_code empty.`);
+                availableRooms.push({
+                    room: roomID,
+                    timeSlot: timeSlot
+                });
             }
+            allRooms.delete(roomID);
+
+        });
+        allRooms.forEach((roomID) => {
+            availableRooms.push({
+                room: roomID,
+                timeSlot: timeSlot
+            });
+
         });
 
-        const freeRooms = allRooms.filter((room) => !unavailableRooms.includes(room));
-        setAvailableRooms(freeRooms);
+        // console.log(availableRooms);
+        
+        
+        
     };
 
     // Handle Cancel Class
@@ -297,10 +315,6 @@ const TeacherRoutine = () => {
             const roomRef = doc(db, `time_slots/${timeSlot}/rooms`, room.toString());
             console.log(`room ref ${roomRef}`);
             const roomSnapshot = await getDoc(roomRef);
-
-
-
-
             const roomData = roomSnapshot.data();
 
             console.log(`room Data ${roomData}`);
@@ -360,25 +374,21 @@ const TeacherRoutine = () => {
         setShowRescheduleModal(true);
     };
 
-    // Confirm reschedule
     const confirmReschedule = async (room) => {
-
-        // setSchedule((prevSchedule) =>
-        //     prevSchedule.map((course) =>
-        //         course.id === selectedCourse.id
-        //             ? { ...course, day: selectedDay, time: selectedTime, room }
-        //             : course
-        //     )
-        // );
-
-        // alert("Class rescheduled successfully!");
-        // setShowRescheduleModal(false);
+        const tslot = revDayMapping[selectedDay] * 6 + revTimeMapping[selectedTime];
+        const preferred = {room:room,timeSlot:tslot};
+        if(availableRooms.includes(preferred)){
+            console.log("You can take the class");
+            
+        }
+        else{
+            console.log("not a free slot");
+        }
 
 
     };
 
-    // Render the table
-    // Render the table
+   
     const renderTable = () => (
         <table border="1" style={{ borderCollapse: "collapse", width: "100%" }}>
             <thead>
@@ -444,7 +454,7 @@ const TeacherRoutine = () => {
                                     onChange={(e) => {
                                         setSelectedTime(e.target.value);
                                         fetchAvailableTimeSlots(selectedDay, e.target.value);
-                                        fetchAvailableRooms(availableTimeSlot);
+                                        
                                     }}
                                     disabled={!selectedDay}
                                 >
