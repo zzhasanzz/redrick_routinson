@@ -35,7 +35,7 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import {
-    IconButton, // Add this to your imports
+    IconButton,
 } from "@chakra-ui/react";
 
 import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
@@ -64,7 +64,8 @@ const Event = () => {
     const [allowedDepartments, setAllowedDepartments] = useState([]);
     const departments = ["CSE", "EEE", "MPE", "BTM", "TVE", "CIVIL"];
     const [isFilteringMyEvents, setIsFilteringMyEvents] = useState(false);
-
+    const [isEditing, setIsEditing] = useState(false);
+    const [editingEventId, setEditingEventId] = useState(null);
 
     const {
         isOpen: isOpenVolunteerModal,
@@ -127,10 +128,10 @@ const Event = () => {
             reader.readAsDataURL(file);
         }
     };
+
     const addRoadmapItem = () => {
         setRoadmap([...roadmap, { day: "", time: "", activity: "", id: Date.now() }]);
     };
-    
 
     const updateRoadmapItem = (id, key, value) => {
         setRoadmap(
@@ -150,7 +151,6 @@ const Event = () => {
         );
     };
 
-
     const handleSubmit = async () => {
         if (!eventName || !description || !startDate || !endDate) {
             alert("Please fill in all required fields.");
@@ -169,40 +169,94 @@ const Event = () => {
         }
 
         try {
-            const eventRef = collection(db, "events");
-            await addDoc(eventRef, {
-                eventName,
-                startDate: startDate.toISOString(),
-                endDate: endDate.toISOString(),
-                description,
-                subscriptionFee: Number(subscriptionFee),
-                volunteerList: [],
-                enableVolunteer,
-                allowedDepartments,
-                image,
-                roadmap,
-                creatorEmail: currentUser.email, // Save the creator's email
-            });
+            if (isEditing) {
+                // Update existing event
+                const eventDocRef = doc(db, "events", editingEventId);
+                await updateDoc(eventDocRef, {
+                    eventName,
+                    startDate: startDate.toISOString(),
+                    endDate: endDate.toISOString(),
+                    description,
+                    subscriptionFee: Number(subscriptionFee),
+                    enableVolunteer,
+                    allowedDepartments,
+                    image,
+                    roadmap,
+                });
+
+                toast({
+                    title: "Event Updated",
+                    description: "The event has been successfully updated.",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                });
+            } else {
+                // Create new event
+                const eventRef = collection(db, "events");
+                await addDoc(eventRef, {
+                    eventName,
+                    startDate: startDate.toISOString(),
+                    endDate: endDate.toISOString(),
+                    description,
+                    subscriptionFee: Number(subscriptionFee),
+                    volunteerList: [],
+                    enableVolunteer,
+                    allowedDepartments,
+                    image,
+                    roadmap,
+                    creatorEmail: currentUser.email, // Save the creator's email
+                });
+
+                toast({
+                    title: "Event Created",
+                    description: "Your event has been successfully created.",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                });
+            }
+
+            // Reset state
+            setIsEditing(false);
+            setEditingEventId(null);
+            setEventName("");
+            setStartDate(new Date());
+            setEndDate(new Date());
+            setDescription("");
+            setSubscriptionFee("");
+            setEnableVolunteer(false);
+            setImage(null);
+            setRoadmap([]);
+            setAllowedDepartments([]);
 
             fetchEvents();
             onClose();
-            toast({
-                title: "Event Created",
-                description: "Your event has been successfully created.",
-                status: "success",
-                duration: 3000,
-                isClosable: true,
-            });
         } catch (error) {
-            console.error("Error adding event: ", error);
+            console.error("Error saving event: ", error);
             toast({
                 title: "Error",
-                description: "Failed to create the event. Please try again.",
+                description: "Failed to save the event. Please try again.",
                 status: "error",
                 duration: 3000,
                 isClosable: true,
             });
         }
+    };
+
+    const handleEditEvent = (event) => {
+        setIsEditing(true);
+        setEditingEventId(event.id);
+        setEventName(event.eventName);
+        setStartDate(new Date(event.startDate));
+        setEndDate(new Date(event.endDate));
+        setDescription(event.description);
+        setSubscriptionFee(event.subscriptionFee || "");
+        setEnableVolunteer(event.enableVolunteer || false);
+        setImage(event.image || null);
+        setRoadmap(event.roadmap || []);
+        setAllowedDepartments(event.allowedDepartments || []);
+        onOpen();
     };
 
     const handleVolunteer = async (eventId) => {
@@ -306,30 +360,28 @@ const Event = () => {
         }
         setIsFilteringMyEvents(!isFilteringMyEvents); // Toggle the state
     };
-    
 
     return (
         <Box p={5}>
-           {isPresident && (
-            <>
-                <Button colorScheme="blue" onClick={onOpen} mb={5}>
-                    Add Event
-                </Button>
-                <Button
-                    colorScheme={isFilteringMyEvents ? "green" : "green"}
-                    onClick={handleFilterMyEvents}
-                    mb={5}
-                >
-                    {isFilteringMyEvents ? "View All Events" : "Events Created by Me"}
-                </Button>
-            </>
-        )}
-
+            {isPresident && (
+                <>
+                    <Button colorScheme="blue" onClick={onOpen} mb={5}>
+                        Add Event
+                    </Button>
+                    <Button
+                        colorScheme={isFilteringMyEvents ? "green" : "green"}
+                        onClick={handleFilterMyEvents}
+                        mb={5}
+                    >
+                        {isFilteringMyEvents ? "View All Events" : "Events Created by Me"}
+                    </Button>
+                </>
+            )}
 
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Create a new Event</ModalHeader>
+                    <ModalHeader>{isEditing ? "Edit Event" : "Create a New Event"}</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <VStack spacing={4}>
@@ -485,7 +537,7 @@ const Event = () => {
                     </ModalBody>
                     <ModalFooter>
                         <Button colorScheme="blue" onClick={handleSubmit}>
-                            Submit Event
+                            {isEditing ? "Update Event" : "Submit Event"}
                         </Button>
                         <Button variant="ghost" onClick={onClose}>
                             Cancel
@@ -509,7 +561,7 @@ const Event = () => {
                             cursor="pointer"
                         >
                             <Flex>
-                            <Box flex="1" p={4}>
+                                <Box flex="1" p={4}>
                                     <Heading size="md" mb={2} isTruncated>
                                         {event.eventName}
                                     </Heading>
@@ -566,6 +618,13 @@ const Event = () => {
                                             onClick={() => handleViewVolunteers(event)}
                                         >
                                             View Volunteers
+                                        </Button>
+                                        <Button
+                                            size="sm"
+                                            colorScheme="blue"
+                                            onClick={() => handleEditEvent(event)}
+                                        >
+                                            Edit Event
                                         </Button>
                                         <Button
                                             size="sm"
