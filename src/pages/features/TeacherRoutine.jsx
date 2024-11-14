@@ -28,7 +28,7 @@ const TeacherRoutine = () => {
 
     let allRooms = new Set(["1", "2", "3", "4", "5", "6", "301", "302", "304", "204", "104", "105"]);
 
-    let availableRooms = [];
+    let availableRooms = new Map();
 
 
 
@@ -219,7 +219,7 @@ const TeacherRoutine = () => {
         console.log(availableTimeSlots);
         availableTimeSlots.forEach(it=>{
             fetchAvailableRooms(it);
-            // console.log(typeof it);
+            console.log(it);
         });
         console.log('');
         console.log('');
@@ -229,31 +229,26 @@ const TeacherRoutine = () => {
     // Fetch available rooms for the selected day and time
     const fetchAvailableRooms = async (timeSlot) => {
         let roomID = "";
-        console.log(timeSlot);
         const roomsRef = collection(db, `time_slots/${timeSlot}/rooms`);
         const roomsSnapshot = await getDocs(roomsRef);
+        
         roomsSnapshot.forEach((doc) => {
             const roomData = doc.data();
             roomID = doc.id.toString();
+            console.log(roomID);
             if (!roomData.perm_course_code && !roomData.temp_course_code) {
                 console.log(`Room ${doc.id} has both perm_course_code and temp_course_code empty.`);
-                availableRooms.push({
-                    room: roomID,
-                    timeSlot: timeSlot
-                });
+                availableRooms.set(roomID,timeSlot);
             }
             allRooms.delete(roomID);
 
         });
         allRooms.forEach((roomID) => {
-            availableRooms.push({
-                room: roomID,
-                timeSlot: timeSlot
-            });
+            availableRooms.set(roomID,timeSlot);
 
         });
 
-        // console.log(availableRooms);
+        console.log(availableRooms);
         
         
         
@@ -376,8 +371,8 @@ const TeacherRoutine = () => {
 
     const confirmReschedule = async (room) => {
         const tslot = revDayMapping[selectedDay] * 6 + revTimeMapping[selectedTime];
-        const preferred = {room:room,timeSlot:tslot};
-        if(availableRooms.includes(preferred)){
+        
+        if(availableRooms.has(room)){
             console.log("You can take the class");
             
         }
