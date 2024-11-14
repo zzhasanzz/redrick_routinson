@@ -28,7 +28,7 @@ const TeacherRoutine = () => {
 
     let allRooms = new Set(["1", "2", "3", "4", "5", "6", "301", "302", "304", "204", "104", "105"]);
 
-    let availableRooms = new Map();
+    let availableRooms =new Map() ;
 
 
 
@@ -120,7 +120,7 @@ const TeacherRoutine = () => {
                         // console.log(`Class at index ${index} is not cancelled`);
                         // console.log(courseData["assigned_room"][index]); 0
                         const totalSlotsPerDay = Object.keys(timeMapping).length;
-                        const timeSlot = courseData["assigned_time_slots"][index]
+                        const timeSlot = courseData["assigned_time_slots"][index];
                         const dayIndex = Math.floor((timeSlot - 1) / totalSlotsPerDay);
                         var courseType = "theory";
                         const timeIndex = (timeSlot - 1) % totalSlotsPerDay + 1;
@@ -198,9 +198,15 @@ const TeacherRoutine = () => {
         timeSlotsSnapshot.forEach(doc => { 
             const timeSlotData = doc.data();
             const timeSlotID = Number(doc.id);
+            console.log(typeof timeSlotData["class_cancelled"]);
             if (timeSlotData["class_cancelled"] === 1) {
-                if (timeSlotData["temp_course_code"] !== "") {
+                // console.log(timeSlotID);
+                // console.log(timeSlotData["class_cancelled"]);
+
+                if (timeSlotData["temp_course_code"] === "") {
                     availableTimeSlots.add(timeSlotID);
+                    // console.log("Time Slot Added")
+                    // console.log(availableTimeSlots[availableTimeSlots.length-1]);
                 }
                 else{
                     occupiedTimeSlots.add(timeSlotID);
@@ -219,7 +225,7 @@ const TeacherRoutine = () => {
         console.log(availableTimeSlots);
         availableTimeSlots.forEach(it=>{
             fetchAvailableRooms(it);
-            console.log(it);
+            // console.log(it);
         });
         console.log('');
         console.log('');
@@ -231,20 +237,26 @@ const TeacherRoutine = () => {
         let roomID = "";
         const roomsRef = collection(db, `time_slots/${timeSlot}/rooms`);
         const roomsSnapshot = await getDocs(roomsRef);
-        
         roomsSnapshot.forEach((doc) => {
             const roomData = doc.data();
             roomID = doc.id.toString();
-            console.log(roomID);
-            if (!roomData.perm_course_code && !roomData.temp_course_code) {
+            // console.log(roomID);
+            if (roomData["class_cancelled"] === 1 && roomData["temp_course_code"]==="") {
                 console.log(`Room ${doc.id} has both perm_course_code and temp_course_code empty.`);
-                availableRooms.set(roomID,timeSlot);
+                // availableRooms.set(roomID,timeSlot);
+                // availableRooms[timeSlot].add(roomID);
+                addValueToKey(availableRooms,timeSlot,roomID);
+                console.log(timeSlot,roomID);
             }
             allRooms.delete(roomID);
 
         });
         allRooms.forEach((roomID) => {
-            availableRooms.set(roomID,timeSlot);
+            // availableRooms[timeSlot].add(roomID);
+            console.log(timeSlot,roomID);
+
+            addValueToKey(availableRooms, timeSlot,roomID);
+            // console.log(roomID);
 
         });
 
@@ -253,6 +265,12 @@ const TeacherRoutine = () => {
         
         
     };
+    function addValueToKey(map, key, value) {
+        if (!map.has(key)) {
+          map.set(key, new Set());
+        }
+        map.get(key).add(value);
+      }
 
     // Handle Cancel Class
     const handleCancelClass = async (courseId, day, time) => {
