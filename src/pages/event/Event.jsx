@@ -38,11 +38,12 @@ import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { db } from "../../firebase";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, getDocs, getDoc, doc ,updateDoc,
+    arrayUnion, } from "firebase/firestore";
 import { AuthContext } from "../../context/AuthContext";
 
 const Event = () => {
-    const { currentUser } = useContext(AuthContext);
+    const { currentUser } = useContext(AuthContext); // Current logged-in user
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedEvent, setSelectedEvent] = useState(null);
@@ -54,6 +55,13 @@ const Event = () => {
     const [enableVolunteer, setEnableVolunteer] = useState(false);
     const [image, setImage] = useState(null);
     const [roadmap, setRoadmap] = useState([]);
+    const [isPresident, setIsPresident] = useState(false); // State for role checking
+    const [volunteerList, setVolunteerList] = useState([]);
+    const {
+        isOpen: isOpenVolunteerModal,
+        onOpen: openVolunteerModal,
+        onClose: closeVolunteerModal,
+    } = useDisclosure();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const {
         isOpen: isDetailsOpen,
@@ -61,6 +69,7 @@ const Event = () => {
         onClose: onDetailsClose,
     } = useDisclosure();
 
+    // Fetch events from Firestore
     const fetchEvents = async () => {
         setLoading(true);
         try {
@@ -71,17 +80,33 @@ const Event = () => {
                 ...doc.data(),
             }));
             setEvents(eventList);
-            setLoading(false);
         } catch (error) {
             console.error("Error fetching events: ", error);
+        } finally {
             setLoading(false);
+        }
+    };
+
+    // Fetch current user's role
+    const fetchUserRole = async () => {
+        try {
+            const userDoc = await getDoc(doc(db, "users", currentUser.email));
+            if (userDoc.exists()) {
+                setIsPresident(userDoc.data().isPresident || false);
+            } else {
+                console.error("User document not found.");
+            }
+        } catch (error) {
+            console.error("Error fetching user role: ", error);
         }
     };
 
     useEffect(() => {
         fetchEvents();
+        fetchUserRole(); // Fetch user role on component mount
     }, []);
 
+    // Handle image upload
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -93,6 +118,7 @@ const Event = () => {
         }
     };
 
+    // Add roadmap item
     const addRoadmapItem = () => {
         setRoadmap([
             ...roadmap,
@@ -100,6 +126,7 @@ const Event = () => {
         ]);
     };
 
+    // Update roadmap item
     const updateRoadmapItem = (id, key, value) => {
         setRoadmap(
             roadmap.map((item) =>
@@ -108,10 +135,12 @@ const Event = () => {
         );
     };
 
+    // Delete roadmap item
     const deleteRoadmapItem = (id) => {
         setRoadmap(roadmap.filter((item) => item.id !== id));
     };
 
+    // Submit event to Firestore
     const handleSubmit = async () => {
         if (!eventName || !description || !startDate || !endDate) {
             alert("Please fill in all required fields.");
@@ -139,7 +168,42 @@ const Event = () => {
             console.error("Error adding event: ", error);
         }
     };
+    const handleVolunteer = async (eventId) => {
+        try {
+            const eventDocRef = doc(db, "events", eventId);
+            const eventDoc = await getDoc(eventDocRef);
 
+            if (eventDoc.exists()) {
+                const eventData = eventDoc.data();
+                const volunteerList = eventData.volunteerList || [];
+
+                if (volunteerList.includes(currentUser.email)) {
+                    alert("You are already registered as a volunteer for this event!");
+                    return;
+                }
+
+                await updateDoc(eventDocRef, {
+                    volunteerList: arrayUnion(currentUser.email),
+                });
+
+                alert("You have successfully volunteered for this event!");
+                fetchEvents();
+            } else {
+                alert("Event not found!");
+            }
+        } catch (error) {
+            console.error("Error volunteering for event: ", error);
+            alert("Something went wrong. Please try again.");
+        }
+    };
+
+    // Handle viewing volunteer list
+    const handleViewVolunteers = (event) => {
+        setVolunteerList(event.volunteerList || []);
+        openVolunteerModal();
+    };
+
+    // Handle card click
     const handleCardClick = (event) => {
         setSelectedEvent(event);
         onDetailsOpen();
@@ -147,9 +211,13 @@ const Event = () => {
 
     return (
         <Box p={5}>
-            <Button colorScheme="blue" onClick={onOpen} mb={5}>
-                Add Event
-            </Button>
+            {/* Render Add Event button only if user is the president */}
+            {isPresident && (
+                <Button colorScheme="blue" onClick={onOpen} mb={5}>
+                    Add Event
+                </Button>
+            )}
+
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>
@@ -363,6 +431,32 @@ const Event = () => {
                                     />
                                 </Box>
                             </Flex>
+                            {event.enableVolunteer && (
+                                <Button
+                                    size="sm" // Smaller size for the button
+                                    colorScheme="green"
+                                    width="fit-content" // Automatically adjusts to the button's text width
+                                    position="absolute"
+                                    bottom={2} // Positioned at the bottom of the card
+                                    left={2} // Positioned slightly to the left
+                                    onClick={() => handleVolunteer(event.id)}
+                                >
+                                    Volunteer
+                                </Button>
+                            )}
+                            {isPresident && (
+                                <Button
+                                    size="sm" // Smaller size for the button
+                                    colorScheme="green"
+                                    width="fit-content" // Automatically adjusts to the button's text width
+                                    position="absolute"
+                                    bottom={2} // Positioned at the bottom of the card
+                                    left={2} // Positioned slightly to the left
+                                    onClick={() => handleViewVolunteers(event)}
+                                >
+                                    View Volunteers
+                                </Button>
+                            )}
                         </Card>
                     ))}
                 </SimpleGrid>
@@ -414,7 +508,7 @@ const Event = () => {
                             </Text>
                             <Text>
                                 {selectedEvent.subscriptionFee
-                                    ? `$${selectedEvent.subscriptionFee}`
+                                    ? `TAKA${selectedEvent.subscriptionFee}`
                                     : "Free"}
                             </Text>
                             {selectedEvent.enableVolunteer && (
@@ -431,6 +525,40 @@ const Event = () => {
                     </ModalContent>
                 </Modal>
             )}
+
+            <Modal isOpen={isOpenVolunteerModal} onClose={closeVolunteerModal}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader
+                    >Volunteer List</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        {volunteerList.length > 0 ? (
+                            <Table size="sm">
+                                <Thead>
+                                    <Tr>
+                                        <Th>Email</Th>
+                                    </Tr>
+                                </Thead>
+                                <Tbody>
+                                    {volunteerList.map((email, index) => (
+                                        <Tr key={index}>
+                                            <Td>{email}</Td>
+                                        </Tr>
+                                    ))}
+                                </Tbody>
+                            </Table>
+                        ) : (
+                            <Text>No volunteers registered for this event.</Text>
+                        )}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button colorScheme="blue" onClick={closeVolunteerModal}>
+                            Close
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </Box>
     );
 };
