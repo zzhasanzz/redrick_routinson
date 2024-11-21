@@ -149,11 +149,6 @@ def write_routine_to_firestore(scheduled_classes):
         batch.commit()
 
         
-        
-        
-        
-
-
 # Days and time slots
 days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 time_slots = ['8:00-9:15', '9:15-10:30', '10:30-11:45', '11:45-1:00', '2:30-3:45', '3:45-5:00']

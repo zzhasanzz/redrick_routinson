@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import {
@@ -142,16 +143,19 @@ const LostAndFound = () => {
     };
 
     // Handle claiming an item
-    const handleClaimItem = async (itemId) => {
+    const handleClaimItem = async (itemId,item) => {
+
+        // setcurrentitemInfo(item)
+        // item.claimed = true;
         onClaimOpen(); // Open claim modal
         setSelectedItem(itemId); // Set selected item for claiming
     };
 
     // Handle claim submission
-    const handleClaimSubmit = async () => {
+    const handleClaimSubmit = async (item) => {
         const itemDoc = doc(db, "lostAndFound", selectedItem.id);
         await updateDoc(itemDoc, {
-            claimed: true,
+            claimed:true,
             claimerID,
             claimerPhone,
             claimerDescription,
@@ -159,6 +163,7 @@ const LostAndFound = () => {
 
         fetchItems();
         onClaimClose();
+        // currentitemInfo.claimed = true;
         alert("Claim submitted successfully!");
     };
 
@@ -202,10 +207,22 @@ const LostAndFound = () => {
                                             <Text fontSize="sm" noOfLines={2} mb={2}>{item.description}</Text>
                                             <Text fontSize="sm" fontWeight="bold">Date Found:</Text>
                                             <Text fontSize="sm" mb={2}>{new Date(item.dateFound).toDateString()}</Text>
+                                            {item.claimed && (
+                                                            <Box mt={2}>
+                                                                <Text fontWeight="bold">Contact:</Text>
+                                                                <Text>Email: {item.email}</Text>
+                                                                <Text>Phone: {item.phone}</Text>
+                                                            </Box>
+                                            )}
                                             {/* Show Claim button only if the email is not the current user's email and item is not claimed */}
-                                            {item.email !== currentUser.email && item.claimed && (
-                                                <Button colorScheme="green" onClick={() => handleClaimItem(item.id)}>
+                                            {item.email !== currentUser.email && !item.claimed && (
+                                                <Button colorScheme="green" onClick={() => handleClaimItem(item.id,item)}>
                                                     Claim Item
+                                                </Button>
+                                            )}
+                                            {item.email == currentUser.email  && (
+                                                <Button colorScheme="blue">
+                                                    Claimers
                                                 </Button>
                                             )}
                                         </Box>
@@ -437,7 +454,7 @@ const LostAndFound = () => {
                         </VStack>
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="blue" onClick={handleClaimSubmit}>
+                        <Button colorScheme="blue" onClick={()=>handleClaimSubmit()}>
                             Submit Claim
                         </Button>
                         <Button variant="ghost" onClick={onClaimClose}>

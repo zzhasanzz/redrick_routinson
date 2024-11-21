@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { db, auth } from "../../firebase";
 import { doc, getDoc, collection, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
@@ -27,6 +28,7 @@ const TeacherRoutine = () => {
     }
 
     let allRooms = new Set(["1", "2", "3", "4", "5", "6", "301", "302", "304", "204", "104", "105"]);
+    let avRooms = new Set([...allRooms]);
 
     let availableRooms =new Map() ;
 
@@ -198,7 +200,7 @@ const TeacherRoutine = () => {
         timeSlotsSnapshot.forEach(doc => { 
             const timeSlotData = doc.data();
             const timeSlotID = Number(doc.id);
-            console.log(typeof timeSlotData["class_cancelled"]);
+            // console.log(typeof timeSlotData["class_cancelled"]);
             if (timeSlotData["class_cancelled"] === 1) {
                 // console.log(timeSlotID);
                 // console.log(timeSlotData["class_cancelled"]);
@@ -224,8 +226,10 @@ const TeacherRoutine = () => {
         });  
         console.log(availableTimeSlots);
         availableTimeSlots.forEach(it=>{
+            
+            // console.log(avRooms);
             fetchAvailableRooms(it);
-            // console.log(it);
+            console.log(it);
         });
         console.log('');
         console.log('');
@@ -248,10 +252,10 @@ const TeacherRoutine = () => {
                 addValueToKey(availableRooms,timeSlot,roomID);
                 console.log(timeSlot,roomID);
             }
-            allRooms.delete(roomID);
-
+            avRooms.delete(roomID);
+            console.log(`Deleting for timeslot ${timeSlot}  room: ${roomID}`);
         });
-        allRooms.forEach((roomID) => {
+        avRooms.forEach((roomID) => {
             // availableRooms[timeSlot].add(roomID);
             console.log(timeSlot,roomID);
 
@@ -259,7 +263,8 @@ const TeacherRoutine = () => {
             // console.log(roomID);
 
         });
-
+        avRooms = new Set([...allRooms]);
+        console.log(avRooms);
         console.log(availableRooms);
         
         
@@ -448,7 +453,7 @@ const TeacherRoutine = () => {
                                     value={selectedDay}
                                     onChange={(e) => {
                                         setSelectedDay(e.target.value);
-                                        setAvailableRooms([]); // Reset available rooms
+                                        // setAvailableRooms([]); // Reset available rooms
                                     }}
                                 >
                                     <option value="">-- Select Day --</option>
