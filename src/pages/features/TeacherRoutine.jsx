@@ -20,17 +20,20 @@ const TeacherRoutine = () => {
         default: ["8:00-9:15", "9:15-10:30", "10:30-11:45", "11:45-1:00", "2:30-3:45", "3:45-5:00"],
         Wednesday: ["8:00-9:15", "9:15-10:30", "10:30-11:45", "11:45-1:00"],
     };
-    let availableTimeSlots = new Set();
+    const [availableTimeSlots, setAvailableTimeSlots] = useState([])
+    const [availableRooms, setAvailableRooms] = useState([])
+    const [roomOptions, setRoomOptions] = useState([])
+    let availableTimeSlotsSet = new Set();
     let allTimeSlots = new Set();
     let occupiedTimeSlots = new Set();
-    for (let i = 1; i <= 30 ; i++){
+    for (let i = 1; i <= 30; i++) {
         allTimeSlots.add(i);
     }
 
     let allRooms = new Set(["1", "2", "3", "4", "5", "6", "301", "302", "304", "204", "104", "105"]);
     let avRooms = new Set([...allRooms]);
 
-    let availableRooms =new Map() ;
+    let availableRoomsMap = new Map();
 
 
 
@@ -194,10 +197,11 @@ const TeacherRoutine = () => {
 
     const fetchAvailableTimeSlots = async (day, time) => {
         let sem = (selectedCourse.toString()).charAt((selectedCourse.toString()).length - 3);
-        setSemester("semester_" + sem);
-        const timeSlotRef = collection(db, semester.toString());
+        let _semester = "semester_" + sem;
+        setSemester(_semester);
+        const timeSlotRef = collection(db, _semester);
         const timeSlotsSnapshot = await getDocs(timeSlotRef);
-        timeSlotsSnapshot.forEach(doc => { 
+        timeSlotsSnapshot.forEach(doc => {
             const timeSlotData = doc.data();
             const timeSlotID = Number(doc.id);
             // console.log(typeof timeSlotData["class_cancelled"]);
@@ -206,31 +210,30 @@ const TeacherRoutine = () => {
                 // console.log(timeSlotData["class_cancelled"]);
 
                 if (timeSlotData["temp_course_code"] === "") {
-                    availableTimeSlots.add(timeSlotID);
+                    availableTimeSlotsSet.add(timeSlotID);
                     // console.log("Time Slot Added")
                     // console.log(availableTimeSlots[availableTimeSlots.length-1]);
                 }
-                else{
+                else {
                     occupiedTimeSlots.add(timeSlotID);
                 }
             }
-            else{               
-                occupiedTimeSlots.add(timeSlotID);    
+            else {
+                occupiedTimeSlots.add(timeSlotID);
             }
-            
+
         });
-        allTimeSlots.forEach(item =>{
-            if(!occupiedTimeSlots.has(item)){
-                availableTimeSlots.add(item);
+        allTimeSlots.forEach(item => {
+            if (!occupiedTimeSlots.has(item)) {
+                availableTimeSlotsSet.add(item);
             }
-        });  
-        console.log(availableTimeSlots);
-        availableTimeSlots.forEach(it=>{
-            
-            // console.log(avRooms);
+        });
+        console.log(availableTimeSlotsSet);
+        availableTimeSlotsSet.forEach(it => {
             fetchAvailableRooms(it);
             console.log(it);
         });
+        setAvailableTimeSlots(availableTimeSlotsSet)
         console.log('');
         console.log('');
         console.log('');
@@ -245,37 +248,44 @@ const TeacherRoutine = () => {
             const roomData = doc.data();
             roomID = doc.id.toString();
             // console.log(roomID);
-            if (roomData["class_cancelled"] === 1 && roomData["temp_course_code"]==="") {
+            if (roomData["class_cancelled"] === 1 && roomData["temp_course_code"] === "") {
                 console.log(`Room ${doc.id} has both perm_course_code and temp_course_code empty.`);
                 // availableRooms.set(roomID,timeSlot);
                 // availableRooms[timeSlot].add(roomID);
-                addValueToKey(availableRooms,timeSlot,roomID);
-                console.log(timeSlot,roomID);
+                addValueToKey(availableRoomsMap, timeSlot, roomID);
+                console.log(timeSlot, roomID);
             }
             avRooms.delete(roomID);
-            console.log(`Deleting for timeslot ${timeSlot}  room: ${roomID}`);
+
         });
+
         avRooms.forEach((roomID) => {
             // availableRooms[timeSlot].add(roomID);
             console.log(timeSlot,roomID);
 
-            addValueToKey(availableRooms, timeSlot,roomID);
+            addValueToKey(availableRoomsMap, timeSlot,roomID);
             // console.log(roomID);
 
         });
+        
         avRooms = new Set([...allRooms]);
-        console.log(avRooms);
-        console.log(availableRooms);
-        
-        
-        
+
+        setAvailableRooms(availableRoomsMap)
+
+
+
     };
+
+    async function handleTimeSlotClick(timeslot) {
+        setSelectedTime(timeslot)
+
+    }
     function addValueToKey(map, key, value) {
         if (!map.has(key)) {
-          map.set(key, new Set());
+            map.set(key, new Set());
         }
         map.get(key).add(value);
-      }
+    }
 
     // Handle Cancel Class
     const handleCancelClass = async (courseId, day, time) => {
@@ -387,26 +397,27 @@ const TeacherRoutine = () => {
     };
 
     // Handle Reschedule Class
-    const handleRescheduleClass = (course) => {
+    const handleRescheduleClass = async (course) => {
         setSelectedCourse(course);
+        await fetchAvailableTimeSlots();
         setShowRescheduleModal(true);
     };
 
     const confirmReschedule = async (room) => {
         const tslot = revDayMapping[selectedDay] * 6 + revTimeMapping[selectedTime];
-        
-        if(availableRooms.has(room)){
+
+        if (availableRoomsMap.has(room)) {
             console.log("You can take the class");
-            
+
         }
-        else{
+        else {
             console.log("not a free slot");
         }
 
 
     };
 
-   
+
     const renderTable = () => (
         <table border="1" style={{ borderCollapse: "collapse", width: "100%" }}>
             <thead>
@@ -447,64 +458,49 @@ const TeacherRoutine = () => {
                     <div className="modal" style={modalStyle}>
                         <div className="modal-content" style={modalContentStyle}>
                             <h3>Reschedule Class</h3>
-                            <label>
-                                Select Day:
-                                <select
-                                    value={selectedDay}
-                                    onChange={(e) => {
-                                        setSelectedDay(e.target.value);
-                                        // setAvailableRooms([]); // Reset available rooms
-                                    }}
-                                >
-                                    <option value="">-- Select Day --</option>
-                                    {days.map((day) => (
-                                        <option key={day} value={day}>
-                                            {day}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
-                            <br />
-                            <label>
-                                Select Time:
-                                <select
-                                    value={selectedTime}
-                                    onChange={(e) => {
-                                        setSelectedTime(e.target.value);
-                                        fetchAvailableTimeSlots(selectedDay, e.target.value);
-                                        
-                                    }}
-                                    disabled={!selectedDay}
-                                >
-                                    <option value="">-- Select Time --</option>
-                                    {(selectedDay === "Wednesday" ? times.Wednesday : times.default).map((time) => (
-                                        <option key={time} value={time}>
-                                            {time}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
-                            <br />
+
+                            {/* Select Time Slot */}
+                            <h3>Select a Time Slot:</h3>
+                            <select onChange={(e) => handleTimeSlotClick(e.target.value)}>
+                                <option value="" disabled selected>
+                                    -- Select a time slot --
+                                </option>
+                                {[...availableTimeSlots].map((timeslot) => (
+                                    <option key={timeslot} value={timeslot}>
+                                        {timeslot}
+                                    </option>
+                                ))}
+                            </select>
+
+                            {/* Display Available Rooms */}
                             <h4>Available Rooms</h4>
-                            {availableRooms.length > 0 ? (
-                                availableRooms.map((room) => (
-                                    <button
-                                        key={room}
-                                        onClick={() => confirmReschedule(room)}
-                                        style={{ margin: "5px" }}
-                                    >
-                                        Room {room}
-                                    </button>
-                                ))
+                            {selectedTime ? (
+                                availableRooms.get(Number(selectedTime))?.size > 0 ? (
+                                    <select onChange={(e) => confirmReschedule(e.target.value)}>
+                                        <option value="" disabled selected>
+                                            -- Select a room --
+                                        </option>
+                                        {Array.from(availableRooms.get(Number(selectedTime))).map((room) => (
+                                            <option key={room} value={room}>
+                                                Room {room}
+                                            </option>
+                                        ))}
+                                    </select>
+                                ) : (
+                                    <p>No rooms available for the selected time slot.</p>
+                                )
                             ) : (
-                                <p>No rooms available or select a time.</p>
+                                <p>Please select a time slot to see available rooms.</p>
                             )}
+
+                            {/* Close Modal */}
                             <button onClick={() => setShowRescheduleModal(false)} style={{ marginTop: "10px" }}>
                                 Close
                             </button>
                         </div>
                     </div>
                 )}
+
             </div>
         </div>
     );
