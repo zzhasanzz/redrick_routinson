@@ -13,6 +13,7 @@ const TeacherRoutine = () => {
     const [selectedDay, setSelectedDay] = useState("");
     const [selectedTime, setSelectedTime] = useState("");
     const [semester, setSemester] = useState("");
+    const [selectedRoom , setSelectedRoom] = useState("");
 
     const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     const times = {
@@ -260,7 +261,7 @@ const TeacherRoutine = () => {
 
         avRooms.forEach((roomID) => {
             // availableRooms[timeSlot].add(roomID);
-            console.log(timeSlot,roomID);
+            // console.log(timeSlot,roomID);
 
             addValueToKey(availableRoomsMap, timeSlot,roomID);
             // console.log(roomID);
@@ -402,16 +403,11 @@ const TeacherRoutine = () => {
         setShowRescheduleModal(true);
     };
 
-    const confirmReschedule = async (room) => {
-        const tslot = revDayMapping[selectedDay] * 6 + revTimeMapping[selectedTime];
-
-        if (availableRoomsMap.has(room)) {
-            console.log("You can take the class");
-
-        }
-        else {
-            console.log("not a free slot");
-        }
+    const confirmReschedule = async () => {
+        console.log(`Selected Room: ${selectedRoom}`);
+        console.log(`Selected Time: ${selectedTime}`);
+        
+        
 
 
     };
@@ -475,7 +471,7 @@ const TeacherRoutine = () => {
                             <h4>Available Rooms</h4>
                             {selectedTime ? (
                                 availableRooms.get(Number(selectedTime))?.size > 0 ? (
-                                    <select onChange={(e) => confirmReschedule(e.target.value)}>
+                                    <select onChange={(e) => setSelectedRoom(e.target.value)}>
                                         <option value="" disabled selected>
                                             -- Select a room --
                                         </option>
@@ -491,7 +487,9 @@ const TeacherRoutine = () => {
                             ) : (
                                 <p>Please select a time slot to see available rooms.</p>
                             )}
-
+                            <button onClick={() => confirmReschedule()} style={{ marginTop: "10px" }}>
+                                Confirm
+                            </button>
                             {/* Close Modal */}
                             <button onClick={() => setShowRescheduleModal(false)} style={{ marginTop: "10px" }}>
                                 Close

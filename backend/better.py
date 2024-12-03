@@ -112,30 +112,62 @@ def write_routine_to_firestore(scheduled_classes):
         # Data for each teacher's course collection
         if teacher_1:
             teacher_1_ref = db.collection('teachers').document(teacher_1).collection('courses').document(cls.code)
+            doc = teacher_1_ref.get()
+            if doc.exists:
+                current_data = doc.to_dict()
+                assigned_time_slots = current_data.get('assigned_time_slots', [])
+                assigned_room = current_data.get('assigned_room', [])
+            else:
+                current_data = {}
+                assigned_time_slots = []
+                assigned_room = []
+
+            # Update the data
+            assigned_time_slots.append(time_slot_1)  # Allow duplicates
+            assigned_room.append(cls.room)          # Allow duplicates
+
             teacher_1_data = {
-                'assigned_time_slots': firestore.ArrayUnion([time_slot_1]),
-                'assigned_room': firestore.ArrayUnion([cls.room]),
-                'course_type':course_type,
-                'class_cancelled_status':firestore.ArrayUnion([0]),
-                
+                'assigned_time_slots': assigned_time_slots,
+                'assigned_room': assigned_room,
+                'course_type': course_type,
+                'class_cancelled_status': current_data.get('class_cancelled_status', [0]),
                 'assigned_temp_time_slots': [],
-                'assigned_temp_room':[] 
+                'assigned_temp_room': []
             }
+
+            # Write back to Firestore
+            teacher_1_ref.set(teacher_1_data)
             batch.set(teacher_1_ref, teacher_1_data)
             batch_count += 1
 
         if teacher_2:
             teacher_2_ref = db.collection('teachers').document(teacher_2).collection('courses').document(cls.code)
+            doc = teacher_2_ref.get()
+            if doc.exists:
+                current_data = doc.to_dict()
+                assigned_time_slots = current_data.get('assigned_time_slots', [])
+                assigned_room = current_data.get('assigned_room', [])
+            else:
+                current_data = {}
+                assigned_time_slots = []
+                assigned_room = []
+
+            # Update the data
+            assigned_time_slots.append(time_slot_1)  # Allow duplicates
+            assigned_room.append(cls.room)          # Allow duplicates
+
             teacher_2_data = {
-                'assigned_time_slots': firestore.ArrayUnion([time_slot_1]),
-                'assigned_room': firestore.ArrayUnion([cls.room]),
-                'course_type':course_type,
-                'class_cancelled_status':firestore.ArrayUnion([0]),
-                
+                'assigned_time_slots': assigned_time_slots,
+                'assigned_room': assigned_room,
+                'course_type': course_type,
+                'class_cancelled_status': current_data.get('class_cancelled_status', [0]),
                 'assigned_temp_time_slots': [],
-                'assigned_temp_room':[] 
+                'assigned_temp_room': []
             }
-            batch.set(teacher_2_ref, teacher_2_data)
+
+            # Write back to Firestore
+            teacher_2_ref.set(teacher_2_data)
+            batch.set(teacher_1_ref, teacher_2_data)
             batch_count += 1
 
         # Commit the batch if the batch limit is reached
