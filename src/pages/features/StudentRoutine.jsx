@@ -66,8 +66,15 @@ const StudentRoutine = () => {
               teacher_2 = perm_teacher_2;
               course_type = perm_course_type;
               room = perm_room;
-
-              if (class_cancelled == 1 && temp_course_code !== "") {
+              
+              if(class_cancelled === 1){
+                course_code = "Cancelled";
+                course_title = "";
+                teacher_1 = "";
+                teacher_2 = "";
+                room = "";
+              }
+              if (class_cancelled === 1 && temp_course_code !== "") {
                 course_code = temp_course_code;
                 course_title = temp_course_title;
                 teacher_1 = temp_teacher_1;

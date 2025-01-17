@@ -67,7 +67,7 @@ def write_routine_to_firestore(scheduled_classes):
             'class_cancelled': 0,
             'temp_course_code': '',
             'temp_course_title': '',
-            'temp_lab': 0,
+            'temp_course_type': '',
             'temp_room': '',
             'temp_teacher_1': '',
             'temp_teacher_2': '',

@@ -7,6 +7,7 @@ import {
   getDocs,
   updateDoc,
   deleteDoc,
+  setDoc
 } from "firebase/firestore";
 import TeacherSidebar from "../home/sidebars/TeacherSidebar";
 
@@ -19,7 +20,8 @@ const TeacherRoutine = () => {
   // const [availableRooms, setAvailableRooms] = useState([]);
   const [availableTimeSlot, setAvailableTimeSlot] = useState("");
   const [selectedDay, setSelectedDay] = useState("");
-  const [selectedTime, setSelectedTime] = useState("");
+  const [selectedTime , setSelectedTime] = useState("");
+  const [selectedRescheduleTime, setSelectedRescheduleTime] = useState("");
   const [semester, setSemester] = useState("");
   const [selectedRoom, setSelectedRoom] = useState("");
 
@@ -219,7 +221,7 @@ const TeacherRoutine = () => {
     timeSlotsSnapshot.forEach((doc) => {
       const timeSlotData = doc.data();
       const timeSlotID = Number(doc.id);
-      console.log(typeof timeSlotData["class_cancelled"]);
+    //   console.log(typeof timeSlotData["class_cancelled"]);
       if (timeSlotData["class_cancelled"] === 1) {
         // console.log(timeSlotID);
         // console.log(timeSlotData["class_cancelled"]);
@@ -289,7 +291,7 @@ const TeacherRoutine = () => {
   };
 
   async function handleTimeSlotClick(timeslot) {
-    setSelectedTime(timeslot);
+    setSelectedRescheduleTime(timeslot);
   }
   function addValueToKey(map, key, value) {
     if (!map.has(key)) {
@@ -473,15 +475,93 @@ const TeacherRoutine = () => {
   };
 
   // Handle Reschedule Class
-  const handleRescheduleClass = async (course) => {
+  const handleRescheduleClass = async (course , day , time) => {
     setSelectedCourse(course);
+    setSelectedDay(day);
+    setSelectedTime(time);
+    console.log(`Selected Day: ${selectedDay}`);
+    console.log(`Selected Time: ${selectedTime}`);
     await fetchAvailableTimeSlots();
-    setShowRescheduleModal(true);
+    
+    
   };
 
   const confirmReschedule = async () => {
     console.log(`Selected Room: ${selectedRoom}`);
-    console.log(`Selected Time: ${selectedTime}`);
+    console.log(`Selected  Reschedule Time: ${selectedRescheduleTime}`);
+    console.log(`Selected Course: ${selectedCourse}`);
+    const selectedCourseType = parseInt(selectedCourse.slice(-1)) % 2 === 0 ? "lab" : "theory";
+    console.log(`Selected Course Type: ${selectedCourseType}`);
+    console.log(`Semester: ${semester}`);
+    // console.log(`${typeof(semester)}`);
+    if(selectedCourseType ==="lab"){
+        console.log("Lab Rescheduling Unavailable");
+    }
+    else{
+
+        // handleCancelClass(selectedCourse,selecedDay,selectedTime);
+        setShowRescheduleModal(true);
+
+        const timeSlotDocRef = doc(db , `${semester}/${selectedRescheduleTime}`);
+        const totalSlotsPerDay = Object.keys(timeMapping).length;
+        const dayIndex = Math.floor((selectedRescheduleTime - 1) / totalSlotsPerDay);
+        const timeIndex = ((selectedRescheduleTime - 1) % totalSlotsPerDay) + 1;
+        const startTime = timeMapping[timeIndex].split("-")[0]; 
+        var endTime = timeMapping[timeIndex].split("-")[1];
+        var day = dayMapping[dayIndex];
+        const time = `${startTime}-${endTime}`;
+        console.log(`Day: ${day}`);
+        console.log(`Time: ${time}`);
+        
+
+
+        try {
+            const docSnap = await getDoc(timeSlotDocRef);
+            if (docSnap.exists()) {
+                // If the document exists, update it
+                await updateDoc(timeSlotDocRef, {
+                    temp_course_code: selectedCourse,
+                    temp_course_type: selectedCourseType,
+                    temp_room: selectedRoom,
+                    temp_teacher_1: teacherName,
+                    temp_day: day,
+                    temp_time_1: time
+                });
+                console.log("Update successful in Semester");
+            } else {
+                // If the document does not exist, create it
+                await setDoc(timeSlotDocRef, {
+                    temp_course_code: selectedCourse,
+                    temp_course_type: selectedCourseType,
+                    temp_room: selectedRoom,
+                    temp_teacher_1: teacherName,
+                    temp_day: day,
+                    temp_time_1: time
+                });
+                console.log("Document created in Semester");
+            }
+        } catch (error) {
+            console.error("Error updating/creating semester doc:", error);
+        }
+        
+        
+
+    }
+
+
+   
+    
+   
+    
+    
+    
+
+
+    
+
+
+
+
   };
 
   const renderTable = () => (
@@ -496,10 +576,9 @@ const TeacherRoutine = () => {
         </tr>
       </thead>
       <tbody>
-        {schedule.map((slot) => (
-          <tr key={slot.courseCode}>
-            {" "}
-            {/* Using courseCode as a unique key */}
+        {schedule.map((slot, index) => (
+          <tr key={`${slot.courseCode}-${slot.day}-${slot.time}-${index}`}>
+            {/* Combined courseCode, day, time, and index for a unique key */}
             <td>{slot.courseCode}</td>
             <td>{slot.day}</td>
             <td>{slot.room}</td>
@@ -512,7 +591,11 @@ const TeacherRoutine = () => {
               >
                 Cancel Class
               </button>
-              <button onClick={() => handleRescheduleClass(slot.courseCode)}>
+              <button
+                onClick={() =>
+                  handleRescheduleClass(slot.courseCode, slot.day, slot.time)
+                }
+              >
                 Reschedule
               </button>
             </td>
@@ -521,6 +604,7 @@ const TeacherRoutine = () => {
       </tbody>
     </table>
   );
+  
 
   return (
     <div style={{ padding: "10px 100px 0px 50px" }}>
@@ -549,13 +633,13 @@ const TeacherRoutine = () => {
 
               {/* Display Available Rooms */}
               <h4>Available Rooms</h4>
-              {selectedTime ? (
-                availableRooms.get(Number(selectedTime))?.size > 0 ? (
+              {selectedRescheduleTime ? (
+                availableRooms.get(Number(selectedRescheduleTime))?.size > 0 ? (
                   <select onChange={(e) => setSelectedRoom(e.target.value)}>
                     <option value="" disabled selected>
                       -- Select a room --
                     </option>
-                    {Array.from(availableRooms.get(Number(selectedTime))).map(
+                    {Array.from(availableRooms.get(Number(selectedRescheduleTime))).map(
                       (room) => (
                         <option key={room} value={room}>
                           Room {room}
