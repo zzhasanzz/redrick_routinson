@@ -7,7 +7,8 @@ import {
   getDocs,
   updateDoc,
   deleteDoc,
-  setDoc
+  setDoc,
+  arrayUnion,
 } from "firebase/firestore";
 import TeacherSidebar from "../home/sidebars/TeacherSidebar";
 
@@ -20,7 +21,7 @@ const TeacherRoutine = () => {
   // const [availableRooms, setAvailableRooms] = useState([]);
   const [availableTimeSlot, setAvailableTimeSlot] = useState("");
   const [selectedDay, setSelectedDay] = useState("");
-  const [selectedTime , setSelectedTime] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
   const [selectedRescheduleTime, setSelectedRescheduleTime] = useState("");
   const [semester, setSemester] = useState("");
   const [selectedRoom, setSelectedRoom] = useState("");
@@ -147,9 +148,12 @@ const TeacherRoutine = () => {
           // console.log(`Stat: ${stat}`);
           if (String(stat) === "1") {
             console.log(`Class at index ${index} is cancelled`);
+            if (tempClasses.length > 0) {
+              console.log("There are temporary classes");
+            }
             // console.log(`Stat: ${stat}`);
           } else {
-            // console.log(`Class at index ${index} is not cancelled`);
+            console.log(`Class at index ${index} is not cancelled`);
             // console.log(courseData["assigned_room"][index]); 0
             const totalSlotsPerDay = Object.keys(timeMapping).length;
             const timeSlot = courseData["assigned_time_slots"][index];
@@ -179,9 +183,11 @@ const TeacherRoutine = () => {
               // console.log(courseData["assigned_temp_room"][index]);
               const totalSlotsPerDay = Object.keys(timeMapping).length;
               const timeSlot = tempTimeSlot;
+              console.log(`timeslot: ${timeSlot}`);
               const dayIndex = Math.floor((timeSlot - 1) / totalSlotsPerDay);
               var courseType = "theory";
               const timeIndex = ((timeSlot - 1) % totalSlotsPerDay) + 1;
+              console.log(`timeslot: ${timeIndex}`);
               const startTime = timeMapping[timeIndex].split("-")[0]; // "8:00"
               var endTime = timeMapping[timeIndex].split("-")[1];
               if (courseData["course_type"][index] === "lab") {
@@ -221,7 +227,7 @@ const TeacherRoutine = () => {
     timeSlotsSnapshot.forEach((doc) => {
       const timeSlotData = doc.data();
       const timeSlotID = Number(doc.id);
-    //   console.log(typeof timeSlotData["class_cancelled"]);
+      //   console.log(typeof timeSlotData["class_cancelled"]);
       if (timeSlotData["class_cancelled"] === 1) {
         // console.log(timeSlotID);
         // console.log(timeSlotData["class_cancelled"]);
@@ -303,6 +309,7 @@ const TeacherRoutine = () => {
   // Handle Cancel Class
   const handleCancelClass = async (courseId, day, time) => {
     let selectedCourseType = "";
+    let rooms = [];
     let room = "";
     let timeSlot = 0;
     try {
@@ -322,21 +329,33 @@ const TeacherRoutine = () => {
       console.log(`Course Type: ${selectedCourseType}`);
 
       console.log(`${courseData.id}`);
-      timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
+
       console.log(`Day: ${day}`);
       console.log(`Day: ${revDayMapping[day]}`);
       console.log(`Time: ${time}`);
       console.log(`Time: ${revTimeMapping[time]}`);
+      timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
       console.log(`Time Slot: ${timeSlot}`);
       console.log(`Course Type: ${selectedCourseType}`);
       const classCancelledStatus = courseData["class_cancelled_status"];
       console.log(`${classCancelledStatus[0]}`);
-      room = courseData["assigned_room"].toString();
-      console.log(room);
+      rooms = courseData["assigned_room"];
+      //   const classTimes = courseData["assigned_time_slots"];
+
+      //   classTimes.forEach((tSlot , index) =>{
+
+      //   console.log(`Tslot: ${tSlot}`);
+      //   console.log(`Time slot: ${timeSlot}`);
+      //     if(tSlot=== timeSlot){
+      //         room = rooms[index];
+      //     }
+      //   })
 
       classCancelledStatus.forEach((stat, idx) => {
         if (courseData["assigned_time_slots"][idx] === timeSlot) {
           classCancelledStatus[idx] = 1;
+          room = rooms[idx];
+          console.log(`Room: ${room}`);
           console.log(
             `Cancelled Course Timeslot ${courseData["class_cancelled_status"][idx]}`
           );
@@ -475,7 +494,7 @@ const TeacherRoutine = () => {
   };
 
   // Handle Reschedule Class
-  const handleRescheduleClass = async (course , day , time) => {
+  const handleRescheduleClass = async (course, day, time) => {
     setSelectedCourse(course);
     setSelectedDay(day);
     setSelectedTime(time);
@@ -483,87 +502,123 @@ const TeacherRoutine = () => {
     console.log(`Selected Time: ${selectedTime}`);
     await fetchAvailableTimeSlots();
     setShowRescheduleModal(true);
-    
   };
 
   const confirmReschedule = async () => {
     console.log(`Selected Room: ${selectedRoom}`);
     console.log(`Selected  Reschedule Time: ${selectedRescheduleTime}`);
     console.log(`Selected Course: ${selectedCourse}`);
-    const selectedCourseType = parseInt(selectedCourse.slice(-1)) % 2 === 0 ? "lab" : "theory";
+    const selectedCourseType =
+      parseInt(selectedCourse.slice(-1)) % 2 === 0 ? "lab" : "theory";
     console.log(`Selected Course Type: ${selectedCourseType}`);
     console.log(`Semester: ${semester}`);
     // console.log(`${typeof(semester)}`);
-    if(selectedCourseType ==="lab"){
-        console.log("Lab Rescheduling Unavailable");
-    }
-    else{
+    if (selectedCourseType === "lab") {
+      console.log("Lab Rescheduling Unavailable");
+    } else {
+      handleCancelClass(selectedCourse, selectedDay, selectedTime);
 
-        // handleCancelClass(selectedCourse,selecedDay,selectedTime);
-        
+      const timeSlotDocRef = doc(db, `${semester}/${selectedRescheduleTime}`);
+      const totalSlotsPerDay = Object.keys(timeMapping).length;
+      const dayIndex = Math.floor(
+        (selectedRescheduleTime - 1) / totalSlotsPerDay
+      );
+      const timeIndex = ((selectedRescheduleTime - 1) % totalSlotsPerDay) + 1;
+      const startTime = timeMapping[timeIndex].split("-")[0];
+      var endTime = timeMapping[timeIndex].split("-")[1];
+      var day = dayMapping[dayIndex];
+      const time = `${startTime}-${endTime}`;
+      console.log(`Day: ${day}`);
+      console.log(`Time: ${time}`);
 
-        const timeSlotDocRef = doc(db , `${semester}/${selectedRescheduleTime}`);
-        const totalSlotsPerDay = Object.keys(timeMapping).length;
-        const dayIndex = Math.floor((selectedRescheduleTime - 1) / totalSlotsPerDay);
-        const timeIndex = ((selectedRescheduleTime - 1) % totalSlotsPerDay) + 1;
-        const startTime = timeMapping[timeIndex].split("-")[0]; 
-        var endTime = timeMapping[timeIndex].split("-")[1];
-        var day = dayMapping[dayIndex];
-        const time = `${startTime}-${endTime}`;
-        console.log(`Day: ${day}`);
-        console.log(`Time: ${time}`);
-        
-
-
-        try {
-            const docSnap = await getDoc(timeSlotDocRef);
-            if (docSnap.exists()) {
-                // If the document exists, update it
-                await updateDoc(timeSlotDocRef, {
-                    temp_course_code: selectedCourse,
-                    temp_course_type: selectedCourseType,
-                    temp_room: selectedRoom,
-                    temp_teacher_1: teacherName,
-                    temp_day: day,
-                    temp_time_1: time
-                });
-                console.log("Update successful in Semester");
-            } else {
-                // If the document does not exist, create it
-                await setDoc(timeSlotDocRef, {
-                    
-                    class_cancelled: 1,
-                    temp_course_code: selectedCourse,
-                    temp_course_type: selectedCourseType,
-                    temp_room: selectedRoom,
-                    temp_teacher_1: teacherName,
-                    temp_day: day,
-                    temp_time_1: time
-                });
-                console.log("Document created in Semester");
-            }
-        } catch (error) {
-            console.error("Error updating/creating semester doc:", error);
+      try {
+        const docSnap = await getDoc(timeSlotDocRef);
+        if (docSnap.exists()) {
+          // If the document exists, update it
+          await updateDoc(timeSlotDocRef, {
+            class_cancelled: 1,
+            temp_course_code: selectedCourse,
+            temp_course_type: selectedCourseType,
+            temp_room: selectedRoom,
+            temp_teacher_1: teacherName,
+            temp_day: day,
+            temp_time_1: time,
+          });
+          console.log("Update successful in Semester");
+        } else {
+          // If the document does not exist, create it
+          await setDoc(timeSlotDocRef, {
+            class_cancelled: 1,
+            temp_course_code: selectedCourse,
+            temp_course_type: selectedCourseType,
+            temp_room: selectedRoom,
+            temp_teacher_1: teacherName,
+            temp_day: day,
+            temp_time_1: time,
+          });
+          console.log("Document created in Semester");
         }
-        
-        
+      } catch (error) {
+        console.error("Error updating/creating semester doc:", error);
+      }
+      try {
+        const courseRef = doc(
+          db,
+          `teachers/${teacherName}/courses`,
+          selectedCourse.toString()
+        );
+        // const courseRef = doc(db, "teachers", teacherName, "courses", courseId.toString());
+        console.log(`Course Ref ${courseRef}`);
+        const courseSnapshot = await getDoc(courseRef);
+        const courseData = courseSnapshot.data();
+        if (courseSnapshot.exists()) {
+          const permanentTimeSlots = courseData.assigned_time_slots || [];
+          let classCancelledStatus = courseData.class_cancelled_status || [];
+          console.log(permanentTimeSlots);
 
+          permanentTimeSlots.forEach((timeSlot, index) => {
+            console.log(`time: ${timeSlot}`);
+            console.log(`time type: ${typeof timeSlot}`);
+            console.log(`selected time: ${selectedTime}`);
+            console.log(`selected time type: ${typeof selectedTime}`);
+            console.log(classCancelledStatus);
+
+            const totalSlotsPerDay = Object.keys(timeMapping).length;
+
+            const timeIndex = ((timeSlot - 1) % totalSlotsPerDay) + 1;
+            const time = timeMapping[timeIndex];
+
+            if (time === selectedTime) {
+              console.log(`Class at index ${index} and ${time} is cancelled`);
+
+              //   Ensure classCancelledStatus has the same length
+              //   if (classCancelledStatus.length <= index) {
+              //     classCancelledStatus = [
+              //       ...classCancelledStatus,
+              //       ...new Array(index - classCancelledStatus.length + 1).fill(0),
+              //     ];
+              //   }
+
+              // Mark the class as cancelled
+              classCancelledStatus[index] = 1;
+              console.log(classCancelledStatus);
+            }
+          });
+
+          // const assignedRooms = courseData["assigned_room"];
+
+          // If the document exists, update it
+          await updateDoc(courseRef, {
+            class_cancelled_status: classCancelledStatus,
+            assigned_temp_time_slots: arrayUnion(selectedRescheduleTime),
+            assigned_temp_room: arrayUnion(selectedRoom),
+          });
+          console.log("Update successful in teacher courses");
+        }
+      } catch (error) {
+        console.error("Error updating/creating teacher doc:", error);
+      }
     }
-
-
-   
-    
-   
-    
-    
-    
-
-
-    
-
-
-
-
   };
 
   const renderTable = () => (
@@ -606,7 +661,6 @@ const TeacherRoutine = () => {
       </tbody>
     </table>
   );
-  
 
   return (
     <div style={{ padding: "10px 100px 0px 50px" }}>
@@ -641,13 +695,13 @@ const TeacherRoutine = () => {
                     <option value="" disabled selected>
                       -- Select a room --
                     </option>
-                    {Array.from(availableRooms.get(Number(selectedRescheduleTime))).map(
-                      (room) => (
-                        <option key={room} value={room}>
-                          Room {room}
-                        </option>
-                      )
-                    )}
+                    {Array.from(
+                      availableRooms.get(Number(selectedRescheduleTime))
+                    ).map((room) => (
+                      <option key={room} value={room}>
+                        Room {room}
+                      </option>
+                    ))}
                   </select>
                 ) : (
                   <p>No rooms available for the selected time slot.</p>
