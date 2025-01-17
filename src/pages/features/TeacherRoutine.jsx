@@ -482,7 +482,7 @@ const TeacherRoutine = () => {
     console.log(`Selected Day: ${selectedDay}`);
     console.log(`Selected Time: ${selectedTime}`);
     await fetchAvailableTimeSlots();
-    
+    setShowRescheduleModal(true);
     
   };
 
@@ -500,7 +500,7 @@ const TeacherRoutine = () => {
     else{
 
         // handleCancelClass(selectedCourse,selecedDay,selectedTime);
-        setShowRescheduleModal(true);
+        
 
         const timeSlotDocRef = doc(db , `${semester}/${selectedRescheduleTime}`);
         const totalSlotsPerDay = Object.keys(timeMapping).length;
@@ -531,6 +531,8 @@ const TeacherRoutine = () => {
             } else {
                 // If the document does not exist, create it
                 await setDoc(timeSlotDocRef, {
+                    
+                    class_cancelled: 1,
                     temp_course_code: selectedCourse,
                     temp_course_type: selectedCourseType,
                     temp_room: selectedRoom,
