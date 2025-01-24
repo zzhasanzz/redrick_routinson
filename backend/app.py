@@ -3,8 +3,22 @@ import subprocess
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
+
+import json
+import csv
+import random
+import firebase_admin
+from firebase_admin import credentials, firestore
+
+
+
 app = Flask(__name__)
 CORS(app)
+
+# Firebase Initialization
+cred = credentials.Certificate("./ServiceAccountKey.json")  # Update with your Firebase credentials JSON file
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 # Endpoint to save course data
 @app.route('/api/save', methods=['POST'])
@@ -232,6 +246,143 @@ def update_course():
 
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
+
+
+
+
+
+def generate_seat_plan(target_departments, semester):
+    """
+    Fetches all documents where semester = X and filters them into given department lists.
+    
+    :param target_departments: List of target department names (e.g., ["CSE", "EEE", "MPE"])
+    :param semester: Semester number to filter by (e.g., 1)
+    :return: JSON response with sorted seat plans for selected departments
+    """
+    try:
+        seat_plan_collection = db.collection("seat_plan_USERS")
+
+        # Query Firestore for matching documents
+        query = seat_plan_collection.where("semester", "==", semester).where("dept", "in", target_departments)
+        results = query.stream()
+
+        # Initialize department lists dynamically based on input
+        seat_plan_data = {dept: [] for dept in target_departments}
+
+        # Group documents by department
+        for doc in results:
+            doc_data = doc.to_dict()
+            dept = doc_data.get("dept", "")
+
+            if dept in seat_plan_data:
+                seat_plan_data[dept].append(doc_data)
+
+        # Sort each department list by "id"
+        for dept in seat_plan_data:
+            seat_plan_data[dept] = sorted(seat_plan_data[dept], key=lambda x: x.get("id", float('inf')))
+
+
+        print(f"✅ Successfully retrieved and sorted seat plans for Semester {semester}: {target_departments}")
+
+        return {"status": "success", "seat_plan": seat_plan_data}
+
+    except Exception as e:
+        print(f"❌ Error retrieving seat plan: {str(e)}")
+        return {"status": "error", "message": str(e)}
+
+def generate_seating_arrangement(
+    result_sem_1_container_1, result_sem_1_container_2,
+    result_sem_2_container_1, result_sem_2_container_2
+):
+    """
+    Generates seating arrangements where:
+    - First two seats: result_sem_1_container_1, result_sem_1_container_2
+    - Next two seats: result_sem_2_container_2, result_sem_2_container_1
+    - This pattern continues until no data is left.
+
+    If a container runs out of data, skip that seat and maintain order.
+    Each room has 60 seats.
+    """
+
+    try:
+        # List of all rooms (assuming 30 rooms)
+        ROOMS = list(range(1, 31))  # Rooms are numbered 1-30
+        SEATS_PER_ROOM = 60  # 60 seats per room
+
+        # Extract student lists from JSON response
+        queue_1 = sum([result_sem_1_container_1["seat_plan"].get(dept, []) for dept in ["CSE", "MPE", "CEE"]], [])
+        queue_2 = sum([result_sem_1_container_2["seat_plan"].get(dept, []) for dept in ["EEE","SWE", "IPE", "TVE"]], [])
+        queue_3 = sum([result_sem_2_container_2["seat_plan"].get(dept, []) for dept in ["EEE","SWE", "IPE", "TVE"]], [])
+        queue_4 = sum([result_sem_2_container_1["seat_plan"].get(dept, []) for dept in ["CSE", "MPE", "CEE"]], [])
+
+        seating_plan = {}  # Dictionary to store seating arrangements per room
+
+        # Initialize room structure
+        for room in ROOMS:
+            seating_plan[room] = []
+
+        room_index = 0  # Track current room
+        seat_no = 1  # Track seat number in each room
+
+        # Define the order of seating
+        seat_order = [queue_1, queue_2, queue_3, queue_4]  # Rotate in this order
+
+        # Loop until all queues are exhausted
+        while any(len(queue) > 0 for queue in seat_order):  # Stop when all lists are empty
+            for queue in seat_order:
+                if queue:  # If queue is not empty
+                    student = queue.pop(0)  # Take first student
+                    seating_plan[ROOMS[room_index]].append({
+                        "room": ROOMS[room_index],
+                        "seat_no": seat_no,
+                        "id": student["id"],
+                        "dept": student["dept"],
+                        "semester": student["semester"],
+                        "role": student.get("role", "student"),
+                        "displayName": student.get("displayName", "")
+                    })
+                    
+                    # Move to next seat
+                    seat_no += 1
+
+                    # If room is full, go to next room
+                    if seat_no > SEATS_PER_ROOM:
+                        seat_no = 1  # Reset seat number
+                        room_index += 1  # Move to next room
+                        if room_index >= len(ROOMS):  # If no more rooms left, stop
+                            break  # Exit the loop
+
+        print("✅ Seating arrangement generated successfully.")
+        return {"status": "success", "seating_plan": seating_plan}
+
+    except Exception as e:
+        print(f"❌ Error generating seating arrangement: {str(e)}")
+        return {"status": "error", "message": str(e)}
+
+
+
+@app.route('/api/seat-plan', methods=['POST'])
+def generate_seat_plan_api():
+    """
+    Flask API route to generate the seat plan based on four data containers.
+    """
+    try:
+        # Hardcoded example (Replace with actual calls to Firestore)
+        result_sem_1_container_1 = generate_seat_plan(["CSE", "MPE", "CEE"], 1)
+        result_sem_1_container_2 = generate_seat_plan(["EEE","SWE", "IPE", "TVE"], 1)
+        result_sem_2_container_1 = generate_seat_plan(["CSE", "MPE", "CEE"], 3)
+        result_sem_2_container_2 = generate_seat_plan(["EEE","SWE", "IPE", "TVE"], 3)
+
+        # Call the seating function with the retrieved data
+        seating_plan = generate_seating_arrangement(
+            result_sem_1_container_1, result_sem_1_container_2,
+            result_sem_2_container_1, result_sem_2_container_2
+        )
+
+        return jsonify(seating_plan)
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
 
 
 # Endpoint to generate routine
