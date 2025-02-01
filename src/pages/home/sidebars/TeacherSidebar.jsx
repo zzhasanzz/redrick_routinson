@@ -31,7 +31,7 @@ const sidebarNavItems = [
     {
         display: 'Logout',
         icon: <i className='bx bx-receipt'></i>,
-        to: '/teacher-home/logout', // Add full path
+        to: '/login', // Add full path
         section: 'logout'
     },
 ];
