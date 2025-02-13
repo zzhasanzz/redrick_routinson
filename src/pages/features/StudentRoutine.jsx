@@ -91,8 +91,11 @@ const StudentRoutine = () => {
                 course_code = temp_course_code;
                 teacher_1 = temp_teacher_1;
                 room = temp_room;
+
                 dayIndex = daysOfWeek.indexOf(temp_day);
+                console.log(`dayIndex: ${dayIndex}`);
                 slotIndex = Slots.indexOf(timeSlotData.temp_time_1); // Assuming perm_time_1 corresponds to the slot time
+                console.log(`slot Index: ${slotIndex}`);
                 slotIndex2 = Slots.indexOf(timeSlotData.temp_time_1);
 
                 console.log("Cancelled Class Found");
