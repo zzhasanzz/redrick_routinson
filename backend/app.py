@@ -358,14 +358,37 @@ def generate_seating_arrangement(
         print(f"❌ Error generating seating arrangement: {str(e)}")
         return {"status": "error", "message": str(e)}
 
+# def store_seating_plan_in_firebase(seating_plan):
+#     """
+#     Stores the generated seating arrangement in Firebase Firestore.
+
+#     :param seating_plan: Dictionary containing the seating arrangement per room.
+#     """
+#     try:
+#         seat_plan_ref = db.collection("seat_plan")  # Firestore Collection
+
+#         for room, seats in seating_plan.items():
+#             room_ref = seat_plan_ref.document(str(room))  # Room document
+
+#             for seat in seats:
+#                 seat_ref = room_ref.collection("seats").document(str(seat["seat_no"]))  # Seat document
+#                 seat_ref.set(seat)  # Write seat data
+
+#         print("✅ Seating Plan successfully stored in Firebase Firestore!")
+#         return {"status": "success", "message": "Seating plan stored in Firebase"}
+
+#     except Exception as e:
+#         print(f"❌ Error storing seating plan in Firebase: {str(e)}")
+#         return {"status": "error", "message": str(e)}
 def store_seating_plan_in_firebase(seating_plan):
     """
-    Stores the generated seating arrangement in Firebase Firestore.
+    Stores the generated seating arrangement in Firebase Firestore and updates student records with their room.
 
     :param seating_plan: Dictionary containing the seating arrangement per room.
     """
     try:
         seat_plan_ref = db.collection("seat_plan")  # Firestore Collection
+        users_ref = db.collection("seat_plan_USERS")  # Firestore Collection for users
 
         for room, seats in seating_plan.items():
             room_ref = seat_plan_ref.document(str(room))  # Room document
@@ -374,12 +397,22 @@ def store_seating_plan_in_firebase(seating_plan):
                 seat_ref = room_ref.collection("seats").document(str(seat["seat_no"]))  # Seat document
                 seat_ref.set(seat)  # Write seat data
 
+                # Update student's document in seat_plan_USERS collection
+                student_id = seat["id"]
+                student_query = users_ref.where("id", "==", student_id).limit(1).stream()
+
+                for doc in student_query:
+                    doc_ref = users_ref.document(doc.id)
+                    doc_ref.update({"room": room})
+                    print(f"✅ Updated student {student_id} with room {room} in seat_plan_USERS.")
+
         print("✅ Seating Plan successfully stored in Firebase Firestore!")
-        return {"status": "success", "message": "Seating plan stored in Firebase"}
+        return {"status": "success", "message": "Seating plan stored in Firebase and student records updated"}
 
     except Exception as e:
         print(f"❌ Error storing seating plan in Firebase: {str(e)}")
         return {"status": "error", "message": str(e)}
+
 
 
 
