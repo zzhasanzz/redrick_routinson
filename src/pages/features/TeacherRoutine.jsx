@@ -614,10 +614,79 @@ const TeacherRoutine = () => {
             assigned_temp_time_slots: arrayUnion(selectedRescheduleTime),
             assigned_temp_room: arrayUnion(selectedRoom),
           });
+          semester;
           console.log("Update successful in teacher courses");
         }
       } catch (error) {
         console.error("Error updating/creating teacher doc:", error);
+      }
+      try {
+        const roomsRef = collection(
+          db,
+          `time_slots/${selectedRescheduleTime}/rooms`
+        );
+        const roomsSnapshot = await getDocs(roomsRef);
+        if (roomsSnapshot.empty) {
+          console.log(`Timeslot ${selectedRescheduleTime} does not exist `);
+          const roomRef = doc(
+            db,
+            `time_slots/${selectedRescheduleTime}/rooms/${selectedRoom}`
+          );
+          await setDoc(roomRef, {
+            class_cancelled: 1,
+            course_type: "theory",
+            perm_course_code: "",
+            perm_course_title: "",
+            perm_teacher_1: "",
+            perm_teacher_2: "",
+            temp_course_code: selectedCourse,
+            temp_course_type: selectedCourseType,
+            temp_room: selectedRoom,
+            temp_teacher_1: teacherName,
+          });
+          console.log(
+            `Timeslot ${selectedRescheduleTime} and room ${selectedRoom} created successfully.`
+          );
+        } else {
+          const roomRef = doc(
+            db,
+            `time_slots/${selectedRescheduleTime}/rooms/${selectedRoom}`
+          );
+          const roomDoc = await getDoc(roomRef);
+          if (roomDoc.exists()) {
+            console.log(
+              `Timeslot ${selectedRescheduleTime} has room no ${selectedRoom} .`
+            );
+
+            const roomData = roomDoc.data();
+
+            await updateDoc(roomRef, {
+              temp_course_code: selectedCourse,
+              temp_course_type: selectedCourseType,
+              temp_room: selectedRoom,
+              temp_teacher_1: teacherName,
+            });
+          } else {
+            console.log(
+              `Timeslot ${selectedRescheduleTime} has rooms but not the selected one.`
+            );
+            await setDoc(roomRef, {
+              class_cancelled: 1,
+              course_type: "theory",
+              perm_course_code: "",
+              perm_course_title: "",
+              perm_teacher_1: "",
+              perm_teacher_2: "",
+              temp_course_code: selectedCourse,
+              temp_course_type: selectedCourseType,
+              temp_room: selectedRoom,
+              temp_teacher_1: teacherName,
+            });
+            console.log(`Room ${selectedRoom} created successfully.`);
+          }
+        }
+      } catch (error) {
+        console.error("Error finding timeslot :", error);
       }
     }
   };

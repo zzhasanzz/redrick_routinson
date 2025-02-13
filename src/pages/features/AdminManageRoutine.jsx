@@ -106,11 +106,15 @@ const AdminManageRoutine = () => {
 
   const updateTeacher = async (updatedData, clearForm) => {
     try {
-      const response = await axios.put("http://localhost:5000/api/update", updatedData);
+      const response = await axios.put(
+        "http://localhost:5000/api/update",
+        updatedData
+      );
       setSuccessMessage(response.data.message);
 
       const updatedCourses = courses.map((course) =>
-        course.semester === updatedData.semester && course.name === updatedData.name
+        course.semester === updatedData.semester &&
+        course.name === updatedData.name
           ? { ...course, teacher: updatedData.teacher }
           : course
       );
@@ -135,7 +139,7 @@ const AdminManageRoutine = () => {
   const filterUniqueCourses = (courses) => {
     const uniqueCourses = [];
     const courseKeys = new Set();
-  
+
     courses.forEach((course) => {
       const uniqueKey = `${course.name}-${course.semester}-${course.teacher}`;
       if (!courseKeys.has(uniqueKey)) {
@@ -143,10 +147,10 @@ const AdminManageRoutine = () => {
         uniqueCourses.push(course);
       }
     });
-  
+
     return uniqueCourses;
   };
-  
+
   const renderSemesterTable = (semester) => {
     // Filter unique courses
     const filteredCourses = filterUniqueCourses(
@@ -154,11 +158,11 @@ const AdminManageRoutine = () => {
         course.name.toLowerCase().includes(searchTerm.toLowerCase())
       ) || []
     );
-  
+
     if (filteredCourses.length === 0) {
       return <p>No courses found for this semester.</p>;
     }
-  
+
     return (
       <table border="1" style={{ borderCollapse: "collapse", width: "100%" }}>
         <thead>
@@ -197,7 +201,6 @@ const AdminManageRoutine = () => {
       </table>
     );
   };
-  
 
   return (
     <div className="admin-routine">
@@ -243,8 +246,6 @@ const AdminManageRoutine = () => {
     </div>
   );
 };
-
-
 
 const AddCourseForm = ({ addCourse }) => {
   const [semester, setSemester] = useState("");
