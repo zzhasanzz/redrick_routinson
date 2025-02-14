@@ -15,6 +15,7 @@ import StudentHome from "./pages/home/StudentHome";
 import TeacherHome from "./pages/home/TeacherHome";
 import TeacherDashboard from "./pages/home/dashboards/TeacherDashboard.jsx";
 import TeacherRoutine from "./pages/features/TeacherRoutine.jsx";
+import TeacherPreference from "./pages/features/TeacherPreference.jsx";
 
 
 import AdminHome from './pages/home/AdminHome.jsx';
@@ -23,7 +24,10 @@ import AdminManageRoutine from './pages/features/AdminManageRoutine.jsx';
 import AdminGenerateRoutine from './pages/features/AdminGenerateRoutine.jsx';
 import AdminManageUsers from './pages/features/AdminManageUsers.jsx';
 import AdminGenerateSeatPlan from './pages/features/AdminManageSeatPlan.jsx';
+import LostAndFound from './pages/features/LostandFound.jsx';
+
 import Event from "./pages/event/Event.jsx";
+
 
 
 
@@ -137,6 +141,13 @@ function App() {
 
             }/>
 
+            <Route path="/student-home/lost-and-found" element={
+                <RequireAuth allowedRoles={["student"]}>
+                   <LostAndFound/>
+                </RequireAuth>
+
+            }/>
+
             <Route path="/student-home/calendar" element={
                 <RequireAuth allowedRoles={["student"]}>
                     <Blank/>
@@ -186,7 +197,18 @@ function App() {
                   </RequireAuth>
               }/>
 
-             
+             <Route path="/teacher-home/teacher-routine" element={
+                  <RequireAuth allowedRoles={["teacher"]}>
+                    <TeacherRoutine/>
+                  </RequireAuth>
+
+              }/>
+
+            <Route path="/teacher-home/teacher-preference" element={
+                  <RequireAuth allowedRoles={["teacher"]}>
+                    <TeacherPreference/>
+                  </RequireAuth>
+              }/>
               
               <Route path="/teacher-home/myevents" element={
                   <RequireAuth allowedRoles={["teacher"]}>
