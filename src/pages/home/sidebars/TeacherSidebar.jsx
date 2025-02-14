@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { AuthContext } from "../../../context/AuthContext"; // Import the AuthContext
 import './teacherSidebar.scss';
 
 const sidebarNavItems = [
@@ -24,18 +25,19 @@ const sidebarNavItems = [
     {
         display: 'User',
         icon: <i className='bx bx-user'></i>,
-        to: '/login', // Add full path
+        to: '/teacher-home/user', // Add full path
         section: 'user'
     },
     {
         display: 'Logout',
         icon: <i className='bx bx-receipt'></i>,
-        to: '/teacher-home/logout', // Add full path
+        to: '/login', // Add full path
         section: 'logout'
     },
 ];
 
 const TeacherSidebar = () => {
+    const { currentUser } = useContext(AuthContext); // Access current user from context
     const [activeIndex, setActiveIndex] = useState(0);
     const [stepHeight, setStepHeight] = useState(0);
     const sidebarRef = useRef();
@@ -63,13 +65,30 @@ const TeacherSidebar = () => {
             <div className="sidebar__logo">
                 RoutineSon
             </div>
+
+            {/* Display User Info (username, email, profile picture) */}
+            {currentUser && (
+                <div className="sidebar__user-info">
+                    <img 
+                        src={currentUser.photoURL} 
+                        alt="Profile"
+                        className="sidebar__user-info__image"
+                    />
+                    <div className="sidebar__user-info__details">
+                        <p className="sidebar__user-info__name">{currentUser.displayName}</p>
+                        <p className="sidebar__user-info__email">{currentUser.email}</p>
+                    </div>
+                </div>
+            )}
+
             <div ref={sidebarRef} className="sidebar__menu">
                 {/* Indicator bar */}
                 <div
                     ref={indicatorRef}
                     className="sidebar__menu__indicator"
                     style={{
-                        transform: `translateX(-50%) translateY(${activeIndex * stepHeight}px)`
+                        transform: `translateX(-50%) translateY(${activeIndex * stepHeight}px)`,
+                        backgroundColor: '#d9f3fc'
                     }}
                 ></div>
 

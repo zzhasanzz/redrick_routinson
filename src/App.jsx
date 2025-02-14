@@ -24,7 +24,10 @@ import AdminManageRoutine from './pages/features/AdminManageRoutine.jsx';
 import AdminGenerateRoutine from './pages/features/AdminGenerateRoutine.jsx';
 import AdminManageUsers from './pages/features/AdminManageUsers.jsx';
 import AdminGenerateSeatPlan from './pages/features/AdminManageSeatPlan.jsx';
+import LostAndFound from './pages/features/LostandFound.jsx';
+
 import Event from "./pages/event/Event.jsx";
+
 
 
 
@@ -134,6 +137,13 @@ function App() {
             <Route path="/student-home/myevents" element={
                 <RequireAuth allowedRoles={["student"]}>
                     <Blank/>
+                </RequireAuth>
+
+            }/>
+
+            <Route path="/student-home/lost-and-found" element={
+                <RequireAuth allowedRoles={["student"]}>
+                   <LostAndFound/>
                 </RequireAuth>
 
             }/>

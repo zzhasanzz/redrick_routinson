@@ -5,7 +5,14 @@ import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { AuthContext } from "../../context/AuthContext";
 
 const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-const Slots = ["8:00-9:15", "9:15-10:30", "10:30-11:45", "11:45-1:00", "2:30-3:45", "3:45-5:00"];
+const Slots = [
+  "8:00-9:15",
+  "9:15-10:30",
+  "10:30-11:45",
+  "11:45-1:00",
+  "2:30-3:45",
+  "3:45-5:00",
+];
 
 const StudentRoutine = () => {
   const [routine, setRoutine] = useState([]);
@@ -17,9 +24,9 @@ const StudentRoutine = () => {
   let teacher_1 = "";
   let teacher_2 = "";
   let room = "";
-  let day="";
-  let time="";
-  let course_type="";
+  let day = "";
+  let time = "";
+  let course_type = "";
 
   useEffect(() => {
     const fetchRoutine = async () => {
@@ -57,8 +64,10 @@ const StudentRoutine = () => {
                 temp_teacher_1,
                 temp_teacher_2,
                 temp_time_1,
-                temp_time_2
+                temp_time_2,
               } = timeSlotData;
+              var slotIndex = -1;
+              var slotIndex2 = -1;
 
               course_code = perm_course_code;
               course_title = perm_course_code;
@@ -67,23 +76,37 @@ const StudentRoutine = () => {
               course_type = perm_course_type;
               room = perm_room;
 
-              if (class_cancelled == 1 && temp_course_code !== "") {
-                course_code = temp_course_code;
-                course_title = temp_course_title;
-                teacher_1 = temp_teacher_1;
-                teacher_2 = temp_teacher_2;
-                room = temp_room;
-                
-              }
-              let slotIndex = -1;
-              let slotIndex2 = -1;
-
-              // Find the index for the day and slot
-              const dayIndex = daysOfWeek.indexOf(perm_day);
+              var dayIndex = daysOfWeek.indexOf(perm_day);
               slotIndex = Slots.indexOf(timeSlotData.perm_time_1); // Assuming perm_time_1 corresponds to the slot time
               slotIndex2 = Slots.indexOf(timeSlotData.perm_time_1);
-              if(course_type==="lab"){
-                slotIndex2 = Slots.indexOf(timeSlotData.perm_time_2); 
+
+              if (class_cancelled === 1) {
+                course_code = "Cancelled";
+                course_title = "";
+                teacher_1 = "";
+                teacher_2 = "";
+                room = "";
+              }
+              if (class_cancelled === 1 && temp_course_code !== "") {
+                course_code = temp_course_code;
+                teacher_1 = temp_teacher_1;
+                room = temp_room;
+
+                dayIndex = daysOfWeek.indexOf(temp_day);
+                console.log(`dayIndex: ${dayIndex}`);
+                slotIndex = Slots.indexOf(timeSlotData.temp_time_1); // Assuming perm_time_1 corresponds to the slot time
+                console.log(`slot Index: ${slotIndex}`);
+                slotIndex2 = Slots.indexOf(timeSlotData.temp_time_1);
+
+                console.log("Cancelled Class Found");
+                console.log(`Course : ${course_code}`);
+                console.log(`teacher : ${teacher_1}`);
+              }
+
+              // Find the index for the day and slot
+
+              if (course_type === "lab") {
+                slotIndex2 = Slots.indexOf(timeSlotData.perm_time_2);
               }
 
               // Update the 2D routine array with course details
@@ -95,7 +118,7 @@ const StudentRoutine = () => {
                   teacher_2,
                   room,
                 };
-                if(slotIndex2!==-1){
+                if (slotIndex2 !== -1) {
                   newRoutine[dayIndex][slotIndex2] = {
                     course_code,
                     course_title,
@@ -151,8 +174,10 @@ const StudentRoutine = () => {
                   {slot ? (
                     <div>
                       <p>{slot.course_code}</p>
-                      
-                      <p>{slot.teacher_1} --- {slot.teacher_2}</p>
+
+                      <p>
+                        {slot.teacher_1} --- {slot.teacher_2}
+                      </p>
                       <p>{slot.room}</p>
                     </div>
                   ) : (
