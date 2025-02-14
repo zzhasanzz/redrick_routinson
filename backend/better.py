@@ -65,6 +65,7 @@ def write_routine_to_firestore(scheduled_classes):
             'perm_time_1': time_1,
             'perm_time_2': time_2,
             'class_cancelled': 0,
+            'rescheduled': 0,
             'temp_course_code': '',
             'temp_course_title': '',
             'temp_course_type': '',
@@ -93,6 +94,7 @@ def write_routine_to_firestore(scheduled_classes):
             'perm_teacher_1': teacher_1,
             'perm_teacher_2': teacher_2,
             'class_cancelled': 0,
+            'rescheduled': 0,
             'temp_course_code': '',
             'temp_course_title': '',
             'temp_teacher_1': '',
@@ -120,6 +122,7 @@ def write_routine_to_firestore(scheduled_classes):
                         'assigned_room': [],
                         'course_type': course_type,
                         'class_cancelled_status': [],
+                        'rescheduled_status': [],
                         'assigned_temp_time_slots': [],
                         'assigned_temp_room': []
                     }
@@ -128,6 +131,7 @@ def write_routine_to_firestore(scheduled_classes):
                 teacher_data_cache[teacher][cls.code]['assigned_time_slots'].append(time_slot_1)
                 teacher_data_cache[teacher][cls.code]['assigned_room'].append(cls.room)
                 teacher_data_cache[teacher][cls.code]['class_cancelled_status'].append(0)
+                teacher_data_cache[teacher][cls.code]['rescheduled_status'].append(0)
 
         # Write to Firestore
         for teacher, courses in teacher_data_cache.items():
