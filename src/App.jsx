@@ -162,6 +162,12 @@ function App() {
                 </RequireAuth>
 
             }/>
+            <Route path="/student-home/forum" element={
+                <RequireAuth allowedRoles={["student"]}>
+                    <div> hola este es un forum </div>
+                </RequireAuth>
+
+            }/>
 
         </Route>
 
