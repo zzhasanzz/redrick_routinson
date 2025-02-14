@@ -1,0 +1,144 @@
+{
+  "semesters": [
+    {
+      "semester": 1,
+      "courses": [
+        {
+          "course": "CSE4107",
+          "credit": 3,
+          "teacher": "MM"
+        },
+        {
+          "course": "Hum4147",
+          "credit": 3,
+          "teacher": "MMH"
+        },
+        {
+          "course": "HUM4142",
+          "credit": 1,
+          "teacher": "AH"
+        },
+        {
+          "course": "Phy4141",
+          "credit": 3,
+          "teacher": "FAK"
+        },
+        {
+          "course": "Math4141",
+          "credit": 4,
+          "teacher": "MUA"
+        },
+        {
+          "course": "CSE4105",
+          "credit": 3,
+          "teacher": "KH"
+        },
+        {
+          "course": "HUM4145",
+          "credit": 3,
+          "teacher": "BS"
+        }
+      ]
+    },
+    {
+      "semester": 3,
+      "courses": [
+        {
+          "course": "Math4341",
+          "credit": 3,
+          "teacher": "MKS"
+        },
+        {
+          "course": "EEE4383",
+          "credit": 3,
+          "teacher": "SHR"
+        },
+        {
+          "course": "CSE4303",
+          "credit": 3,
+          "teacher": "SA"
+        },
+        {
+          "course": "CSE4305",
+          "credit": 3,
+          "teacher": "MHA"
+        },
+        {
+          "course": "CSE4307",
+          "credit": 3,
+          "teacher": "ARMK"
+        },
+        {
+          "course": "CSE4301",
+          "credit": 3,
+          "teacher": "FH"
+        }
+      ]
+    },
+    {
+      "semester": 5,
+      "courses": [
+        {
+          "course": "CSE4501",
+          "credit": 3,
+          "teacher": "MRK"
+        },
+        {
+          "course": "CSE4511",
+          "credit": 3,
+          "teacher": "SH"
+        },
+        {
+          "course": "CSE4513",
+          "credit": 3,
+          "teacher": "SAH"
+        },
+        {
+          "course": "Math4541",
+          "credit": 3,
+          "teacher": "AKA"
+        },
+        {
+          "course": "CSE4539",
+          "credit": 3,
+          "teacher": "MIA"
+        }
+      ]
+    },
+    {
+      "semester": 7,
+      "courses": [
+        {
+          "course": "Hum4743",
+          "credit": 2,
+          "teacher": "ZR"
+        },
+        {
+          "course": "Math4741",
+          "credit": 3,
+          "teacher": "MMA"
+        },
+        {
+          "course": "CSE4703",
+          "credit": 3,
+          "teacher": "AZM"
+        },
+        {
+          "course": "CSE4709",
+          "credit": 3,
+          "teacher": "MAMR"
+        },
+        {
+          "course": "CSE4739",
+          "credit": 3,
+          "teacher": "NY"
+        },
+        {
+          "course": "CSE4733",
+          "credit": 3,
+          "teacher": "MBH"
+        }
+      ]
+    }
+  ]
+}

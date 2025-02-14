@@ -15,6 +15,7 @@ import StudentHome from "./pages/home/StudentHome";
 import TeacherHome from "./pages/home/TeacherHome";
 import TeacherDashboard from "./pages/home/dashboards/TeacherDashboard.jsx";
 import TeacherRoutine from "./pages/features/TeacherRoutine.jsx";
+import TeacherPreference from "./pages/features/TeacherPreference.jsx";
 
 
 import AdminHome from './pages/home/AdminHome.jsx';
@@ -180,7 +181,18 @@ function App() {
                   </RequireAuth>
               }/>
 
-             
+             <Route path="/teacher-home/teacher-routine" element={
+                  <RequireAuth allowedRoles={["teacher"]}>
+                    <TeacherRoutine/>
+                  </RequireAuth>
+
+              }/>
+
+            <Route path="/teacher-home/teacher-preference" element={
+                  <RequireAuth allowedRoles={["teacher"]}>
+                    <TeacherPreference/>
+                  </RequireAuth>
+              }/>
               
               <Route path="/teacher-home/myevents" element={
                   <RequireAuth allowedRoles={["teacher"]}>

@@ -10,10 +10,10 @@ const TeacherDashboard = () => {
         <Box p={8}>
             <Text fontSize="4xl" mb={10}>Teacher</Text>
             <SimpleGrid columns={[2, null, 3]} spacing={8}>
-                <Link to="/class-routine">
+                <Link to="/teacher-home/teacher-preference">
                     <Button height="250px" width="450px" flexDirection="column" justifyContent="center" borderRadius="30px ">
                         <Icon as={FaCalendarAlt} boxSize={20} />
-                        <Text fontSize="2xl">Class Routine</Text>
+                        <Text fontSize="2xl">Preferences</Text>
                     </Button>
                 </Link>
 
