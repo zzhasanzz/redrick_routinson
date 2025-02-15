@@ -4,11 +4,11 @@
       "semester": 1,
       "courses": [
         {
-          "course": "Hum4145/Hum4144",
-          "course_name": "Islamiat/English",
+          "course": "Hum4144",
+          "course_name": "Islamiat",
           "course_type": "theory",
           "credit": 2.0,
-          "teacher": "BS",
+          "teacher": "MMH",
           "assigned": true
         },
         {
@@ -16,7 +16,7 @@
           "course_name": "Technology, Environment and Society",
           "course_type": "theory",
           "credit": 3.0,
-          "teacher": "MMH",
+          "teacher": "BS",
           "assigned": true
         },
         {
@@ -64,30 +64,6 @@
           "course_name": "English I",
           "course_type": "theory",
           "credit": 1.0,
-          "teacher": "",
-          "assigned": false
-        },
-        {
-          "course": "Phy4142",
-          "course_name": "Physics I Lab",
-          "course_type": "lab",
-          "credit": 0.75,
-          "teacher": "",
-          "assigned": false
-        },
-        {
-          "course": "CSE4104",
-          "course_name": "Engineering Drawing Lab",
-          "course_type": "lab",
-          "credit": 0.75,
-          "teacher": "",
-          "assigned": false
-        },
-        {
-          "course": "CSE4108",
-          "course_name": "Structured Programming I Lab",
-          "course_type": "lab",
-          "credit": 1.5,
           "teacher": "",
           "assigned": false
         }
@@ -143,38 +119,6 @@
           "credit": 3.0,
           "teacher": "ARMK",
           "assigned": true
-        },
-        {
-          "course": "EEE4384",
-          "course_name": "Electronic Devices and Circuits Lab",
-          "course_type": "lab",
-          "credit": 0.75,
-          "teacher": "",
-          "assigned": false
-        },
-        {
-          "course": "CSE4302",
-          "course_name": "Object Oriented Programming Lab",
-          "course_type": "lab",
-          "credit": 1.5,
-          "teacher": "",
-          "assigned": false
-        },
-        {
-          "course": "CSE4304",
-          "course_name": "Data Structures Lab",
-          "course_type": "lab",
-          "credit": 1.5,
-          "teacher": "",
-          "assigned": false
-        },
-        {
-          "course": "CSE4308",
-          "course_name": "Database Management Systems Lab",
-          "course_type": "lab",
-          "credit": 1.0,
-          "teacher": "",
-          "assigned": false
         }
       ]
     },
@@ -194,7 +138,7 @@
           "course_name": "Computer Networks",
           "course_type": "theory",
           "credit": 3.0,
-          "teacher": "SH",
+          "teacher": "FH",
           "assigned": true
         },
         {
@@ -220,54 +164,6 @@
           "credit": 3.0,
           "teacher": "MIA",
           "assigned": true
-        },
-        {
-          "course": "CSE4502",
-          "course_name": "Operating Systems Lab",
-          "course_type": "lab",
-          "credit": 1.0,
-          "teacher": "",
-          "assigned": false
-        },
-        {
-          "course": "CSE4504",
-          "course_name": "Microprocessor and Assembly Language Lab",
-          "course_type": "lab",
-          "credit": 0.75,
-          "teacher": "",
-          "assigned": false
-        },
-        {
-          "course": "CSE4508",
-          "course_name": "RDBMS Programming Lab",
-          "course_type": "lab",
-          "credit": 1.5,
-          "teacher": "",
-          "assigned": false
-        },
-        {
-          "course": "CSE4510",
-          "course_name": "Software Development",
-          "course_type": "lab",
-          "credit": 0.75,
-          "teacher": "",
-          "assigned": false
-        },
-        {
-          "course": "CSE4512",
-          "course_name": "Computer Networks Lab",
-          "course_type": "lab",
-          "credit": 1.5,
-          "teacher": "",
-          "assigned": false
-        },
-        {
-          "course": "CSE4540",
-          "course_name": "Web Programming Lab",
-          "course_type": "lab",
-          "credit": 0.75,
-          "teacher": "",
-          "assigned": false
         }
       ]
     },
@@ -321,38 +217,6 @@
           "credit": 3.0,
           "teacher": "MBH",
           "assigned": true
-        },
-        {
-          "course": "CSE4710",
-          "course_name": "Machine Learning Lab",
-          "course_type": "lab",
-          "credit": 0.75,
-          "teacher": "",
-          "assigned": false
-        },
-        {
-          "course": "CSE4734",
-          "course_name": "Digital Image Processing Lab",
-          "course_type": "lab",
-          "credit": 0.75,
-          "teacher": "",
-          "assigned": false
-        },
-        {
-          "course": "CSE4700",
-          "course_name": "Project/Thesis",
-          "course_type": "lab",
-          "credit": 3.0,
-          "teacher": "",
-          "assigned": false
-        },
-        {
-          "course": "CSE4790",
-          "course_name": "Industrial Training",
-          "course_type": "lab",
-          "credit": 1.0,
-          "teacher": "",
-          "assigned": false
         }
       ]
     }
