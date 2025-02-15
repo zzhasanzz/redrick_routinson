@@ -121,7 +121,7 @@ def has_collision(new_class):
 
 def is_priority_teacher(teacher, faculty_details):
     rank = faculty_details.get(teacher, {}).get("rank", "")
-    return rank in ["Professor", "Assistant Professor"]
+    return rank in ["Part-Time", "Professor", "Assistant Professor"]
 
 # Schedule remaining classes with faculty preferences
 def schedule_remaining_classes(classes, scheduled, faculty_details):
@@ -294,6 +294,34 @@ def write_schedule_to_json(scheduled, filename="final_schedule.json"):
     with open(filename, "w") as file:
         json.dump(output, file, indent=2)
 
+def update_faculty_courses(scheduled_classes, faculty_details):
+    """Completely replace faculty courses with new scheduled classes"""
+    # Clear all existing courses for all teachers
+    for teacher in faculty_details.values():
+        if "courses" in teacher:
+            del teacher["courses"]
+    
+    # Add new courses from schedule
+    for cls in scheduled_classes:
+        course_type = "lab" if len(cls.times) > 1 else "theory"
+        for teacher in cls.teachers:
+            if teacher in faculty_details:
+                # Create new course entries
+                faculty_details[teacher].setdefault("courses", [])
+                for time in cls.times:
+                    new_course = {
+                        "course": cls.code,
+                        "type": course_type,
+                        "day": cls.day,
+                        "time": time
+                    }
+                    # Add if not duplicate
+                    if new_course not in faculty_details[teacher]["courses"]:
+                        faculty_details[teacher]["courses"].append(new_course)
+            else:
+                print(f"Warning: Teacher {teacher} not found in faculty_details.json")
+    return faculty_details
+
 def write_schedule_to_csv(scheduled, filename="final_schedule.csv"):
     # Organize data by semester, section, day, and time slot
     schedule_data = {}
@@ -360,6 +388,13 @@ def main():
     
     # Schedule remaining classes with faculty preferences
     unscheduled = schedule_remaining_classes(regular_classes, scheduled, faculty_details)
+
+    # Update faculty details with scheduled courses
+    updated_faculty_data = update_faculty_courses(scheduled, faculty_details)
+    
+    # Write updated faculty details back to file
+    with open("faculty_details.json", "w") as f:
+        json.dump(updated_faculty_data, f, indent=2)
     
     # Write final schedule to JSON
     write_schedule_to_json(scheduled)

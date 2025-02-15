@@ -9,11 +9,6 @@
           "teacher": "MM"
         },
         {
-          "course": "Hum4147",
-          "credit": 3,
-          "teacher": "MMH"
-        },
-        {
           "course": "HUM4142",
           "credit": 1,
           "teacher": "AH"
@@ -34,20 +29,25 @@
           "teacher": "KH"
         },
         {
-          "course": "HUM4145",
+          "course": "HUM4144",
+          "credit": 3,
+          "teacher": "MMH"
+        },
+        {
+          "course": "Hum4147",
           "credit": 3,
           "teacher": "BS"
+        },
+        {
+          "course": "Hum4144",
+          "credit": 3,
+          "teacher": "MMH"
         }
       ]
     },
     {
       "semester": 3,
       "courses": [
-        {
-          "course": "Math4341",
-          "credit": 3,
-          "teacher": "MKS"
-        },
         {
           "course": "EEE4383",
           "credit": 3,
@@ -72,6 +72,11 @@
           "course": "CSE4301",
           "credit": 3,
           "teacher": "FH"
+        },
+        {
+          "course": "Math4341",
+          "credit": 3,
+          "teacher": "MKS"
         }
       ]
     },
@@ -86,7 +91,7 @@
         {
           "course": "CSE4511",
           "credit": 3,
-          "teacher": "SH"
+          "teacher": "FH"
         },
         {
           "course": "CSE4513",
@@ -97,11 +102,6 @@
           "course": "Math4541",
           "credit": 3,
           "teacher": "AKA"
-        },
-        {
-          "course": "CSE4539",
-          "credit": 3,
-          "teacher": "MIA"
         }
       ]
     },
