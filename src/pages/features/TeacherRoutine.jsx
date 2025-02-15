@@ -141,6 +141,7 @@ const TeacherRoutine = () => {
         const courseData = doc.data();
         console.log(courseData);
         const classCancelledStatus = courseData["class_cancelled_status"];
+        const classRescheduledStatus = courseData["rescheduled_status"];
         const tempClasses = courseData["assigned_temp_time_slots"];
         console.log("Testing");
         console.log(classCancelledStatus);
@@ -176,14 +177,18 @@ const TeacherRoutine = () => {
 
             // console.log(`Stat: ${stat}`);
           } else {
+            let classStatus = "Cancelled";
             console.log(`Class at index ${index} is cancelled`);
+            if (String(classRescheduledStatus[index]) === "1") {
+              classStatus = "Rescheduled";
+            }
             teacherSchedule.push({
               courseCode: doc.id,
               courseTitle: courseData["assigned_course_title"],
               day: dayMapping[dayIndex],
               time: `${startTime}-${endTime}`,
               room: courseData["assigned_room"][index],
-              status: "Cancelled",
+              status: classStatus,
             });
           }
         });
@@ -707,6 +712,138 @@ const TeacherRoutine = () => {
     }
   };
 
+  const handleUndoCancelledClass = async (courseId, day, time) => {
+    let selectedCourseType = "";
+    let rooms = [];
+    let room = "";
+    let timeSlot = 0;
+    try {
+      const courseRef = doc(
+        db,
+        `teachers/${teacherName}/courses`,
+        courseId.toString()
+      );
+      const courseSnapshot = await getDoc(courseRef);
+      const courseData = courseSnapshot.data();
+
+      selectedCourseType = courseData["course_type"];
+      timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
+      rooms = courseData["assigned_room"];
+      const classCancelledStatus = courseData["class_cancelled_status"];
+
+      classCancelledStatus.forEach((stat, idx) => {
+        if (courseData["assigned_time_slots"][idx] === timeSlot) {
+          classCancelledStatus[idx] = 0;
+          room = rooms[idx];
+        }
+      });
+      await updateDoc(courseRef, {
+        class_cancelled_status: classCancelledStatus,
+      });
+
+      // Update room status
+      const roomRef = doc(db, `time_slots/${timeSlot}/rooms`, room.toString());
+      await updateDoc(roomRef, {
+        class_cancelled: 0,
+      });
+
+      // Update semester status
+      let sem = courseId.toString().charAt(courseId.toString().length - 3);
+      const semester = "semester_" + sem;
+      const timeSlotRef = doc(db, semester, timeSlot.toString());
+      await updateDoc(timeSlotRef, {
+        class_cancelled: 0,
+      });
+
+      // Handle second slot for lab classes
+      if (selectedCourseType === "lab") {
+        const nextTimeSlot = timeSlot + 1;
+        const nextRoomRef = doc(
+          db,
+          `time_slots/${nextTimeSlot}/rooms`,
+          room.toString()
+        );
+        await updateDoc(nextRoomRef, {
+          class_cancelled: 0,
+        });
+
+        const nextTimeSlotRef = doc(db, semester, nextTimeSlot.toString());
+        await updateDoc(nextTimeSlotRef, {
+          class_cancelled: 0,
+        });
+      }
+    } catch (error) {
+      console.error("Error undoing cancelled class:", error);
+      alert("Failed to undo cancelled class.");
+    }
+  };
+
+  const handleCancelTemporaryClass = async (courseId, day, time, room) => {
+    try {
+      // Get the timeslot
+      const timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
+
+      // Update teacher's course document
+      const courseRef = doc(
+        db,
+        `teachers/${teacherName}/courses`,
+        courseId.toString()
+      );
+      const courseSnapshot = await getDoc(courseRef);
+      const courseData = courseSnapshot.data();
+
+      // Get existing temporary slots and rooms
+      let tempTimeSlots = courseData.assigned_temp_time_slots || [];
+      let tempRooms = courseData.assigned_temp_room || [];
+
+      // Find the index of the slot to remove
+      const slotIndex = tempTimeSlots.indexOf(timeSlot.toString());
+
+      // Update the arrays by removing the cancelled temporary class
+      if (slotIndex > -1) {
+        tempTimeSlots = tempTimeSlots.filter((_, index) => index !== slotIndex);
+        tempRooms = tempRooms.filter((_, index) => index !== slotIndex);
+
+        // Update the course document with new arrays
+        await updateDoc(courseRef, {
+          assigned_temp_time_slots: tempTimeSlots,
+          assigned_temp_room: tempRooms,
+        });
+      }
+
+      // Update semester document
+      let sem = courseId.toString().charAt(courseId.toString().length - 3);
+      const semester = "semester_" + sem;
+      const timeSlotRef = doc(db, semester, timeSlot.toString());
+
+      await updateDoc(timeSlotRef, {
+        temp_course_code: "",
+        temp_course_type: "",
+        temp_room: "",
+        temp_teacher_1: "",
+        temp_day: "",
+        temp_time_1: "",
+        rescheduled: 0,
+      });
+
+      // Update room document
+      const roomRef = doc(db, `time_slots/${timeSlot}/rooms/${room}`);
+      await updateDoc(roomRef, {
+        temp_course_code: "",
+        temp_course_type: "",
+        temp_room: "",
+        temp_teacher_1: "",
+        class_cancelled: 0,
+      });
+
+      // Refresh the schedule
+      // location.reload();
+    } catch (error) {
+      console.error("Error canceling temporary class:", error);
+      alert("Failed to cancel temporary class.");
+    }
+  };
+
   const renderTable = () => (
     <table border="1" style={{ borderCollapse: "collapse", width: "100%" }}>
       <thead>
@@ -726,18 +863,44 @@ const TeacherRoutine = () => {
             <td>{slot.courseCode}</td>
             <td>{slot.day}</td>
             <td>{slot.room}</td>
-
             <td>{slot.time}</td>
             <td>{slot.status}</td>
-
             <td>
-              <button
-                onClick={() =>
-                  handleCancelClass(slot.courseCode, slot.day, slot.time)
-                }
-              >
-                Cancel Class
-              </button>
+              {slot.status === "Temporary" ? (
+                <button
+                  onClick={() =>
+                    handleCancelTemporaryClass(
+                      slot.courseCode,
+                      slot.day,
+                      slot.time,
+                      slot.room // Pass the room as a parameter
+                    )
+                  }
+                >
+                  Cancel Temporary Class
+                </button>
+              ) : slot.status === "Cancelled" ? (
+                <button
+                  onClick={() =>
+                    handleUndoCancelledClass(
+                      slot.courseCode,
+                      slot.day,
+                      slot.time
+                    )
+                  }
+                >
+                  Undo Cancel
+                </button>
+              ) : (
+                <button
+                  onClick={() =>
+                    handleCancelClass(slot.courseCode, slot.day, slot.time)
+                  }
+                >
+                  Cancel Class
+                </button>
+              )}
+
               <button
                 onClick={() =>
                   handleRescheduleClass(slot.courseCode, slot.day, slot.time)
