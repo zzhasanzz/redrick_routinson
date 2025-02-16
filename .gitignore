@@ -28,4 +28,5 @@ backend/optimal.txt
 backend/routine.txt
 backend/softenv/*
 backend/ServiceAccountKey.json
+ServiceAccountKey.json
 
