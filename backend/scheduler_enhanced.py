@@ -2,13 +2,198 @@ import json
 import csv
 import random
 import copy
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 from collections import defaultdict
+import time
+
+cred = credentials.Certificate('./ServiceAccountKey.json')
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 # Constants
 DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+ROOMS = ["1" , "2" ,"3" , "4" ,"5" , "6" , "301", "302", "304", "204", "104", "105"]
 TIME_SLOTS = ["8:00-9:15", "9:15-10:30", "10:30-11:45", "11:45-1:00", "2:30-3:45", "3:45-5:00"]
 CLASSROOMS = ["1", "2", "3", "4", "5", "6", "7", "8", "301", "302", "304", "203", "204", "508", "509", "510"]
 SECTIONS = ["A", "B"]
+
+def write_routine_to_firestore(scheduled_classes):
+    time_mapping = {
+        "8:00-9:15": 1,
+        "9:15-10:30": 2,
+        "10:30-11:45": 3,
+        "11:45-1:00": 4,
+        "2:30-3:45": 5,
+        "3:45-5:00": 6
+    }
+    day_mapping = {
+        "Monday": 0,
+        "Tuesday": 1,
+        "Wednesday": 2,
+        "Thursday": 3,
+        "Friday": 4,
+        "Saturday": 5,
+        "Sunday": 6
+    }
+    # Create a set of semester-section combinations
+    semestersBySections = set()
+    for cls in scheduled_classes:
+        combination = f"{cls.semester}{cls.section}"  # This will create strings like "1A", "1B", "3A", etc.
+        semestersBySections.add(combination)
+        # print(semestersBySections)
+    
+    # Now you can iterate through the combinations
+    for semester_section in semestersBySections:
+        semester = semester_section[0]  # Gets the first character (the semester number)
+        section = semester_section[1]  # Gets the second character (the section letter)
+        semester_section_ref = db.collection(f'semester_{cls.semester}_{cls.section}')
+        delete_collection(semester_section_ref)
+    
+    delete_collection(db.collection('time_slots'))
+    delete_collection(db.collection('teachers'))
+
+    batch_limit = 450  #
+    batch_count = 0
+    batch = db.batch()
+
+    teacher_data_cache = {}
+    for cls in scheduled_classes:
+        time_1 = cls.times[0] if len(cls.times) > 0 else ""
+        time_2 = cls.times[1] if len(cls.times) > 1 else ""
+        teacher_1 = cls.teachers[0] if len(cls.teachers) > 0 else ""
+        teacher_2 = cls.teachers[1] if len(cls.teachers) > 1 else ""
+
+        day_index = day_mapping.get(cls.day, -1)
+        time_index = time_mapping.get(time_1, 0)
+        time_slot_1 = day_index * len(time_mapping) + time_index if day_index >= 0 else ""
+        course_type = "lab" if time_2 else "theory"
+
+        # Data for the semester collection
+        data = {
+            'perm_course_code': cls.code,
+            'perm_course_title': "",
+            'perm_course_type': course_type,
+            'perm_room': cls.room,
+            'perm_teacher_1': teacher_1,
+            'perm_teacher_2': teacher_2,
+            'perm_day': cls.day,
+            'perm_time_1': time_1,
+            'perm_time_2': time_2,
+            'class_cancelled': 0,
+            'rescheduled': 0,
+            'temp_course_code': '',
+            'temp_course_title': '',
+            'temp_course_type': '',
+            'temp_room': '',
+            'temp_teacher_1': '',
+            'temp_teacher_2': '',
+            'temp_day': '',
+            'temp_time_1': '',
+            'temp_time_2': ''
+        }
+        doc_ref = db.collection(f'semester_{cls.semester}_{cls.section}').document(str(time_slot_1))
+        batch.set(doc_ref, data)
+        if time_2:
+            time_slot_2 = time_slot_1 + 1
+            doc_ref = db.collection(f'semester_{cls.semester}_{cls.section}').document(str(time_slot_2))
+            batch.set(doc_ref, data)
+            batch_count += 1
+        batch_count += 1
+        
+        
+        
+        time_slot_data = {
+            'perm_course_code': cls.code,
+            'perm_course_title': "",
+            'course_type': course_type,
+            'perm_teacher_1': teacher_1,
+            'perm_teacher_2': teacher_2,
+            'class_cancelled': 0,
+            'rescheduled': 0,
+            'temp_course_code': '',
+            'temp_course_title': '',
+            'temp_teacher_1': '',
+            'temp_teacher_2': '',
+            'section':cls.section,
+        }
+        
+        time_slot_ref = db.collection('time_slots').document(str(time_slot_1)).collection('rooms').document(str(cls.room))
+        batch.set(time_slot_ref, time_slot_data)
+        batch_count += 1
+        if time_2:
+            time_slot_ref = db.collection('time_slots').document(str(time_slot_2)).collection('rooms').document(str(cls.room))
+            batch.set(time_slot_ref, time_slot_data)
+            batch_count += 1
+            
+        for teacher in [teacher_1, teacher_2]:
+            if teacher:
+                # Initialize teacher data if not in cache
+                if teacher not in teacher_data_cache:
+                    teacher_data_cache[teacher] = {}
+                class_code_with_section = f"{cls.code}_{cls.section}"
+                # Initialize course-specific data if not already initialized
+                if cls.code not in teacher_data_cache[teacher]:
+                    teacher_data_cache[teacher][class_code_with_section] = {
+                        'assigned_time_slots': [],
+                        'assigned_room': [],
+                        'course_type': course_type,
+                        'class_cancelled_status': [],
+                        'rescheduled_status': [],
+                        'assigned_temp_time_slots': [],
+                        'assigned_temp_room': []
+                    }
+
+                # Append data to the appropriate fields
+                teacher_data_cache[teacher][class_code_with_section]['assigned_time_slots'].append(time_slot_1)
+                teacher_data_cache[teacher][class_code_with_section]['assigned_room'].append(cls.room)
+                teacher_data_cache[teacher][class_code_with_section]['class_cancelled_status'].append(0)
+                teacher_data_cache[teacher][class_code_with_section]['rescheduled_status'].append(0)
+
+        # Write to Firestore
+        for teacher, courses in teacher_data_cache.items():
+            for course_code_with_section, data in courses.items():
+                teacher_ref = db.collection('teachers').document(teacher).collection('courses').document(course_code_with_section)
+                batch.set(teacher_ref, data)
+                batch_count += 1
+
+
+
+        # Commit batch if batch limit is reached
+        if batch_count >= batch_limit:
+            batch.commit()
+            batch = db.batch()
+            batch_count = 0
+            time.sleep(1)  # Add small delay between batch commits
+
+    # Write cached teacher data
+    
+
+    # Commit any remaining writes in the final batch
+    if batch_count > 0:
+        batch.commit()
+
+
+    
+
+
+
+
+def delete_collection(collection_ref):
+    """Delete all documents in a collection using batched operations."""
+    docs = collection_ref.stream()
+    batch = db.batch()
+    count = 0
+    for doc in docs:
+        batch.delete(doc.reference)
+        count += 1
+        if count == 500:
+            batch.commit()
+            batch = db.batch()
+            count = 0
+    if count > 0:
+        batch.commit()
 
 # Initialize semester timeslots with sections and days
 semester_timeslots = {
@@ -366,6 +551,8 @@ def main():
     
     # Write final schedule to CSV
     write_schedule_to_csv(scheduled)
+    
+    write_routine_to_firestore(scheduled)
     
     print(f"Scheduled {len(scheduled)} classes.")
     if unscheduled:

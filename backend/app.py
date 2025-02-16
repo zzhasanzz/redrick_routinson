@@ -261,7 +261,7 @@ def get_courses():
 
 
 @app.route('/api/delete', methods=['DELETE'])
-def delete_course():
+def delete_course_record():
     data = request.json
     semester = data.get('semester')
     name = data.get('name')
