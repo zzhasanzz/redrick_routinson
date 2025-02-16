@@ -109,7 +109,25 @@
               ]
             },
             {
-              "course": "HUM4145",
+              "course": "HUM4144",
+              "credit": 3,
+              "schedule": [
+                {
+                  "day": "Monday",
+                  "time": "8:00-9:15",
+                  "room": "105",
+                  "teacher": "MMH"
+                },
+                {
+                  "day": "Friday",
+                  "time": "2:30-3:45",
+                  "room": "4",
+                  "teacher": "MMH"
+                }
+              ]
+            },
+            {
+              "course": "Hum4147",
               "credit": 3,
               "schedule": [
                 {
@@ -125,14 +143,9 @@
                   "teacher": "BS"
                 }
               ]
-            }
-          ]
-        },
-        {
-          "section": "B",
-          "courses": [
+            },
             {
-              "course": "CSE4107",
+              "course": "Hum4144",
               "credit": 3,
               "schedule": [
                 {
@@ -187,6 +200,7 @@
                   "day": "Wednesday",
                   "time": "8:00-9:15",
                   "room": "104",
+                  "room": "104",
                   "teacher": "FAK"
                 },
                 {
@@ -234,7 +248,7 @@
               ]
             },
             {
-              "course": "HUM4145",
+              "course": "HUM4144",
               "credit": 3,
               "schedule": [
                 {
@@ -262,7 +276,7 @@
           "section": "A",
           "courses": [
             {
-              "course": "Math4341",
+              "course": "Hum4144",
               "credit": 3,
               "schedule": [
                 {
@@ -278,7 +292,17 @@
                   "teacher": "MKS"
                 }
               ]
-            },
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "semester": 3,
+      "sections": [
+        {
+          "section": "A",
+          "courses": [
             {
               "course": "EEE4383",
               "credit": 3,
@@ -368,12 +392,7 @@
                   "teacher": "FH"
                 }
               ]
-            }
-          ]
-        },
-        {
-          "section": "B",
-          "courses": [
+            },
             {
               "course": "Math4341",
               "credit": 3,
@@ -391,7 +410,12 @@
                   "teacher": "MKS"
                 }
               ]
-            },
+            }
+          ]
+        },
+        {
+          "section": "B",
+          "courses": [
             {
               "course": "EEE4383",
               "credit": 3,
@@ -479,6 +503,24 @@
                   "time": "3:45-5:00",
                   "room": "302",
                   "teacher": "FH"
+                }
+              ]
+            },
+            {
+              "course": "Math4341",
+              "credit": 3,
+              "schedule": [
+                {
+                  "day": "Friday",
+                  "time": "3:45-5:00",
+                  "room": "3",
+                  "teacher": "MKS"
+                },
+                {
+                  "day": "Tuesday",
+                  "time": "9:15-10:30",
+                  "room": "5",
+                  "teacher": "MKS"
                 }
               ]
             }

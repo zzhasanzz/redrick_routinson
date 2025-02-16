@@ -82,7 +82,8 @@ const TeacherPreference = () => {
         try {
             // Convert selected slots to the required format
             const preferredTimes = selectedSlots.map((slot) => {
-                const [day, time] = slot.split('-');
+                const [day, ...timeParts] = slot.split('-');
+                const time = timeParts.join('-');
                 return { day, time };
             });
 
@@ -94,9 +95,9 @@ const TeacherPreference = () => {
                 },
                 body: JSON.stringify({
                     teacherName,
-                    preferredTimes,
+                    preferredTimes,  // Now contains full time ranges
                 }),
-            });
+            });     
 
             if (response.ok) {
                 toast({

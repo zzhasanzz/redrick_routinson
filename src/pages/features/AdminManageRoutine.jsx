@@ -42,6 +42,9 @@ const AdminManageRoutine = () => {
   const [selectedFaculty, setSelectedFaculty] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [currentSemester, setCurrentSemester] = useState(null);
+  const [updatingCourse, setUpdatingCourse] = useState(null);
+  const [selectedUpdateFaculty, setSelectedUpdateFaculty] = useState('');
+  const { isOpen: isUpdateOpen, onOpen: onUpdateOpen, onClose: onUpdateClose } = useDisclosure();
   const toast = useToast();
 
   useEffect(() => {
@@ -51,9 +54,9 @@ const AdminManageRoutine = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/offered-courses');
+      const response = await fetch(`http://localhost:5000/api/offered-courses?t=${Date.now()}`);
       if (!response.ok) throw new Error('Failed to fetch courses');
-      
+
       const data = await response.json();
       if (!data?.semesters) throw new Error('Invalid data structure');
 
@@ -77,7 +80,7 @@ const AdminManageRoutine = () => {
     try {
       const response = await fetch('http://localhost:5000/api/faculty-ranks');
       if (!response.ok) throw new Error('Failed to fetch faculty');
-      
+
       const data = await response.json();
       setFacultyList(Object.keys(data));
     } catch (err) {
@@ -95,7 +98,7 @@ const AdminManageRoutine = () => {
     try {
       const response = await fetch(`http://localhost:5000/api/unassigned-courses/${semester}`);
       if (!response.ok) throw new Error('Failed to fetch unassigned courses');
-      
+
       const data = await response.json();
       setUnassignedCourses(data);
     } catch (err) {
@@ -114,7 +117,7 @@ const AdminManageRoutine = () => {
       const response = await fetch('http://localhost:5000/api/delete-course', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ semester, course: courseCode }),
+        body: JSON.stringify({ semester, course: courseCode, updateOfferedCourses: true }),
       });
 
       const result = await response.json();
@@ -127,7 +130,7 @@ const AdminManageRoutine = () => {
         duration: 3000,
         isClosable: true,
       });
-      
+
       await fetchCourses();
     } catch (err) {
       toast({
@@ -137,6 +140,49 @@ const AdminManageRoutine = () => {
         duration: 3000,
         isClosable: true,
       });
+    }
+  };
+
+  const handleUpdateFaculty = async () => {
+    try {
+      if (!updatingCourse || !selectedUpdateFaculty) {
+        throw new Error('Please select a faculty');
+      }
+
+      const response = await fetch('http://localhost:5000/api/update-faculty', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          semester: updatingCourse.semester, // Now properly structured
+          course: updatingCourse.course,
+          teacher: selectedUpdateFaculty
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Failed to update faculty');
+
+      toast({
+        title: 'Updated!',
+        description: `Faculty updated for ${updatingCourse.course}`,
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+
+      onUpdateClose();
+      await fetchCourses(); // Refresh the data
+    } catch (err) {
+      toast({
+        title: 'Update Failed',
+        description: err.message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setSelectedUpdateFaculty('');
+      setUpdatingCourse(null);
     }
   };
 
@@ -221,31 +267,57 @@ const AdminManageRoutine = () => {
           <TabPanels>
             {courses.map(semester => (
               <TabPanel key={semester.semester}>
-                <Box overflowX="auto">
+                <Box overflowX="auto" minWidth="800px">
                   <Table variant="striped" colorScheme="gray">
                     <Thead>
                       <Tr>
-                        <Th>Course Code</Th>
-                        <Th>Course Name</Th>
-                        <Th>Credits</Th>
-                        <Th>Faculty</Th>
-                        <Th>Actions</Th>
+                        <Th width="20%" textAlign="center">Course Code</Th>
+                        <Th width="35%" textAlign="center">Course Name</Th>
+                        <Th width="15%" textAlign="center">Credits</Th>
+                        <Th width="20%" textAlign="center">Faculty</Th>
+                        <Th width="10%" textAlign="center">Actions</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
                       {semester.courses.map(course => (
                         <Tr key={course.course}>
-                          <Td fontWeight="600">{course.course}</Td>
-                          <Td>{course.course_name}</Td>
-                          <Td>{course.credit}</Td>
-                          <Td>{course.teacher}</Td>
-                          <Td>
+                          <Td padding="2" fontWeight="600" textAlign="center">{course.course}</Td>
+                          <Td padding="2" textAlign="center">{course.course_name}</Td>
+                          <Td padding="2" textAlign="center">{course.credit}</Td>
+                          <Td padding="2" textAlign="center">{course.teacher}</Td>
+                          <Td padding="2" textAlign="center">
                             <Button
-                              colorScheme="red"
+                              color="rgb(253, 253, 253)"
+                              backgroundColor="rgba(132, 113, 113, 0.69)"
+                              borderColor="rgba(132, 113, 113, 0.79)"
+                              _hover={{
+                                bg: "rgba(132, 113, 113, 0.43)",
+                                transition: "background 0.33s ease-in-out",
+                              }}
                               size="sm"
                               onClick={() => handleDeleteCourse(semester.semester, course.course)}
+                              isLoading={loading} // Add loading state
                             >
                               Delete
+                            </Button>
+                            <Button
+                              color="rgb(253, 253, 253)"
+                              backgroundColor="rgba(113, 123, 132, 0.69)"
+                              borderColor="rgba(113, 118, 132, 0.79)"
+                              _hover={{
+                                bg: "rgba(113, 114, 132, 0.43)",
+                                transition: "background 0.33s ease-in-out",
+                              }}
+                              onClick={() => {
+                                setUpdatingCourse({
+                                  ...course,
+                                  semester: semester.semester // Add semester context
+                                });
+                                setSelectedUpdateFaculty(course.teacher || '');
+                                onUpdateOpen();
+                              }}
+                            >
+                              Update
                             </Button>
                           </Td>
                         </Tr>
@@ -255,7 +327,12 @@ const AdminManageRoutine = () => {
                 </Box>
                 <Button
                   mt={4}
-                  colorScheme="blue"
+                  color="rgb(46, 114, 128)"
+                  backgroundColor="rgba(46, 114, 128, 0.16)"
+                  _hover={{
+                    bg: "rgba(113, 119, 132, 0.48)",
+                    transition: "background 0.33s ease-in-out",
+                  }}
                   onClick={() => {
                     fetchUnassignedCourses(semester.semester);
                     onOpen();
@@ -312,6 +389,34 @@ const AdminManageRoutine = () => {
             <Button ml={3} onClick={onClose}>
               Cancel
             </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={isUpdateOpen} onClose={onUpdateClose}>
+        <ModalContent>
+          <ModalHeader>Update Faculty for {updatingCourse?.course}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl isRequired>
+              <FormLabel>Select New Faculty</FormLabel>
+              <Select
+                placeholder="Select faculty"
+                value={selectedUpdateFaculty}
+                onChange={e => setSelectedUpdateFaculty(e.target.value)}
+              >
+                {facultyList.map(faculty => (
+                  <option key={faculty} value={faculty}>
+                    {faculty}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={handleUpdateFaculty}>
+              Update
+            </Button>
+            <Button ml={3} onClick={onUpdateClose}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
