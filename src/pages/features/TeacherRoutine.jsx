@@ -18,8 +18,6 @@ const TeacherRoutine = () => {
   const [teacherName, setTeacherName] = useState("");
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState("");
-  // const [selectedCourseType , setSelectedCourseType] = useState("")
-  // const [availableRooms, setAvailableRooms] = useState([]);
   const [availableTimeSlot, setAvailableTimeSlot] = useState("");
   const [selectedDay, setSelectedDay] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
@@ -140,6 +138,7 @@ const TeacherRoutine = () => {
       coursesSnapshot.forEach((doc) => {
         const courseData = doc.data();
         console.log(courseData);
+        const section = doc.id.slice(-1);
         const classCancelledStatus = courseData["class_cancelled_status"];
         const classRescheduledStatus = courseData["rescheduled_status"];
         const tempClasses = courseData["assigned_temp_time_slots"];
@@ -167,10 +166,11 @@ const TeacherRoutine = () => {
             // console.log(courseData["assigned_room"][index]); 0
 
             teacherSchedule.push({
-              courseCode: doc.id,
+              courseCode: doc.id.substring(0, doc.id.length - 2),
               courseTitle: courseData["assigned_course_title"],
               day: dayMapping[dayIndex],
               time: `${startTime}-${endTime}`,
+              section: section,
               room: courseData["assigned_room"][index],
               status: "Permanent",
             });
@@ -183,10 +183,11 @@ const TeacherRoutine = () => {
               classStatus = "Rescheduled";
             }
             teacherSchedule.push({
-              courseCode: doc.id,
+              courseCode: doc.id.substring(0, doc.id.length - 2),
               courseTitle: courseData["assigned_course_title"],
               day: dayMapping[dayIndex],
               time: `${startTime}-${endTime}`,
+              section: section,
               room: courseData["assigned_room"][index],
               status: classStatus,
             });
@@ -212,10 +213,11 @@ const TeacherRoutine = () => {
                 courseType = "theory";
               }
               teacherSchedule.push({
-                courseCode: doc.id,
+                courseCode: doc.id.substring(0, doc.id.length - 2),
                 courseTitle: courseData["assigned-course-title"],
                 day: dayMapping[dayIndex],
                 time: `${startTime}-${endTime}`,
+                section: section,
                 room: courseData["assigned_temp_room"][index],
                 status: "Temporary",
               });
@@ -853,6 +855,7 @@ const TeacherRoutine = () => {
           <th>Room</th>
           <th>Time</th>
           <th>Status</th>
+          <th>Section</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -865,6 +868,8 @@ const TeacherRoutine = () => {
             <td>{slot.room}</td>
             <td>{slot.time}</td>
             <td>{slot.status}</td>
+            <td>{slot.section}</td>
+
             <td>
               {slot.status === "Temporary" ? (
                 <button

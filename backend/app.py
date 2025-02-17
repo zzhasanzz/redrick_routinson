@@ -226,66 +226,8 @@ def add_course():
         return jsonify({"error": str(e)}), 500
     
 
-<<<<<<< HEAD
-@app.route('/api/courses', methods=['GET'])
-def get_courses():
-    courses = []
-
-    # Read from input.txt (Full-Time courses)
-    try:
-        if not os.path.exists('input.txt'):
-            raise FileNotFoundError('input.txt not found.')
-        
-        with open('input.txt', 'r') as f:
-            for line in f:
-                parts = line.strip().split(';')
-                if len(parts) != 4:  # Ensure there are exactly 4 parts
-                    continue  # Skip malformed lines
-                semester, name, credit, teacher = parts
-                courses.append({
-                    'semester': semester,
-                    'name': name,
-                    'credit': credit,
-                    'teacher': teacher,
-                    'teacherType': 'Full-Time'  # Assuming full-time for this file
-                })
-    except Exception as e:
-        return jsonify({'status': 'error', 'message': f"Error reading input.txt: {str(e)}"}), 500
-
-    # Read from input_pt.txt (Part-Time courses)
-    try:
-        if not os.path.exists('input_pt.txt'):
-            raise FileNotFoundError('input_pt.txt not found.')
-
-        with open('input_pt.txt', 'r') as f:
-            for line in f:
-                parts = line.strip().split(';')
-                if len(parts) != 7:  # Ensure there are exactly 7 parts
-                    continue  # Skip malformed lines
-                semester, name, credit, day, time, room, teacher = parts
-                courses.append({
-                    'semester': semester,
-                    'name': name,
-                    'credit': credit,  # Add credit information
-                    'teacher': teacher,
-                    'teacherType': 'Part-Time',  # Mark as part-time
-                    # Optional: Remove the following fields if you don't need them
-                    'day': day,
-                    'time': time,
-                    'room': room
-                })
-    except Exception as e:
-        return jsonify({'status': 'error', 'message': f"Error reading input_pt.txt: {str(e)}"}), 500
-
-    return jsonify({'status': 'success', 'courses': courses})
-
-
-@app.route('/api/delete', methods=['DELETE'])
-def delete_course_record():
-=======
 @app.route('/api/update-preferences', methods=['POST'])
 def update_preferences():
->>>>>>> upstream/main
     data = request.json
     teacher_name = data.get('teacherName')
     preferred_times = data.get('preferredTimes')
