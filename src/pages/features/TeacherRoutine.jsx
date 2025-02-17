@@ -325,7 +325,7 @@ const TeacherRoutine = () => {
   }
 
   // Handle Cancel Class
-  const handleCancelClass = async (courseId, day, time) => {
+  const handleCancelClass = async (courseId, day, time, section) => {
     let selectedCourseType = "";
     let rooms = [];
     let room = "";
@@ -334,7 +334,7 @@ const TeacherRoutine = () => {
       const courseRef = doc(
         db,
         `teachers/${teacherName}/courses`,
-        courseId.toString()
+        courseId.toString() + "_" + section
       );
       // const courseRef = doc(db, "teachers", teacherName, "courses", courseId.toString());
       console.log(`Course Ref ${courseRef}`);
@@ -413,7 +413,7 @@ const TeacherRoutine = () => {
     try {
       // Extract the semester from the courseId
       let sem = courseId.toString().charAt(courseId.toString().length - 3);
-      const semester = "semester_" + sem;
+      const semester = "semester_" + sem + "_" + section;
       setSemester(semester); // Ensure setSemester is updating the state correctly
       console.log(semester);
 
@@ -477,7 +477,7 @@ const TeacherRoutine = () => {
       try {
         // Extract the semester from the courseId
         let sem = courseId.toString().charAt(courseId.toString().length - 3);
-        const semester = "semester_" + sem;
+        const semester = "semester_" + sem + "_" + section;
         setSemester(semester); // Ensure setSemester is updating the state correctly
         console.log(semester);
 
@@ -899,7 +899,12 @@ const TeacherRoutine = () => {
               ) : (
                 <button
                   onClick={() =>
-                    handleCancelClass(slot.courseCode, slot.day, slot.time)
+                    handleCancelClass(
+                      slot.courseCode,
+                      slot.day,
+                      slot.time,
+                      slot.section
+                    )
                   }
                 >
                   Cancel Class
