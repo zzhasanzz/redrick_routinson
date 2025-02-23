@@ -736,7 +736,7 @@ const TeacherRoutine = () => {
       const courseRef = doc(
         db,
         `teachers/${teacherName}/courses`,
-        courseId.toString()
+        courseId.toString() + "_" + section
       );
       const courseSnapshot = await getDoc(courseRef);
       const courseData = courseSnapshot.data();
@@ -764,7 +764,7 @@ const TeacherRoutine = () => {
 
       // Update semester status
       let sem = courseId.toString().charAt(courseId.toString().length - 3);
-      const semester = "semester_" + sem;
+      const semester = "semester_" + sem + "_" + section;
       const timeSlotRef = doc(db, semester, timeSlot.toString());
       await updateDoc(timeSlotRef, {
         class_cancelled: 0,
@@ -808,7 +808,7 @@ const TeacherRoutine = () => {
       const courseRef = doc(
         db,
         `teachers/${teacherName}/courses`,
-        courseId.toString()
+        courseId.toString() + "_" + section
       );
       const courseSnapshot = await getDoc(courseRef);
       const courseData = courseSnapshot.data();
@@ -834,7 +834,7 @@ const TeacherRoutine = () => {
 
       // Update semester document
       let sem = courseId.toString().charAt(courseId.toString().length - 3);
-      const semester = "semester_" + sem;
+      const semester = "semester_" + sem + "_" + section;
       const timeSlotRef = doc(db, semester, timeSlot.toString());
 
       await updateDoc(timeSlotRef, {
@@ -844,6 +844,7 @@ const TeacherRoutine = () => {
         temp_teacher_1: "",
         temp_day: "",
         temp_time_1: "",
+        temp_section: "",
         rescheduled: 0,
       });
 
@@ -854,6 +855,7 @@ const TeacherRoutine = () => {
         temp_course_type: "",
         temp_room: "",
         temp_teacher_1: "",
+        temp_section: "",
         class_cancelled: 0,
       });
 
