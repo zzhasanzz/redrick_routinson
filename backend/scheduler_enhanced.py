@@ -54,11 +54,12 @@ def write_routine_to_firestore(scheduled_classes):
     delete_collection(db.collection('time_slots'))
     delete_collection(db.collection('teachers'))
 
-    batch_limit = 450  #
-    batch_count = 0
-    batch = db.batch()
-
-    teacher_data_cache = {}
+    # Prepare data structures for batch processing
+    semester_data = defaultdict(list)
+    timeslot_data = defaultdict(list)
+    teacher_data = defaultdict(lambda: defaultdict(dict))
+    
+    # First pass: organize all data
     for cls in scheduled_classes:
         time_1 = cls.times[0] if len(cls.times) > 0 else ""
         time_2 = cls.times[1] if len(cls.times) > 1 else ""
@@ -70,10 +71,10 @@ def write_routine_to_firestore(scheduled_classes):
         time_slot_1 = day_index * len(time_mapping) + time_index if day_index >= 0 else ""
         course_type = "lab" if time_2 else "theory"
 
-        # Data for the semester collection
-        data = {
+        # Prepare semester data
+        semester_key = f'semester_{cls.semester}_{cls.section}'
+        doc_data = {
             'perm_course_code': cls.code,
-            'perm_course_title': "",
             'perm_course_type': course_type,
             'perm_room': cls.room,
             'perm_teacher_1': teacher_1,
@@ -84,7 +85,6 @@ def write_routine_to_firestore(scheduled_classes):
             'class_cancelled': 0,
             'rescheduled': 0,
             'temp_course_code': '',
-            'temp_course_title': '',
             'temp_course_type': '',
             'temp_room': '',
             'temp_section': '',
@@ -94,50 +94,35 @@ def write_routine_to_firestore(scheduled_classes):
             'temp_time_1': '',
             'temp_time_2': ''
         }
-        doc_ref = db.collection(f'semester_{cls.semester}_{cls.section}').document(str(time_slot_1))
-        batch.set(doc_ref, data)
+        semester_data[semester_key].append((str(time_slot_1), doc_data))
         if time_2:
             time_slot_2 = time_slot_1 + 1
-            doc_ref = db.collection(f'semester_{cls.semester}_{cls.section}').document(str(time_slot_2))
-            batch.set(doc_ref, data)
-            batch_count += 1
-        batch_count += 1
-        
-        
-        
-        time_slot_data = {
+            semester_data[semester_key].append((str(time_slot_2), doc_data))
+
+        # Prepare timeslot data
+        time_slot_doc = {
             'perm_course_code': cls.code,
-            'perm_course_title': "",
             'course_type': course_type,
             'perm_teacher_1': teacher_1,
             'perm_teacher_2': teacher_2,
             'class_cancelled': 0,
             'rescheduled': 0,
             'temp_course_code': '',
-            'temp_course_title': '',
             'temp_section': '',
             'temp_teacher_1': '',
             'temp_teacher_2': '',
-            'section':cls.section,
+            'section': cls.section,
         }
-        
-        time_slot_ref = db.collection('time_slots').document(str(time_slot_1)).collection('rooms').document(str(cls.room))
-        batch.set(time_slot_ref, time_slot_data)
-        batch_count += 1
+        timeslot_data[str(time_slot_1)].append((str(cls.room), time_slot_doc))
         if time_2:
-            time_slot_ref = db.collection('time_slots').document(str(time_slot_2)).collection('rooms').document(str(cls.room))
-            batch.set(time_slot_ref, time_slot_data)
-            batch_count += 1
-            
+            timeslot_data[str(time_slot_2)].append((str(cls.room), time_slot_doc))
+
+        # Prepare teacher data
         for teacher in [teacher_1, teacher_2]:
             if teacher:
-                # Initialize teacher data if not in cache
-                if teacher not in teacher_data_cache:
-                    teacher_data_cache[teacher] = {}
                 class_code_with_section = f"{cls.code}_{cls.section}"
-                # Initialize course-specific data if not already initialized
-                if cls.code not in teacher_data_cache[teacher]:
-                    teacher_data_cache[teacher][class_code_with_section] = {
+                if class_code_with_section not in teacher_data[teacher]:
+                    teacher_data[teacher][class_code_with_section] = {
                         'assigned_time_slots': [],
                         'assigned_room': [],
                         'course_type': course_type,
@@ -146,56 +131,86 @@ def write_routine_to_firestore(scheduled_classes):
                         'assigned_temp_time_slots': [],
                         'assigned_temp_room': []
                     }
+                
+                teacher_data[teacher][class_code_with_section]['assigned_time_slots'].append(time_slot_1)
+                teacher_data[teacher][class_code_with_section]['assigned_room'].append(cls.room)
+                teacher_data[teacher][class_code_with_section]['class_cancelled_status'].append(0)
+                teacher_data[teacher][class_code_with_section]['rescheduled_status'].append(0)
 
-                # Append data to the appropriate fields
-                teacher_data_cache[teacher][class_code_with_section]['assigned_time_slots'].append(time_slot_1)
-                teacher_data_cache[teacher][class_code_with_section]['assigned_room'].append(cls.room)
-                teacher_data_cache[teacher][class_code_with_section]['class_cancelled_status'].append(0)
-                teacher_data_cache[teacher][class_code_with_section]['rescheduled_status'].append(0)
+    # Clear existing data
+    delete_collections(['time_slots', 'teachers'])
+    for semester_key in semester_data.keys():
+        delete_collection(db.collection(semester_key))
 
-        # Write to Firestore
-        for teacher, courses in teacher_data_cache.items():
-            for course_code_with_section, data in courses.items():
-                teacher_ref = db.collection('teachers').document(teacher).collection('courses').document(course_code_with_section)
-                batch.set(teacher_ref, data)
-                batch_count += 1
+    # Batch write with efficient chunking
+    def chunked_batch_write(data_dict, collection_path, is_nested=False):
+        batch = db.batch()
+        count = 0
+        batch_limit = 450  # Firestore batch limit is 500, using 450 for safety
 
-
-
-        # Commit batch if batch limit is reached
-        if batch_count >= batch_limit:
+        for key, items in data_dict.items():
+            if is_nested:
+                # Handle nested collections (like timeslots)
+                subcoll_ref = db.collection(collection_path).document(key).collection('rooms')
+                for doc_id, doc_data in items:
+                    batch.set(subcoll_ref.document(doc_id), doc_data)
+            else:
+                # Handle flat collections
+                coll_ref = db.collection(collection_path or key)
+                for doc_id, doc_data in items:
+                    batch.set(coll_ref.document(doc_id), doc_data)
+            
+            count += len(items)
+            if count >= batch_limit:
+                batch.commit()
+                batch = db.batch()
+                count = 0
+                time.sleep(0.5)  # Small delay between batches
+        
+        if count > 0:
             batch.commit()
-            batch = db.batch()
-            batch_count = 0
-            time.sleep(1)  # Add small delay between batch commits
 
-    # Write cached teacher data
+    # Execute batch writes in parallel (if possible)
+    chunked_batch_write(semester_data, None)
+    chunked_batch_write(timeslot_data, 'time_slots', True)
     
-
-    # Commit any remaining writes in the final batch
-    if batch_count > 0:
-        batch.commit()
-
-
-    
-
-
-
-
-def delete_collection(collection_ref):
-    """Delete all documents in a collection using batched operations."""
-    docs = collection_ref.stream()
+    # Write teacher data
     batch = db.batch()
     count = 0
-    for doc in docs:
-        batch.delete(doc.reference)
-        count += 1
-        if count == 500:
-            batch.commit()
-            batch = db.batch()
-            count = 0
+    for teacher, courses in teacher_data.items():
+        for course_code, data in courses.items():
+            ref = db.collection('teachers').document(teacher).collection('courses').document(course_code)
+            batch.set(ref, data)
+            count += 1
+            if count >= 450:
+                batch.commit()
+                batch = db.batch()
+                count = 0
+                time.sleep(0.5)
+    
     if count > 0:
         batch.commit()
+
+def delete_collections(collection_names):
+    """Delete multiple collections efficiently"""
+    for name in collection_names:
+        delete_collection(db.collection(name))
+
+def delete_collection(collection_ref, batch_size=500):
+    """More efficient collection deletion"""
+    docs = collection_ref.limit(batch_size).stream()
+    deleted = 0
+
+    for doc in docs:
+        # Handle subcollections first
+        for subcoll in doc.reference.collections():
+            delete_collection(subcoll, batch_size)
+        
+        doc.reference.delete()
+        deleted += 1
+
+    if deleted >= batch_size:
+        return delete_collection(collection_ref, batch_size)
 
 # Initialize semester timeslots with sections and days
 semester_timeslots = {

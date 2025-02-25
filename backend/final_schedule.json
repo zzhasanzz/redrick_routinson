@@ -10,16 +10,56 @@
               "course": "HUM4144",
               "schedule": [
                 {
-                  "day": "Thursday",
+                  "day": "Wednesday",
                   "time": "8:00-9:15",
-                  "room": "5",
+                  "room": "6",
                   "teacher": "MMH"
                 },
                 {
-                  "day": "Friday",
+                  "day": "Thursday",
                   "time": "9:15-10:30",
-                  "room": "2",
+                  "room": "301",
                   "teacher": "MMH"
+                }
+              ]
+            },
+            {
+              "course": "Math4141",
+              "schedule": [
+                {
+                  "day": "Tuesday",
+                  "time": "8:00-9:15",
+                  "room": "6",
+                  "teacher": "MUA"
+                },
+                {
+                  "day": "Friday",
+                  "time": "8:00-9:15",
+                  "room": "304",
+                  "teacher": "MUA"
+                }
+              ]
+            },
+            {
+              "course": "CSE4105",
+              "schedule": [
+                {
+                  "day": "Monday",
+                  "time": "9:15-10:30",
+                  "room": "5",
+                  "teacher": "KH"
+                },
+                {
+                  "day": "Thursday",
+                  "time": "10:30-11:45",
+                  "room": "5",
+                  "teacher": "KH"
+                },
+                {
+                  "day": "Friday",
+                  "time": "2:30-3:45",
+                  "room": "7",
+                  "teacher": "KH"
                 }
               ]
             },
@@ -28,49 +68,15 @@
               "schedule": [
                 {
                   "day": "Thursday",
-                  "time": "9:15-10:30",
-                  "room": "7",
-                  "teacher": "MMH"
-                },
-                {
-                  "day": "Friday",
                   "time": "8:00-9:15",
-                  "room": "7",
+                  "room": "8",
                   "teacher": "MMH"
-                }
-              ]
-            },
-            {
-              "course": "CSE4107",
-              "schedule": [
-                {
-                  "day": "Friday",
-                  "time": "2:30-3:45",
-                  "room": "2",
-                  "teacher": "MM"
                 },
                 {
                   "day": "Tuesday",
-                  "time": "9:15-10:30",
-                  "room": "304",
-                  "teacher": "MM"
-                }
-              ]
-            },
-            {
-              "course": "Math4141",
-              "schedule": [
-                {
-                  "day": "Monday",
-                  "time": "8:00-9:15",
-                  "room": "1",
-                  "teacher": "MUA"
-                },
-                {
-                  "day": "Wednesday",
-                  "time": "9:15-10:30",
-                  "room": "3",
-                  "teacher": "MUA"
+                  "time": "2:30-3:45",
+                  "room": "5",
+                  "teacher": "MMH"
                 }
               ]
             },
@@ -78,16 +84,50 @@
               "course": "Phy4141",
               "schedule": [
                 {
-                  "day": "Wednesday",
+                  "day": "Monday",
                   "time": "8:00-9:15",
-                  "room": "510",
+                  "room": "6",
                   "teacher": "FAK"
                 },
                 {
-                  "day": "Tuesday",
+                  "day": "Thursday",
                   "time": "2:30-3:45",
-                  "room": "509",
+                  "room": "301",
                   "teacher": "FAK"
+                }
+              ]
+            },
+            {
+              "course": "CSE4107",
+              "schedule": [
+                {
+                  "day": "Monday",
+                  "time": "3:45-5:00",
+                  "room": "301",
+                  "teacher": "MM"
+                },
+                {
+                  "day": "Tuesday",
+                  "time": "9:15-10:30",
+                  "room": "4",
+                  "teacher": "MM"
+                }
+              ]
+            },
+            {
+              "course": "Hum4147",
+              "schedule": [
+                {
+                  "day": "Monday",
+                  "time": "2:30-3:45",
+                  "room": "7",
+                  "teacher": "BS"
+                },
+                {
+                  "day": "Wednesday",
+                  "time": "9:15-10:30",
+                  "room": "3",
+                  "teacher": "BS"
                 }
               ]
             },
@@ -97,42 +137,8 @@
                 {
                   "day": "Thursday",
                   "time": "3:45-5:00",
-                  "room": "7",
+                  "room": "510",
                   "teacher": "AH"
-                }
-              ]
-            },
-            {
-              "course": "CSE4105",
-              "schedule": [
-                {
-                  "day": "Tuesday",
-                  "time": "8:00-9:15",
-                  "room": "204",
-                  "teacher": "KH"
-                },
-                {
-                  "day": "Thursday",
-                  "time": "10:30-11:45",
-                  "room": "4",
-                  "teacher": "KH"
-                }
-              ]
-            },
-            {
-              "course": "Hum4147",
-              "schedule": [
-                {
-                  "day": "Thursday",
-                  "time": "11:45-1:00",
-                  "room": "509",
-                  "teacher": "BS"
-                },
-                {
-                  "day": "Monday",
-                  "time": "9:15-10:30",
-                  "room": "203",
-                  "teacher": "BS"
                 }
               ]
             }
@@ -177,36 +183,19 @@
           "section": "B",
           "courses": [
             {
-              "course": "Hum4144",
+              "course": "Math4141",
               "schedule": [
-                {
-                  "day": "Monday",
-                  "time": "10:30-11:45",
-                  "room": "302",
-                  "teacher": "MMH"
-                },
                 {
                   "day": "Wednesday",
                   "time": "10:30-11:45",
-                  "room": "6",
-                  "teacher": "MMH"
-                }
-              ]
-            },
-            {
-              "course": "HUM4144",
-              "schedule": [
-                {
-                  "day": "Tuesday",
-                  "time": "8:00-9:15",
-                  "room": "508",
-                  "teacher": "MMH"
+                  "room": "301",
+                  "teacher": "MUA"
                 },
                 {
-                  "day": "Monday",
-                  "time": "2:30-3:45",
-                  "room": "7",
-                  "teacher": "MMH"
+                  "day": "Thursday",
+                  "time": "8:00-9:15",
+                  "room": "304",
+                  "teacher": "MUA"
                 }
               ]
             },
@@ -214,67 +203,33 @@
               "course": "Phy4141",
               "schedule": [
                 {
-                  "day": "Friday",
-                  "time": "11:45-1:00",
-                  "room": "2",
-                  "teacher": "FAK"
-                },
-                {
-                  "day": "Thursday",
-                  "time": "8:00-9:15",
-                  "room": "510",
-                  "teacher": "FAK"
-                }
-              ]
-            },
-            {
-              "course": "Math4141",
-              "schedule": [
-                {
                   "day": "Tuesday",
-                  "time": "9:15-10:30",
-                  "room": "510",
-                  "teacher": "MUA"
-                },
-                {
-                  "day": "Thursday",
-                  "time": "9:15-10:30",
-                  "room": "302",
-                  "teacher": "MUA"
-                }
-              ]
-            },
-            {
-              "course": "CSE4107",
-              "schedule": [
-                {
-                  "day": "Monday",
-                  "time": "3:45-5:00",
-                  "room": "1",
-                  "teacher": "MM"
-                },
-                {
-                  "day": "Wednesday",
-                  "time": "11:45-1:00",
-                  "room": "8",
-                  "teacher": "MM"
-                }
-              ]
-            },
-            {
-              "course": "CSE4105",
-              "schedule": [
-                {
-                  "day": "Monday",
-                  "time": "11:45-1:00",
-                  "room": "1",
-                  "teacher": "KH"
+                  "time": "2:30-3:45",
+                  "room": "509",
+                  "teacher": "FAK"
                 },
                 {
                   "day": "Friday",
+                  "time": "11:45-1:00",
+                  "room": "203",
+                  "teacher": "FAK"
+                }
+              ]
+            },
+            {
+              "course": "Hum4144",
+              "schedule": [
+                {
+                  "day": "Friday",
                   "time": "8:00-9:15",
-                  "room": "302",
-                  "teacher": "KH"
+                  "room": "301",
+                  "teacher": "MMH"
+                },
+                {
+                  "day": "Monday",
+                  "time": "11:45-1:00",
+                  "room": "204",
+                  "teacher": "MMH"
                 }
               ]
             },
@@ -284,14 +239,31 @@
                 {
                   "day": "Tuesday",
                   "time": "10:30-11:45",
-                  "room": "203",
+                  "room": "8",
                   "teacher": "BS"
                 },
                 {
                   "day": "Friday",
-                  "time": "9:15-10:30",
-                  "room": "301",
+                  "time": "10:30-11:45",
+                  "room": "304",
                   "teacher": "BS"
+                }
+              ]
+            },
+            {
+              "course": "CSE4107",
+              "schedule": [
+                {
+                  "day": "Wednesday",
+                  "time": "11:45-1:00",
+                  "room": "510",
+                  "teacher": "MM"
+                },
+                {
+                  "day": "Thursday",
+                  "time": "2:30-3:45",
+                  "room": "508",
+                  "teacher": "MM"
                 }
               ]
             },
@@ -299,10 +271,38 @@
               "course": "HUM4142",
               "schedule": [
                 {
-                  "day": "Friday",
-                  "time": "10:30-11:45",
-                  "room": "508",
+                  "day": "Tuesday",
+                  "time": "3:45-5:00",
+                  "room": "204",
                   "teacher": "AH"
+                }
+              ]
+            },
+            {
+              "course": "CSE4105",
+              "schedule": [
+                {
+                  "day": "Tuesday",
+                  "time": "8:00-9:15",
+                  "room": "7",
+                  "teacher": "KH"
+                }
+              ]
+            },
+            {
+              "course": "HUM4144",
+              "schedule": [
+                {
+                  "day": "Friday",
+                  "time": "9:15-10:30",
+                  "room": "509",
+                  "teacher": "MMH"
+                },
+                {
+                  "day": "Monday",
+                  "time": "10:30-11:45",
+                  "room": "1",
+                  "teacher": "MMH"
                 }
               ]
             }
@@ -352,36 +352,53 @@
           "section": "A",
           "courses": [
             {
-              "course": "CSE4307",
+              "course": "Math4341",
               "schedule": [
                 {
                   "day": "Wednesday",
                   "time": "8:00-9:15",
-                  "room": "509",
+                  "room": "508",
+                  "teacher": "MKS"
+                },
+                {
+                  "day": "Friday",
+                  "time": "9:15-10:30",
+                  "room": "203",
+                  "teacher": "MKS"
+                }
+              ]
+            },
+            {
+              "course": "CSE4307",
+              "schedule": [
+                {
+                  "day": "Monday",
+                  "time": "9:15-10:30",
+                  "room": "8",
                   "teacher": "ARMK"
                 },
                 {
-                  "day": "Tuesday",
-                  "time": "10:30-11:45",
-                  "room": "509",
+                  "day": "Thursday",
+                  "time": "9:15-10:30",
+                  "room": "8",
                   "teacher": "ARMK"
                 }
               ]
             },
             {
-              "course": "Math4341",
+              "course": "EEE4383",
               "schedule": [
                 {
-                  "day": "Tuesday",
-                  "time": "2:30-3:45",
-                  "room": "204",
-                  "teacher": "MKS"
+                  "day": "Wednesday",
+                  "time": "9:15-10:30",
+                  "room": "7",
+                  "teacher": "SHR"
                 },
                 {
-                  "day": "Monday",
-                  "time": "2:30-3:45",
-                  "room": "301",
-                  "teacher": "MKS"
+                  "day": "Friday",
+                  "time": "8:00-9:15",
+                  "room": "509",
+                  "teacher": "SHR"
                 }
               ]
             },
@@ -389,15 +406,15 @@
               "course": "CSE4303",
               "schedule": [
                 {
-                  "day": "Tuesday",
-                  "time": "11:45-1:00",
-                  "room": "5",
+                  "day": "Thursday",
+                  "time": "8:00-9:15",
+                  "room": "509",
                   "teacher": "SA"
                 },
                 {
-                  "day": "Thursday",
-                  "time": "3:45-5:00",
-                  "room": "2",
+                  "day": "Tuesday",
+                  "time": "11:45-1:00",
+                  "room": "301",
                   "teacher": "SA"
                 }
               ]
@@ -406,15 +423,15 @@
               "course": "CSE4305",
               "schedule": [
                 {
-                  "day": "Wednesday",
-                  "time": "9:15-10:30",
-                  "room": "510",
+                  "day": "Friday",
+                  "time": "10:30-11:45",
+                  "room": "508",
                   "teacher": "MHA"
                 },
                 {
-                  "day": "Tuesday",
+                  "day": "Thursday",
                   "time": "3:45-5:00",
-                  "room": "6",
+                  "room": "3",
                   "teacher": "MHA"
                 }
               ]
@@ -423,39 +440,16 @@
               "course": "CSE4301",
               "schedule": [
                 {
-                  "day": "Thursday",
-                  "time": "8:00-9:15",
-                  "room": "509",
+                  "day": "Friday",
+                  "time": "11:45-1:00",
+                  "room": "301",
                   "teacher": "FH"
                 },
                 {
-                  "day": "Friday",
-                  "time": "10:30-11:45",
+                  "day": "Tuesday",
+                  "time": "2:30-3:45",
                   "room": "510",
                   "teacher": "FH"
-                }
-              ]
-            },
-            {
-              "course": "EEE4383",
-              "schedule": [
-                {
-                  "day": "Monday",
-                  "time": "8:00-9:15",
-                  "room": "302",
-                  "teacher": "SHR"
-                },
-                {
-                  "day": "Thursday",
-                  "time": "9:15-10:30",
-                  "room": "510",
-                  "teacher": "SHR"
-                },
-                {
-                  "day": "Friday",
-                  "time": "8:00-9:15",
-                  "room": "4",
-                  "teacher": "SHR"
                 }
               ]
             }
@@ -511,29 +505,12 @@
           "section": "B",
           "courses": [
             {
-              "course": "CSE4305",
-              "schedule": [
-                {
-                  "day": "Thursday",
-                  "time": "3:45-5:00",
-                  "room": "5",
-                  "teacher": "MHA"
-                },
-                {
-                  "day": "Friday",
-                  "time": "9:15-10:30",
-                  "room": "510",
-                  "teacher": "MHA"
-                }
-              ]
-            },
-            {
               "course": "CSE4307",
               "schedule": [
                 {
-                  "day": "Monday",
-                  "time": "9:15-10:30",
-                  "room": "204",
+                  "day": "Tuesday",
+                  "time": "8:00-9:15",
+                  "room": "1",
                   "teacher": "ARMK"
                 },
                 {
@@ -545,19 +522,19 @@
               ]
             },
             {
-              "course": "Math4341",
+              "course": "EEE4383",
               "schedule": [
-                {
-                  "day": "Friday",
-                  "time": "8:00-9:15",
-                  "room": "509",
-                  "teacher": "MKS"
-                },
                 {
                   "day": "Thursday",
                   "time": "10:30-11:45",
-                  "room": "203",
-                  "teacher": "MKS"
+                  "room": "509",
+                  "teacher": "SHR"
+                },
+                {
+                  "day": "Monday",
+                  "time": "8:00-9:15",
+                  "room": "204",
+                  "teacher": "SHR"
                 }
               ]
             },
@@ -571,10 +548,44 @@
                   "teacher": "SA"
                 },
                 {
+                  "day": "Friday",
+                  "time": "8:00-9:15",
+                  "room": "7",
+                  "teacher": "SA"
+                }
+              ]
+            },
+            {
+              "course": "Math4341",
+              "schedule": [
+                {
+                  "day": "Tuesday",
+                  "time": "9:15-10:30",
+                  "room": "8",
+                  "teacher": "MKS"
+                },
+                {
+                  "day": "Monday",
+                  "time": "11:45-1:00",
+                  "room": "1",
+                  "teacher": "MKS"
+                }
+              ]
+            },
+            {
+              "course": "CSE4305",
+              "schedule": [
+                {
                   "day": "Monday",
                   "time": "10:30-11:45",
-                  "room": "203",
-                  "teacher": "SA"
+                  "room": "6",
+                  "teacher": "MHA"
+                },
+                {
+                  "day": "Tuesday",
+                  "time": "10:30-11:45",
+                  "room": "508",
+                  "teacher": "MHA"
                 }
               ]
             },
@@ -584,25 +595,14 @@
                 {
                   "day": "Wednesday",
                   "time": "10:30-11:45",
-                  "room": "204",
+                  "room": "3",
                   "teacher": "FH"
                 },
                 {
-                  "day": "Monday",
-                  "time": "8:00-9:15",
-                  "room": "204",
+                  "day": "Thursday",
+                  "time": "2:30-3:45",
+                  "room": "1",
                   "teacher": "FH"
-                }
-              ]
-            },
-            {
-              "course": "EEE4383",
-              "schedule": [
-                {
-                  "day": "Tuesday",
-                  "time": "8:00-9:15",
-                  "room": "509",
-                  "teacher": "SHR"
                 }
               ]
             }
@@ -680,35 +680,18 @@
               ]
             },
             {
-              "course": "CSE4511",
-              "schedule": [
-                {
-                  "day": "Thursday",
-                  "time": "10:30-11:45",
-                  "room": "5",
-                  "teacher": "FH"
-                },
-                {
-                  "day": "Tuesday",
-                  "time": "9:15-10:30",
-                  "room": "6",
-                  "teacher": "FH"
-                }
-              ]
-            },
-            {
               "course": "CSE4501",
               "schedule": [
                 {
-                  "day": "Monday",
-                  "time": "9:15-10:30",
-                  "room": "510",
+                  "day": "Wednesday",
+                  "time": "8:00-9:15",
+                  "room": "204",
                   "teacher": "MRK"
                 },
                 {
-                  "day": "Tuesday",
+                  "day": "Monday",
                   "time": "11:45-1:00",
-                  "room": "509",
+                  "room": "4",
                   "teacher": "MRK"
                 }
               ]
@@ -717,15 +700,15 @@
               "course": "Math4541",
               "schedule": [
                 {
-                  "day": "Wednesday",
-                  "time": "8:00-9:15",
-                  "room": "8",
+                  "day": "Thursday",
+                  "time": "11:45-1:00",
+                  "room": "7",
                   "teacher": "AKA"
                 },
                 {
-                  "day": "Thursday",
-                  "time": "11:45-1:00",
-                  "room": "510",
+                  "day": "Tuesday",
+                  "time": "10:30-11:45",
+                  "room": "2",
                   "teacher": "AKA"
                 }
               ]
@@ -734,16 +717,33 @@
               "course": "CSE4513",
               "schedule": [
                 {
-                  "day": "Tuesday",
-                  "time": "10:30-11:45",
-                  "room": "301",
+                  "day": "Friday",
+                  "time": "3:45-5:00",
+                  "room": "2",
                   "teacher": "SAH"
                 },
                 {
-                  "day": "Wednesday",
+                  "day": "Monday",
                   "time": "9:15-10:30",
-                  "room": "204",
+                  "room": "508",
                   "teacher": "SAH"
+                }
+              ]
+            },
+            {
+              "course": "CSE4511",
+              "schedule": [
+                {
+                  "day": "Monday",
+                  "time": "8:00-9:15",
+                  "room": "509",
+                  "teacher": "FH"
+                },
+                {
+                  "day": "Tuesday",
+                  "time": "9:15-10:30",
+                  "room": "302",
+                  "teacher": "FH"
                 }
               ]
             }
@@ -855,52 +855,18 @@
               ]
             },
             {
-              "course": "CSE4511",
-              "schedule": [
-                {
-                  "day": "Monday",
-                  "time": "9:15-10:30",
-                  "room": "5",
-                  "teacher": "FH"
-                },
-                {
-                  "day": "Wednesday",
-                  "time": "11:45-1:00",
-                  "room": "304",
-                  "teacher": "FH"
-                }
-              ]
-            },
-            {
-              "course": "Math4541",
-              "schedule": [
-                {
-                  "day": "Friday",
-                  "time": "8:00-9:15",
-                  "room": "508",
-                  "teacher": "AKA"
-                },
-                {
-                  "day": "Monday",
-                  "time": "10:30-11:45",
-                  "room": "204",
-                  "teacher": "AKA"
-                }
-              ]
-            },
-            {
               "course": "CSE4513",
               "schedule": [
                 {
-                  "day": "Thursday",
-                  "time": "9:15-10:30",
-                  "room": "508",
+                  "day": "Wednesday",
+                  "time": "11:45-1:00",
+                  "room": "301",
                   "teacher": "SAH"
                 },
                 {
-                  "day": "Friday",
-                  "time": "11:45-1:00",
-                  "room": "301",
+                  "day": "Thursday",
+                  "time": "9:15-10:30",
+                  "room": "302",
                   "teacher": "SAH"
                 }
               ]
@@ -909,16 +875,50 @@
               "course": "CSE4501",
               "schedule": [
                 {
-                  "day": "Wednesday",
-                  "time": "8:00-9:15",
-                  "room": "203",
+                  "day": "Thursday",
+                  "time": "11:45-1:00",
+                  "room": "1",
                   "teacher": "MRK"
                 },
                 {
-                  "day": "Thursday",
-                  "time": "11:45-1:00",
-                  "room": "302",
+                  "day": "Friday",
+                  "time": "9:15-10:30",
+                  "room": "510",
                   "teacher": "MRK"
+                }
+              ]
+            },
+            {
+              "course": "Math4541",
+              "schedule": [
+                {
+                  "day": "Wednesday",
+                  "time": "8:00-9:15",
+                  "room": "5",
+                  "teacher": "AKA"
+                },
+                {
+                  "day": "Monday",
+                  "time": "9:15-10:30",
+                  "room": "3",
+                  "teacher": "AKA"
+                }
+              ]
+            },
+            {
+              "course": "CSE4511",
+              "schedule": [
+                {
+                  "day": "Thursday",
+                  "time": "10:30-11:45",
+                  "room": "203",
+                  "teacher": "FH"
+                },
+                {
+                  "day": "Friday",
+                  "time": "8:00-9:15",
+                  "room": "5",
+                  "teacher": "FH"
                 }
               ]
             }
@@ -1001,87 +1001,36 @@
           "section": "A",
           "courses": [
             {
-              "course": "Hum4743",
-              "schedule": [
-                {
-                  "day": "Wednesday",
-                  "time": "8:00-9:15",
-                  "room": "301",
-                  "teacher": "ZR"
-                },
-                {
-                  "day": "Thursday",
-                  "time": "10:30-11:45",
-                  "room": "2",
-                  "teacher": "ZR"
-                }
-              ]
-            },
-            {
               "course": "Math4741",
               "schedule": [
                 {
-                  "day": "Monday",
-                  "time": "11:45-1:00",
-                  "room": "3",
+                  "day": "Thursday",
+                  "time": "10:30-11:45",
+                  "room": "8",
                   "teacher": "MMA"
                 },
-                {
-                  "day": "Tuesday",
-                  "time": "2:30-3:45",
-                  "room": "6",
-                  "teacher": "MMA"
-                }
-              ]
-            },
-            {
-              "course": "CSE4703",
-              "schedule": [
                 {
                   "day": "Wednesday",
-                  "time": "9:15-10:30",
-                  "room": "508",
-                  "teacher": "AZM"
-                },
-                {
-                  "day": "Monday",
                   "time": "8:00-9:15",
-                  "room": "301",
-                  "teacher": "AZM"
+                  "room": "7",
+                  "teacher": "MMA"
                 }
               ]
             },
             {
-              "course": "CSE4733",
+              "course": "Hum4743",
               "schedule": [
                 {
                   "day": "Tuesday",
-                  "time": "10:30-11:45",
-                  "room": "304",
-                  "teacher": "MBH"
-                },
-                {
-                  "day": "Friday",
-                  "time": "9:15-10:30",
-                  "room": "1",
-                  "teacher": "MBH"
-                }
-              ]
-            },
-            {
-              "course": "CSE4739",
-              "schedule": [
-                {
-                  "day": "Wednesday",
-                  "time": "10:30-11:45",
-                  "room": "510",
-                  "teacher": "NY"
+                  "time": "8:00-9:15",
+                  "room": "509",
+                  "teacher": "ZR"
                 },
                 {
                   "day": "Monday",
                   "time": "9:15-10:30",
-                  "room": "302",
-                  "teacher": "NY"
+                  "room": "2",
+                  "teacher": "ZR"
                 }
               ]
             },
@@ -1089,16 +1038,67 @@
               "course": "CSE4709",
               "schedule": [
                 {
-                  "day": "Tuesday",
+                  "day": "Monday",
                   "time": "8:00-9:15",
-                  "room": "1",
+                  "room": "301",
                   "teacher": "MAMR"
+                },
+                {
+                  "day": "Friday",
+                  "time": "8:00-9:15",
+                  "room": "6",
+                  "teacher": "MAMR"
+                }
+              ]
+            },
+            {
+              "course": "CSE4739",
+              "schedule": [
+                {
+                  "day": "Tuesday",
+                  "time": "9:15-10:30",
+                  "room": "204",
+                  "teacher": "NY"
+                },
+                {
+                  "day": "Wednesday",
+                  "time": "10:30-11:45",
+                  "room": "304",
+                  "teacher": "NY"
+                }
+              ]
+            },
+            {
+              "course": "CSE4733",
+              "schedule": [
+                {
+                  "day": "Friday",
+                  "time": "9:15-10:30",
+                  "room": "508",
+                  "teacher": "MBH"
+                },
+                {
+                  "day": "Wednesday",
+                  "time": "9:15-10:30",
+                  "room": "1",
+                  "teacher": "MBH"
+                }
+              ]
+            },
+            {
+              "course": "CSE4703",
+              "schedule": [
+                {
+                  "day": "Tuesday",
+                  "time": "10:30-11:45",
+                  "room": "302",
+                  "teacher": "AZM"
                 },
                 {
                   "day": "Thursday",
                   "time": "11:45-1:00",
-                  "room": "204",
-                  "teacher": "MAMR"
+                  "room": "508",
+                  "teacher": "AZM"
                 }
               ]
             }
@@ -1143,19 +1143,19 @@
           "section": "B",
           "courses": [
             {
-              "course": "Hum4743",
+              "course": "Math4741",
               "schedule": [
                 {
                   "day": "Tuesday",
-                  "time": "8:00-9:15",
-                  "room": "510",
-                  "teacher": "ZR"
+                  "time": "2:30-3:45",
+                  "room": "204",
+                  "teacher": "MMA"
                 },
                 {
-                  "day": "Monday",
-                  "time": "8:00-9:15",
-                  "room": "5",
-                  "teacher": "ZR"
+                  "day": "Friday",
+                  "time": "2:30-3:45",
+                  "room": "509",
+                  "teacher": "MMA"
                 }
               ]
             },
@@ -1163,50 +1163,33 @@
               "course": "CSE4703",
               "schedule": [
                 {
-                  "day": "Thursday",
-                  "time": "10:30-11:45",
-                  "room": "509",
-                  "teacher": "AZM"
-                },
-                {
-                  "day": "Tuesday",
-                  "time": "10:30-11:45",
-                  "room": "510",
-                  "teacher": "AZM"
-                }
-              ]
-            },
-            {
-              "course": "Math4741",
-              "schedule": [
-                {
                   "day": "Wednesday",
                   "time": "8:00-9:15",
-                  "room": "7",
-                  "teacher": "MMA"
+                  "room": "203",
+                  "teacher": "AZM"
                 },
                 {
-                  "day": "Friday",
-                  "time": "11:45-1:00",
-                  "room": "508",
-                  "teacher": "MMA"
+                  "day": "Monday",
+                  "time": "9:15-10:30",
+                  "room": "203",
+                  "teacher": "AZM"
                 }
               ]
             },
             {
-              "course": "CSE4733",
+              "course": "Hum4743",
               "schedule": [
-                {
-                  "day": "Thursday",
-                  "time": "3:45-5:00",
-                  "room": "203",
-                  "teacher": "MBH"
-                },
                 {
                   "day": "Wednesday",
                   "time": "9:15-10:30",
-                  "room": "304",
-                  "teacher": "MBH"
+                  "room": "6",
+                  "teacher": "ZR"
+                },
+                {
+                  "day": "Thursday",
+                  "time": "11:45-1:00",
+                  "room": "3",
+                  "teacher": "ZR"
                 }
               ]
             },
@@ -1214,16 +1197,33 @@
               "course": "CSE4739",
               "schedule": [
                 {
-                  "day": "Friday",
-                  "time": "2:30-3:45",
-                  "room": "304",
+                  "day": "Thursday",
+                  "time": "10:30-11:45",
+                  "room": "7",
                   "teacher": "NY"
                 },
                 {
-                  "day": "Tuesday",
-                  "time": "9:15-10:30",
-                  "room": "302",
+                  "day": "Monday",
+                  "time": "8:00-9:15",
+                  "room": "5",
                   "teacher": "NY"
+                }
+              ]
+            },
+            {
+              "course": "CSE4733",
+              "schedule": [
+                {
+                  "day": "Monday",
+                  "time": "11:45-1:00",
+                  "room": "301",
+                  "teacher": "MBH"
+                },
+                {
+                  "day": "Tuesday",
+                  "time": "10:30-11:45",
+                  "room": "204",
+                  "teacher": "MBH"
                 }
               ]
             },
@@ -1233,13 +1233,13 @@
                 {
                   "day": "Wednesday",
                   "time": "10:30-11:45",
-                  "room": "304",
+                  "room": "8",
                   "teacher": "MAMR"
                 },
                 {
-                  "day": "Monday",
-                  "time": "9:15-10:30",
-                  "room": "3",
+                  "day": "Tuesday",
+                  "time": "8:00-9:15",
+                  "room": "5",
                   "teacher": "MAMR"
                 }
               ]
