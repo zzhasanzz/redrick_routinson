@@ -777,6 +777,7 @@ const TeacherRoutine = () => {
           day: data.perm_day,
           time: data.perm_time_1,
           room: data.perm_room,
+          section: section, // Add section to the data
         });
       }
     }
@@ -798,6 +799,7 @@ const TeacherRoutine = () => {
         day: day,
         time: time,
         room: slot.room,
+        section: slot.section, // Add section to target class
       });
       setShowSwapRequestModal(true);
     } else {
@@ -807,20 +809,29 @@ const TeacherRoutine = () => {
   };
 
   const sendSwapRequest = async () => {
-    const swapRequestRef = collection(db, "swap_requests");
-    await addDoc(swapRequestRef, {
-      requestingTeacher: teacherName,
-      requestingCourse: selectedCourse,
-      requestingTimeSlot:
-        revDayMapping[selectedDay] * 6 + revTimeMapping[selectedTime],
-      targetTeacher: targetClass.teacher,
-      targetCourse: targetClass.course,
-      targetTimeSlot: targetClass.timeSlot,
-      status: "pending",
-      createdAt: new Date(),
-    });
-    alert("Swap request sent successfully!");
-    setShowSwapRequestModal(false);
+    try {
+      const swapRequestRef = collection(db, "swap_requests");
+      await addDoc(swapRequestRef, {
+        requestingTeacher: teacherName,
+        requestingCourse: `${selectedCourse}_${selectedSection}`, // Add section to course code
+        requestingTimeSlot:
+          revDayMapping[selectedDay] * 6 + revTimeMapping[selectedTime],
+        targetTeacher: targetClass.teacher,
+        targetCourse: `${targetClass.course}_${
+          targetClass.section || selectedSection
+        }`, // Add section to target course
+        targetTimeSlot: targetClass.timeSlot,
+        requestingSection: selectedSection, // Add section info
+        targetSection: targetClass.section || selectedSection, // Add section info
+        status: "pending",
+        createdAt: new Date(),
+      });
+      alert("Swap request sent successfully!");
+      setShowSwapRequestModal(false);
+    } catch (error) {
+      console.error("Error sending swap request:", error);
+      alert(`Failed to send swap request: ${error.message}`);
+    }
   };
 
   const handleSwapResponse = async (requestId, accept) => {
@@ -829,6 +840,7 @@ const TeacherRoutine = () => {
       if (!request) return;
 
       if (accept) {
+        // Use full course codes with sections
         await performClassSwap(request);
       }
 
@@ -839,24 +851,30 @@ const TeacherRoutine = () => {
       alert(`Swap request ${accept ? "accepted" : "rejected"} successfully!`);
     } catch (error) {
       console.error("Error handling swap response:", error);
-      alert("Failed to process swap response");
+      alert(`Failed to process swap response: ${error.message}`);
     }
   };
 
   const performClassSwap = async (request) => {
-    await updateTempSchedule(
-      request.requestingTeacher,
-      request.requestingCourse,
-      request.targetTimeSlot,
-      request.requestingTimeSlot
-    );
+    try {
+      // Course codes already include sections from the request object
+      await updateTempSchedule(
+        request.requestingTeacher,
+        request.requestingCourse, // Already includes section
+        request.targetTimeSlot,
+        request.requestingTimeSlot
+      );
 
-    await updateTempSchedule(
-      request.targetTeacher,
-      request.targetCourse,
-      request.requestingTimeSlot,
-      request.targetTimeSlot
-    );
+      await updateTempSchedule(
+        request.targetTeacher,
+        request.targetCourse, // Already includes section
+        request.requestingTimeSlot,
+        request.targetTimeSlot
+      );
+    } catch (error) {
+      console.error("Error performing class swap:", error);
+      throw error;
+    }
   };
 
   const updateTempSchedule = async (
@@ -865,6 +883,7 @@ const TeacherRoutine = () => {
     newTimeSlot,
     oldTimeSlot
   ) => {
+    // Course parameter already includes the section
     const courseRef = doc(db, `teachers/${teacher}/courses/${course}`);
     await updateDoc(courseRef, {
       assigned_temp_time_slots: arrayUnion(newTimeSlot),
