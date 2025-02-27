@@ -869,6 +869,8 @@ const TeacherRoutine = () => {
       const timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
       setSelectedRescheduleTime(timeSlot);
       await fetchAvailableRooms(timeSlot);
+    } else if (slot.type === "lab") {
+      alert("Lab classes cannot be swapped with Thoery classes!");
     } else if (slot.teacher !== teacherName) {
       // Handle occupied slot selection for swap
       setTargetClass({

@@ -94,6 +94,7 @@ const SemesterRoutineTable = ({
                         <div>{slot.course}</div>
                         <div>Room: {slot.room}</div>
                         <div>Teacher: {slot.teacher}</div>
+                        <div>Type: {slot.type || "theory"}</div>
                         {slot.isLabFirst && <div>(Lab - 2 slots)</div>}
                       </div>
                     )}
