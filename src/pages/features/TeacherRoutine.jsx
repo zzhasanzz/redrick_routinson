@@ -97,9 +97,12 @@ const TeacherRoutine = () => {
 
   const revTimeMapping = {
     "8:00-9:15": 1,
+    "8:00-10:30": 1,
     "9:15-10:30": 2,
     "10:30-11:45": 3,
+    "10:30-1:00": 3,
     "11:45-1:00": 4,
+    "2:30-3:45": 5,
     "2:30-3:45": 5,
     "3:45-5:00": 6,
   };
@@ -301,7 +304,10 @@ const TeacherRoutine = () => {
       const courseData = courseSnapshot.data();
       selectedCourseType = courseData["course_type"];
       const classCancelledStatus = courseData["class_cancelled_status"];
+      console.log("Day: ", day);
+      console.log("Time: ", time);
       timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
+      console.log("Time Slot: ", timeSlot);
       rooms = courseData["assigned_room"];
       classCancelledStatus.forEach((stat, idx) => {
         if (courseData["assigned_time_slots"][idx] === timeSlot) {
@@ -318,6 +324,7 @@ const TeacherRoutine = () => {
     }
 
     try {
+      console.log("Time Slot: ", timeSlot);
       const roomRef = doc(db, `time_slots/${timeSlot}/rooms`, room.toString());
       const roomSnapshot = await getDoc(roomRef);
       const roomData = roomSnapshot.data();

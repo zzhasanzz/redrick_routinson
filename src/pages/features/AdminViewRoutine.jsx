@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { db } from "../../firebase";
+import { collection, getDocs } from "firebase/firestore";
 import Papa from "papaparse";
 import {
   Box,
@@ -37,43 +39,74 @@ const AdminViewRoutine = () => {
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
   useEffect(() => {
-    const loadData = async () => {
+    const fetchAllRoutines = async () => {
       try {
-        const response = await fetch("../../../backend/final_schedule.csv");
-        const csvData = await response.text();
-
-        const results = Papa.parse(csvData, { header: false }).data;
         const processedData = {};
+        const semesters = ["1", "3", "5", "7"];
+        const sections = ["A", "B"];
 
-        let currentSemester = "";
-        let currentSection = "";
+        for (const semester of semesters) {
+          processedData[semester] = {};
 
-        results.forEach((row) => {
-          if (row[0] && row[0].startsWith("Semester")) {
-            // New section header
-            const [sem, sec] = row[0].split(", Section ");
-            currentSemester = sem.replace("Semester ", "").trim();
-            currentSection = sec.replace('"', "").trim();
+          for (const section of sections) {
+            const routineData = [];
+            const semesterRef = collection(
+              db,
+              `semester_${semester}_${section}`
+            );
+            const snapshot = await getDocs(semesterRef);
 
-            if (!processedData[currentSemester]) {
-              processedData[currentSemester] = {};
-            }
-            processedData[currentSemester][currentSection] = [];
-          } else if (days.includes(row[0])) {
-            // Day row data
-            processedData[currentSemester][currentSection].push(row);
+            // Initialize empty routine structure
+            const routineStructure = days.map((day) => {
+              const row = [day];
+              for (let i = 0; i < timeSlots.length; i++) {
+                row.push(null);
+              }
+              return row;
+            });
+
+            // Fill in the routine with actual data
+            snapshot.forEach((doc) => {
+              const data = doc.data();
+              if (!data.class_cancelled || data.temp_course_code) {
+                const courseInfo = data.temp_course_code
+                  ? `${data.temp_course_code}\n${data.temp_teacher_1}\n${data.temp_room}`
+                  : `${data.perm_course_code}\n${data.perm_teacher_1}\n${data.perm_room}`;
+
+                const dayIndex = days.indexOf(data.temp_day || data.perm_day);
+                const timeIndex = timeSlots.indexOf(
+                  data.temp_time_1 || data.perm_time_1
+                );
+
+                if (dayIndex !== -1 && timeIndex !== -1) {
+                  routineStructure[dayIndex][timeIndex + 1] = courseInfo;
+
+                  // If it's a lab, fill the next slot too
+                  const courseType =
+                    data.temp_course_type || data.perm_course_type;
+                  if (
+                    courseType === "lab" &&
+                    timeIndex + 2 <= timeSlots.length
+                  ) {
+                    routineStructure[dayIndex][timeIndex + 2] = courseInfo;
+                  }
+                }
+              }
+            });
+
+            processedData[semester][section] = routineStructure;
           }
-        });
+        }
 
         setTimetableData(processedData);
         setLoading(false);
       } catch (error) {
-        console.error("Error loading timetable:", error);
+        console.error("Error fetching routines:", error);
         setLoading(false);
       }
     };
 
-    loadData();
+    fetchAllRoutines();
   }, []);
 
   const renderCourseCell = (course) => {
