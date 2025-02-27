@@ -8,7 +8,7 @@ cred = credentials.Certificate('./ServiceAccountKey.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-rooms = ["1" , "2" ,"3" , "4" ,"5" , "6" , "301", "302", "304", "204", "104", "105"]
+
 def write_routine_to_firestore(scheduled_classes):
     time_mapping = {
         "8:00-9:15": 1,
