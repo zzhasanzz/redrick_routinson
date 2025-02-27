@@ -36,8 +36,9 @@ const StudentRoutine = () => {
           if (userDoc.exists()) {
             const userData = userDoc.data();
             const sem = userData.semester;
-            const semName = "semester_" + sem;
-            const timeSlotRef = collection(db, semName.toString());
+            const sect = userData.section;
+            const sem_sect = "semester_" + sem + "_" + sect;
+            const timeSlotRef = collection(db, sem_sect.toString());
             const timeSlotsSnapshot = await getDocs(timeSlotRef);
 
             // Initialize an empty routine array
