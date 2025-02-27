@@ -607,54 +607,89 @@ const TeacherRoutine = () => {
     room,
     section
   ) => {
+    console.log("Cancelling temporary class");
+    console.log("Course ID: ", courseId);
+    console.log("Day: ", day);
+    console.log("Time: ", time);
+    console.log("Room: ", room);
+    console.log("Section: ", section);
     try {
+      // Calculate timeslot
       const timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
+
+      // Get course reference and data
       const courseRef = doc(
         db,
         `teachers/${teacherName}/courses`,
-        courseId.toString() + "_" + section
+        `${courseId}_${section}`
       );
       const courseSnapshot = await getDoc(courseRef);
       const courseData = courseSnapshot.data();
-      let tempTimeSlots = courseData.assigned_temp_time_slots || [];
+
+      // Convert all timeslots to strings for consistent comparison
+      let tempTimeSlots = (courseData.assigned_temp_time_slots || []).map(
+        (slot) => String(slot)
+      );
       let tempRooms = courseData.assigned_temp_room || [];
-      const slotIndex = tempTimeSlots.indexOf(timeSlot.toString());
+
+      // Find the index using string comparison
+      const slotIndex = tempTimeSlots.indexOf(String(timeSlot));
+
       if (slotIndex > -1) {
+        // Remove the specific timeslot and room
+
         tempTimeSlots = tempTimeSlots.filter((_, index) => index !== slotIndex);
         tempRooms = tempRooms.filter((_, index) => index !== slotIndex);
+
+        // Update course document
         await updateDoc(courseRef, {
           assigned_temp_time_slots: tempTimeSlots,
           assigned_temp_room: tempRooms,
         });
+
+        // Update semester document
+        const sem = courseId.charAt(courseId.length - 3);
+        const semester = `semester_${sem}_${section}`;
+        const timeSlotRef = doc(db, semester, String(timeSlot));
+        await updateDoc(timeSlotRef, {
+          temp_course_code: "",
+          temp_course_type: "",
+          temp_room: "",
+          temp_teacher_1: "",
+          temp_day: "",
+          temp_time_1: "",
+          temp_section: "",
+          rescheduled: 0,
+          class_cancelled: 0,
+        });
+
+        // Update room document
+        const roomRef = doc(db, `time_slots/${timeSlot}/rooms/${room}`);
+        await updateDoc(roomRef, {
+          temp_course_code: "",
+          temp_course_type: "",
+          temp_room: "",
+          temp_teacher_1: "",
+          temp_section: "",
+          class_cancelled: 0,
+        });
+
+        // Refresh the schedule
+        const updatedSchedule = schedule.filter(
+          (slot) =>
+            !(
+              slot.courseCode === courseId &&
+              slot.day === day &&
+              slot.time === time &&
+              slot.room === room &&
+              slot.section === section
+            )
+        );
+        setSchedule(updatedSchedule);
       }
-
-      let sem = courseId.toString().charAt(courseId.toString().length - 3);
-      const semester = "semester_" + sem + "_" + section;
-      const timeSlotRef = doc(db, semester, timeSlot.toString());
-      await updateDoc(timeSlotRef, {
-        temp_course_code: "",
-        temp_course_type: "",
-        temp_room: "",
-        temp_teacher_1: "",
-        temp_day: "",
-        temp_time_1: "",
-        temp_section: "",
-        rescheduled: 0,
-      });
-
-      const roomRef = doc(db, `time_slots/${timeSlot}/rooms/${room}`);
-      await updateDoc(roomRef, {
-        temp_course_code: "",
-        temp_course_type: "",
-        temp_room: "",
-        temp_teacher_1: "",
-        temp_section: "",
-        class_cancelled: 0,
-      });
-
-      location.reload();
     } catch (error) {
       console.error("Error canceling temporary class:", error);
+      console.error("Error details:", error.message);
       alert("Failed to cancel temporary class.");
     }
   };
