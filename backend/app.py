@@ -1,9 +1,8 @@
 import os
+import re
 import subprocess
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-
-
 import json
 import csv
 import random
@@ -20,236 +19,251 @@ cred = credentials.Certificate("./ServiceAccountKey.json")  # Update with your F
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-# Endpoint to save course data
-@app.route('/api/save', methods=['POST'])
-def save_course():
-    data = request.json  # Get JSON data from the request
+    
+with open('offered_courses.json', 'r') as file:
+    offered_courses = json.load(file)
 
+with open('input_courses.json', 'r') as file:
+    input_courses = json.load(file)
+
+with open('faculty_details.json', 'r') as file:
+    faculty_details = json.load(file)
+
+@app.route('/api/offered-courses', methods=['GET'])
+def get_offered_courses():
     try:
-        if data['teacherType'] == 'Full-Time':
-            # Append to input.txt
-            with open('input.txt', 'a') as f:
-                f.write(f"{data['semester']};{data['name']};{data['credit']};{data['teacher']}\n")
-
-        elif data['teacherType'] == 'Part-Time':
-            # Append to input_pt.txt for both timeslots
-            with open('input_pt.txt', 'a') as f:
-                f.write(f"{data['semester']};{data['name']};{data['credit']};{data['day1']};{data['time1']};{data['room']};{data['teacher']}\n")
-                f.write(f"{data['semester']};{data['name']};{data['credit']};{data['day2']};{data['time2']};{data['room']};{data['teacher']}\n")
-
-        return jsonify({'status': 'success', 'message': 'Course data saved successfully.'})
-
+        # Read fresh data on every request
+        with open('offered_courses.json', 'r') as file:
+            offered_courses = json.load(file)
+        return jsonify(offered_courses)
     except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
-
-@app.route('/api/courses', methods=['GET'])
-def get_courses():
-    courses = []
-
-    # Read from input.txt (Full-Time courses)
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/api/unassigned-courses/<int:semester>', methods=['GET'])
+def get_unassigned_courses(semester):
     try:
-        if not os.path.exists('input.txt'):
-            raise FileNotFoundError('input.txt not found.')
-        
-        with open('input.txt', 'r') as f:
-            for line in f:
-                parts = line.strip().split(';')
-                if len(parts) != 4:  # Ensure there are exactly 4 parts
-                    continue  # Skip malformed lines
-                semester, name, credit, teacher = parts
-                courses.append({
-                    'semester': semester,
-                    'name': name,
-                    'credit': credit,
-                    'teacher': teacher,
-                    'teacherType': 'Full-Time'  # Assuming full-time for this file
-                })
+        # Find the semester in offered_courses.json
+        semester_data = next((sem for sem in offered_courses['semesters'] if sem['semester'] == semester), None)
+        if not semester_data:
+            return jsonify({"error": f"Semester {semester} not found"}), 404
+
+        # Filter unassigned courses
+        unassigned_courses = [course for course in semester_data['courses'] if not course['assigned']]
+
+        return jsonify(unassigned_courses), 200
     except Exception as e:
-        return jsonify({'status': 'error', 'message': f"Error reading input.txt: {str(e)}"}), 500
-
-    # Read from input_pt.txt (Part-Time courses)
-    try:
-        if not os.path.exists('input_pt.txt'):
-            raise FileNotFoundError('input_pt.txt not found.')
-
-        with open('input_pt.txt', 'r') as f:
-            for line in f:
-                parts = line.strip().split(';')
-                if len(parts) != 7:  # Ensure there are exactly 7 parts
-                    continue  # Skip malformed lines
-                semester, name, credit, day, time, room, teacher = parts
-                courses.append({
-                    'semester': semester,
-                    'name': name,
-                    'credit': credit,  # Add credit information
-                    'teacher': teacher,
-                    'teacherType': 'Part-Time',  # Mark as part-time
-                    # Optional: Remove the following fields if you don't need them
-                    'day': day,
-                    'time': time,
-                    'room': room
-                })
-    except Exception as e:
-        return jsonify({'status': 'error', 'message': f"Error reading input_pt.txt: {str(e)}"}), 500
-
-    return jsonify({'status': 'success', 'courses': courses})
-
-
-@app.route('/api/delete', methods=['DELETE'])
+        return jsonify({"error": str(e)}), 500
+    
+    
+@app.route('/api/delete-course', methods=['POST'])
 def delete_course():
-    data = request.json
-    semester = data.get('semester')
-    name = data.get('name')
-    teacher = data.get('teacher')
-
     try:
-        # Handle Full-Time courses
-        if os.path.exists('input.txt'):
-            with open('input.txt', 'r') as f:
-                lines = f.readlines()
-            with open('input.txt', 'w') as f:
-                for line in lines:
-                    if not line.startswith(f"{semester};{name};") or teacher not in line:
-                        f.write(line)
+        data = request.json
 
-        # Handle Part-Time courses
-        if os.path.exists('input_pt.txt'):
-            with open('input_pt.txt', 'r') as f:
-                lines = f.readlines()
-            with open('input_pt.txt', 'w') as f:
-                for line in lines:
-                    if not line.startswith(f"{semester};{name};") or teacher not in line:
-                        f.write(line)
+        # Validate required fields
+        if not all(key in data for key in ['semester', 'course']):
+            return jsonify({"error": "Missing required fields: semester or course"}), 400
 
-        return jsonify({'status': 'success', 'message': 'Course deleted successfully.'})
-    except Exception as e:
-        return jsonify({'status': 'error', 'message': f"Error deleting course: {str(e)}"}), 500
-
-@app.route('/api/update', methods=['PUT'])
-def update_course():
-    data = request.json  # Get the updated data from the frontend
-
-    try:
-        oldCourse= ""
-        newTeacher= ""
         semester = data['semester']
-        course = data['name']
+        course_code = data['course']
+
+        # Check if offered_courses.json has the 'semesters' key
+        if 'semesters' not in offered_courses:
+            return jsonify({"error": "Invalid structure: 'semesters' key not found in offered_courses.json"}), 500
+
+        # Update offered_courses.json (set assigned to false)
+        semester_found = False
+        course_found = False
+
+        for sem in offered_courses['semesters']:
+            if sem['semester'] == semester:
+                semester_found = True
+                for course in sem['courses']:
+                    if course['course'] == course_code:
+                        course_found = True
+                        course['assigned'] = False
+                        break
+                break
+
+        if not semester_found:
+            return jsonify({"error": f"Semester {semester} not found"}), 404
+        if not course_found:
+            return jsonify({"error": f"Course {course_code} not found in semester {semester}"}), 404
+
+        # Check if input_courses.json has the 'semesters' key
+        if 'semesters' not in input_courses:
+            return jsonify({"error": "Invalid structure: 'semesters' key not found in input_courses.json"}), 500
+
+        # Update input_courses.json (remove the course)
+        for sem in input_courses['semesters']:
+            if sem['semester'] == semester:
+                sem['courses'] = [c for c in sem['courses'] if c['course'] != course_code]
+                break
+
+        # Save changes to files
+        with open('offered_courses.json', 'w') as file:
+            json.dump(offered_courses, file, indent=2)
+
+        with open('input_courses.json', 'w') as file:
+            json.dump(input_courses, file, indent=2)
+
+        return jsonify({"message": "Course deleted successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/api/faculty-ranks', methods=['GET'])
+def get_faculty_ranks():
+    try:
+        with open('faculty_ranks.json', 'r') as file:
+            faculty_ranks = json.load(file)
+        return jsonify(faculty_ranks), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/api/update-faculty', methods=['POST'])
+def update_faculty():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+            
+        required = ['semester', 'course', 'teacher']
+        if not all(key in data for key in required):
+            return jsonify({
+                "error": f"Missing fields. Required: {', '.join(required)}",
+                "received": list(data.keys())
+            }), 400
+
+        semester = data['semester']
+        course_code = data['course']
         new_teacher = data['teacher']
-        teacher_type = data['teacherType']
 
-        if teacher_type == 'Full-Time':
-            # Update in input.txt
-            updated_lines = []
-            found = False
+        # Load fresh data from files
+        with open('offered_courses.json', 'r') as f:
+            offered = json.load(f)
+        with open('input_courses.json', 'r') as f:
+            input_courses = json.load(f)
 
-            with open('input.txt', 'r') as f:
-                for line in f:
-                    parts = line.strip().split(';')
-                    if len(parts) == 4:  # Ensure correct format
-                        line_semester, line_course, credit, teacher = parts
-                        if line_semester.strip() == semester.strip() and line_course.strip() == course.strip():
-                            oldCourse = line_course
-                            newTeacher =new_teacher
-                            updated_lines.append(f"{line_semester};{line_course};{credit};{new_teacher}\n")
-                            found = True
-                        else:
-                            updated_lines.append(line)
-                    else:
-                        updated_lines.append(line)
+        # Update offered_courses.json
+        updated_offered = False
+        for sem in offered['semesters']:
+            if sem['semester'] == semester:
+                for course in sem['courses']:
+                    if course['course'] == course_code:
+                        course['teacher'] = new_teacher
+                        updated_offered = True
+                        break
+                if updated_offered:
+                    break
 
-            if not found:
-                return jsonify({'status': 'error', 'message': 'Course not found in input.txt'}), 404
+        # Update input_courses.json
+        updated_input = False
+        for sem in input_courses['semesters']:
+            if sem['semester'] == semester:
+                for course in sem['courses']:
+                    if course['course'] == course_code:
+                        course['teacher'] = new_teacher
+                        updated_input = True
+                        break
+                if updated_input:
+                    break
 
-            # Write back to input.txt
-            with open('input.txt', 'w') as f:
-                f.writelines(updated_lines)
+        if not updated_offered:
+            return jsonify({"error": "Course not found in offered courses"}), 404
+        if not updated_input:
+            return jsonify({"error": "Course not found in input courses"}), 404
 
-        elif teacher_type == 'Part-Time':
-            # Update in input_pt.txt
-            updated_lines = []
-            found = False
+        # Save changes
+        with open('offered_courses.json', 'w') as f:
+            json.dump(offered, f, indent=2)
+        with open('input_courses.json', 'w') as f:
+            json.dump(input_courses, f, indent=2)
 
-            with open('input_pt.txt', 'r') as f:
-                for line in f:
-                    parts = line.strip().split(';')
-                    if len(parts) == 7:  # Ensure correct format
-                        line_semester, line_course, credit, day, time, room, teacher = parts
-                        if line_semester.strip() == semester.strip() and line_course.strip() == course.strip():
-                            oldCourse = line_course
-                            newTeacher =new_teacher
-                            updated_lines.append(f"{line_semester};{line_course};{credit};{day};{time};{room};{new_teacher}\n")
-                            found = True
-                        else:
-                            updated_lines.append(line)
-                    else:
-                        updated_lines.append(line)
+        return jsonify({"message": "Faculty updated successfully"}), 200
 
-            if not found:
-                return jsonify({'status': 'error', 'message': 'Course not found in input_pt.txt'}), 404
-
-            # Write back to input_pt.txt
-            with open('input_pt.txt', 'w') as f:
-                f.writelines(updated_lines)
+    except Exception as e:
+        return jsonify({"error": f"Server error: {str(e)}"}), 500
 
 
-                # Open and process the optimal.txt file
-        with open("optimal.txt", 'r') as file:
-            lines = file.readlines()
+@app.route('/api/add-course', methods=['POST'])
+def add_course():
+    try:
+        data = request.json
 
-        updated = False  # Flag to check if any update was made
-        updated_lines = []  # List to store updated lines
+        # Validate required fields
+        if not all(key in data for key in ['semester', 'course', 'teacher']):
+            return jsonify({"error": "Missing required fields: semester, course, or teacher"}), 400
 
-        for line in lines:
-            # Strip newline characters and split by semicolon
-            parts = line.strip().split(';')
+        semester = data['semester']
+        course_code = data['course']
+        teacher = data['teacher']
 
-            # Ensure the line has at least the expected number of parts
-            if len(parts) >= 6:
-                line_semester = parts[0].strip()  # Trim whitespace
-                line_course = parts[1].strip()  # Trim whitespace
-                day = parts[2].strip()  # Trim whitespace
-                time = parts[3].strip()  # Trim whitespace
-                room = parts[4].strip()  # Trim whitespace
-                teachers = parts[5].strip()  # Trim whitespace
+        # Update offered_courses.json (set assigned to true)
+        for sem in offered_courses['semesters']:
+            if sem['semester'] == semester:
+                for course in sem['courses']:
+                    if course['course'] == course_code:
+                        course['assigned'] = True
+                        course['teacher'] = teacher
+                        break
+                break
 
-                # Check if this line matches the course and semester being updated
-                if line_semester == semester.strip() and line_course.lower() == oldCourse.strip().lower():
-                    # Update the teacher(s)
-                    original_teachers = teachers
-                    updated_teachers = newTeacher.strip()  # Trim and set the new teacher
-                    updated_line = f"{line_semester};{line_course};{day};{time};{room};{updated_teachers}"
-                    updated_lines.append(updated_line)
-                    updated = True
-                    print(f"Updated optimal.txt: {line_course}, {original_teachers} -> {updated_teachers}")
-                else:
-                    # Keep the line unchanged
-                    updated_lines.append(line.strip())
-            else:
-                # Keep malformed or incomplete lines unchanged
-                updated_lines.append(line.strip())
+        # Add the course to input_courses.json
+        for sem in input_courses['semesters']:
+            if sem['semester'] == semester:
+                sem['courses'].append({"course": course_code, "credit": 3, "teacher": teacher})
+                break
 
-        if not updated:
-            print(f"No entries found for course '{oldCourse.strip()}' in optimal.txt. No updates made.")
-            return jsonify({'status': 'error', 'message': f"No entries found for course '{oldCourse.strip()}' in optimal.txt."}), 404
+        # Save changes to files
+        with open('offered_courses.json', 'w') as file:
+            json.dump(offered_courses, file, indent=2)
 
-        # Write the updated lines back to optimal.txt
-        with open("optimal.txt", 'w') as file:
-            file.write('\n'.join(updated_lines) + '\n')  # Add a newline at the end
+        with open('input_courses.json', 'w') as file:
+            json.dump(input_courses, file, indent=2)
 
-        print("Update completed successfully in optimal.txt.")
+        return jsonify({"message": "Course added successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 
-        
-        subprocess.run(['python', 'table.py'], check=True)
+@app.route('/api/update-preferences', methods=['POST'])
+def update_preferences():
+    data = request.json
+    teacher_name = data.get('teacherName')
+    preferred_times = data.get('preferredTimes')
 
+    if not teacher_name or not preferred_times:
+        return jsonify({'status': 'error', 'message': 'Teacher name and preferred times are required.'}), 400
 
-        return jsonify({'status': 'success', 'message': 'Teacher updated successfully.'})
+    try:
+        with open('faculty_details.json', 'r') as f:
+            faculty_details = json.load(f)
+
+        if teacher_name not in faculty_details:
+            return jsonify({'status': 'error', 'message': 'Teacher not found.'}), 404
+
+        # Convert time slots to range format
+        formatted_times = []
+        for entry in preferred_times:
+            # Split time into start and end using regex to handle various formats
+            start_time, end_time = re.match(r'(\d+:\d+)-(\d+:\d+)', entry['time']).groups()
+            formatted_time = f"{start_time}-{end_time}"
+            formatted_times.append({
+                'day': entry['day'],
+                'time': formatted_time
+            })
+
+        faculty_details[teacher_name]['preferred_times'] = formatted_times
+
+        with open('faculty_details.json', 'w') as f:
+            json.dump(faculty_details, f, indent=2)
+
+        return jsonify({'status': 'success', 'message': 'Preferences updated successfully.'})
 
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
-
-
-
+####################################################################################################################################
 
 def generate_seat_plan(target_departments, semester):
     """
@@ -358,14 +372,37 @@ def generate_seating_arrangement(
         print(f"❌ Error generating seating arrangement: {str(e)}")
         return {"status": "error", "message": str(e)}
 
+# def store_seating_plan_in_firebase(seating_plan):
+#     """
+#     Stores the generated seating arrangement in Firebase Firestore.
+
+#     :param seating_plan: Dictionary containing the seating arrangement per room.
+#     """
+#     try:
+#         seat_plan_ref = db.collection("seat_plan")  # Firestore Collection
+
+#         for room, seats in seating_plan.items():
+#             room_ref = seat_plan_ref.document(str(room))  # Room document
+
+#             for seat in seats:
+#                 seat_ref = room_ref.collection("seats").document(str(seat["seat_no"]))  # Seat document
+#                 seat_ref.set(seat)  # Write seat data
+
+#         print("✅ Seating Plan successfully stored in Firebase Firestore!")
+#         return {"status": "success", "message": "Seating plan stored in Firebase"}
+
+#     except Exception as e:
+#         print(f"❌ Error storing seating plan in Firebase: {str(e)}")
+#         return {"status": "error", "message": str(e)}
 def store_seating_plan_in_firebase(seating_plan):
     """
-    Stores the generated seating arrangement in Firebase Firestore.
+    Stores the generated seating arrangement in Firebase Firestore and updates student records with their room.
 
     :param seating_plan: Dictionary containing the seating arrangement per room.
     """
     try:
         seat_plan_ref = db.collection("seat_plan")  # Firestore Collection
+        users_ref = db.collection("seat_plan_USERS")  # Firestore Collection for users
 
         for room, seats in seating_plan.items():
             room_ref = seat_plan_ref.document(str(room))  # Room document
@@ -374,12 +411,22 @@ def store_seating_plan_in_firebase(seating_plan):
                 seat_ref = room_ref.collection("seats").document(str(seat["seat_no"]))  # Seat document
                 seat_ref.set(seat)  # Write seat data
 
+                # Update student's document in seat_plan_USERS collection
+                student_id = seat["id"]
+                student_query = users_ref.where("id", "==", student_id).limit(1).stream()
+
+                for doc in student_query:
+                    doc_ref = users_ref.document(doc.id)
+                    doc_ref.update({"room": room})
+                    print(f"✅ Updated student {student_id} with room {room} in seat_plan_USERS.")
+
         print("✅ Seating Plan successfully stored in Firebase Firestore!")
-        return {"status": "success", "message": "Seating plan stored in Firebase"}
+        return {"status": "success", "message": "Seating plan stored in Firebase and student records updated"}
 
     except Exception as e:
         print(f"❌ Error storing seating plan in Firebase: {str(e)}")
         return {"status": "error", "message": str(e)}
+
 
 
 
@@ -416,9 +463,9 @@ def generate_seat_plan_api():
 def generate_routine():
     try:
         # Execute the Python scripts sequentially
-        subprocess.run(['python', 'new.py'], check=True)
-        subprocess.run(['python', 'better.py'], check=True)
-        subprocess.run(['python', 'table.py'], check=True)
+        subprocess.run(['python', 'scheduler.py'], check=True)
+        subprocess.run(['python', 'scheduler_enhanced.py'], check=True)
+        subprocess.run(['python', 'z_stats.py'], check=True)
 
         # Return success response
         return jsonify({"message": "Routine generated successfully!"}), 200

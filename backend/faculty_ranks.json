@@ -1,0 +1,207 @@
+{
+  "AZR": [
+    {
+      "rank": "Part-Time"
+    }
+  ],
+
+  "DFS" : [
+    {
+      "rank": "Professor"
+    }
+  ],
+
+  "BS" : [
+    {
+      "rank": "Assistant Professor"
+    }
+  ],
+
+  "MM" : [
+    {
+      "rank": "Assistant Professor"
+    }
+  ],
+
+  "FAK" : [
+    {
+      "rank": "Professor"
+    }
+  ],
+
+  "AH" : [
+    {
+      "rank": "Assistant Professor"
+    }
+  ],
+  "MMH" : [
+    {
+      "rank": "Part-Time"
+    }
+  ],
+  "KH" : [
+    {
+      "rank": "Professor"
+    }
+  ],
+  "MKS" : [
+    {
+      "rank": "Assistant Professor"
+    }
+  ] ,
+  "AA" : [
+    {
+      "rank": "Junior Lecturer"
+    }
+  ],
+  "MUA" : [
+    {
+      "rank": "Part-Time"
+    }
+  ],
+  "SRR" : [
+    {
+      "rank": "Lecturer"
+    }
+  ],
+  "RHJ" : [
+    {
+      "rank" : "Junior Lecturer"
+    }
+  ],
+  "MAMR" : [
+    {
+      "rank": "Lecturer"
+    }
+  ],
+  "FH" : [
+    {
+      "rank": "Assistant Professor"
+    }
+  ],
+  "SHR" : [
+    {
+      "rank" : "Lecturer"
+    }
+  ],
+  "HJA" : [
+    {
+      "rank" : "Lecturer"
+    }
+  ],
+  "ARMK" : [
+    {
+      "rank" : "Professor"
+    }
+  ],
+  "SA" : [
+    {
+      "rank" : "Assistant Professor"
+    }
+  ],
+  "MHA": [
+    {
+      "rank" : "Assistant Professor"
+    }
+  ],
+  "TZF" : [
+    {
+      "rank" : "Junior Lecturer"
+    }
+  ],
+  "IT": [
+    {
+      "rank" : "Lecturer"
+    }
+  ],
+  "RH": [
+    {
+      "rank": "Lecturer"
+    }
+  ],
+  "AAR": [
+    {
+      "rank": "Junior Lecturer"
+    }
+  ],
+  "SAH": [
+    {
+      "rank": "Assistant Professor"
+    }
+  ],
+  "SB": [
+    {
+      "rank": "Lecturer"
+    }
+  ],
+  "TSA": [
+    {
+      "rank": "Junior Lecturer"
+    }
+  ],
+  "FI": [
+    {
+      "rank" : "Lecturer"
+    }
+  ],
+  "AKA": [
+    {
+      "rank": "Professor"
+    }
+  ],
+  "MRK": [
+    {
+      "rank": "Assistant Professor"
+    }
+  ],
+  "OR": [
+    {
+      "rank": "Part-Time"
+    }
+  ],
+  "SH": [
+    {
+      "rank": "Professor"
+    }
+  ],
+  "HM": [
+    {
+      "rank" : "Professor"
+    }
+  ],
+  "AZM": [
+    {
+      "rank": "Associate Professor"
+    }
+  ],
+  "TMC": [
+    {
+      "rank":"Assistant Professor"
+    }
+  ],
+  "ASH": [
+    {
+      "rank": "Lecturer"
+    }
+  ],
+  "MBH": [
+    {
+      "rank": "Assistant Professor"
+    }
+  ],
+  "ZR": [
+    {
+      "rank": "Part-Time"
+    }
+  ],
+  "MMA": [
+    {
+      "rank": "Professor"
+    }
+  ],
+  "NY": [
+    {
+      "rank": "Lecturer"
+    }
+  ]
+}

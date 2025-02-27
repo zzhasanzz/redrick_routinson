@@ -1,0 +1,224 @@
+{
+  "semesters": [
+    {
+      "semester": 1,
+      "courses": [
+        {
+          "course": "Hum4144",
+          "course_name": "Islamiat",
+          "course_type": "theory",
+          "credit": 2.0,
+          "teacher": "MMH",
+          "assigned": true
+        },
+        {
+          "course": "Hum4147",
+          "course_name": "Technology, Environment and Society",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "BS",
+          "assigned": true
+        },
+        {
+          "course": "Math4141",
+          "course_name": "Geometry and Differential Calculus",
+          "course_type": "theory",
+          "credit": 4.0,
+          "teacher": "MUA",
+          "assigned": true
+        },
+        {
+          "course": "Phy4141",
+          "course_name": "Physics I",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "FAK",
+          "assigned": true
+        },
+        {
+          "course": "CSE4105",
+          "course_name": "Computing for Engineers",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "KH",
+          "assigned": true
+        },
+        {
+          "course": "CSE4107",
+          "course_name": "Structured Programming I",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "MM",
+          "assigned": true
+        },
+        {
+          "course": "Hum4142",
+          "course_name": "Arabic I",
+          "course_type": "theory",
+          "credit": 1.0,
+          "teacher": "AH",
+          "assigned": true
+        },
+        {
+          "course": "Hum4144",
+          "course_name": "English I",
+          "course_type": "theory",
+          "credit": 1.0,
+          "teacher": "",
+          "assigned": false
+        }
+      ]
+    },
+    {
+      "semester": 3,
+      "courses": [
+        {
+          "course": "Math4341",
+          "course_name": "Linear Algebra",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "MKS",
+          "assigned": true
+        },
+        {
+          "course": "EEE4383",
+          "course_name": "Electronic Devices and Circuits",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "SHR",
+          "assigned": true
+        },
+        {
+          "course": "CSE4301",
+          "course_name": "Object Oriented Programming",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "FH",
+          "assigned": true
+        },
+        {
+          "course": "CSE4303",
+          "course_name": "Data Structures",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "SA",
+          "assigned": true
+        },
+        {
+          "course": "CSE4305",
+          "course_name": "Computer Organization and Architecture",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "MHA",
+          "assigned": true
+        },
+        {
+          "course": "CSE4307",
+          "course_name": "Database Management Systems",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "ARMK",
+          "assigned": true
+        }
+      ]
+    },
+    {
+      "semester": 5,
+      "courses": [
+        {
+          "course": "CSE4501",
+          "course_name": "Operating Systems",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "MRK",
+          "assigned": true
+        },
+        {
+          "course": "CSE4511",
+          "course_name": "Computer Networks",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "FH",
+          "assigned": true
+        },
+        {
+          "course": "CSE4513",
+          "course_name": "Software Engineering and Object-Oriented Design",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "SAH",
+          "assigned": true
+        },
+        {
+          "course": "Math4541",
+          "course_name": "Multivariable Calculus and Complex Variables",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "AKA",
+          "assigned": true
+        },
+        {
+          "course": "CSE4539",
+          "course_name": "Web Programming",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "MIA",
+          "assigned": true
+        }
+      ]
+    },
+    {
+      "semester": 7,
+      "courses": [
+        {
+          "course": "Hum4743",
+          "course_name": "Engineering Economics",
+          "course_type": "theory",
+          "credit": 2.0,
+          "teacher": "ZR",
+          "assigned": true
+        },
+        {
+          "course": "Math4741",
+          "course_name": "Mathematical Analysis",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "MMA",
+          "assigned": true
+        },
+        {
+          "course": "CSE4703",
+          "course_name": "Theory of Computing",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "AZM",
+          "assigned": true
+        },
+        {
+          "course": "CSE4709",
+          "course_name": "Machine Learning",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "MAMR",
+          "assigned": true
+        },
+        {
+          "course": "CSE4739",
+          "course_name": "Data Mining",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "NY",
+          "assigned": true
+        },
+        {
+          "course": "CSE4733",
+          "course_name": "Digital Image Processing",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "MBH",
+          "assigned": true
+        }
+      ]
+    }
+  ]
+}

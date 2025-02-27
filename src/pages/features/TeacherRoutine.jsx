@@ -141,33 +141,46 @@ const TeacherRoutine = () => {
         const courseData = doc.data();
         console.log(courseData);
         const classCancelledStatus = courseData["class_cancelled_status"];
+        const classRescheduledStatus = courseData["rescheduled_status"];
         const tempClasses = courseData["assigned_temp_time_slots"];
         console.log("Testing");
         console.log(classCancelledStatus);
         // const assignedRooms = courseData["assigned_room"];
         classCancelledStatus.forEach((stat, index) => {
           // console.log(`Stat: ${stat}`);
-          if (String(stat) === "1") {
-            console.log(`Class at index ${index} is cancelled`);
-            if (tempClasses.length > 0) {
-              console.log("There are temporary classes");
-            }
-            // console.log(`Stat: ${stat}`);
+
+          const totalSlotsPerDay = Object.keys(timeMapping).length;
+          const timeSlot = courseData["assigned_time_slots"][index];
+          const dayIndex = Math.floor((timeSlot - 1) / totalSlotsPerDay);
+          var courseType = "theory";
+          const timeIndex = ((timeSlot - 1) % totalSlotsPerDay) + 1;
+          const startTime = timeMapping[timeIndex].split("-")[0]; // "8:00"
+          var endTime = timeMapping[timeIndex].split("-")[1];
+          if (courseData["course_type"] === "lab") {
+            courseType = "lab";
+            endTime = timeMapping[timeIndex + 1].split("-")[1]; // "10:30"
           } else {
+            courseType = "theory";
+          }
+          if (String(stat) !== "1") {
             console.log(`Class at index ${index} is not cancelled`);
             // console.log(courseData["assigned_room"][index]); 0
-            const totalSlotsPerDay = Object.keys(timeMapping).length;
-            const timeSlot = courseData["assigned_time_slots"][index];
-            const dayIndex = Math.floor((timeSlot - 1) / totalSlotsPerDay);
-            var courseType = "theory";
-            const timeIndex = ((timeSlot - 1) % totalSlotsPerDay) + 1;
-            const startTime = timeMapping[timeIndex].split("-")[0]; // "8:00"
-            var endTime = timeMapping[timeIndex].split("-")[1];
-            if (courseData["course_type"] === "lab") {
-              courseType = "lab";
-              endTime = timeMapping[timeIndex + 1].split("-")[1]; // "10:30"
-            } else {
-              courseType = "theory";
+
+            teacherSchedule.push({
+              courseCode: doc.id,
+              courseTitle: courseData["assigned_course_title"],
+              day: dayMapping[dayIndex],
+              time: `${startTime}-${endTime}`,
+              room: courseData["assigned_room"][index],
+              status: "Permanent",
+            });
+
+            // console.log(`Stat: ${stat}`);
+          } else {
+            let classStatus = "Cancelled";
+            console.log(`Class at index ${index} is cancelled`);
+            if (String(classRescheduledStatus[index]) === "1") {
+              classStatus = "Rescheduled";
             }
             teacherSchedule.push({
               courseCode: doc.id,
@@ -175,6 +188,7 @@ const TeacherRoutine = () => {
               day: dayMapping[dayIndex],
               time: `${startTime}-${endTime}`,
               room: courseData["assigned_room"][index],
+              status: classStatus,
             });
           }
         });
@@ -203,6 +217,7 @@ const TeacherRoutine = () => {
                 day: dayMapping[dayIndex],
                 time: `${startTime}-${endTime}`,
                 room: courseData["assigned_temp_room"][index],
+                status: "Temporary",
               });
             }
           });
@@ -538,6 +553,7 @@ const TeacherRoutine = () => {
           // If the document exists, update it
           await updateDoc(timeSlotDocRef, {
             class_cancelled: 1,
+            rescheduled: 1,
             temp_course_code: selectedCourse,
             temp_course_type: selectedCourseType,
             temp_room: selectedRoom,
@@ -550,6 +566,7 @@ const TeacherRoutine = () => {
           // If the document does not exist, create it
           await setDoc(timeSlotDocRef, {
             class_cancelled: 1,
+            rescheduled: 1,
             temp_course_code: selectedCourse,
             temp_course_type: selectedCourseType,
             temp_room: selectedRoom,
@@ -575,6 +592,7 @@ const TeacherRoutine = () => {
         if (courseSnapshot.exists()) {
           const permanentTimeSlots = courseData.assigned_time_slots || [];
           let classCancelledStatus = courseData.class_cancelled_status || [];
+          let rescheduledStatus = courseData.rescheduled_status || [];
           console.log(permanentTimeSlots);
 
           permanentTimeSlots.forEach((timeSlot, index) => {
@@ -602,6 +620,7 @@ const TeacherRoutine = () => {
 
               // Mark the class as cancelled
               classCancelledStatus[index] = 1;
+              rescheduledStatus[index] = 1;
               console.log(classCancelledStatus);
             }
           });
@@ -611,14 +630,217 @@ const TeacherRoutine = () => {
           // If the document exists, update it
           await updateDoc(courseRef, {
             class_cancelled_status: classCancelledStatus,
+            rescheduled_status: rescheduledStatus,
             assigned_temp_time_slots: arrayUnion(selectedRescheduleTime),
             assigned_temp_room: arrayUnion(selectedRoom),
           });
+          semester;
           console.log("Update successful in teacher courses");
         }
       } catch (error) {
         console.error("Error updating/creating teacher doc:", error);
       }
+      try {
+        const roomsRef = collection(
+          db,
+          `time_slots/${selectedRescheduleTime}/rooms`
+        );
+        const roomsSnapshot = await getDocs(roomsRef);
+        if (roomsSnapshot.empty) {
+          console.log(`Timeslot ${selectedRescheduleTime} does not exist `);
+          const roomRef = doc(
+            db,
+            `time_slots/${selectedRescheduleTime}/rooms/${selectedRoom}`
+          );
+          await setDoc(roomRef, {
+            class_cancelled: 1,
+            rescheduled: 0,
+            course_type: "theory",
+            perm_course_code: "",
+            perm_course_title: "",
+            perm_teacher_1: "",
+            perm_teacher_2: "",
+            temp_course_code: selectedCourse,
+            temp_course_type: selectedCourseType,
+            temp_room: selectedRoom,
+            temp_teacher_1: teacherName,
+          });
+          console.log(
+            `Timeslot ${selectedRescheduleTime} and room ${selectedRoom} created successfully.`
+          );
+        } else {
+          const roomRef = doc(
+            db,
+            `time_slots/${selectedRescheduleTime}/rooms/${selectedRoom}`
+          );
+          const roomDoc = await getDoc(roomRef);
+          if (roomDoc.exists()) {
+            console.log(
+              `Timeslot ${selectedRescheduleTime} has room no ${selectedRoom} .`
+            );
+
+            const roomData = roomDoc.data();
+
+            await updateDoc(roomRef, {
+              temp_course_code: selectedCourse,
+              temp_course_type: selectedCourseType,
+              temp_room: selectedRoom,
+              temp_teacher_1: teacherName,
+            });
+          } else {
+            console.log(
+              `Timeslot ${selectedRescheduleTime} has rooms but not the selected one.`
+            );
+            await setDoc(roomRef, {
+              class_cancelled: 1,
+              course_type: "theory",
+              perm_course_code: "",
+              perm_course_title: "",
+              perm_teacher_1: "",
+              perm_teacher_2: "",
+              temp_course_code: selectedCourse,
+              temp_course_type: selectedCourseType,
+              temp_room: selectedRoom,
+              temp_teacher_1: teacherName,
+            });
+            console.log(`Room ${selectedRoom} created successfully.`);
+          }
+        }
+      } catch (error) {
+        console.error("Error finding timeslot :", error);
+      }
+    }
+  };
+
+  const handleUndoCancelledClass = async (courseId, day, time) => {
+    let selectedCourseType = "";
+    let rooms = [];
+    let room = "";
+    let timeSlot = 0;
+    try {
+      const courseRef = doc(
+        db,
+        `teachers/${teacherName}/courses`,
+        courseId.toString()
+      );
+      const courseSnapshot = await getDoc(courseRef);
+      const courseData = courseSnapshot.data();
+
+      selectedCourseType = courseData["course_type"];
+      timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
+      rooms = courseData["assigned_room"];
+      const classCancelledStatus = courseData["class_cancelled_status"];
+
+      classCancelledStatus.forEach((stat, idx) => {
+        if (courseData["assigned_time_slots"][idx] === timeSlot) {
+          classCancelledStatus[idx] = 0;
+          room = rooms[idx];
+        }
+      });
+      await updateDoc(courseRef, {
+        class_cancelled_status: classCancelledStatus,
+      });
+
+      // Update room status
+      const roomRef = doc(db, `time_slots/${timeSlot}/rooms`, room.toString());
+      await updateDoc(roomRef, {
+        class_cancelled: 0,
+      });
+
+      // Update semester status
+      let sem = courseId.toString().charAt(courseId.toString().length - 3);
+      const semester = "semester_" + sem;
+      const timeSlotRef = doc(db, semester, timeSlot.toString());
+      await updateDoc(timeSlotRef, {
+        class_cancelled: 0,
+      });
+
+      // Handle second slot for lab classes
+      if (selectedCourseType === "lab") {
+        const nextTimeSlot = timeSlot + 1;
+        const nextRoomRef = doc(
+          db,
+          `time_slots/${nextTimeSlot}/rooms`,
+          room.toString()
+        );
+        await updateDoc(nextRoomRef, {
+          class_cancelled: 0,
+        });
+
+        const nextTimeSlotRef = doc(db, semester, nextTimeSlot.toString());
+        await updateDoc(nextTimeSlotRef, {
+          class_cancelled: 0,
+        });
+      }
+    } catch (error) {
+      console.error("Error undoing cancelled class:", error);
+      alert("Failed to undo cancelled class.");
+    }
+  };
+
+  const handleCancelTemporaryClass = async (courseId, day, time, room) => {
+    try {
+      // Get the timeslot
+      const timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
+
+      // Update teacher's course document
+      const courseRef = doc(
+        db,
+        `teachers/${teacherName}/courses`,
+        courseId.toString()
+      );
+      const courseSnapshot = await getDoc(courseRef);
+      const courseData = courseSnapshot.data();
+
+      // Get existing temporary slots and rooms
+      let tempTimeSlots = courseData.assigned_temp_time_slots || [];
+      let tempRooms = courseData.assigned_temp_room || [];
+
+      // Find the index of the slot to remove
+      const slotIndex = tempTimeSlots.indexOf(timeSlot.toString());
+
+      // Update the arrays by removing the cancelled temporary class
+      if (slotIndex > -1) {
+        tempTimeSlots = tempTimeSlots.filter((_, index) => index !== slotIndex);
+        tempRooms = tempRooms.filter((_, index) => index !== slotIndex);
+
+        // Update the course document with new arrays
+        await updateDoc(courseRef, {
+          assigned_temp_time_slots: tempTimeSlots,
+          assigned_temp_room: tempRooms,
+        });
+      }
+
+      // Update semester document
+      let sem = courseId.toString().charAt(courseId.toString().length - 3);
+      const semester = "semester_" + sem;
+      const timeSlotRef = doc(db, semester, timeSlot.toString());
+
+      await updateDoc(timeSlotRef, {
+        temp_course_code: "",
+        temp_course_type: "",
+        temp_room: "",
+        temp_teacher_1: "",
+        temp_day: "",
+        temp_time_1: "",
+        rescheduled: 0,
+      });
+
+      // Update room document
+      const roomRef = doc(db, `time_slots/${timeSlot}/rooms/${room}`);
+      await updateDoc(roomRef, {
+        temp_course_code: "",
+        temp_course_type: "",
+        temp_room: "",
+        temp_teacher_1: "",
+        class_cancelled: 0,
+      });
+
+      // Refresh the schedule
+      // location.reload();
+    } catch (error) {
+      console.error("Error canceling temporary class:", error);
+      alert("Failed to cancel temporary class.");
     }
   };
 
@@ -630,6 +852,7 @@ const TeacherRoutine = () => {
           <th>Day</th>
           <th>Room</th>
           <th>Time</th>
+          <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -641,14 +864,43 @@ const TeacherRoutine = () => {
             <td>{slot.day}</td>
             <td>{slot.room}</td>
             <td>{slot.time}</td>
+            <td>{slot.status}</td>
             <td>
-              <button
-                onClick={() =>
-                  handleCancelClass(slot.courseCode, slot.day, slot.time)
-                }
-              >
-                Cancel Class
-              </button>
+              {slot.status === "Temporary" ? (
+                <button
+                  onClick={() =>
+                    handleCancelTemporaryClass(
+                      slot.courseCode,
+                      slot.day,
+                      slot.time,
+                      slot.room // Pass the room as a parameter
+                    )
+                  }
+                >
+                  Cancel Temporary Class
+                </button>
+              ) : slot.status === "Cancelled" ? (
+                <button
+                  onClick={() =>
+                    handleUndoCancelledClass(
+                      slot.courseCode,
+                      slot.day,
+                      slot.time
+                    )
+                  }
+                >
+                  Undo Cancel
+                </button>
+              ) : (
+                <button
+                  onClick={() =>
+                    handleCancelClass(slot.courseCode, slot.day, slot.time)
+                  }
+                >
+                  Cancel Class
+                </button>
+              )}
+
               <button
                 onClick={() =>
                   handleRescheduleClass(slot.courseCode, slot.day, slot.time)
