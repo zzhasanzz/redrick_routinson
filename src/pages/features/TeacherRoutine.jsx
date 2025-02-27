@@ -91,8 +91,6 @@ const TeacherRoutine = () => {
     2: "Wednesday",
     3: "Thursday",
     4: "Friday",
-    5: "Saturday",
-    6: "Sunday",
   };
 
   const revTimeMapping = {
@@ -133,93 +131,95 @@ const TeacherRoutine = () => {
     fetchTeacherName();
   }, []);
 
-  // Fetch schedule from Firestore
-  useEffect(() => {
-    const fetchSchedule = async () => {
-      const teacherSchedule = [];
-      const teacherDocRef = doc(db, "teachers", teacherName.toString());
-      const coursesCollectionRef = collection(teacherDocRef, "courses");
-      const coursesSnapshot = await getDocs(coursesCollectionRef);
+  // Move fetchSchedule outside of useEffect to make it reusable
+  const fetchSchedule = async () => {
+    const teacherSchedule = [];
+    const teacherDocRef = doc(db, "teachers", teacherName.toString());
+    const coursesCollectionRef = collection(teacherDocRef, "courses");
+    const coursesSnapshot = await getDocs(coursesCollectionRef);
 
-      coursesSnapshot.forEach((doc) => {
-        const courseData = doc.data();
-        const section = doc.id.slice(-1);
-        const classCancelledStatus = courseData["class_cancelled_status"];
-        const classRescheduledStatus = courseData["rescheduled_status"];
-        const tempClasses = courseData["assigned_temp_time_slots"];
+    coursesSnapshot.forEach((doc) => {
+      const courseData = doc.data();
+      const section = doc.id.slice(-1);
+      const classCancelledStatus = courseData["class_cancelled_status"];
+      const classRescheduledStatus = courseData["rescheduled_status"];
+      const tempClasses = courseData["assigned_temp_time_slots"];
 
-        classCancelledStatus.forEach((stat, index) => {
-          const totalSlotsPerDay = Object.keys(timeMapping).length;
-          const timeSlot = courseData["assigned_time_slots"][index];
-          const dayIndex = Math.floor((timeSlot - 1) / totalSlotsPerDay);
-          var courseType = "theory";
-          const timeIndex = ((timeSlot - 1) % totalSlotsPerDay) + 1;
-          const startTime = timeMapping[timeIndex].split("-")[0];
-          var endTime = timeMapping[timeIndex].split("-")[1];
-          if (courseData["course_type"] === "lab") {
-            courseType = "lab";
-            endTime = timeMapping[timeIndex + 1].split("-")[1];
-          } else {
-            courseType = "theory";
+      classCancelledStatus.forEach((stat, index) => {
+        const totalSlotsPerDay = Object.keys(timeMapping).length;
+        const timeSlot = courseData["assigned_time_slots"][index];
+        const dayIndex = Math.floor((timeSlot - 1) / totalSlotsPerDay);
+        var courseType = "theory";
+        const timeIndex = ((timeSlot - 1) % totalSlotsPerDay) + 1;
+        const startTime = timeMapping[timeIndex].split("-")[0];
+        var endTime = timeMapping[timeIndex].split("-")[1];
+        if (courseData["course_type"] === "lab") {
+          courseType = "lab";
+          endTime = timeMapping[timeIndex + 1].split("-")[1];
+        } else {
+          courseType = "theory";
+        }
+        if (String(stat) !== "1") {
+          teacherSchedule.push({
+            courseCode: doc.id.substring(0, doc.id.length - 2),
+            courseTitle: courseData["assigned_course_title"],
+            day: dayMapping[dayIndex],
+            time: `${startTime}-${endTime}`,
+            section: section,
+            room: courseData["assigned_room"][index],
+            status: "Permanent",
+          });
+        } else {
+          let classStatus = "Cancelled";
+          if (String(classRescheduledStatus[index]) === "1") {
+            classStatus = "Rescheduled";
           }
-          if (String(stat) !== "1") {
-            teacherSchedule.push({
-              courseCode: doc.id.substring(0, doc.id.length - 2),
-              courseTitle: courseData["assigned_course_title"],
-              day: dayMapping[dayIndex],
-              time: `${startTime}-${endTime}`,
-              section: section,
-              room: courseData["assigned_room"][index],
-              status: "Permanent",
-            });
-          } else {
-            let classStatus = "Cancelled";
-            if (String(classRescheduledStatus[index]) === "1") {
-              classStatus = "Rescheduled";
-            }
-            teacherSchedule.push({
-              courseCode: doc.id.substring(0, doc.id.length - 2),
-              courseTitle: courseData["assigned_course_title"],
-              day: dayMapping[dayIndex],
-              time: `${startTime}-${endTime}`,
-              section: section,
-              room: courseData["assigned_room"][index],
-              status: classStatus,
-            });
-          }
-        });
-
-        if (!(tempClasses && tempClasses.length === 0)) {
-          tempClasses.forEach((tempTimeSlot, index) => {
-            if (tempTimeSlot !== "") {
-              const totalSlotsPerDay = Object.keys(timeMapping).length;
-              const timeSlot = tempTimeSlot;
-              const dayIndex = Math.floor((timeSlot - 1) / totalSlotsPerDay);
-              var courseType = "theory";
-              const timeIndex = ((timeSlot - 1) % totalSlotsPerDay) + 1;
-              const startTime = timeMapping[timeIndex].split("-")[0];
-              var endTime = timeMapping[timeIndex].split("-")[1];
-              if (courseData["course_type"][index] === "lab") {
-                courseType = "lab";
-                endTime = timeMapping[timeIndex + 1].split("-")[1];
-              } else {
-                courseType = "theory";
-              }
-              teacherSchedule.push({
-                courseCode: doc.id.substring(0, doc.id.length - 2),
-                courseTitle: courseData["assigned-course-title"],
-                day: dayMapping[dayIndex],
-                time: `${startTime}-${endTime}`,
-                section: section,
-                room: courseData["assigned_temp_room"][index],
-                status: "Temporary",
-              });
-            }
+          teacherSchedule.push({
+            courseCode: doc.id.substring(0, doc.id.length - 2),
+            courseTitle: courseData["assigned_course_title"],
+            day: dayMapping[dayIndex],
+            time: `${startTime}-${endTime}`,
+            section: section,
+            room: courseData["assigned_room"][index],
+            status: classStatus,
           });
         }
       });
-      setSchedule(teacherSchedule);
-    };
+
+      if (!(tempClasses && tempClasses.length === 0)) {
+        tempClasses.forEach((tempTimeSlot, index) => {
+          if (tempTimeSlot !== "") {
+            const totalSlotsPerDay = Object.keys(timeMapping).length;
+            const timeSlot = tempTimeSlot;
+            const dayIndex = Math.floor((timeSlot - 1) / totalSlotsPerDay);
+            var courseType = "theory";
+            const timeIndex = ((timeSlot - 1) % totalSlotsPerDay) + 1;
+            const startTime = timeMapping[timeIndex].split("-")[0];
+            var endTime = timeMapping[timeIndex].split("-")[1];
+            if (courseData["course_type"][index] === "lab") {
+              courseType = "lab";
+              endTime = timeMapping[timeIndex + 1].split("-")[1];
+            } else {
+              courseType = "theory";
+            }
+            teacherSchedule.push({
+              courseCode: doc.id.substring(0, doc.id.length - 2),
+              courseTitle: courseData["assigned-course-title"],
+              day: dayMapping[dayIndex],
+              time: `${startTime}-${endTime}`,
+              section: section,
+              room: courseData["assigned_temp_room"][index],
+              status: "Temporary",
+            });
+          }
+        });
+      }
+    });
+    setSchedule(teacherSchedule);
+  };
+
+  // Update the useEffect to use the new fetchSchedule function
+  useEffect(() => {
     if (teacherName) {
       fetchSchedule();
     }
@@ -394,6 +394,7 @@ const TeacherRoutine = () => {
         alert("Failed to cancel class.");
       }
     }
+    await fetchSchedule(); // Refresh the schedule after cancellation
   };
 
   const handleRescheduleClass = async (course, day, time, section, room) => {
@@ -545,6 +546,8 @@ const TeacherRoutine = () => {
         console.error("Error finding timeslot :", error);
       }
     }
+    await fetchSchedule(); // Refresh the schedule after rescheduling
+    setShowUnifiedRescheduleModal(false); // Close the modal after success
   };
 
   const handleUndoCancelledClass = async (courseId, day, time, section) => {
@@ -605,6 +608,7 @@ const TeacherRoutine = () => {
       console.error("Error undoing cancelled class:", error);
       alert("Failed to undo cancelled class.");
     }
+    await fetchSchedule(); // Refresh the schedule after undo
   };
 
   const handleCancelTemporaryClass = async (
@@ -699,6 +703,7 @@ const TeacherRoutine = () => {
       console.error("Error details:", error.message);
       alert("Failed to cancel temporary class.");
     }
+    await fetchSchedule(); // Refresh the schedule after cancellation
   };
 
   const renderTable = () => (
@@ -811,6 +816,26 @@ const TeacherRoutine = () => {
     const semesterSnapshot = await getDocs(semesterRef);
     for (const doc of semesterSnapshot.docs) {
       const data = doc.data();
+
+      console.log("Timeslots: ", doc.id);
+      console.log(
+        "perm Data: ",
+        data.perm_course_code,
+        data.perm_teacher_1,
+        data.perm_day,
+        data.perm_time_1,
+        data.perm_room,
+        section
+      );
+      console.log(
+        "temp Data: ",
+        data.temp_course_code,
+        data.temp_teacher_1,
+        data.temp_day,
+        data.temp_time_1,
+        data.temp_room,
+        data.temp_section
+      );
       if (data.perm_teacher_1 && !data.class_cancelled) {
         classes.push({
           timeSlot: doc.id,
@@ -818,8 +843,20 @@ const TeacherRoutine = () => {
           course: data.perm_course_code,
           day: data.perm_day,
           time: data.perm_time_1,
-          room: data.perm_room, // Include both permanent and temporary room
+          room: data.perm_room,
+          type: data.perm_course_type,
           section: section,
+        });
+      } else if (data.temp_teacher_1) {
+        classes.push({
+          timeSlot: doc.id,
+          teacher: data.temp_teacher_1,
+          course: data.temp_course_code,
+          day: data.temp_day,
+          time: data.temp_time_1,
+          room: data.temp_room,
+          type: data.temp_course_type || "theory",
+          section: data.temp_section,
         });
       }
     }
@@ -895,6 +932,7 @@ const TeacherRoutine = () => {
       console.error("Error handling swap response:", error);
       alert(`Failed to process swap response: ${error.message}`);
     }
+    await fetchSchedule(); // Refresh the schedule after swap
   };
 
   const performClassSwap = async (request) => {

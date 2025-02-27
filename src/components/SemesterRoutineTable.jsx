@@ -16,13 +16,42 @@ const SemesterRoutineTable = ({
     });
   });
 
-  // Fill in the classes
+  // Fill in the classes with special handling for labs
   semesterClasses.forEach((cls) => {
     if (routineByTime[cls.time] && routineByTime[cls.time][cls.day]) {
-      routineByTime[cls.time][cls.day] = {
-        isFree: false,
-        ...cls,
-      };
+      let isLab = false;
+      // Check if it's a lab course (course code ends with even number)
+      if (cls.type === "lab") {
+        isLab = true;
+      }
+
+      // For lab courses, mark two consecutive time slots
+      if (isLab) {
+        // Find the index of current time slot
+        const currentTimeIndex = timeSlots.indexOf(cls.time);
+        if (currentTimeIndex >= 0 && currentTimeIndex < timeSlots.length - 1) {
+          // Mark current time slot
+          routineByTime[cls.time][cls.day] = {
+            isFree: false,
+            isLabFirst: true,
+            ...cls,
+          };
+
+          // Mark next time slot
+          const nextTime = timeSlots[currentTimeIndex + 1];
+          routineByTime[nextTime][cls.day] = {
+            isFree: false,
+            isLabSecond: true,
+            ...cls,
+          };
+        }
+      } else {
+        // For regular theory classes, mark single time slot
+        routineByTime[cls.time][cls.day] = {
+          isFree: false,
+          ...cls,
+        };
+      }
     }
   });
 
@@ -50,6 +79,12 @@ const SemesterRoutineTable = ({
                     style={{
                       cursor: "pointer",
                       backgroundColor: slot.isFree ? "#e8f5e9" : "#fff3e0",
+                      ...(slot.isLabSecond && {
+                        borderTop: "none",
+                      }),
+                      ...(slot.isLabFirst && {
+                        borderBottom: "none",
+                      }),
                     }}
                   >
                     {slot.isFree ? (
@@ -59,6 +94,7 @@ const SemesterRoutineTable = ({
                         <div>{slot.course}</div>
                         <div>Room: {slot.room}</div>
                         <div>Teacher: {slot.teacher}</div>
+                        {slot.isLabFirst && <div>(Lab - 2 slots)</div>}
                       </div>
                     )}
                   </td>
