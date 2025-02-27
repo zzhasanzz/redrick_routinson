@@ -44,8 +44,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import { db } from "../../firebase";
 import { collection, addDoc, getDocs, getDoc, doc, deleteDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { AuthContext } from "../../context/AuthContext";
+import { QRCodeSVG, QRCodeCanvas } from "qrcode.react";
+
 
 const Event = () => {
+    const [selectedTokens, setSelectedTokens] = useState({});
+    const [foodOptions, setFoodOptions] = useState([]);
+    const foodItems = ["Breakfast", "Lunch", "Snack", "Dinner"];
     const { currentUser } = useContext(AuthContext);
     const [events, setEvents] = useState([]);
     const [filteredEvents, setFilteredEvents] = useState([]);
@@ -66,7 +71,7 @@ const Event = () => {
     const [isFilteringMyEvents, setIsFilteringMyEvents] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [editingEventId, setEditingEventId] = useState(null);
-
+    const [participantList, setParticipantList] = useState([]);
     const {
         isOpen: isOpenVolunteerModal,
         onOpen: openVolunteerModal,
@@ -78,6 +83,13 @@ const Event = () => {
         onOpen: onDetailsOpen,
         onClose: onDetailsClose,
     } = useDisclosure();
+    const {
+        isOpen: isOpenTokensModal,
+        onOpen: onOpenTokensModal,
+        onClose: onCloseTokensModal,
+    } = useDisclosure();
+
+    const { isOpen: isParticipantsOpen, onOpen: onParticipantsOpen, onClose: onParticipantsClose } = useDisclosure();
 
     const toast = useToast();
 
@@ -118,6 +130,55 @@ const Event = () => {
         fetchUserRole();
     }, []);
 
+
+    const handleViewTokens = async (event) => {
+        try {
+            console.log("Fetching tokens for event:", event.id); // ✅ Debugging log
+            const eventDocRef = doc(db, "events", event.id);
+            const eventDoc = await getDoc(eventDocRef);
+
+            if (eventDoc.exists()) {
+                const eventData = eventDoc.data();
+                console.log("Event Data:", eventData); // ✅ Debugging log
+
+                const userTokens = eventData.foodTokens?.[currentUser.email] || {};
+                console.log("User Tokens:", userTokens); // ✅ Debugging log
+
+                if (Object.keys(userTokens).length === 0) {
+                    toast({
+                        title: "No QR Tokens",
+                        description: "You have not received any QR tokens for this event.",
+                        status: "warning",
+                        duration: 3000,
+                        isClosable: true,
+                    });
+                    return;
+                }
+
+                setSelectedTokens(userTokens);
+                onOpenTokensModal(); // ✅ Open Modal after state update
+            } else {
+                toast({
+                    title: "Event Not Found",
+                    description: "Could not find the selected event.",
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                });
+            }
+        } catch (error) {
+            console.error("Error fetching tokens: ", error);
+            toast({
+                title: "Error",
+                description: "Failed to retrieve QR tokens. Please try again.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+    };
+
+
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -157,20 +218,8 @@ const Event = () => {
             return;
         }
 
-        if (enableVolunteer && allowedDepartments.length === 0) {
-            toast({
-                title: "Allowed Departments Required",
-                description: "Please select at least one department for volunteering.",
-                status: "warning",
-                duration: 3000,
-                isClosable: true,
-            });
-            return;
-        }
-
         try {
             if (isEditing) {
-                // Update existing event
                 const eventDocRef = doc(db, "events", editingEventId);
                 await updateDoc(eventDocRef, {
                     eventName,
@@ -182,17 +231,9 @@ const Event = () => {
                     allowedDepartments,
                     image,
                     roadmap,
-                });
-
-                toast({
-                    title: "Event Updated",
-                    description: "The event has been successfully updated.",
-                    status: "success",
-                    duration: 3000,
-                    isClosable: true,
+                    foodOptions, // Save selected food options
                 });
             } else {
-                // Create new event
                 const eventRef = collection(db, "events");
                 await addDoc(eventRef, {
                     eventName,
@@ -205,19 +246,20 @@ const Event = () => {
                     allowedDepartments,
                     image,
                     roadmap,
-                    creatorEmail: currentUser.email, // Save the creator's email
-                });
-
-                toast({
-                    title: "Event Created",
-                    description: "Your event has been successfully created.",
-                    status: "success",
-                    duration: 3000,
-                    isClosable: true,
+                    creatorEmail: currentUser.email,
+                    foodOptions, // Save selected food options
                 });
             }
 
-            // Reset state
+            toast({
+                title: isEditing ? "Event Updated" : "Event Created",
+                description: isEditing ? "Event updated successfully." : "Event created successfully.",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+            });
+
+            // Reset fields
             setIsEditing(false);
             setEditingEventId(null);
             setEventName("");
@@ -229,6 +271,7 @@ const Event = () => {
             setImage(null);
             setRoadmap([]);
             setAllowedDepartments([]);
+            setFoodOptions([]);
 
             fetchEvents();
             onClose();
@@ -243,6 +286,7 @@ const Event = () => {
             });
         }
     };
+
 
     const handleEditEvent = (event) => {
         setIsEditing(true);
@@ -267,7 +311,7 @@ const Event = () => {
             if (eventDoc.exists()) {
                 const eventData = eventDoc.data();
                 const volunteerList = eventData.volunteerList || [];
-                const allowedDepartments = eventData.allowedDepartments || [];
+                // const allowedDepartments = eventData.allowedDepartments || [];
 
                 if (volunteerList.includes(currentUser.email)) {
                     toast({
@@ -361,6 +405,70 @@ const Event = () => {
         setIsFilteringMyEvents(!isFilteringMyEvents); // Toggle the state
     };
 
+    const handleRegister = async (eventId, selectedFoodOptions) => {
+        try {
+            const eventDocRef = doc(db, "events", eventId);
+            const eventDoc = await getDoc(eventDocRef);
+
+            if (eventDoc.exists()) {
+                const eventData = eventDoc.data();
+                const participantList = eventData.participantList || [];
+
+                if (participantList.includes(currentUser.email)) {
+                    toast({
+                        title: "Already Registered",
+                        description: "You have already registered for this event.",
+                        status: "info",
+                        duration: 3000,
+                        isClosable: true,
+                    });
+                    return;
+                }
+
+                // ✅ Generate QR Codes with RAW DATA instead of a URL
+                let foodTokens = eventData.foodTokens || {}; // Keep existing tokens
+                foodTokens[currentUser.email] = {}; // Create space for this user
+
+                selectedFoodOptions.forEach(food => {
+                    foodTokens[currentUser.email][food] = `${eventId}-${currentUser.email}-${food}`; // ✅ Store raw QR code format
+                });
+
+                // ✅ Save Tokens & Participant Info
+                await updateDoc(eventDocRef, {
+                    participantList: arrayUnion(currentUser.email),
+                    foodTokens, // ✅ Save tokens in raw format
+                });
+
+                toast({
+                    title: "Registration Successful",
+                    description: "You have received food tokens.",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                });
+
+                fetchEvents();
+            }
+        } catch (error) {
+            console.error("Error registering for event: ", error);
+            toast({
+                title: "Error",
+                description: "Failed to register. Please try again.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+    };
+
+
+
+    const handleViewParticipants = (event) => {
+        setParticipantList(event.participantList);
+        onParticipantsOpen();
+    };
+
+
     return (
         <Box p={5}>
             {isPresident && (
@@ -374,6 +482,14 @@ const Event = () => {
                         mb={5}
                     >
                         {isFilteringMyEvents ? "View All Events" : "Events Created by Me"}
+                    </Button>
+
+                    <Button
+                        colorScheme="red"
+                        onClick={() => window.location.href = "/student-home/scanner"}
+                        mb={5}
+                    >
+                        Scanner
                     </Button>
                 </>
             )}
@@ -425,6 +541,24 @@ const Event = () => {
                                     value={subscriptionFee}
                                     onChange={(e) => setSubscriptionFee(e.target.value)}
                                 />
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel>Food Options</FormLabel>
+                                <SimpleGrid columns={2} spacing={2}>
+                                    {foodItems.map((food) => (
+                                        <Checkbox
+                                            key={food}
+                                            isChecked={foodOptions.includes(food)}
+                                            onChange={() =>
+                                                setFoodOptions((prev) =>
+                                                    prev.includes(food) ? prev.filter((f) => f !== food) : [...prev, food]
+                                                )
+                                            }
+                                        >
+                                            {food}
+                                        </Checkbox>
+                                    ))}
+                                </SimpleGrid>
                             </FormControl>
                             <FormControl>
                                 <FormLabel>Upload Event Image</FormLabel>
@@ -643,6 +777,28 @@ const Event = () => {
                                         Volunteer
                                     </Button>
                                 )}
+                                {event.creatorEmail === currentUser.email ? (
+                                    <Button size="sm" colorScheme="purple" onClick={() => handleViewParticipants(event)}>
+                                        View Participants
+                                    </Button>
+                                ) : event.participantList?.includes(currentUser.email) ? ( // ✅ FIXED THIS LINE
+                                    <Button
+                                        size="sm"
+                                        colorScheme="purple"
+                                        onClick={() => handleViewTokens(event)}
+                                    >
+                                        Token
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        size="sm"
+                                        colorScheme="blue"
+                                        onClick={() => handleRegister(event.id, event.foodOptions)}
+                                    >
+                                        Register
+                                    </Button>
+                                )}
+
                                 <Button
                                     size="sm"
                                     colorScheme="blue"
@@ -678,6 +834,16 @@ const Event = () => {
                         <Text fontWeight="bold">Description:</Text>
                         <Text>{selectedEvent?.description}</Text>
                         <Text fontWeight="bold">Roadmap:</Text>
+                        <Text fontWeight="bold" mt={4}>Food Options:</Text>
+                        {selectedEvent?.foodOptions && selectedEvent.foodOptions.length > 0 ? (
+                            <SimpleGrid columns={2} spacing={2} mt={2}>
+                                {selectedEvent.foodOptions.map((food, index) => (
+                                    <Badge key={index} colorScheme="orange">{food}</Badge>
+                                ))}
+                            </SimpleGrid>
+                        ) : (
+                            <Text>No food options available.</Text>
+                        )}
                         <Table size="sm" mt={4}>
                             <Thead>
                                 <Tr>
@@ -750,6 +916,67 @@ const Event = () => {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
+            <Modal isOpen={isParticipantsOpen} onClose={onParticipantsClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Registered Participants</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        {participantList.length > 0 ? (
+                            <Table size="sm">
+                                <Thead>
+                                    <Tr>
+                                        <Th>Email</Th>
+                                    </Tr>
+                                </Thead>
+                                <Tbody>
+                                    {participantList.map((email, index) => (
+                                        <Tr key={index}>
+                                            <Td>{email}</Td>
+                                        </Tr>
+                                    ))}
+                                </Tbody>
+                            </Table>
+                        ) : (
+                            <Text>No participants registered yet.</Text>
+                        )}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button colorScheme="blue" onClick={onParticipantsClose}>
+                            Close
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+            <Modal isOpen={isOpenTokensModal} onClose={onCloseTokensModal}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Your Food Tokens</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        {Object.keys(selectedTokens).length > 0 ? (  // ✅ Check if tokens exist
+                            Object.entries(selectedTokens).map(([foodItem, qrData]) => (
+                                <Box key={foodItem} textAlign="center" mb={4}>
+                                    <Text fontWeight="bold">{foodItem}</Text>
+                                    <QRCodeSVG value={qrData} size={200} />
+                                </Box>
+                            ))
+                        ) : (
+                            <Text>No QR tokens found for this event.</Text>  // ✅ Error message if empty
+                        )}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button colorScheme="blue" onClick={onCloseTokensModal}>
+                            Close
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+
+
+
         </Box>
     );
 };

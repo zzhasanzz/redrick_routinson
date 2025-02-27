@@ -26,6 +26,8 @@ import AdminGenerateSeatPlan from './pages/features/AdminManageSeatPlan.jsx';
 import LostAndFound from './pages/features/LostandFound.jsx';
 
 import Event from "./pages/event/Event.jsx";
+import FoodScanner from "./pages/event/Scanner.jsx";
+import Redeem from "./pages/event/Redeem.jsx";
 
 
 
@@ -166,6 +168,15 @@ function App() {
                 </RequireAuth>
 
             }/>
+
+            <Route path="/student-home/scanner" element={
+                <RequireAuth allowedRoles={["student"]}>
+                    <FoodScanner/>
+                </RequireAuth>
+
+            }/>
+
+
             <Route path="/student-home/logout" element={
                 <RequireAuth allowedRoles={["student"]}>
                     <Blank/>
@@ -226,6 +237,8 @@ function App() {
               }/>
 
           </Route>
+
+          <Route path="/redeem" element={<Redeem/>} />
 
       </Routes>
     </Router>
