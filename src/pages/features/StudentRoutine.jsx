@@ -88,6 +88,7 @@ const StudentRoutine = () => {
                 teacher_1 = "";
                 teacher_2 = "";
                 room = "";
+                console.log("Class Cancelled or Rescheduled");
               }
               if (temp_course_code !== "") {
                 course_code = temp_course_code;
@@ -100,9 +101,12 @@ const StudentRoutine = () => {
                 console.log(`slot Index: ${slotIndex}`);
                 slotIndex2 = Slots.indexOf(timeSlotData.temp_time_1);
 
-                console.log("Cancelled Class Found");
+                console.log("Temporary Class Found");
                 console.log(`Course : ${course_code}`);
                 console.log(`teacher : ${teacher_1}`);
+                console.log(`room : ${room}`);
+                console.log(`day : ${temp_day}`);
+                console.log(`time : ${timeSlotData.temp_time_1}`);
               }
 
               // Find the index for the day and slot

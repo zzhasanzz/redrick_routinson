@@ -425,12 +425,6 @@ const TeacherRoutine = () => {
       console.log("Original class cancelled successfully");
 
       // Check if trying to reschedule on the same day
-      if (newDay === selectedDay) {
-        alert(
-          "Same day rescheduling is not allowed. Please select a different day."
-        );
-        return;
-      }
 
       // --- Update the semester collection ---
       const timeSlotDocRef = doc(
@@ -1037,6 +1031,7 @@ const TeacherRoutine = () => {
     reqTimeSlot,
     reqSection,
     reqRoom,
+
     targetTeacher,
     targetCourse,
     targetTimeSlot,
@@ -1141,10 +1136,12 @@ const TeacherRoutine = () => {
       );
       const targetTimeIndex = ((targetTimeSlot - 1) % totalSlotsPerDay) + 1;
       const targetStartTime = timeMapping[targetTimeIndex].split("-")[0];
+      const targetEndTime = timeMapping[targetTimeIndex + 1].split("-")[0];
 
       const reqDayIndex = Math.floor((reqTimeSlot - 1) / totalSlotsPerDay);
       const reqTimeIndex = ((reqTimeSlot - 1) % totalSlotsPerDay) + 1;
       const reqStartTime = timeMapping[reqTimeIndex].split("-")[0];
+      const reqEndTime = timeMapping[reqTimeIndex + 1].split("-")[0];
 
       // Update semester timeslot document
       const reqTimeSlotRef = doc(db, reqSemester, reqTimeSlot.toString());
@@ -1153,6 +1150,8 @@ const TeacherRoutine = () => {
         temp_room: targetRoom,
         temp_teacher_1: targetTeacher,
         temp_section: targetSection,
+        temp_day: dayMapping[reqDayIndex],
+        temp_time_1: `${reqStartTime}-${reqEndTime}`,
         rescheduled: 1,
         class_cancelled: 1,
       });
@@ -1167,6 +1166,9 @@ const TeacherRoutine = () => {
         temp_room: reqRoom,
         temp_teacher_1: reqTeacher,
         temp_section: reqSection,
+        temp_day: dayMapping[targetDayIndex],
+        temp_time_1: `${targetStartTime}-${targetEndTime}`,
+
         rescheduled: 1,
         class_cancelled: 1,
       });
