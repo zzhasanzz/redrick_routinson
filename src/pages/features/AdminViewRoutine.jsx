@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { db } from "../../firebase";
+import { collection, getDocs } from "firebase/firestore";
 import Papa from "papaparse";
 import {
   Box,
@@ -9,168 +11,295 @@ import {
   Th,
   Td,
   Heading,
-  VStack,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
+  Tag,
+  useColorModeValue,
   Spinner,
+  Text,
 } from "@chakra-ui/react";
-import "./Timetable.css";
 
 const AdminViewRoutine = () => {
-  const [data, setData] = useState([]);
-  const [data3, setData3] = useState([]);
-  const [data5, setData5] = useState([]);
-  const [data7, setData7] = useState([]);
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [timetableData, setTimetableData] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [activeSemester, setActiveSemester] = useState("1");
+
+  const timeSlots = [
+    "8:00-9:15",
+    "9:15-10:30",
+    "10:30-11:45",
+    "11:45-1:00",
+    "2:30-3:45",
+    "3:45-5:00",
+  ];
+
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
   useEffect(() => {
-    const fetchCSV = async () => {
-      const response = await fetch("../../../backend/Semester_1_Routine.csv");
-      const reader = response.body.getReader();
-      const result = await reader.read();
-      const decoder = new TextDecoder("utf-8");
-      const csvData = decoder.decode(result.value);
+    const fetchAllRoutines = async () => {
+      try {
+        const processedData = {};
+        const semesters = ["1", "3", "5", "7"];
+        const sections = ["A", "B"];
 
-      Papa.parse(csvData, {
-        header: false,
-        skipEmptyLines: true,
-        complete: (result) => {
-          setData(result.data);
-          setLoading(false); // Stop loading when data is fetched
-        },
-      });
+        for (const semester of semesters) {
+          processedData[semester] = {};
+
+          for (const section of sections) {
+            const routineData = [];
+            const semesterRef = collection(
+              db,
+              `semester_${semester}_${section}`
+            );
+            const snapshot = await getDocs(semesterRef);
+
+            // Initialize empty routine structure
+            const routineStructure = days.map((day) => {
+              const row = [day];
+              for (let i = 0; i < timeSlots.length; i++) {
+                row.push(null);
+              }
+              return row;
+            });
+
+            // Fill in the routine with actual data
+            snapshot.forEach((doc) => {
+              const data = doc.data();
+              if (!data.class_cancelled || data.temp_course_code) {
+                const courseInfo = data.temp_course_code
+                  ? `${data.temp_course_code}\n${data.temp_teacher_1}\n${data.temp_room}`
+                  : `${data.perm_course_code}\n${data.perm_teacher_1}\n${data.perm_room}`;
+
+                const dayIndex = days.indexOf(data.temp_day || data.perm_day);
+                const timeIndex = timeSlots.indexOf(
+                  data.temp_time_1 || data.perm_time_1
+                );
+
+                if (dayIndex !== -1 && timeIndex !== -1) {
+                  routineStructure[dayIndex][timeIndex + 1] = courseInfo;
+
+                  // If it's a lab, fill the next slot too
+                  const courseType =
+                    data.temp_course_type || data.perm_course_type;
+                  if (
+                    courseType === "lab" &&
+                    timeIndex + 2 <= timeSlots.length
+                  ) {
+                    routineStructure[dayIndex][timeIndex + 2] = courseInfo;
+                  }
+                }
+              }
+            });
+
+            processedData[semester][section] = routineStructure;
+          }
+        }
+
+        setTimetableData(processedData);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching routines:", error);
+        setLoading(false);
+      }
     };
 
-    fetchCSV();
+    fetchAllRoutines();
   }, []);
 
-  useEffect(() => {
-    const fetchCSV = async () => {
-      const response = await fetch("../../../backend/Semester_3_Routine.csv");
-      const reader = response.body.getReader();
-      const result = await reader.read();
-      const decoder = new TextDecoder("utf-8");
-      const csvData = decoder.decode(result.value);
+  const renderCourseCell = (course) => {
+    if (!course) return null;
 
-      Papa.parse(csvData, {
-        header: false,
-        skipEmptyLines: true,
-        complete: (result) => {
-          setData3(result.data);
-        },
-      });
-    };
+    const isLab = course.includes(" + ") || course.includes("Lab");
+    const colorScheme = isLab ? "green" : "blue";
 
-    fetchCSV();
-  }, []);
+    return (
+      <Tag
+        colorScheme={colorScheme}
+        variant="subtle"
+        borderRadius="md"
+        size="md"
+        w="100%"
+        py={2}
+        whiteSpace="normal"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        textAlign="center"
+        minH="60px" // Set minimum height for consistency
+      >
+        {course}
+      </Tag>
+    );
+  };
 
-  useEffect(() => {
-    const fetchCSV = async () => {
-      const response = await fetch("../../../backend/Semester_5_Routine.csv");
-      const reader = response.body.getReader();
-      const result = await reader.read();
-      const decoder = new TextDecoder("utf-8");
-      const csvData = decoder.decode(result.value);
-
-      Papa.parse(csvData, {
-        header: false,
-        skipEmptyLines: true,
-        complete: (result) => {
-          setData5(result.data);
-        },
-      });
-    };
-
-    fetchCSV();
-  }, []);
-
-  useEffect(() => {
-    const fetchCSV = async () => {
-      const response = await fetch("../../../backend/Semester_7_Routine.csv");
-      const reader = response.body.getReader();
-      const result = await reader.read();
-      const decoder = new TextDecoder("utf-8");
-      const csvData = decoder.decode(result.value);
-
-      Papa.parse(csvData, {
-        header: false,
-        skipEmptyLines: true,
-        complete: (result) => {
-          setData7(result.data);
-        },
-      });
-    };
-
-    fetchCSV();
-  }, []);
-
-  const renderTable = (tableData) => (
-    <Table variant="striped" colorScheme="gray" size="md">
-      <Thead>
-        <Tr>
-          {tableData.length > 0 &&
-            tableData[0].map((header, index) => (
-              <Th key={index} textAlign="center">
-                {header}
+  const renderSectionTable = (sectionData) => {
+    return (
+      <Box overflowX="auto" mb={8}>
+        <Table variant="striped" border="black" colorScheme="white" size="xl">
+          <Thead bg="rgb(43, 65, 98)">
+            <Tr>
+              <Th width="15%" textAlign="center" color="rgb(43, 41, 41)">
+                Day
               </Th>
-            ))}
-        </Tr>
-      </Thead>
-      <Tbody>
-        {tableData.slice(1).map((row, rowIndex) => (
-          <Tr key={rowIndex}>
-            {row.map((cell, cellIndex) => (
-              <Td key={cellIndex} textAlign="center">
-                {cell}
-              </Td>
-            ))}
-          </Tr>
-        ))}
-      </Tbody>
-    </Table>
-  );
+              {timeSlots.map((time, index) => (
+                <Th
+                  key={index}
+                  textAlign="center"
+                  fontSize="15px"
+                  width={`${82 / 6}%`}
+                  color="rgb(43, 41, 41)"
+                >
+                  {time}
+                </Th>
+              ))}
+            </Tr>
+          </Thead>
+          <Tbody>
+            {days.map((day, dayIndex) => {
+              const dayData = sectionData.find((d) => d[0] === day);
+              return (
+                <Tr key={dayIndex}>
+                  <Td
+                    fontWeight="600"
+                    textAlign="center"
+                    bg={useColorModeValue("white", "gray.800")}
+                  >
+                    {day}
+                  </Td>
+                  {timeSlots.map((_, timeIndex) => {
+                    const course = dayData ? dayData[timeIndex + 1] : null;
+                    return (
+                      <Td
+                        key={timeIndex}
+                        textAlign="center"
+                        p={2}
+                        //bg={course ? useColorModeValue('white', 'gray.800') : useColorModeValue('gray.100', 'gray.700')}
+                      >
+                        {course ? renderCourseCell(course) : "---"}
+                      </Td>
+                    );
+                  })}
+                </Tr>
+              );
+            })}
+          </Tbody>
+        </Table>
+      </Box>
+    );
+  };
 
   if (loading) {
     return (
-      <Box textAlign="center" py={10}>
+      <Box textAlign="center" p={8}>
         <Spinner size="xl" />
-        <Heading mt={5}>Loading course routine...</Heading>
+        <Text mt={4} fontSize="lg">
+          Loading timetable data...
+        </Text>
       </Box>
     );
   }
 
   return (
-    <VStack spacing={8} p={5} align="stretch">
-      {/* Semester 1 */}
-      <Box>
-        <Heading as="h2" size="lg" textAlign="center" mb={5}>
-          Semester 1 Routine
-        </Heading>
-        {renderTable(data)}
-      </Box>
+    <Box p={6}>
+      <Heading mb={6} color="rgb(43, 65, 98)">
+        Routine for All Ongoing Semesters
+      </Heading>
 
-      {/* Semester 3 */}
-      <Box>
-        <Heading as="h2" size="lg" textAlign="center" mb={5}>
-          Semester 3 Routine
-        </Heading>
-        {renderTable(data3)}
-      </Box>
+      <Tabs
+        colorScheme="gray"
+        _hover={{
+          bg: "white", // Light gray on hover
+          transition: "background 0.4s ease-in-out",
+        }}
+        onChange={(index) => setActiveSemester(["1", "3", "5", "7"][index])}
+      >
+        <TabList mb={6}>
+          <Tab
+            _hover={{
+              bg: "gray.100", // Light gray on hover
+              transition: "background 0.4s ease-in-out",
+            }}
+          >
+            Semester 1
+          </Tab>
+          <Tab
+            _hover={{
+              bg: "gray.100", // Light gray on hover
+              transition: "background 0.4s ease-in-out",
+            }}
+          >
+            Semester 3
+          </Tab>
+          <Tab
+            _hover={{
+              bg: "gray.100", // Light gray on hover
+              transition: "background 0.4s ease-in-out",
+            }}
+          >
+            Semester 5
+          </Tab>
+          <Tab
+            _hover={{
+              bg: "gray.100", // Light gray on hover
+              transition: "background 0.4s ease-in-out",
+            }}
+          >
+            Semester 7
+          </Tab>
+        </TabList>
 
-      {/* Semester 5 */}
-      <Box>
-        <Heading as="h2" size="lg" textAlign="center" mb={5}>
-          Semester 5 Routine
-        </Heading>
-        {renderTable(data5)}
-      </Box>
+        <TabPanels>
+          {["1", "3", "5", "7"].map((semester) => (
+            <TabPanel key={semester} p={0}>
+              <Tabs variant="enclosed" colorScheme="teal">
+                <TabList>
+                  <Tab
+                    _hover={{
+                      bg: "gray.100", // Light gray on hover
+                      transition: "background 0.4s ease-in-out",
+                    }}
+                  >
+                    Section A
+                  </Tab>
+                  <Tab
+                    _hover={{
+                      bg: "gray.100", // Light gray on hover
+                      transition: "background 0.4s ease-in-out",
+                    }}
+                  >
+                    Section B
+                  </Tab>
+                </TabList>
 
-      {/* Semester 7 */}
-      <Box>
-        <Heading as="h2" size="lg" textAlign="center" mb={5}>
-          Semester 7 Routine
-        </Heading>
-        {renderTable(data7)}
-      </Box>
-    </VStack>
+                <TabPanels mt={4}>
+                  <TabPanel p={2}>
+                    {timetableData[semester]?.A ? (
+                      renderSectionTable(timetableData[semester].A)
+                    ) : (
+                      <Text textAlign="center" p={4}>
+                        No data for Section A
+                      </Text>
+                    )}
+                  </TabPanel>
+                  <TabPanel p={2}>
+                    {timetableData[semester]?.B ? (
+                      renderSectionTable(timetableData[semester].B)
+                    ) : (
+                      <Text textAlign="center" p={4}>
+                        No data for Section B
+                      </Text>
+                    )}
+                  </TabPanel>
+                </TabPanels>
+              </Tabs>
+            </TabPanel>
+          ))}
+        </TabPanels>
+      </Tabs>
+    </Box>
   );
 };
 
