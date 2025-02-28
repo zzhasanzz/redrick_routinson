@@ -281,8 +281,7 @@
         "type": "theory",
         "day": "Monday",
         "time": "3:45-5:00"
-        "day": "Monday",
-        "time": "3:45-5:00"
+
       },
       {
         "course": "CSE4107",
@@ -617,8 +616,7 @@
         "type": "theory",
         "day": "Thursday",
         "time": "10:30-11:45"
-        "day": "Thursday",
-        "time": "10:30-11:45"
+
       }
     ]
   },
@@ -1485,8 +1483,7 @@
         "type": "theory",
         "day": "Monday",
         "time": "8:00-9:15"
-        "day": "Monday",
-        "time": "8:00-9:15"
+
       },
       {
         "course": "CSE4301",
@@ -2128,7 +2125,6 @@
         "type": "theory",
         "day": "Wednesday",
         "time": "10:30-11:45"
-        "time": "10:30-11:45"
       },
       {
         "course": "CSE4709",
@@ -2140,7 +2136,6 @@
         "course": "CSE4709",
         "type": "theory",
         "day": "Tuesday",
-        "time": "9:15-10:30"
         "time": "9:15-10:30"
       },
       {
@@ -3134,8 +3129,7 @@
         "type": "theory",
         "day": "Wednesday",
         "time": "11:45-1:00"
-        "day": "Wednesday",
-        "time": "11:45-1:00"
+
       },
       {
         "course": "CSE4513",
@@ -3777,8 +3771,7 @@
         "type": "theory",
         "day": "Wednesday",
         "time": "11:45-1:00"
-        "day": "Wednesday",
-        "time": "11:45-1:00"
+
       },
       {
         "course": "CSE4703",
@@ -4695,8 +4688,7 @@
         "type": "theory",
         "day": "Monday",
         "time": "8:00-9:15"
-        "day": "Monday",
-        "time": "8:00-9:15"
+
       },
       {
         "course": "CSE4739",

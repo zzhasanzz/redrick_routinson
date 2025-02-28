@@ -1,42 +1,29 @@
 /* User Profile Container */
-.user-profile {
-    text-align: center;
-    max-width: 400px;
-    margin: 20px auto;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background: #fff;
-}
-
-/* Profile Heading */
-h2 {
-    margin-bottom: 20px;
-    color: #333;
-}
-
-/* Profile Picture Container */
-.profile-pic-container {
-    position: relative;
+.user-profile-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    width: 60%;
+    margin: auto;
 }
 
-/* Profile Image Wrapper */
-.profile-label {
+/* Profile Image Container */
+.profile-image-container {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
     position: relative;
-    display: inline-block;
-    cursor: pointer;
 }
 
-/* Hide File Input */
-.file-input {
-    display: none;
-}
-
-/* Profile Image Styling */
 .profile-img-wrapper {
     position: relative;
     width: 120px;
@@ -44,12 +31,11 @@ h2 {
     border-radius: 50%;
     overflow: hidden;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     background: #ddd;
 }
 
-/* Profile Image */
 .profile-img {
     width: 100%;
     height: 100%;
@@ -57,35 +43,113 @@ h2 {
     border-radius: 50%;
 }
 
-/* Placeholder for No Profile Picture */
+
 .no-profile-pic {
     width: 100%;
     height: 100%;
     display: flex;
-    justify-content: center;
     align-items: center;
-    font-size: 14px;
-    color: #666;
+    justify-content: center;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    color: #888;
 }
 
-/* Gallery Icon */
+/* Hidden File Input */
+.file-input {
+    display: none;
+}
+
+/* Gallery Icon (Visible in Edit Mode) */
 .gallery-icon {
     position: absolute;
-    bottom: 10px;
-    right: 10px;
+    bottom: 5px;
+    right: 5px;
     width: 30px;
     height: 30px;
     cursor: pointer;
-    opacity: 0.8;
-    transition: opacity 0.3s ease-in-out;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    padding: 5px;
+    transition: transform 0.2s ease-in-out;
 }
 
-/* Show Gallery Icon Only in Edit Mode */
-.profile-label.edit-mode .gallery-icon {
-    display: block;
+.gallery-icon:hover {
+    transform: scale(1.1);
 }
 
-/* Floating Social Media Icons (Vertical) */
+/* User Information Grid */
+.user-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px 30px;
+    width: 100%;
+    text-align: left;
+}
+
+.info-group {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+}
+
+.highlighted-text {
+    color: #3b82f6; /* Blue color */
+    font-weight: bold;
+}
+
+.bold-text {
+    font-weight: 600;
+    color: #4a4a4a;
+}
+
+/* Skills Display */
+.skills-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.skill-block {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+/* Bio and Skills Container */
+.bio-skills-container {
+    margin-top: 15px;
+    text-align: left;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.bio-skills-container textarea,
+.bio-skills-container input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    background: white;
+    transition: border 0.3s ease-in-out;
+}
+
+
+
+.bio-skills-container textarea:focus,
+.bio-skills-container input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Floating Social Media Icons */
 .social-icons {
     position: fixed;
     top: 20px;
@@ -95,7 +159,6 @@ h2 {
     gap: 10px;
 }
 
-/* Social Media Icons */
 .social-icons a img {
     width: 40px;
     height: 40px;
@@ -103,16 +166,15 @@ h2 {
     transition: transform 0.2s ease-in-out;
 }
 
-/* Social Media Icon Hover Effect */
 .social-icons a img:hover {
     transform: scale(1.1);
 }
 
-/* Social Media Input Slider (Now Appears to the Left of Icons) */
+/* Social Media Input Slider */
 .social-slider {
     position: fixed;
-    top: 0px;
-    right: 80px; /* Moves to the left of social icons */
+    top: 0;
+    right: 80px;
     width: 220px;
     background: white;
     padding: 15px;
@@ -124,7 +186,6 @@ h2 {
     transition: transform 0.3s ease-in-out;
 }
 
-/* Input Fields for Social Media Links */
 .social-slider input {
     padding: 8px;
     border: 1px solid #ccc;
@@ -133,7 +194,7 @@ h2 {
     width: 100%;
 }
 
-/* Button Group for Save and Edit Buttons (Moved to Lower Right) */
+/* Button Group */
 .btn-group {
     position: fixed;
     bottom: 20px;
@@ -142,11 +203,10 @@ h2 {
     gap: 10px;
 }
 
-/* Save Button */
-.save-btn {
+.save-btn,
+.edit-btn {
     padding: 10px 16px;
     border: none;
-    background: #28a745;
     color: white;
     font-size: 16px;
     cursor: pointer;
@@ -154,110 +214,29 @@ h2 {
     transition: background-color 0.3s;
 }
 
-/* Save Button Hover Effect */
+.save-btn {
+    background: #28a745;
+}
+
 .save-btn:hover {
     background: #218838;
 }
 
-/* Edit/Cancel Button */
 .edit-btn {
-    padding: 10px 16px;
-    border: none;
     background: #007bff;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s;
 }
 
-/* Edit/Cancel Button Hover Effect */
 .edit-btn:hover {
     background: #0056b3;
 }
 
-/* Disabled Button Styling */
-.save-btn:disabled, .edit-btn:disabled {
+.save-btn:disabled,
+.edit-btn:disabled {
     background: #bbb;
     cursor: not-allowed;
 }
 
-/* User Information Section */
-.user-info {
-    text-align: left;
-    margin-top: 20px;
-}
-
-/* User Info Text */
-.user-info p {
-    font-size: 16px;
-    color: #444;
-    margin: 5px 0;
-}
-
-/* Bio and Skills Section */
-.bio-skills-container {
-    margin-top: 15px;
-    text-align: left;
-    padding: 10px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* Bio and Skills Text */
-.bio-skills-container p {
-    font-size: 16px;
-    color: #444;
-    margin-bottom: 8px;
-}
-
-/* Editable Bio Input */
-.bio-skills-container textarea {
-    width: 100%;
-    height: 80px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-    resize: none;
-    background: white;
-    transition: border 0.3s ease-in-out;
-}
-
-.bio-skills-container textarea:focus {
-    border-color: #007bff;
-    outline: none;
-}
-
-/* Editable Skills Input */
-.bio-skills-container input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-    background: white;
-    transition: border 0.3s ease-in-out;
-}
-
-.bio-skills-container input:focus {
-    border-color: #007bff;
-    outline: none;
-}
-
-/* Bio and Skills Display in View Mode */
-.bio-skills-container .bio-text,
-.bio-skills-container .skills-text {
-    font-size: 16px;
-    color: #444;
-    padding: 10px;
-    border-radius: 5px;
-    background: white;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* Responsive Adjustments */
+/* Responsive Design */
 @media (max-width: 600px) {
     .bio-skills-container {
         padding: 8px;
@@ -270,4 +249,21 @@ h2 {
     .bio-skills-container input {
         padding: 6px;
     }
+}
+
+.bio-skills-container textarea {
+    width: 100%;
+    height: 150px; /* Increased height */
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    resize: vertical; /* Allows user to resize */
+    background: white;
+    transition: border 0.3s ease-in-out;
+}
+
+.bio-skills-container textarea:focus {
+    border-color: #007bff;
+    outline: none;
 }

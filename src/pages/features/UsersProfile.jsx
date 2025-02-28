@@ -138,8 +138,6 @@ const UsersProfile = () => {
                     <img src={linkedinIcon} alt="LinkedIn" />
                 </a>
             </div>
-
-            {/* Social Media Links Input Box (Only in Edit Mode) */}
             {isEditing && (
                 <div className="social-slider">
                     <input type="text" placeholder="Facebook URL" value={profileDetails.facebook} onChange={(e) => setProfileDetails({ ...profileDetails, facebook: e.target.value })} />
@@ -148,30 +146,67 @@ const UsersProfile = () => {
                 </div>
             )}
 
-            <div className="user-profile">
-                {/* <h2>User Profile</h2> */}
+            <div className="user-profile-container">
+                {/* Profile Picture */}
+                <label className="profile-label">
+                    {/* Hidden File Input */}
+                    {isEditing && (
+                        <input 
+                            type="file" 
+                            accept="image/*" 
+                            onChange={handleProfilePicChange} 
+                            disabled={uploading} 
+                            className="file-input" 
+                            ref={fileInputRef} 
+                            onClick={(e) => e.stopPropagation()} 
+                        />
+                    )}
 
-                {/* Profile Picture Section */}
-                <div className="profile-pic-container">
-                    <label className="profile-label">
-                        {isEditing && <input type="file" accept="image/*" onChange={handleProfilePicChange} disabled={uploading} className="file-input" ref={fileInputRef} />}
-                        <div className="profile-img-wrapper">
-                            {previewPic ? <img src={previewPic} alt="Preview" className="profile-img" /> : userData?.profilePic ? <img src={userData.profilePic} alt="Profile" className="profile-img" /> : <div className="no-profile-pic">No profile picture</div>}
-                            {isEditing && <img src={galleryIcon} alt="Gallery Icon" className="gallery-icon" />}
-                        </div>
-                    </label>
-                </div>
+                    <div className="profile-img-wrapper">
+                        {previewPic ? (
+                            <img src={previewPic} alt="Preview" className="profile-img" />
+                        ) : userData?.profilePic ? (
+                            <img src={userData.profilePic} alt="Profile" className="profile-img" />
+                        ) : (
+                            <div className="no-profile-pic">No profile picture</div>
+                        )}
+
+                        {/* Gallery Icon Appears in Edit Mode */}
+                        {isEditing  && (<img 
+                        src={galleryIcon} 
+                        alt="Select Image" 
+                        className="gallery-icon" 
+                        onClick={(e) => {
+                            e.preventDefault();  // Prevents default behavior
+                            e.stopPropagation(); // Stops bubbling
+                            fileInputRef.current?.click(); // Opens file picker only once
+                        }} 
+                    />)}
+
+                    </div>
+                </label>
 
                 {/* User Information Section */}
-                <div className="user-info">
-                    <p><strong>Name:</strong> {userData?.displayName || "N/A"}</p>
-                    <p><strong>Email:</strong> {currentUser.email}</p>
-                    <p><strong>Department:</strong> {userData?.department || "N/A"}</p>
-                    {/* <p><strong>Role:</strong> {userData?.role || "N/A"}</p> */}
-                    <p><strong>Semester:</strong> {userData?.semester || "N/A"}</p>
-
-                    {/* Bio & Skills Section */}
-                    <div className="bio-skills-container">
+                <div className="user-info-grid">
+                    <div className="info-group">
+                        <p><strong>Student ID</strong></p>
+                        <p className="highlighted-text">{userData?.id || "N/A"}</p>
+                    </div>
+                    <div className="info-group">
+                        <p><strong>Current AY</strong></p>
+                        <p className="highlighted-text">{userData?.academicYear || "2023-2024"}</p>
+                    </div>
+                    <div className="info-group">
+                        <p><strong>Student Name</strong></p>
+                        <p className="bold-text">{userData?.displayName || "N/A"}</p>
+                    </div>
+                    <div className="info-group">
+                        <p><strong>Current Semester</strong></p>
+                        <p className="bold-text">{userData?.semester || "N/A"}</p>
+                    </div>
+                </div>
+            </div>
+            <div className="bio-skills-container">
                         {isEditing ? (
                             <>
                                 <textarea placeholder="Write a short bio..." value={profileDetails.bio} onChange={(e) => setProfileDetails({ ...profileDetails, bio: e.target.value })} />
@@ -180,13 +215,19 @@ const UsersProfile = () => {
                         ) : (
                             <>
                                 <p><strong>Bio:</strong> {userData?.bio || "No bio available"}</p>
-                                <p><strong>Skills:</strong> {userData?.skills || "No skills listed"}</p>
+                                <p><strong>Skills:</strong></p>
+                                <div className="skills-container">
+                                {userData?.skills 
+                                    ? userData.skills.split(",").map((skill, index) => (
+                                        <span key={index} className="skill-block">{skill.trim()}</span>
+                                    )) 
+                                    : <span>No skills listed</span>
+                                }
+                                </div>
+
                             </>
                         )}
-                    </div>
-                </div>
             </div>
-
             {/* Save & Edit Buttons */}
             <div className="btn-group">
                 {isEditing && <button onClick={handleSave} disabled={uploading} className="save-btn">Save</button>}
