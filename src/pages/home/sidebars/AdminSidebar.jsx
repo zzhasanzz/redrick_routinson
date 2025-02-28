@@ -29,6 +29,12 @@ const sidebarNavItems = [
         section: 'user'
     },
     {
+        display: 'Stats',
+        icon: <i className='bx bx-user'></i>,
+        to: '/admin-home/admin-statistics', // Add full path
+        section: 'statistics'
+    },
+    {
         display: 'Logout',
         icon: <i className='bx bx-receipt'></i>,
         to: '/login', // Add full path
