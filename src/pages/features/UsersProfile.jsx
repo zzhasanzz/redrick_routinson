@@ -147,9 +147,7 @@ const UsersProfile = () => {
             )}
 
             <div className="user-profile-container">
-                {/* Profile Picture */}
                 <label className="profile-label">
-                    {/* Hidden File Input */}
                     {isEditing && (
                         <input 
                             type="file" 
@@ -171,22 +169,20 @@ const UsersProfile = () => {
                             <div className="no-profile-pic">No profile picture</div>
                         )}
 
-                        {/* Gallery Icon Appears in Edit Mode */}
                         {isEditing  && (<img 
                         src={galleryIcon} 
                         alt="Select Image" 
                         className="gallery-icon" 
                         onClick={(e) => {
-                            e.preventDefault();  // Prevents default behavior
-                            e.stopPropagation(); // Stops bubbling
-                            fileInputRef.current?.click(); // Opens file picker only once
+                            e.preventDefault();  
+                            e.stopPropagation(); 
+                            fileInputRef.current?.click();
                         }} 
                     />)}
 
                     </div>
                 </label>
 
-                {/* User Information Section */}
                 <div className="user-info-grid">
                     <div className="info-group">
                         <p><strong>Student ID</strong></p>
@@ -228,7 +224,6 @@ const UsersProfile = () => {
                             </>
                         )}
             </div>
-            {/* Save & Edit Buttons */}
             <div className="btn-group">
                 {isEditing && <button onClick={handleSave} disabled={uploading} className="save-btn">Save</button>}
                 <button onClick={toggleEditing} className="edit-btn">{isEditing ? "Cancel" : "Edit"}</button>
