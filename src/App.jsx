@@ -32,6 +32,7 @@ import AdminGenerateSeatPlan from "./pages/features/AdminManageSeatPlan.jsx";
 import LostAndFound from "./pages/features/LostAndFound.jsx";
 
 import Event from "./pages/event/Event.jsx";
+import AdminStats from "./pages/features/AdminStats.jsx";
 
 function App() {
   const { currentUser, role } = useContext(AuthContext);
@@ -98,9 +99,17 @@ function App() {
                 </RequireAuth>
               }
             />
+            <Route
+              path="/admin-home/admin-statistics"
+              element={
+                <RequireAuth allowedRoles={["admin"]}>
+                  <AdminStats />
+                </RequireAuth>
+              }
+            />
 
             <Route
-              path="/admin-home/admin-generate-seat-plan"
+              path="/admin-home/admin-manage-seat-plan"
               element={
                 <RequireAuth allowedRoles={["admin"]}>
                   <AdminGenerateSeatPlan />
