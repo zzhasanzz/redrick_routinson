@@ -30,6 +30,7 @@ import AdminViewRoutine from "./pages/features/AdminViewRoutine.jsx";
 import AdminManageUsers from "./pages/features/AdminManageUsers.jsx";
 import AdminGenerateSeatPlan from "./pages/features/AdminManageSeatPlan.jsx";
 import LostAndFound from "./pages/features/LostAndFound.jsx";
+import UsersProfile from "./pages/features/UsersProfile.jsx";
 
 import Event from "./pages/event/Event.jsx";
 
@@ -181,7 +182,7 @@ function App() {
               path="/student-home/user"
               element={
                 <RequireAuth allowedRoles={["student"]}>
-                  <Blank />
+                  <UsersProfile/>
                 </RequireAuth>
               }
             />
