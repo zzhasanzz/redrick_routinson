@@ -21,8 +21,8 @@ import SemesterRoutineTable from "../../components/SemesterRoutineTable";
 const TeacherRoutine = () => {
   const [schedule, setSchedule] = useState([]);
   const [teacherName, setTeacherName] = useState("");
-  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState("");
+  const [selectedCourseType, setSelectedCourseType] = useState("");
   const [selectedDay, setSelectedDay] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedSection, setSelectedSection] = useState("");
@@ -159,31 +159,22 @@ const TeacherRoutine = () => {
         } else {
           courseType = "theory";
         }
+
+        let classStatus = "Cancelled";
         if (String(stat) !== "1") {
-          teacherSchedule.push({
-            courseCode: doc.id.substring(0, doc.id.length - 2),
-            courseTitle: courseData["assigned_course_title"],
-            day: dayMapping[dayIndex],
-            time: `${startTime}-${endTime}`,
-            section: section,
-            room: courseData["assigned_room"][index],
-            status: "Permanent",
-          });
-        } else {
-          let classStatus = "Cancelled";
-          if (String(classRescheduledStatus[index]) === "1") {
-            classStatus = "Rescheduled";
-          }
-          teacherSchedule.push({
-            courseCode: doc.id.substring(0, doc.id.length - 2),
-            courseTitle: courseData["assigned_course_title"],
-            day: dayMapping[dayIndex],
-            time: `${startTime}-${endTime}`,
-            section: section,
-            room: courseData["assigned_room"][index],
-            status: classStatus,
-          });
+          classStatus = "Active";
+        } else if (String(classRescheduledStatus[index]) === "1") {
+          classStatus = "Rescheduled";
         }
+        teacherSchedule.push({
+          courseCode: doc.id.substring(0, doc.id.length - 2),
+          courseTitle: courseData["assigned_course_title"],
+          day: dayMapping[dayIndex],
+          time: `${startTime}-${endTime}`,
+          section: section,
+          room: courseData["assigned_room"][index],
+          status: classStatus,
+        });
       });
 
       if (!(tempClasses && tempClasses.length === 0)) {
@@ -225,36 +216,36 @@ const TeacherRoutine = () => {
     }
   }, [teacherName]);
 
-  const fetchAvailableTimeSlots = async (day, time) => {
-    let sem = selectedCourse
-      .toString()
-      .charAt(selectedCourse.toString().length - 3);
-    const semester = "semester_" + sem + "_" + selectedSection;
-    const timeSlotRef = collection(db, semester);
-    const timeSlotsSnapshot = await getDocs(timeSlotRef);
-    timeSlotsSnapshot.forEach((doc) => {
-      const timeSlotData = doc.data();
-      const timeSlotID = Number(doc.id);
-      if (timeSlotData["class_cancelled"] === 1) {
-        if (timeSlotData["temp_course_code"] === "") {
-          availableTimeSlotsSet.add(timeSlotID);
-        } else {
-          occupiedTimeSlots.add(timeSlotID);
-        }
-      } else {
-        occupiedTimeSlots.add(timeSlotID);
-      }
-    });
-    allTimeSlots.forEach((item) => {
-      if (!occupiedTimeSlots.has(item)) {
-        availableTimeSlotsSet.add(item);
-      }
-    });
-    availableTimeSlotsSet.forEach((it) => {
-      fetchAvailableRooms(it);
-    });
-    setAvailableTimeSlots(availableTimeSlotsSet);
-  };
+  // const fetchAvailableTimeSlots = async (day, time) => {
+  //   let sem = selectedCourse
+  //     .toString()
+  //     .charAt(selectedCourse.toString().length - 3);
+  //   const semester = "semester_" + sem + "_" + selectedSection;
+  //   const timeSlotRef = collection(db, semester);
+  //   const timeSlotsSnapshot = await getDocs(timeSlotRef);
+  //   timeSlotsSnapshot.forEach((doc) => {
+  //     const timeSlotData = doc.data();
+  //     const timeSlotID = Number(doc.id);
+  //     if (timeSlotData["class_cancelled"] === 1) {
+  //       if (timeSlotData["temp_course_code"] === "") {
+  //         availableTimeSlotsSet.add(timeSlotID);
+  //       } else {
+  //         occupiedTimeSlots.add(timeSlotID);
+  //       }
+  //     } else {
+  //       occupiedTimeSlots.add(timeSlotID);
+  //     }
+  //   });
+  //   allTimeSlots.forEach((item) => {
+  //     if (!occupiedTimeSlots.has(item)) {
+  //       availableTimeSlotsSet.add(item);
+  //     }
+  //   });
+  //   availableTimeSlotsSet.forEach((it) => {
+  //     fetchAvailableRooms(it);
+  //   });
+  //   setAvailableTimeSlots(availableTimeSlotsSet);
+  // };
 
   const fetchAvailableRooms = async (timeSlot) => {
     let roomID = "";
@@ -264,7 +255,7 @@ const TeacherRoutine = () => {
       const roomData = doc.data();
       roomID = doc.id.toString();
       if (
-        roomData["class_cancelled"] === 1 &&
+        (roomData["class_cancelled"] === 1 || roomData["rescheduled"] === 1) &&
         roomData["temp_course_code"] === ""
       ) {
         addValueToKey(availableRoomsMap, timeSlot, roomID);
@@ -277,10 +268,6 @@ const TeacherRoutine = () => {
     avRooms = new Set([...allRooms]);
     setAvailableRooms(availableRoomsMap);
   };
-
-  async function handleTimeSlotClick(timeslot) {
-    setSelectedRescheduleTime(timeslot);
-  }
 
   function addValueToKey(map, key, value) {
     if (!map.has(key)) {
@@ -397,157 +384,241 @@ const TeacherRoutine = () => {
     await fetchSchedule(); // Refresh the schedule after cancellation
   };
 
-  const handleRescheduleClass = async (course, day, time, section, room) => {
-    setSelectedCourse(course);
-    setSelectedDay(day);
-    setSelectedTime(time);
-    setSelectedSection(section);
-    setSelectedRoom(room);
-
-    let sem = course.toString().charAt(course.toString().length - 3);
-    await fetchSemesterClasses(sem, section);
-    setShowUnifiedRescheduleModal(true);
-  };
-
   const confirmReschedule = async () => {
-    console.log(`Selected Room: ${selectedRoom}`);
-    console.log(`Selected  Reschedule Time: ${selectedRescheduleTime}`);
-    console.log(`Selected Course: ${selectedCourse}`);
-    console.log(`Selected Section: ${selectedSection}`);
-    const selectedCourseType =
-      parseInt(selectedCourse.slice(-1)) % 2 === 0 ? "lab" : "theory";
-    console.log(`Selected Course Type: ${selectedCourseType}`);
-    let sem = selectedCourse
-      .toString()
-      .charAt(selectedCourse.toString().length - 3);
-    const semester = "semester_" + sem + "_" + selectedSection;
-    if (selectedCourseType === "lab") {
-      console.log("Lab Rescheduling Unavailable");
-    } else {
-      handleCancelClass(
+    try {
+      console.log(`Selected Room: ${selectedRoom}`);
+      console.log(`Selected Reschedule Time: ${selectedRescheduleTime}`);
+      console.log(`Selected Course: ${selectedCourse}`);
+      console.log(`Selected Section: ${selectedSection}`);
+      console.log(`Selected Course Type: ${selectedCourseType}`);
+
+      if (!selectedRoom || !selectedRescheduleTime) {
+        alert("Please select both a room and a time slot for rescheduling.");
+        return;
+      }
+
+      // Get semester number from course code
+      let sem = selectedCourse
+        .toString()
+        .charAt(selectedCourse.toString().length - 3);
+      const semesterCollection = `semester_${sem}_${selectedSection}`;
+
+      // Calculate day and time information for the new timeslot
+      const totalSlotsPerDay = Object.keys(timeMapping).length;
+      const newDayIndex = Math.floor(
+        (selectedRescheduleTime - 1) / totalSlotsPerDay
+      );
+      const newTimeIndex =
+        ((selectedRescheduleTime - 1) % totalSlotsPerDay) + 1;
+      const newDay = dayMapping[newDayIndex];
+      const newStartTime = timeMapping[newTimeIndex].split("-")[0];
+      const newEndTime = timeMapping[newTimeIndex].split("-")[1];
+      const newTime = `${newStartTime}-${newEndTime}`;
+
+      // First, cancel the original class
+      await handleCancelClass(
         selectedCourse,
         selectedDay,
         selectedTime,
         selectedSection
       );
+      console.log("Original class cancelled successfully");
 
-      const timeSlotDocRef = doc(db, `${semester}/${selectedRescheduleTime}`);
-      const totalSlotsPerDay = Object.keys(timeMapping).length;
-      const dayIndex = Math.floor(
-        (selectedRescheduleTime - 1) / totalSlotsPerDay
+      // Check if trying to reschedule on the same day
+      if (newDay === selectedDay) {
+        alert(
+          "Same day rescheduling is not allowed. Please select a different day."
+        );
+        return;
+      }
+
+      // --- Update the semester collection ---
+      const timeSlotDocRef = doc(
+        db,
+        semesterCollection,
+        selectedRescheduleTime.toString()
       );
-      const timeIndex = ((selectedRescheduleTime - 1) % totalSlotsPerDay) + 1;
-      const startTime = timeMapping[timeIndex].split("-")[0];
-      var endTime = timeMapping[timeIndex].split("-")[1];
-      var day = dayMapping[dayIndex];
-      const time = `${startTime}-${endTime}`;
 
-      try {
-        const docSnap = await getDoc(timeSlotDocRef);
-        if (docSnap.exists()) {
-          await updateDoc(timeSlotDocRef, {
-            class_cancelled: 1,
-            rescheduled: 1,
-            temp_course_code: selectedCourse,
-            temp_course_type: selectedCourseType,
-            temp_room: selectedRoom,
-            temp_section: selectedSection,
-            temp_time_1: time,
-            temp_teacher_1: teacherName,
-            temp_day: day,
-          });
-          console.log("Update successful in Semester");
-        } else {
-          await setDoc(timeSlotDocRef, {
-            class_cancelled: 1,
-            rescheduled: 1,
-            temp_course_code: selectedCourse,
-            temp_course_type: selectedCourseType,
-            temp_room: selectedRoom,
-            temp_section: selectedSection,
-            temp_time_1: time,
-            temp_teacher_1: teacherName,
-            temp_day: day,
-          });
-          console.log("Document created in Semester");
-        }
-      } catch (error) {
-        console.error("Error updating/creating semester doc:", error);
-      }
+      // Create or update the semester document
+      await setDoc(
+        timeSlotDocRef,
+        {
+          class_cancelled: 0,
+          rescheduled: 1,
+          temp_course_code: selectedCourse,
+          temp_course_type: selectedCourseType || "theory",
+          temp_room: selectedRoom,
+          temp_section: selectedSection,
+          temp_time_1: newTime,
+          temp_teacher_1: teacherName,
+          temp_day: newDay,
+          // Preserve permanent fields if any
+          perm_course_code: "",
+          perm_course_type: "",
+          perm_room: "",
+          perm_teacher_1: "",
+          perm_teacher_2: "",
+          perm_day: "",
+          perm_time_1: "",
+          perm_time_2: "",
+        },
+        { merge: true }
+      );
 
-      try {
-        const courseRef = doc(
-          db,
-          `teachers/${teacherName}/courses`,
-          selectedCourse.toString() + "_" + selectedSection
-        );
-        const courseSnapshot = await getDoc(courseRef);
+      console.log(
+        `Updated semester collection document at ${semesterCollection}/${selectedRescheduleTime}`
+      );
+
+      // --- Update the timeslots collection ---
+      const roomRef = doc(
+        db,
+        `time_slots/${selectedRescheduleTime}/rooms`,
+        selectedRoom
+      );
+
+      // Create or update the room document in timeslots
+      await setDoc(
+        roomRef,
+        {
+          class_cancelled: 0,
+          rescheduled: 1,
+          course_type: selectedCourseType || "theory",
+          temp_course_code: selectedCourse,
+          temp_teacher_1: teacherName,
+          temp_section: selectedSection,
+          perm_course_code: "",
+          perm_teacher_1: "",
+          perm_teacher_2: "",
+        },
+        { merge: true }
+      );
+
+      console.log(
+        `Updated timeslot collection at time_slots/${selectedRescheduleTime}/rooms/${selectedRoom}`
+      );
+
+      // --- Update teacher's courses collection ---
+      const courseRef = doc(
+        db,
+        `teachers/${teacherName}/courses`,
+        `${selectedCourse}_${selectedSection}`
+      );
+
+      const courseSnapshot = await getDoc(courseRef);
+      if (courseSnapshot.exists()) {
         const courseData = courseSnapshot.data();
-        if (courseSnapshot.exists()) {
-          const permanentTimeSlots = courseData.assigned_time_slots || [];
-          let classCancelledStatus = courseData.class_cancelled_status || [];
-          let rescheduledStatus = courseData.rescheduled_status || [];
 
-          permanentTimeSlots.forEach((timeSlot, index) => {
-            const totalSlotsPerDay = Object.keys(timeMapping).length;
-            const timeIndex = ((timeSlot - 1) % totalSlotsPerDay) + 1;
-            const time = timeMapping[timeIndex];
+        // Find the timeslot index that matches the cancelled class
+        const originalTimeSlot =
+          revDayMapping[selectedDay] * totalSlotsPerDay +
+          revTimeMapping[selectedTime];
+        let cancelledIndex = -1;
 
-            if (time === selectedTime) {
-              classCancelledStatus[index] = 1;
-              rescheduledStatus[index] = 1;
-            }
-          });
+        const timeSlots = courseData.assigned_time_slots || [];
+        timeSlots.forEach((slot, idx) => {
+          if (Number(slot) === Number(originalTimeSlot)) {
+            cancelledIndex = idx;
+          }
+        });
 
-          await updateDoc(courseRef, {
-            class_cancelled_status: classCancelledStatus,
-            rescheduled_status: rescheduledStatus,
-            assigned_temp_time_slots: arrayUnion(selectedRescheduleTime),
-            assigned_temp_room: arrayUnion(selectedRoom),
-          });
-          console.log("Update successful in teacher courses");
-        }
-      } catch (error) {
-        console.error("Error updating/creating teacher doc:", error);
-      }
+        // Update the teacher's course document
+        await updateDoc(courseRef, {
+          assigned_temp_time_slots: arrayUnion(
+            selectedRescheduleTime.toString()
+          ),
+          assigned_temp_room: arrayUnion(selectedRoom),
+        });
 
-      try {
-        const roomRef = doc(
-          db,
-          `time_slots/${selectedRescheduleTime}/rooms/${selectedRoom}`
+        console.log(
+          `Updated teacher course document at teachers/${teacherName}/courses/${selectedCourse}_${selectedSection}`
         );
-        const roomDoc = await getDoc(roomRef);
-        if (roomDoc.exists()) {
-          const roomData = roomDoc.data();
-          await updateDoc(roomRef, {
-            temp_course_code: selectedCourse,
-            temp_course_type: selectedCourseType,
-            temp_room: selectedRoom,
-            temp_teacher_1: teacherName,
-            temp_section: selectedSection,
-          });
-        } else {
-          await setDoc(roomRef, {
-            class_cancelled: 1,
-            course_type: "theory",
-            perm_course_code: "",
-            perm_course_title: "",
-            perm_teacher_1: "",
-            perm_teacher_2: "",
-            temp_course_code: selectedCourse,
-            temp_course_type: selectedCourseType,
-            temp_room: selectedRoom,
-            temp_teacher_1: teacherName,
-            temp_section: selectedSection,
-          });
-          console.log(`Room ${selectedRoom} created successfully.`);
-        }
-      } catch (error) {
-        console.error("Error finding timeslot :", error);
+      } else {
+        console.log(`Teacher course document doesn't exist, creating new one`);
+        await setDoc(courseRef, {
+          assigned_temp_time_slots: [selectedRescheduleTime.toString()],
+          assigned_temp_room: [selectedRoom],
+          course_type: selectedCourseType || "theory",
+          class_cancelled_status: [1],
+          rescheduled_status: [1],
+          assigned_time_slots: [],
+          assigned_room: [],
+        });
       }
+
+      // For lab courses, we need to handle two consecutive time slots
+      if (selectedCourseType === "lab") {
+        const secondTimeSlot = Number(selectedRescheduleTime) + 1;
+
+        // Update second time slot in semester collection
+        const secondTimeSlotRef = doc(
+          db,
+          semesterCollection,
+          secondTimeSlot.toString()
+        );
+        await setDoc(
+          secondTimeSlotRef,
+          {
+            class_cancelled: 0,
+            rescheduled: 1,
+            temp_course_code: selectedCourse,
+            temp_course_type: "lab",
+            temp_room: selectedRoom,
+            temp_section: selectedSection,
+            temp_time_1: newTime,
+            temp_teacher_1: teacherName,
+            temp_day: newDay,
+          },
+          { merge: true }
+        );
+
+        // Update second time slot in time_slots collection
+        const secondRoomRef = doc(
+          db,
+          `time_slots/${secondTimeSlot}/rooms`,
+          selectedRoom
+        );
+        await setDoc(
+          secondRoomRef,
+          {
+            class_cancelled: 0,
+            rescheduled: 1,
+            course_type: "lab",
+            temp_course_code: selectedCourse,
+            temp_teacher_1: teacherName,
+            temp_section: selectedSection,
+          },
+          { merge: true }
+        );
+      }
+
+      // Refresh the schedule and close modal
+      await fetchSchedule();
+      setShowUnifiedRescheduleModal(false);
+      alert("Class rescheduled successfully!");
+    } catch (error) {
+      console.error("Error in confirmReschedule:", error);
+      alert(`Failed to reschedule class: ${error.message}`);
     }
-    await fetchSchedule(); // Refresh the schedule after rescheduling
-    setShowUnifiedRescheduleModal(false); // Close the modal after success
+  };
+
+  const handleRescheduleClass = async (
+    course,
+    day,
+    time,
+    section,
+    room,
+    type
+  ) => {
+    setSelectedCourse(course);
+    setSelectedDay(day);
+    setSelectedTime(time);
+    setSelectedSection(section);
+    setSelectedRoom(room);
+    setSelectedCourseType(type);
+
+    let sem = course.toString().charAt(course.toString().length - 3);
+    await fetchSemesterClasses(sem, section);
+    setShowUnifiedRescheduleModal(true);
   };
 
   const handleUndoCancelledClass = async (courseId, day, time, section) => {
@@ -693,7 +764,8 @@ const TeacherRoutine = () => {
               slot.day === day &&
               slot.time === time &&
               slot.room === room &&
-              slot.section === section
+              slot.section === section &&
+              slot.status === status
             )
         );
         setSchedule(updatedSchedule);
@@ -777,7 +849,8 @@ const TeacherRoutine = () => {
                     slot.day,
                     slot.time,
                     slot.section,
-                    slot.room
+                    slot.room,
+                    slot.type
                   )
                 }
               >

@@ -65,8 +65,8 @@ def write_routine_to_firestore(scheduled_classes):
             semester_section_ref = db.collection(f'semester_{cls.semester}_{cls.section}')
             delete_collection(semester_section_ref)
         
-        delete_collection(db.collection('time_slots'))
-        delete_collection(db.collection('teachers'))
+        # Delete collections before writing new data
+        delete_collections(['time_slots', 'teachers'])
 
         # Prepare data structures for batch processing
         semester_data = defaultdict(list)
