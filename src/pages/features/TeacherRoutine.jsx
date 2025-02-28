@@ -1049,21 +1049,84 @@ const TeacherRoutine = () => {
         db,
         `teachers/${reqTeacher}/courses/${reqCourse}_${reqSection}`
       );
-      await updateDoc(reqCourseRef, {
-        assigned_temp_time_slots: arrayUnion(targetTimeSlot),
-        assigned_temp_room: arrayUnion(targetRoom),
-        class_cancelled_status: [1],
-      });
+      const reqCourseSnapshot = await getDoc(reqCourseRef);
 
+      if (reqCourseSnapshot.exists()) {
+        const reqCourseData = reqCourseSnapshot.data();
+        // Find the index of the permanent class that matches the timeslot
+        const reqTimeSlots = reqCourseData.assigned_time_slots || [];
+        let reqCancelledStatus = reqCourseData.class_cancelled_status || [];
+        let reqRescheduledStatus = reqCourseData.rescheduled_status || [];
+
+        // Find the index by matching timeslot
+        let reqCancelIndex = -1;
+        for (let i = 0; i < reqTimeSlots.length; i++) {
+          if (Number(reqTimeSlots[i]) === Number(reqTimeSlot)) {
+            reqCancelIndex = i;
+            break;
+          }
+        }
+
+        // Update the specific class's cancelled and rescheduled status
+        if (reqCancelIndex !== -1) {
+          reqCancelledStatus[reqCancelIndex] = 1;
+          reqRescheduledStatus[reqCancelIndex] = 1;
+        }
+
+        await updateDoc(reqCourseRef, {
+          assigned_temp_time_slots: arrayUnion(targetTimeSlot),
+          assigned_temp_room: arrayUnion(targetRoom),
+          class_cancelled_status: reqCancelledStatus,
+          rescheduled_status: reqRescheduledStatus,
+        });
+
+        console.log(
+          `Updated requesting teacher course status at index ${reqCancelIndex}`
+        );
+      }
+
+      // Update target teacher's course document
       const targetCourseRef = doc(
         db,
         `teachers/${targetTeacher}/courses/${targetCourse}_${targetSection}`
       );
-      await updateDoc(targetCourseRef, {
-        assigned_temp_time_slots: arrayUnion(reqTimeSlot),
-        assigned_temp_room: arrayUnion(reqRoom),
-        class_cancelled_status: [1],
-      });
+      const targetCourseSnapshot = await getDoc(targetCourseRef);
+
+      if (targetCourseSnapshot.exists()) {
+        const targetCourseData = targetCourseSnapshot.data();
+        // Find the index of the permanent class that matches the timeslot
+        const targetTimeSlots = targetCourseData.assigned_time_slots || [];
+        let targetCancelledStatus =
+          targetCourseData.class_cancelled_status || [];
+        let targetRescheduledStatus = targetCourseData.rescheduled_status || [];
+
+        // Find the index by matching timeslot
+        let targetCancelIndex = -1;
+        for (let i = 0; i < targetTimeSlots.length; i++) {
+          if (Number(targetTimeSlots[i]) === Number(targetTimeSlot)) {
+            targetCancelIndex = i;
+            break;
+          }
+        }
+
+        // Update the specific class's cancelled and rescheduled status
+        if (targetCancelIndex !== -1) {
+          targetCancelledStatus[targetCancelIndex] = 1;
+          targetRescheduledStatus[targetCancelIndex] = 1;
+        }
+
+        await updateDoc(targetCourseRef, {
+          assigned_temp_time_slots: arrayUnion(reqTimeSlot),
+          assigned_temp_room: arrayUnion(reqRoom),
+          class_cancelled_status: targetCancelledStatus,
+          rescheduled_status: targetRescheduledStatus,
+        });
+
+        console.log(
+          `Updated target teacher course status at index ${targetCancelIndex}`
+        );
+      }
+
       // Get semester and section from course code
       const reqSemesterNum = reqCourse.charAt(reqCourse.length - 3);
       const reqSemester = `semester_${reqSemesterNum}_${reqSection}`;
