@@ -2,13 +2,236 @@ import json
 import csv
 import random
 import copy
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 from collections import defaultdict
+import time
+
+cred = credentials.Certificate('./ServiceAccountKey.json')
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 # Constants
 DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+ROOMS = ["1" , "2" ,"3" , "4" ,"5" , "6" , "301", "302", "304", "204", "104", "105"]
 TIME_SLOTS = ["8:00-9:15", "9:15-10:30", "10:30-11:45", "11:45-1:00", "2:30-3:45", "3:45-5:00"]
 CLASSROOMS = ["1", "2", "3", "4", "5", "6", "7", "8", "301", "302", "304", "203", "204", "508", "509", "510"]
 SECTIONS = ["A", "B"]
+
+def update_generation_status(status):
+    """Update the routine generation status in Firestore"""
+    try:
+        db.collection('routine_status').document('generation').set({
+            'status': status,
+            'timestamp': firestore.SERVER_TIMESTAMP
+        })
+    except Exception as e:
+        print(f"Error updating generation status: {e}")
+
+def write_routine_to_firestore(scheduled_classes):
+    try:
+        # Set status to "generating"
+        update_generation_status("generating")
+        
+        time_mapping = {
+            "8:00-9:15": 1,
+            "9:15-10:30": 2,
+            "10:30-11:45": 3,
+            "11:45-1:00": 4,
+            "2:30-3:45": 5,
+            "3:45-5:00": 6
+        }
+        day_mapping = {
+            "Monday": 0,
+            "Tuesday": 1,
+            "Wednesday": 2,
+            "Thursday": 3,
+            "Friday": 4,
+            "Saturday": 5,
+            "Sunday": 6
+        }
+        # Create a set of semester-section combinations
+        semestersBySections = set()
+        for cls in scheduled_classes:
+            combination = f"{cls.semester}{cls.section}"  # This will create strings like "1A", "1B", "3A", etc.
+            semestersBySections.add(combination)
+            # print(semestersBySections)
+        
+        # Now you can iterate through the combinations
+        for semester_section in semestersBySections:
+            semester = semester_section[0]  # Gets the first character (the semester number)
+            section = semester_section[1]  # Gets the second character (the section letter)
+            semester_section_ref = db.collection(f'semester_{cls.semester}_{cls.section}')
+            delete_collection(semester_section_ref)
+        
+        # Delete collections before writing new data
+        delete_collections(['time_slots', 'teachers'])
+
+        # Prepare data structures for batch processing
+        semester_data = defaultdict(list)
+        timeslot_data = defaultdict(list)
+        teacher_data = defaultdict(lambda: defaultdict(dict))
+        
+        # First pass: organize all data
+        for cls in scheduled_classes:
+            time_1 = cls.times[0] if len(cls.times) > 0 else ""
+            time_2 = cls.times[1] if len(cls.times) > 1 else ""
+            teacher_1 = cls.teachers[0] if len(cls.teachers) > 0 else ""
+            teacher_2 = cls.teachers[1] if len(cls.teachers) > 1 else ""
+
+            day_index = day_mapping.get(cls.day, -1)
+            time_index = time_mapping.get(time_1, 0)
+            time_slot_1 = day_index * len(time_mapping) + time_index if day_index >= 0 else ""
+            course_type = "lab" if time_2 else "theory"
+
+            # Prepare semester data
+            semester_key = f'semester_{cls.semester}_{cls.section}'
+            doc_data = {
+                'perm_course_code': cls.code,
+                'perm_course_type': course_type,
+                'perm_room': cls.room,
+                'perm_teacher_1': teacher_1,
+                'perm_teacher_2': teacher_2,
+                'perm_day': cls.day,
+                'perm_time_1': time_1,
+                'perm_time_2': time_2,
+                'class_cancelled': 0,
+                'rescheduled': 0,
+                'temp_course_code': '',
+                'temp_course_type': '',
+                'temp_room': '',
+                'temp_section': '',
+                'temp_teacher_1': '',
+                'temp_teacher_2': '',
+                'temp_day': '',
+                'temp_time_1': '',
+                'temp_time_2': ''
+            }
+            semester_data[semester_key].append((str(time_slot_1), doc_data))
+            if time_2:
+                time_slot_2 = time_slot_1 + 1
+                semester_data[semester_key].append((str(time_slot_2), doc_data))
+
+            # Prepare timeslot data
+            time_slot_doc = {
+                'perm_course_code': cls.code,
+                'course_type': course_type,
+                'perm_teacher_1': teacher_1,
+                'perm_teacher_2': teacher_2,
+                'class_cancelled': 0,
+                'rescheduled': 0,
+                'temp_course_code': '',
+                'temp_section': '',
+                'temp_teacher_1': '',
+                'temp_teacher_2': '',
+                'section': cls.section,
+            }
+            timeslot_data[str(time_slot_1)].append((str(cls.room), time_slot_doc))
+            if time_2:
+                timeslot_data[str(time_slot_2)].append((str(cls.room), time_slot_doc))
+
+            # Prepare teacher data
+            for teacher in [teacher_1, teacher_2]:
+                if teacher:
+                    class_code_with_section = f"{cls.code}_{cls.section}"
+                    if class_code_with_section not in teacher_data[teacher]:
+                        teacher_data[teacher][class_code_with_section] = {
+                            'assigned_time_slots': [],
+                            'assigned_room': [],
+                            'course_type': course_type,
+                            'class_cancelled_status': [],
+                            'rescheduled_status': [],
+                            'assigned_temp_time_slots': [],
+                            'assigned_temp_room': []
+                        }
+                    
+                    teacher_data[teacher][class_code_with_section]['assigned_time_slots'].append(time_slot_1)
+                    teacher_data[teacher][class_code_with_section]['assigned_room'].append(cls.room)
+                    teacher_data[teacher][class_code_with_section]['class_cancelled_status'].append(0)
+                    teacher_data[teacher][class_code_with_section]['rescheduled_status'].append(0)
+
+        # Clear existing data
+        delete_collections(['time_slots', 'teachers'])
+        for semester_key in semester_data.keys():
+            delete_collection(db.collection(semester_key))
+
+        # Batch write with efficient chunking
+        def chunked_batch_write(data_dict, collection_path, is_nested=False):
+            batch = db.batch()
+            count = 0
+            batch_limit = 450  # Firestore batch limit is 500, using 450 for safety
+
+            for key, items in data_dict.items():
+                if is_nested:
+                    # Handle nested collections (like timeslots)
+                    subcoll_ref = db.collection(collection_path).document(key).collection('rooms')
+                    for doc_id, doc_data in items:
+                        batch.set(subcoll_ref.document(doc_id), doc_data)
+                else:
+                    # Handle flat collections
+                    coll_ref = db.collection(collection_path or key)
+                    for doc_id, doc_data in items:
+                        batch.set(coll_ref.document(doc_id), doc_data)
+                
+                count += len(items)
+                if count >= batch_limit:
+                    batch.commit()
+                    batch = db.batch()
+                    count = 0
+                    time.sleep(0.5)  # Small delay between batches
+            
+            if count > 0:
+                batch.commit()
+
+        # Execute batch writes in parallel (if possible)
+        chunked_batch_write(semester_data, None)
+        chunked_batch_write(timeslot_data, 'time_slots', True)
+        
+        # Write teacher data
+        batch = db.batch()
+        count = 0
+        for teacher, courses in teacher_data.items():
+            for course_code, data in courses.items():
+                ref = db.collection('teachers').document(teacher).collection('courses').document(course_code)
+                batch.set(ref, data)
+                count += 1
+                if count >= 450:
+                    batch.commit()
+                    batch = db.batch()
+                    count = 0
+                    time.sleep(0.5)
+        
+        if count > 0:
+            batch.commit()
+        
+        # Set status to "complete" when done
+        update_generation_status("complete")
+    except Exception as e:
+        print(f"Error in write_routine_to_firestore: {e}")
+        update_generation_status("error")
+        raise e
+
+def delete_collections(collection_names):
+    """Delete multiple collections efficiently"""
+    for name in collection_names:
+        delete_collection(db.collection(name))
+
+def delete_collection(collection_ref, batch_size=500):
+    """More efficient collection deletion"""
+    docs = collection_ref.limit(batch_size).stream()
+    deleted = 0
+
+    for doc in docs:
+        # Handle subcollections first
+        for subcoll in doc.reference.collections():
+            delete_collection(subcoll, batch_size)
+        
+        doc.reference.delete()
+        deleted += 1
+
+    if deleted >= batch_size:
+        return delete_collection(collection_ref, batch_size)
 
 # Initialize semester timeslots with sections and days
 semester_timeslots = {
@@ -121,7 +344,7 @@ def has_collision(new_class):
 
 def is_priority_teacher(teacher, faculty_details):
     rank = faculty_details.get(teacher, {}).get("rank", "")
-    return rank in ["Part-Time", "Professor", "Assistant Professor"]
+    return rank in ["Professor", "Assistant Professor"]
 
 # Schedule remaining classes with faculty preferences
 def schedule_remaining_classes(classes, scheduled, faculty_details):
@@ -294,34 +517,6 @@ def write_schedule_to_json(scheduled, filename="final_schedule.json"):
     with open(filename, "w") as file:
         json.dump(output, file, indent=2)
 
-def update_faculty_courses(scheduled_classes, faculty_details):
-    """Completely replace faculty courses with new scheduled classes"""
-    # Clear all existing courses for all teachers
-    for teacher in faculty_details.values():
-        if "courses" in teacher:
-            del teacher["courses"]
-    
-    # Add new courses from schedule
-    for cls in scheduled_classes:
-        course_type = "lab" if len(cls.times) > 1 else "theory"
-        for teacher in cls.teachers:
-            if teacher in faculty_details:
-                # Create new course entries
-                faculty_details[teacher].setdefault("courses", [])
-                for time in cls.times:
-                    new_course = {
-                        "course": cls.code,
-                        "type": course_type,
-                        "day": cls.day,
-                        "time": time
-                    }
-                    # Add if not duplicate
-                    if new_course not in faculty_details[teacher]["courses"]:
-                        faculty_details[teacher]["courses"].append(new_course)
-            else:
-                print(f"Warning: Teacher {teacher} not found in faculty_details.json")
-    return faculty_details
-
 def write_schedule_to_csv(scheduled, filename="final_schedule.csv"):
     # Organize data by semester, section, day, and time slot
     schedule_data = {}
@@ -360,51 +555,54 @@ def write_schedule_to_csv(scheduled, filename="final_schedule.csv"):
 
 # Main function
 def main():
-    scheduled = []
-    
-    # Hardcode labs and part-time classes
-    hardcode_labs(scheduled)
-    hardcode_part_time_teachers(scheduled)
-    
-    # Load regular classes from JSON
-    regular_data = load_json("first_schedule.json")
-    regular_classes = []
-    for semester in regular_data["semesters"]:
-        for section in semester["sections"]:
-            for course in section["courses"]:
-                for schedule in course["schedule"]:
-                    regular_classes.append(Class(
-                        semester=semester["semester"],
-                        section=section["section"],
-                        code=course["course"],
-                        day=schedule["day"],
-                        times=[schedule["time"]],
-                        room=schedule["room"],
-                        teachers=[schedule["teacher"]]
-                    ))
-    
-    # Load faculty details
-    faculty_details = load_faculty_details()
-    
-    # Schedule remaining classes with faculty preferences
-    unscheduled = schedule_remaining_classes(regular_classes, scheduled, faculty_details)
-
-    # Update faculty details with scheduled courses
-    updated_faculty_data = update_faculty_courses(scheduled, faculty_details)
-    
-    # Write updated faculty details back to file
-    with open("faculty_details.json", "w") as f:
-        json.dump(updated_faculty_data, f, indent=2)
-    
-    # Write final schedule to JSON
-    write_schedule_to_json(scheduled)
-    
-    # Write final schedule to CSV
-    write_schedule_to_csv(scheduled)
-    
-    print(f"Scheduled {len(scheduled)} classes.")
-    if unscheduled:
-        print(f"Could not schedule {len(unscheduled)} classes.")
+    try:
+        # Reset status at start
+        update_generation_status("starting")
+        
+        scheduled = []
+        
+        # Hardcode labs and part-time classes
+        hardcode_labs(scheduled)
+        hardcode_part_time_teachers(scheduled)
+        
+        # Load regular classes from JSON
+        regular_data = load_json("first_schedule.json")
+        regular_classes = []
+        for semester in regular_data["semesters"]:
+            for section in semester["sections"]:
+                for course in section["courses"]:
+                    for schedule in course["schedule"]:
+                        regular_classes.append(Class(
+                            semester=semester["semester"],
+                            section=section["section"],
+                            code=course["course"],
+                            day=schedule["day"],
+                            times=[schedule["time"]],
+                            room=schedule["room"],
+                            teachers=[schedule["teacher"]]
+                        ))
+        
+        # Load faculty details
+        faculty_details = load_faculty_details()
+        
+        # Schedule remaining classes with faculty preferences
+        unscheduled = schedule_remaining_classes(regular_classes, scheduled, faculty_details)
+        
+        # Write final schedule to JSON
+        write_schedule_to_json(scheduled)
+        
+        # Write final schedule to CSV
+        write_schedule_to_csv(scheduled)
+        
+        write_routine_to_firestore(scheduled)
+        
+        print(f"Scheduled {len(scheduled)} classes.")
+        if unscheduled:
+            print(f"Could not schedule {len(unscheduled)} classes.")
+    except Exception as e:
+        print(f"Error in main: {e}")
+        update_generation_status("error")
+        raise e
 
 # Run the program
 if __name__ == "__main__":

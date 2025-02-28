@@ -28,4 +28,9 @@ backend/optimal.txt
 backend/routine.txt
 backend/softenv/*
 backend/ServiceAccountKey.json
+backend/final_schedule.json
+backend/softenv/*
+backend/first_schedule.json
+
+ServiceAccountKey.json
 

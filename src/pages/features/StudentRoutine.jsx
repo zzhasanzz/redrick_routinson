@@ -36,8 +36,9 @@ const StudentRoutine = () => {
           if (userDoc.exists()) {
             const userData = userDoc.data();
             const sem = userData.semester;
-            const semName = "semester_" + sem;
-            const timeSlotRef = collection(db, semName.toString());
+            const sect = userData.section;
+            const sem_sect = "semester_" + sem + "_" + sect;
+            const timeSlotRef = collection(db, sem_sect.toString());
             const timeSlotsSnapshot = await getDocs(timeSlotRef);
 
             // Initialize an empty routine array
@@ -47,6 +48,7 @@ const StudentRoutine = () => {
               const timeSlotData = doc.data();
               const {
                 class_cancelled,
+                rescheduled,
                 perm_course_code,
                 perm_course_title,
                 perm_course_type,
@@ -80,14 +82,15 @@ const StudentRoutine = () => {
               slotIndex = Slots.indexOf(timeSlotData.perm_time_1); // Assuming perm_time_1 corresponds to the slot time
               slotIndex2 = Slots.indexOf(timeSlotData.perm_time_1);
 
-              if (class_cancelled === 1) {
+              if (class_cancelled === 1 || rescheduled === 1) {
                 course_code = "Cancelled";
                 course_title = "";
                 teacher_1 = "";
                 teacher_2 = "";
                 room = "";
+                console.log("Class Cancelled or Rescheduled");
               }
-              if (class_cancelled === 1 && temp_course_code !== "") {
+              if (temp_course_code !== "") {
                 course_code = temp_course_code;
                 teacher_1 = temp_teacher_1;
                 room = temp_room;
@@ -98,9 +101,12 @@ const StudentRoutine = () => {
                 console.log(`slot Index: ${slotIndex}`);
                 slotIndex2 = Slots.indexOf(timeSlotData.temp_time_1);
 
-                console.log("Cancelled Class Found");
+                console.log("Temporary Class Found");
                 console.log(`Course : ${course_code}`);
                 console.log(`teacher : ${teacher_1}`);
+                console.log(`room : ${room}`);
+                console.log(`day : ${temp_day}`);
+                console.log(`time : ${timeSlotData.temp_time_1}`);
               }
 
               // Find the index for the day and slot

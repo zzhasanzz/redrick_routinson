@@ -51,8 +51,8 @@
       {
         "course": "HUM4144",
         "type": "theory",
-        "day": "Tuesday",
-        "time": "3:45-5:00"
+        "day": "Wednesday",
+        "time": "9:15-10:30"
       },
       {
         "course": "HUM4144",
@@ -67,13 +67,13 @@
         "time": "8:00-9:15"
       },
       {
-        "course": "HUM4144",
+        "course": "Hum4144",
         "type": "theory",
         "day": "Friday",
         "time": "2:30-3:45"
       },
       {
-        "course": "Hum4144",
+        "course": "HUM4144",
         "type": "theory",
         "day": "Tuesday",
         "time": "10:30-11:45"
@@ -81,7 +81,7 @@
       {
         "course": "Hum4144",
         "type": "theory",
-        "day": "Thursday",
+        "day": "Tuesday",
         "time": "2:30-3:45"
       },
       {
@@ -281,12 +281,14 @@
         "type": "theory",
         "day": "Monday",
         "time": "3:45-5:00"
+        "day": "Monday",
+        "time": "3:45-5:00"
       },
       {
         "course": "CSE4107",
         "type": "theory",
         "day": "Tuesday",
-        "time": "9:15-10:30"
+        "time": "3:45-5:00"
       },
       {
         "course": "CSE4107",
@@ -361,11 +363,13 @@
         "course": "Math4141",
         "type": "theory",
         "day": "Monday",
+        "day": "Monday",
         "time": "9:15-10:30"
       },
       {
         "course": "Math4141",
         "type": "theory",
+        "day": "Tuesday",
         "day": "Tuesday",
         "time": "8:00-9:15"
       }
@@ -611,6 +615,8 @@
       {
         "course": "CSE4105",
         "type": "theory",
+        "day": "Thursday",
+        "time": "10:30-11:45"
         "day": "Thursday",
         "time": "10:30-11:45"
       }
@@ -1465,12 +1471,20 @@
       {
         "course": "CSE4301",
         "type": "theory",
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "CSE4301",
+        "type": "theory",
         "day": "Thursday",
         "time": "8:00-9:15"
       },
       {
         "course": "CSE4511",
         "type": "theory",
+        "day": "Monday",
+        "time": "8:00-9:15"
         "day": "Monday",
         "time": "8:00-9:15"
       },
@@ -2114,6 +2128,7 @@
         "type": "theory",
         "day": "Wednesday",
         "time": "10:30-11:45"
+        "time": "10:30-11:45"
       },
       {
         "course": "CSE4709",
@@ -2125,6 +2140,7 @@
         "course": "CSE4709",
         "type": "theory",
         "day": "Tuesday",
+        "time": "9:15-10:30"
         "time": "9:15-10:30"
       },
       {
@@ -2999,8 +3015,8 @@
       {
         "course": "CSE4501",
         "type": "theory",
-        "day": "Wednesday",
-        "time": "8:00-9:15"
+        "day": "Tuesday",
+        "time": "11:45-1:00"
       },
       {
         "course": "CSE4501",
@@ -3110,12 +3126,14 @@
       {
         "course": "CSE4513",
         "type": "theory",
-        "day": "Tuesday",
-        "time": "10:30-11:45"
+        "day": "Monday",
+        "time": "9:15-10:30"
       },
       {
         "course": "CSE4513",
         "type": "theory",
+        "day": "Wednesday",
+        "time": "11:45-1:00"
         "day": "Wednesday",
         "time": "11:45-1:00"
       },
@@ -3326,7 +3344,7 @@
       {
         "course": "Math4541",
         "type": "theory",
-        "day": "Tuesday",
+        "day": "Thursday",
         "time": "11:45-1:00"
       },
       {
@@ -3334,6 +3352,12 @@
         "type": "theory",
         "day": "Thursday",
         "time": "10:30-11:45"
+      },
+      {
+        "course": "Math4541",
+        "type": "theory",
+        "day": "Friday",
+        "time": "9:15-10:30"
       }
     ]
   },
@@ -3751,6 +3775,8 @@
       {
         "course": "CSE4703",
         "type": "theory",
+        "day": "Wednesday",
+        "time": "11:45-1:00"
         "day": "Wednesday",
         "time": "11:45-1:00"
       },
@@ -4403,8 +4429,8 @@
       {
         "course": "Hum4743",
         "type": "theory",
-        "day": "Monday",
-        "time": "10:30-11:45"
+        "day": "Friday",
+        "time": "3:45-5:00"
       },
       {
         "course": "Hum4743",
@@ -4488,14 +4514,14 @@
       {
         "course": "CSE4733",
         "type": "theory",
-        "day": "Thursday",
-        "time": "3:45-5:00"
+        "day": "Wednesday",
+        "time": "8:00-9:15"
       },
       {
         "course": "CSE4733",
         "type": "theory",
-        "day": "Tuesday",
-        "time": "10:30-11:45"
+        "day": "Friday",
+        "time": "9:15-10:30"
       },
       {
         "course": "CSE4733",
@@ -4667,6 +4693,8 @@
       {
         "course": "CSE4739",
         "type": "theory",
+        "day": "Monday",
+        "time": "8:00-9:15"
         "day": "Monday",
         "time": "8:00-9:15"
       },

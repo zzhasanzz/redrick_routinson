@@ -191,7 +191,9 @@
                 },
                 {
                   "day": "Thursday",
+                  "day": "Thursday",
                   "time": "3:45-5:00",
+                  "room": "3",
                   "room": "3",
                   "teacher": "FAK"
                 }
@@ -374,6 +376,7 @@
               "credit": 3,
               "schedule": [
                 {
+                  "day": "Thursday",
                   "day": "Thursday",
                   "time": "2:30-3:45",
                   "room": "6",
