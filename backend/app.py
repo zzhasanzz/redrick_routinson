@@ -325,8 +325,8 @@ def generate_seating_arrangement(
 
         # Extract student lists from JSON response
         queue_1 = sum([result_sem_1_container_1["seat_plan"].get(dept, []) for dept in ["CSE", "MPE", "SWE", "IPE"]], [])
-        queue_2 = sum([result_sem_1_container_2["seat_plan"].get(dept, []) for dept in ["EEE","CEE", "TVE"]], [])
-        queue_3 = sum([result_sem_3_container_2["seat_plan"].get(dept, []) for dept in ["CEE", "TVE", "EEE"]], [])
+        queue_2 = sum([result_sem_1_container_2["seat_plan"].get(dept, []) for dept in ["EEE","CEE", "TVE","BTM"]], [])
+        queue_3 = sum([result_sem_3_container_2["seat_plan"].get(dept, []) for dept in ["BTM","CEE", "TVE", "EEE"]], [])
         queue_4 = sum([result_sem_3_container_1["seat_plan"].get(dept, []) for dept in ["MPE", "SWE", "IPE" ,"CSE"]], [])
 
         seating_plan = {}  # Dictionary to store seating arrangements per room
@@ -375,7 +375,7 @@ def generate_seating_arrangement(
 
 
 
-def store_seating_plan_in_firebase(seating_plan):
+def store_seating_plan_in_firebase(seating_plan, shift):
     """
     Stores the generated seating arrangement in Firebase Firestore and updates student records with their room using batch operations.
 
@@ -383,7 +383,8 @@ def store_seating_plan_in_firebase(seating_plan):
     """
     try:
         db = firestore.client()  # Initialize Firestore client
-        seat_plan_ref = db.collection("seat_plan")  # Firestore Collection
+        seat_plan_collection = f"seat_plan_{shift}"
+        seat_plan_ref = db.collection(seat_plan_collection)  # Firestore Collection
         users_ref = db.collection("seat_plan_USERS")  # Firestore Collection for users
         batch = db.batch()
 
@@ -415,7 +416,7 @@ def store_seating_plan_in_firebase(seating_plan):
 
 
 
-@app.route('/api/seat-plan', methods=['POST'])
+@app.route('/api/seat-plan-admin-summer', methods=['POST'])
 def generate_seat_plan_api():
     """
     Flask API route to generate the seat plan based on four data containers.
@@ -423,10 +424,16 @@ def generate_seat_plan_api():
     try:
         # Hardcoded example (Replace with actual calls to Firestore)
         result_sem_1_container_1 = generate_seat_plan(["CSE", "MPE", "SWE", "IPE"], 1)
-        result_sem_1_container_2 = generate_seat_plan(["EEE","CEE", "TVE"], 1)
+        result_sem_1_container_2 = generate_seat_plan(["EEE","CEE", "TVE","BTM"], 1)
 
         result_sem_3_container_1 = generate_seat_plan([ "MPE", "SWE", "IPE" ,"CSE"], 3)
-        result_sem_3_container_2 = generate_seat_plan(["CEE", "TVE", "EEE"], 3)
+        result_sem_3_container_2 = generate_seat_plan(["BTM","CEE", "TVE", "EEE"], 3)
+
+        day_result_sem_5_container_1 = generate_seat_plan(["CSE", "MPE", "SWE", "IPE"], 5)
+        day_result_sem_5_container_2 = generate_seat_plan(["EEE","CEE", "TVE","BTM"], 5)
+
+        day_result_sem_7_container_1 = generate_seat_plan([ "MPE", "SWE", "IPE" ,"CSE"], 7)
+        day_result_sem_7_container_2 = generate_seat_plan(["BTM","CEE", "TVE", "EEE"], 7)
 
         # Call the seating function with the retrieved data
         seating_plan = generate_seating_arrangement(
@@ -434,14 +441,57 @@ def generate_seat_plan_api():
             result_sem_3_container_1, result_sem_3_container_2
         )
 
-         # Store seating plan in Firestore
-        firebase_response = store_seating_plan_in_firebase(seating_plan["seating_plan"])
+        seating_plan_day = generate_seating_arrangement(
+            day_result_sem_5_container_1, day_result_sem_5_container_2,
+            day_result_sem_7_container_1, day_result_sem_7_container_2
+        )
+ 
 
-        return jsonify(firebase_response)
+         # Store seating plan in Firestore
+        firebase_response = store_seating_plan_in_firebase(seating_plan["seating_plan"],"summer_morning")
+        firebase_response = store_seating_plan_in_firebase(seating_plan_day["seating_plan"],"summer_day")
+        return jsonify(firebase_response_day)
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
 
+##################
+@app.route('/api/seat-plan-admin-winter', methods=['POST'])
+def generate_seat_plan_api_winter():
+    """
+    Flask API route to generate the seat plan based on four data containers.
+    """
+    try:
+        # Hardcoded example (Replace with actual calls to Firestore)
+        result_sem_2_container_1 = generate_seat_plan(["CSE", "MPE", "SWE", "IPE"], 2)
+        result_sem_2_container_2 = generate_seat_plan(["EEE","CEE", "TVE","BTM"], 2)
+
+        result_sem_4_container_1 = generate_seat_plan([ "MPE", "SWE", "IPE" ,"CSE"], 4)
+        result_sem_4_container_2 = generate_seat_plan(["BTM","CEE", "TVE", "EEE"], 4)
+
+        day_result_sem_6_container_1 = generate_seat_plan(["CSE", "MPE", "SWE", "IPE"], 6)
+        day_result_sem_6_container_2 = generate_seat_plan(["EEE","CEE", "TVE","BTM"], 6)
+
+        day_result_sem_8_container_1 = generate_seat_plan([ "MPE", "SWE", "IPE" ,"CSE"], 8)
+        day_result_sem_8_container_2 = generate_seat_plan(["BTM","CEE", "TVE", "EEE"], 8)
+
+        # Call the seating function with the retrieved data
+        seating_plan = generate_seating_arrangement(
+            result_sem_2_container_1, result_sem_2_container_2,
+            result_sem_4_container_1, result_sem_4_container_2
+        )
+
+        seating_plan_day = generate_seating_arrangement(
+            day_result_sem_6_container_1, day_result_sem_6_container_2,
+            day_result_sem_8_container_1, day_result_sem_8_container_2
+        )
+ 
+
+        firebase_response = store_seating_plan_in_firebase(seating_plan["seating_plan"],"winter_morning")
+        firebase_response_day = store_seating_plan_in_firebase(seating_plan_day["seating_plan"],"winter_day")
+        return jsonify(firebase_response_day)
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
 
 # Endpoint to generate routine
 @app.route('/admin-home/admin-dashboard', methods=['POST'])

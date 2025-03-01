@@ -38,13 +38,13 @@ const AdminManageSeatPlan = () => {
   useEffect(() => {
     const initializeRooms = async () => {
       try {
-        const roomsRef = collection(db, 'seat_plan');
+        const roomsRef = collection(db, 'seat_plan_summer_day');
         const snapshot = await getDocs(roomsRef);
 
         if (!snapshot.empty) {
           console.log('No rooms found. Creating initial rooms...');
-          for (let roomId = 20; roomId <= 24; roomId++) {
-            const roomRef = doc(db, 'seat_plan', roomId.toString());
+          for (let roomId = 1; roomId <= 28; roomId++) {
+            const roomRef = doc(db, 'seat_plan_summer_day', roomId.toString());
             await setDoc(roomRef, { dummy2: 'dummy2' }, { merge: true });
           }
           toast({
@@ -68,7 +68,7 @@ const AdminManageSeatPlan = () => {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const roomsRef = collection(db, 'seat_plan');
+        const roomsRef = collection(db, 'seat_plan_summer_day');
         const snapshot = await getDocs(roomsRef);
         
         if (snapshot.empty) {
@@ -92,7 +92,7 @@ const AdminManageSeatPlan = () => {
     if (!selectedRoom) return;
 
     setLoading(true);
-    const seatsRef = collection(db, `seat_plan/${selectedRoom}/seats`);
+    const seatsRef = collection(db, `seat_plan_summer_day/${selectedRoom}/seats`);
     
     const unsubscribe = onSnapshot(seatsRef, (snapshot) => {
       const seatsData = snapshot.docs.map(doc => ({

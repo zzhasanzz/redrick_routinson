@@ -34,6 +34,7 @@ import UsersProfile from "./pages/features/UsersProfile.jsx";
 
 import Event from "./pages/event/Event.jsx";
 import AdminStats from "./pages/features/AdminStats.jsx";
+import AdminGenerateSeatPlanForAll from "./pages/features/adminGenerateSeatPlan.jsx"
 
 function App() {
   const { currentUser, role } = useContext(AuthContext);
@@ -114,6 +115,14 @@ function App() {
               element={
                 <RequireAuth allowedRoles={["admin"]}>
                   <AdminGenerateSeatPlan />
+                </RequireAuth>
+              }
+            />
+             <Route
+              path="/admin-home/admin-generate-seat-plan"
+              element={
+                <RequireAuth allowedRoles={["admin"]}>
+                  <AdminGenerateSeatPlanForAll/>
                 </RequireAuth>
               }
             />
