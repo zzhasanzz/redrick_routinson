@@ -18,7 +18,7 @@ Simplify your university life.
 ### Clone the repository
 To clone the repository, type the command in any folder.
 ```
-git clone https://github.com/shufanshahi/redrick_routinson
+git clone https://github.com/shufanshahi/Redrick_Routinson.git
 ```
 This will create a folder 'redrick_routinson' in that directory. 
 It will have a complete copy of this repository. With a '.git' folder inside.
