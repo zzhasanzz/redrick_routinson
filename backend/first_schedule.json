@@ -246,7 +246,7 @@
                   "teacher": "MMH"
                 },
                 {
-                  "day": "Tuesday",
+                  "day": "Friday",
                   "time": "10:30-11:45",
                   "room": "104",
                   "teacher": "MMH"
@@ -695,7 +695,7 @@
               "credit": 2,
               "schedule": [
                 {
-                  "day": "Thursday",
+                  "day": "Wednesday",
                   "time": "8:00-9:15",
                   "room": "304",
                   "teacher": "ZR"

@@ -14,8 +14,8 @@
       "total_courses": 8,
       "theory": {
         "total": 8,
-        "full_matches": 5,
-        "match_percent": 62.5,
+        "full_matches": 6,
+        "match_percent": 75.0,
         "issues": [
           {
             "course": "HUM4144",
@@ -287,8 +287,8 @@
       "total_courses": 8,
       "theory": {
         "total": 4,
-        "full_matches": 2,
-        "match_percent": 50.0,
+        "full_matches": 1,
+        "match_percent": 25.0,
         "issues": [
           {
             "course": "Math4341",

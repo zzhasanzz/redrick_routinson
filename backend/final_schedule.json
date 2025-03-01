@@ -24,7 +24,7 @@
               ]
             },
             {
-              "course": "HUM4142",
+              "course": "Math4141",
               "schedule": [
                 {
                   "day": "Tuesday",
@@ -55,7 +55,7 @@
               "course": "Hum4147",
               "schedule": [
                 {
-                  "day": "Tuesday",
+                  "day": "Wednesday",
                   "time": "8:00-9:15",
                   "room": "510",
                   "teacher": "BS"
@@ -191,6 +191,17 @@
                   "room": "301",
                   "teacher": "MUA"
                 },
+                {
+                  "day": "Tuesday",
+                  "time": "8:00-9:15",
+                  "room": "304",
+                  "teacher": "MUA"
+                }
+              ]
+            },
+            {
+              "course": "CSE4105",
+              "schedule": [
                 {
                   "day": "Tuesday",
                   "time": "8:00-9:15",
@@ -391,7 +402,7 @@
               ]
             },
             {
-              "course": "CSE4301",
+              "course": "CSE4305",
               "schedule": [
                 {
                   "day": "Thursday",
@@ -706,7 +717,7 @@
               ]
             },
             {
-              "course": "Math4541",
+              "course": "CSE4501",
               "schedule": [
                 {
                   "day": "Tuesday",
@@ -723,7 +734,7 @@
               ]
             },
             {
-              "course": "CSE4513",
+              "course": "Math4541",
               "schedule": [
                 {
                   "day": "Tuesday",
@@ -868,7 +879,7 @@
               "course": "Math4541",
               "schedule": [
                 {
-                  "day": "Monday",
+                  "day": "Thursday",
                   "time": "9:15-10:30",
                   "room": "302",
                   "teacher": "AKA"
@@ -882,7 +893,7 @@
               ]
             },
             {
-              "course": "CSE4513",
+              "course": "CSE4511",
               "schedule": [
                 {
                   "day": "Wednesday",
@@ -899,7 +910,7 @@
               ]
             },
             {
-              "course": "CSE4501",
+              "course": "CSE4513",
               "schedule": [
                 {
                   "day": "Thursday",
@@ -1047,7 +1058,7 @@
               ]
             },
             {
-              "course": "CSE4709",
+              "course": "Math4741",
               "schedule": [
                 {
                   "day": "Wednesday",
@@ -1240,7 +1251,7 @@
               ]
             },
             {
-              "course": "Hum4743",
+              "course": "CSE4709",
               "schedule": [
                 {
                   "day": "Monday",
