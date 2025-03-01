@@ -527,7 +527,8 @@ const TeacherRoutine = () => {
           semesterCollection,
           secondTimeSlot.toString()
         );
-        const newTimeIndex2 = secondTimeSlot;
+
+        const newTimeIndex2 = ((secondTimeSlot - 1) % totalSlotsPerDay) + 1;
         console.log("New time index 2: ", newTimeIndex2);
 
         const newStartTime2 = timeMapping[newTimeIndex2].split("-")[0];
@@ -615,9 +616,38 @@ const TeacherRoutine = () => {
       const courseSnapshot = await getDoc(courseRef);
       const courseData = courseSnapshot.data();
       selectedCourseType = courseData["course_type"];
+
       const classCancelledStatus = courseData["class_cancelled_status"];
       timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
       rooms = courseData["assigned_room"];
+
+      const roomRef = doc(db, `time_slots/${timeSlot}/rooms`, room.toString());
+
+      const roomSnapshot = await getDoc(roomRef);
+      const roomData = roomSnapshot.data();
+      if (roomData["temp_course_code"] !== "") {
+        alert(
+          "Cannot undo cancelled class with a temporary class rescheduled."
+        );
+        return;
+      }
+      if (selectedCourseType === "lab") {
+        const nextRoomRef = doc(
+          db,
+          `time_slots/${timeSlot + 1}/rooms`,
+          room.toString()
+        );
+
+        const nextRoomSnapshot = await getDoc(nextRoomRef);
+        const nextRoomData = nextRoomSnapshot.data();
+        if (nextRoomData["temp_course_code"] !== "") {
+          alert(
+            "Cannot undo cancelled class with a temporary class rescheduled."
+          );
+          return;
+        }
+      }
+
       classCancelledStatus.forEach((stat, idx) => {
         if (courseData["assigned_time_slots"][idx] === timeSlot) {
           classCancelledStatus[idx] = 0;
@@ -628,7 +658,6 @@ const TeacherRoutine = () => {
         class_cancelled_status: classCancelledStatus,
       });
 
-      const roomRef = doc(db, `time_slots/${timeSlot}/rooms`, room.toString());
       await updateDoc(roomRef, {
         class_cancelled: 0,
       });
