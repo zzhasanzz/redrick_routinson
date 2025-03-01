@@ -45,9 +45,14 @@ import { db } from "../../firebase";
 import { collection, addDoc, getDocs, getDoc, doc, deleteDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { AuthContext } from "../../context/AuthContext";
 import { QRCodeSVG, QRCodeCanvas } from "qrcode.react";
+import {useNavigate} from "react-router-dom";
+
+
 
 
 const Event = () => {
+    // const [showInvitePage, setShowInvitePage] = useState(false);
+    // const [selectedEventForInvite, setSelectedEventForInvite] = useState(null);
     const [selectedTokens, setSelectedTokens] = useState({});
     const [foodOptions, setFoodOptions] = useState([]);
     const foodItems = ["Breakfast", "Lunch", "Snack", "Dinner"];
@@ -92,6 +97,90 @@ const Event = () => {
     const { isOpen: isParticipantsOpen, onOpen: onParticipantsOpen, onClose: onParticipantsClose } = useDisclosure();
 
     const toast = useToast();
+
+    // const [isInviteModalOpen, setInviteModalOpen] = useState(false);
+    // const [teachers, setTeachers] = useState([]);
+    // const [selectedTeacher, setSelectedTeacher] = useState(null);
+    // const [invitationMessage, setInvitationMessage] = useState("");
+
+    const navigate = useNavigate();
+
+
+
+
+
+
+
+
+
+
+
+
+
+   // _____________________________________________________________________
+
+
+    // Add this function to fetch teachers
+//     const fetchTeachers = async () => {
+//         try {
+//             const usersCollection = collection(db, "users");
+//             const snapshot = await getDocs(usersCollection);
+//             const teacherList = [];
+//             snapshot.forEach(doc => {
+//                 const userData = doc.data();
+//                 if(userData.role === "teacher") {
+//                     teacherList.push({ id: doc.id, ...userData });
+//                 }
+//             });
+//             setTeachers(teacherList);
+//         } catch (error) {
+//             console.error("Error fetching teachers:", error);
+//         }
+//     };
+//
+// // Add this function to send invitation
+//     const sendInvitation = async () => {
+//         if(!selectedTeacher || !invitationMessage) {
+//             toast({
+//                 title: "Missing Information",
+//                 description: "Please select a teacher and write a message",
+//                 status: "error",
+//                 duration: 3000,
+//                 isClosable: true,
+//             });
+//             return;
+//         }
+//
+//         try {
+//             await addDoc(collection(db, "invitations"), {
+//                 eventId: selectedEvent.id,
+//                 eventName: selectedEvent.eventName,
+//                 senderEmail: currentUser.email,
+//                 teacherEmail: selectedTeacher.email,
+//                 message: invitationMessage,
+//                 status: "pending",
+//                 timestamp: new Date().toISOString()
+//             });
+//
+//             toast({
+//                 title: "Invitation Sent!",
+//                 description: "Your invitation has been successfully sent",
+//                 status: "success",
+//                 duration: 3000,
+//                 isClosable: true,
+//             });
+//             setInviteModalOpen(false);
+//         } catch (error) {
+//             console.error("Error sending invitation:", error);
+//             toast({
+//                 title: "Error",
+//                 description: "Failed to send invitation",
+//                 status: "error",
+//                 duration: 3000,
+//                 isClosable: true,
+//             });
+//         }
+//     };
 
     const fetchEvents = async () => {
         setLoading(true);
@@ -764,6 +853,16 @@ const Event = () => {
                                         >
                                             Edit Event
                                         </Button>
+
+                                        <Button
+                                            colorScheme="teal"
+                                            onClick={() => navigate(`/student-home/event/invite/${event.id}`)}
+                                            ml={2}
+                                        >
+                                            Invite Teachers
+                                        </Button>
+
+
                                         <Button
                                             size="sm"
                                             colorScheme="red"
@@ -977,6 +1076,48 @@ const Event = () => {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
+
+            {/*<Modal isOpen={isInviteModalOpen} onClose={() => setInviteModalOpen(false)}>*/}
+            {/*    <ModalOverlay />*/}
+            {/*    <ModalContent>*/}
+            {/*        <ModalHeader>Invite Teachers</ModalHeader>*/}
+            {/*        <ModalCloseButton />*/}
+            {/*        <ModalBody>*/}
+            {/*            <Textarea*/}
+            {/*                placeholder="Dear Professor [Name],\n\nWe would be honored to have your expertise and guidance for our upcoming event [Event Name]. Your involvement would greatly enrich our program..."*/}
+            {/*                value={invitationMessage}*/}
+            {/*                onChange={(e) => setInvitationMessage(e.target.value)}*/}
+            {/*                minHeight="200px"*/}
+            {/*                mb={4}*/}
+            {/*            />*/}
+
+            {/*            <Text fontWeight="bold" mb={2}>Select Teacher:</Text>*/}
+            {/*            <SimpleGrid columns={1} spacing={2}>*/}
+            {/*                {teachers.map(teacher => (*/}
+            {/*                    <Card*/}
+            {/*                        p={3}*/}
+            {/*                        key={teacher.id}*/}
+            {/*                        cursor="pointer"*/}
+            {/*                        border={selectedTeacher?.id === teacher.id ? "2px solid teal" : "1px solid gray"}*/}
+            {/*                        onClick={() => setSelectedTeacher(teacher)}*/}
+            {/*                    >*/}
+            {/*                        <Text fontWeight="bold">{teacher.name}</Text>*/}
+            {/*                        <Text>{teacher.email}</Text>*/}
+            {/*                        <Text>{teacher.department}</Text>*/}
+            {/*                    </Card>*/}
+            {/*                ))}*/}
+            {/*            </SimpleGrid>*/}
+            {/*        </ModalBody>*/}
+            {/*        <ModalFooter>*/}
+            {/*            <Button colorScheme="teal" onClick={sendInvitation}>*/}
+            {/*                Send Invitation*/}
+            {/*            </Button>*/}
+            {/*            <Button variant="outline" ml={3} onClick={() => setInviteModalOpen(false)}>*/}
+            {/*                Cancel*/}
+            {/*            </Button>*/}
+            {/*        </ModalFooter>*/}
+            {/*    </ModalContent>*/}
+            {/*</Modal>*/}
 
 
 

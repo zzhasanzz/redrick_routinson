@@ -35,6 +35,8 @@ import UsersProfile from "./pages/features/UsersProfile.jsx";
 
 import Event from "./pages/event/Event.jsx";
 import AdminStats from "./pages/features/AdminStats.jsx";
+import TeacherEvents from "./pages/event/TeacherEvents.jsx";
+import InviteTeacher from "./pages/event/InviteTeacher.jsx";
 
 function App() {
   const { currentUser, role } = useContext(AuthContext);
@@ -210,6 +212,15 @@ function App() {
                 </RequireAuth>
               }
             />
+
+              <Route
+                  path="/student-home/event/invite/:eventId"
+                  element={
+                      <RequireAuth allowedRoles={["student"]}>
+                          <InviteTeacher/>
+                      </RequireAuth>
+                  }
+              />
             <Route
               path="/student-home/logout"
               element={
@@ -257,11 +268,11 @@ function App() {
             />
 
             <Route
-              path="/teacher-home/myevents"
+              path="/teacher-home/event"
               element={
-                <RequireAuth allowedRoles={["teacher"]}>
-                  <Blank />
-                </RequireAuth>
+                // <RequireAuth allowedRoles={["teacher"]}>
+                  <TeacherEvents/>
+               // </RequireAuth>
               }
             />
             <Route
