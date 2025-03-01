@@ -24,7 +24,7 @@ const TeacherDashboard = () => {
                     </Button>
                 </Link>
 
-                <Link to="/event">
+                <Link to="/teacher-home/event">
                     <Button height="250px" width="450px" flexDirection="column" justifyContent="center" borderRadius="30px">
                         <Icon as={FaClipboardList} boxSize={20} />
                         <Text fontSize="2xl">Event</Text>
