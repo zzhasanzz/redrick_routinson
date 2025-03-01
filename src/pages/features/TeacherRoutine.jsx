@@ -101,7 +101,7 @@ const TeacherRoutine = () => {
     "10:30-1:00": 3,
     "11:45-1:00": 4,
     "2:30-3:45": 5,
-    "2:30-3:45": 5,
+    "2:30-5:00": 5,
     "3:45-5:00": 6,
   };
 
@@ -166,6 +166,7 @@ const TeacherRoutine = () => {
         } else if (String(classRescheduledStatus[index]) === "1") {
           classStatus = "Rescheduled";
         }
+
         teacherSchedule.push({
           courseCode: doc.id.substring(0, doc.id.length - 2),
           courseTitle: courseData["assigned_course_title"],
@@ -187,18 +188,21 @@ const TeacherRoutine = () => {
             const timeIndex = ((timeSlot - 1) % totalSlotsPerDay) + 1;
             const startTime = timeMapping[timeIndex].split("-")[0];
             var endTime = timeMapping[timeIndex].split("-")[1];
-            if (courseData["course_type"][index] === "lab") {
+            if (courseData["course_type"] === "lab") {
               courseType = "lab";
+              console.log("Course Type: ", courseType);
               endTime = timeMapping[timeIndex + 1].split("-")[1];
             } else {
               courseType = "theory";
             }
+            console.log("Temporary Class Time: ", startTime, endTime);
             teacherSchedule.push({
               courseCode: doc.id.substring(0, doc.id.length - 2),
               courseTitle: courseData["assigned-course-title"],
               day: dayMapping[dayIndex],
               time: `${startTime}-${endTime}`,
               section: section,
+              type: courseType,
               room: courseData["assigned_temp_room"][index],
               status: "Temporary",
             });
@@ -215,37 +219,6 @@ const TeacherRoutine = () => {
       fetchSchedule();
     }
   }, [teacherName]);
-
-  // const fetchAvailableTimeSlots = async (day, time) => {
-  //   let sem = selectedCourse
-  //     .toString()
-  //     .charAt(selectedCourse.toString().length - 3);
-  //   const semester = "semester_" + sem + "_" + selectedSection;
-  //   const timeSlotRef = collection(db, semester);
-  //   const timeSlotsSnapshot = await getDocs(timeSlotRef);
-  //   timeSlotsSnapshot.forEach((doc) => {
-  //     const timeSlotData = doc.data();
-  //     const timeSlotID = Number(doc.id);
-  //     if (timeSlotData["class_cancelled"] === 1) {
-  //       if (timeSlotData["temp_course_code"] === "") {
-  //         availableTimeSlotsSet.add(timeSlotID);
-  //       } else {
-  //         occupiedTimeSlots.add(timeSlotID);
-  //       }
-  //     } else {
-  //       occupiedTimeSlots.add(timeSlotID);
-  //     }
-  //   });
-  //   allTimeSlots.forEach((item) => {
-  //     if (!occupiedTimeSlots.has(item)) {
-  //       availableTimeSlotsSet.add(item);
-  //     }
-  //   });
-  //   availableTimeSlotsSet.forEach((it) => {
-  //     fetchAvailableRooms(it);
-  //   });
-  //   setAvailableTimeSlots(availableTimeSlotsSet);
-  // };
 
   const fetchAvailableRooms = async (timeSlot) => {
     let roomID = "";
@@ -440,7 +413,7 @@ const TeacherRoutine = () => {
           class_cancelled: 0,
           rescheduled: 1,
           temp_course_code: selectedCourse,
-          temp_course_type: selectedCourseType || "theory",
+          temp_course_type: selectedCourseType,
           temp_room: selectedRoom,
           temp_section: selectedSection,
           temp_time_1: newTime,
@@ -476,7 +449,7 @@ const TeacherRoutine = () => {
         {
           class_cancelled: 0,
           rescheduled: 1,
-          course_type: selectedCourseType || "theory",
+          course_type: selectedCourseType,
           temp_course_code: selectedCourse,
           temp_teacher_1: teacherName,
           temp_section: selectedSection,
@@ -531,7 +504,7 @@ const TeacherRoutine = () => {
         await setDoc(courseRef, {
           assigned_temp_time_slots: [selectedRescheduleTime.toString()],
           assigned_temp_room: [selectedRoom],
-          course_type: selectedCourseType || "theory",
+          course_type: selectedCourseType,
           class_cancelled_status: [1],
           rescheduled_status: [1],
           assigned_time_slots: [],
@@ -541,7 +514,9 @@ const TeacherRoutine = () => {
 
       // For lab courses, we need to handle two consecutive time slots
       if (selectedCourseType === "lab") {
+        console.log("Rescheduling lab class, updating second time slot");
         const secondTimeSlot = Number(selectedRescheduleTime) + 1;
+        console.log("Second time slot: ", secondTimeSlot);
 
         // Update second time slot in semester collection
         const secondTimeSlotRef = doc(
@@ -549,16 +524,21 @@ const TeacherRoutine = () => {
           semesterCollection,
           secondTimeSlot.toString()
         );
+        const newTimeIndex2 = secondTimeSlot + 1;
+        const newStartTime2 = timeMapping[newTimeIndex2].split("-")[0];
+        const newEndTime2 = timeMapping[newTimeIndex2].split("-")[1];
+        const newTime2 = `${newStartTime2}-${newEndTime2}`;
+        console.log("New time 2: ", newTime2);
         await setDoc(
           secondTimeSlotRef,
           {
             class_cancelled: 0,
-            rescheduled: 1,
+            rescheduled: 0,
             temp_course_code: selectedCourse,
-            temp_course_type: "lab",
+            course_type: "lab",
             temp_room: selectedRoom,
             temp_section: selectedSection,
-            temp_time_1: newTime,
+            temp_time_1: newTime2,
             temp_teacher_1: teacherName,
             temp_day: newDay,
           },
@@ -575,7 +555,7 @@ const TeacherRoutine = () => {
           secondRoomRef,
           {
             class_cancelled: 0,
-            rescheduled: 1,
+            rescheduled: 0,
             course_type: "lab",
             temp_course_code: selectedCourse,
             temp_teacher_1: teacherName,
@@ -922,7 +902,7 @@ const TeacherRoutine = () => {
           day: data.temp_day,
           time: data.temp_time_1,
           room: data.temp_room,
-          type: data.temp_course_type || "theory",
+          type: data.course_type || "theory",
           section: data.temp_section,
         });
       }
@@ -931,27 +911,56 @@ const TeacherRoutine = () => {
   };
 
   const handleSlotSelect = async (day, time, slot) => {
-    if (slot.isFree) {
-      // Handle free slot selection
-      const timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
-      setSelectedRescheduleTime(timeSlot);
-      await fetchAvailableRooms(timeSlot);
-    } else if (slot.type === "lab") {
-      alert("Lab classes cannot be swapped with Thoery classes!");
-    } else if (slot.teacher !== teacherName) {
-      // Handle occupied slot selection for swap
-      setTargetClass({
-        timeSlot: revDayMapping[day] * 6 + revTimeMapping[time],
-        teacher: slot.teacher,
-        course: slot.course,
-        day: day,
-        time: time,
-        room: slot.room,
-        section: slot.section, // Add section to target class
-      });
-      setShowSwapRequestModal(true);
+    if (slot.type !== selectedCourseType) {
+      alert("Lab classes cannot be swapped with Theory classes!");
+      console.log("slot: ", slot);
+    }
+    if (selectedCourseType === "lab") {
+      let timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
+      let nexTimeSlot = timeSlot + 1;
+      if (slot.isFree) {
+        timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
+        nexTimeSlot = timeSlot + 1;
+      }
+      if (
+        Math.floor((nextTimeSlot - 1) / 6) !== Math.floor((timeSlot - 1) / 6) ||
+        (timeSlot - 1) % 6 === 3
+      ) {
+        alert("Lab classes must have two consecutive slots in the same day!");
+        return;
+      }
+
+      const nextSlot = semesterClasses.find(
+        (classSlot) => Number(classSlot.timeSlot) === nextTimeSlot
+      );
+      if (nextSlot && nextSlot.isFree) {
+        setSelectedRescheduleTime(timeSlot);
+        await fetchAvailableRooms(timeSlot);
+      } else {
+        alert("Lab classes require two consecutive free slots!");
+        return;
+      }
     } else {
-      alert("This is your own class!");
+      if (slot.isFree) {
+        // Handle free slot selection
+        const timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
+        setSelectedRescheduleTime(timeSlot);
+        await fetchAvailableRooms(timeSlot);
+      } else if (slot.teacher !== teacherName) {
+        // Handle occupied slot selection for swap
+        setTargetClass({
+          timeSlot: revDayMapping[day] * 6 + revTimeMapping[time],
+          teacher: slot.teacher,
+          course: slot.course,
+          day: day,
+          time: time,
+          room: slot.room,
+          section: slot.section, // Add section to target class
+        });
+        setShowSwapRequestModal(true);
+      } else {
+        alert("This is your own class!");
+      }
     }
     setSelectedSlot(slot);
   };
