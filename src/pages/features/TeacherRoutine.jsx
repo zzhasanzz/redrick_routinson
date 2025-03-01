@@ -1159,14 +1159,19 @@ const TeacherRoutine = () => {
       const targetDayIndex = Math.floor(
         (targetTimeSlot - 1) / totalSlotsPerDay
       );
+      console.log("Target Day Index: ", targetDayIndex);
+      console.log("TargetTimeSlot: ", targetTimeSlot);
+
       const targetTimeIndex = ((targetTimeSlot - 1) % totalSlotsPerDay) + 1;
       const targetStartTime = timeMapping[targetTimeIndex].split("-")[0];
-      const targetEndTime = timeMapping[targetTimeIndex + 1].split("-")[0];
+      console.log("Target Start Time: ", targetStartTime);
+      const targetEndTime = timeMapping[targetTimeIndex].split("-")[1];
+      console.log("Target End Time: ", targetEndTime);
 
       const reqDayIndex = Math.floor((reqTimeSlot - 1) / totalSlotsPerDay);
       const reqTimeIndex = ((reqTimeSlot - 1) % totalSlotsPerDay) + 1;
       const reqStartTime = timeMapping[reqTimeIndex].split("-")[0];
-      const reqEndTime = timeMapping[reqTimeIndex + 1].split("-")[0];
+      const reqEndTime = timeMapping[reqTimeIndex].split("-")[1];
 
       // Update semester timeslot document
       const reqTimeSlotRef = doc(db, reqSemester, reqTimeSlot.toString());
