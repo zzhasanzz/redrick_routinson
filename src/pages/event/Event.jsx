@@ -105,6 +105,10 @@ const Event = () => {
 
     const navigate = useNavigate();
 
+    const [selectedFoodItem, setSelectedFoodItem] = useState("");
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [totalTokens, setTotalTokens] = useState(0);
+
 
 
 
@@ -222,50 +226,30 @@ const Event = () => {
 
     const handleViewTokens = async (event) => {
         try {
-            console.log("Fetching tokens for event:", event.id); // ✅ Debugging log
             const eventDocRef = doc(db, "events", event.id);
             const eventDoc = await getDoc(eventDocRef);
 
             if (eventDoc.exists()) {
                 const eventData = eventDoc.data();
-                console.log("Event Data:", eventData); // ✅ Debugging log
-
                 const userTokens = eventData.foodTokens?.[currentUser.email] || {};
-                console.log("User Tokens:", userTokens); // ✅ Debugging log
 
                 if (Object.keys(userTokens).length === 0) {
-                    toast({
-                        title: "No QR Tokens",
-                        description: "You have not received any QR tokens for this event.",
-                        status: "warning",
-                        duration: 3000,
-                        isClosable: true,
-                    });
+                    toast({ /* ... */ });
                     return;
                 }
 
+                const firstTokenKey = Object.keys(userTokens)[0];
                 setSelectedTokens(userTokens);
-                onOpenTokensModal(); // ✅ Open Modal after state update
-            } else {
-                toast({
-                    title: "Event Not Found",
-                    description: "Could not find the selected event.",
-                    status: "error",
-                    duration: 3000,
-                    isClosable: true,
-                });
+                setSelectedFoodItem(firstTokenKey);
+                setCurrentIndex(0);
+                setTotalTokens(Object.keys(userTokens).length);
+                onOpenTokensModal();
             }
         } catch (error) {
-            console.error("Error fetching tokens: ", error);
-            toast({
-                title: "Error",
-                description: "Failed to retrieve QR tokens. Please try again.",
-                status: "error",
-                duration: 3000,
-                isClosable: true,
-            });
+            // Handle error
         }
     };
+
 
 
     const handleImageUpload = (e) => {
@@ -562,6 +546,7 @@ const Event = () => {
     };
 
 
+
     return (
         <Box p={5}>
             {isPresident && (
@@ -606,8 +591,15 @@ const Event = () => {
                                 <FormLabel>Event Start Date</FormLabel>
                                 <DatePicker
                                     selected={startDate}
-                                    onChange={(date) => setStartDate(date)}
+                                    onChange={(date) => {
+                                        setStartDate(date);
+                                        // If the current end date is before the new start date, update the end date
+                                        if (endDate < date) {
+                                            setEndDate(date);
+                                        }
+                                    }}
                                     dateFormat="MMMM d, yyyy"
+                                    minDate={new Date()}
                                 />
                             </FormControl>
                             <FormControl isRequired>
@@ -616,6 +608,7 @@ const Event = () => {
                                     selected={endDate}
                                     onChange={(date) => setEndDate(date)}
                                     dateFormat="MMMM d, yyyy"
+                                    minDate={startDate} // Set the minimum date to the start date
                                 />
                             </FormControl>
                             <FormControl isRequired>
@@ -1052,21 +1045,52 @@ const Event = () => {
                 </ModalContent>
             </Modal>
 
-            <Modal isOpen={isOpenTokensModal} onClose={onCloseTokensModal}>
+            <Modal isOpen={isOpenTokensModal} onClose={onCloseTokensModal} size="lg">
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Your Food Tokens</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        {Object.keys(selectedTokens).length > 0 ? (  // ✅ Check if tokens exist
-                            Object.entries(selectedTokens).map(([foodItem, qrData]) => (
-                                <Box key={foodItem} textAlign="center" mb={4}>
-                                    <Text fontWeight="bold">{foodItem}</Text>
-                                    <QRCodeSVG value={qrData} size={200} />
+                        {Object.keys(selectedTokens).length > 0 ? (
+                            <VStack spacing={4}>
+                                {/* Navigation Controls */}
+                                <HStack justifyContent="space-between" w="full">
+                                    <Button
+                                        onClick={() => setSelectedFoodItem(prev => {
+                                            const keys = Object.keys(selectedTokens);
+                                            const newIndex = (keys.indexOf(prev) - 1 + keys.length) % keys.length;
+                                            return keys[newIndex];
+                                        })}
+                                        isDisabled={Object.keys(selectedTokens).length <= 1}
+                                    >
+                                        Previous
+                                    </Button>
+                                    <Button
+                                        onClick={() => setSelectedFoodItem(prev => {
+                                            const keys = Object.keys(selectedTokens);
+                                            const newIndex = (keys.indexOf(prev) + 1) % keys.length;
+                                            return keys[newIndex];
+                                        })}
+                                        isDisabled={Object.keys(selectedTokens).length <= 1}
+                                    >
+                                        Next
+                                    </Button>
+                                </HStack>
+
+                                {/* QR Code Display */}
+                                <Box textAlign="center" w="full">
+                                    <Text fontSize="xl" mb={4} fontWeight="bold">
+                                        {selectedFoodItem}
+                                    </Text>
+                                    <QRCodeSVG
+                                        value={selectedTokens[selectedFoodItem]}
+                                        size={256}
+                                        style={{ margin: '0 auto' }}
+                                    />
                                 </Box>
-                            ))
+                            </VStack>
                         ) : (
-                            <Text>No QR tokens found for this event.</Text>  // ✅ Error message if empty
+                            <Text>No QR tokens found for this event.</Text>
                         )}
                     </ModalBody>
                     <ModalFooter>
