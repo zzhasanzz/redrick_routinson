@@ -324,10 +324,10 @@ def generate_seating_arrangement(
         SEATS_PER_ROOM = 60  # 60 seats per room
 
         # Extract student lists from JSON response
-        queue_1 = sum([result_sem_1_container_1["seat_plan"].get(dept, []) for dept in ["CSE", "MPE", "CEE"]], [])
-        queue_2 = sum([result_sem_1_container_2["seat_plan"].get(dept, []) for dept in ["EEE","SWE", "IPE", "TVE"]], [])
-        queue_3 = sum([result_sem_3_container_2["seat_plan"].get(dept, []) for dept in ["IPE", "TVE", "EEE","SWE"]], [])
-        queue_4 = sum([result_sem_3_container_1["seat_plan"].get(dept, []) for dept in ["MPE", "CEE" ,"CSE"]], [])
+        queue_1 = sum([result_sem_1_container_1["seat_plan"].get(dept, []) for dept in ["CSE", "MPE", "SWE", "IPE"]], [])
+        queue_2 = sum([result_sem_1_container_2["seat_plan"].get(dept, []) for dept in ["EEE","CEE", "TVE"]], [])
+        queue_3 = sum([result_sem_3_container_2["seat_plan"].get(dept, []) for dept in ["CEE", "TVE", "EEE"]], [])
+        queue_4 = sum([result_sem_3_container_1["seat_plan"].get(dept, []) for dept in ["MPE", "SWE", "IPE" ,"CSE"]], [])
 
         seating_plan = {}  # Dictionary to store seating arrangements per room
 
@@ -372,44 +372,27 @@ def generate_seating_arrangement(
         print(f"❌ Error generating seating arrangement: {str(e)}")
         return {"status": "error", "message": str(e)}
 
-# def store_seating_plan_in_firebase(seating_plan):
-#     """
-#     Stores the generated seating arrangement in Firebase Firestore.
 
-#     :param seating_plan: Dictionary containing the seating arrangement per room.
-#     """
-#     try:
-#         seat_plan_ref = db.collection("seat_plan")  # Firestore Collection
 
-#         for room, seats in seating_plan.items():
-#             room_ref = seat_plan_ref.document(str(room))  # Room document
 
-#             for seat in seats:
-#                 seat_ref = room_ref.collection("seats").document(str(seat["seat_no"]))  # Seat document
-#                 seat_ref.set(seat)  # Write seat data
-
-#         print("✅ Seating Plan successfully stored in Firebase Firestore!")
-#         return {"status": "success", "message": "Seating plan stored in Firebase"}
-
-#     except Exception as e:
-#         print(f"❌ Error storing seating plan in Firebase: {str(e)}")
-#         return {"status": "error", "message": str(e)}
 def store_seating_plan_in_firebase(seating_plan):
     """
-    Stores the generated seating arrangement in Firebase Firestore and updates student records with their room.
+    Stores the generated seating arrangement in Firebase Firestore and updates student records with their room using batch operations.
 
     :param seating_plan: Dictionary containing the seating arrangement per room.
     """
     try:
+        db = firestore.client()  # Initialize Firestore client
         seat_plan_ref = db.collection("seat_plan")  # Firestore Collection
         users_ref = db.collection("seat_plan_USERS")  # Firestore Collection for users
+        batch = db.batch()
 
         for room, seats in seating_plan.items():
             room_ref = seat_plan_ref.document(str(room))  # Room document
 
             for seat in seats:
-                seat_ref = room_ref.collection("seats").document(str(seat["seat_no"]))  # Seat document
-                seat_ref.set(seat)  # Write seat data
+                seat_ref = room_ref.collection("seats").document(str(seat["seat_no"]))
+                batch.set(seat_ref, seat)  # Add seat data to batch
 
                 # Update student's document in seat_plan_USERS collection
                 student_id = seat["id"]
@@ -417,15 +400,17 @@ def store_seating_plan_in_firebase(seating_plan):
 
                 for doc in student_query:
                     doc_ref = users_ref.document(doc.id)
-                    doc_ref.update({"room": room})
-                    print(f"✅ Updated student {student_id} with room {room} in seat_plan_USERS.")
-
+                    batch.update(doc_ref, {"room": room})  # Batch update
+                    print(f"✅ Queued update for student {student_id} with room {room} in seat_plan_USERS.")
+        
+        batch.commit()  # Commit all batched writes at once
         print("✅ Seating Plan successfully stored in Firebase Firestore!")
         return {"status": "success", "message": "Seating plan stored in Firebase and student records updated"}
 
     except Exception as e:
         print(f"❌ Error storing seating plan in Firebase: {str(e)}")
         return {"status": "error", "message": str(e)}
+
 
 
 
@@ -437,11 +422,11 @@ def generate_seat_plan_api():
     """
     try:
         # Hardcoded example (Replace with actual calls to Firestore)
-        result_sem_1_container_1 = generate_seat_plan(["CSE", "MPE", "CEE"], 1)
-        result_sem_1_container_2 = generate_seat_plan(["EEE","SWE", "IPE", "TVE"], 1)
+        result_sem_1_container_1 = generate_seat_plan(["CSE", "MPE", "SWE", "IPE"], 1)
+        result_sem_1_container_2 = generate_seat_plan(["EEE","CEE", "TVE"], 1)
 
-        result_sem_3_container_1 = generate_seat_plan([ "MPE", "CEE" ,"CSE"], 3)
-        result_sem_3_container_2 = generate_seat_plan(["IPE", "TVE", "EEE","SWE"], 3)
+        result_sem_3_container_1 = generate_seat_plan([ "MPE", "SWE", "IPE" ,"CSE"], 3)
+        result_sem_3_container_2 = generate_seat_plan(["CEE", "TVE", "EEE"], 3)
 
         # Call the seating function with the retrieved data
         seating_plan = generate_seating_arrangement(
