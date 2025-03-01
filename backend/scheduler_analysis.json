@@ -1,12 +1,12 @@
 {
-  "total_courses": 214,
-  "theory_courses": 102,
+  "total_courses": 215,
+  "theory_courses": 103,
   "lab_courses": 112,
-  "theory_full_matches": 71,
+  "theory_full_matches": 72,
   "lab_full_matches": 94,
   "lab_partial_matches": 14,
   "no_matches": 35,
-  "theory_success_rate": 69.6,
+  "theory_success_rate": 69.9,
   "lab_full_match_percent": 83.9,
   "lab_partial_match_percent": 12.5,
   "faculty_details": {
@@ -14,8 +14,8 @@
       "total_courses": 8,
       "theory": {
         "total": 8,
-        "full_matches": 6,
-        "match_percent": 75.0,
+        "full_matches": 4,
+        "match_percent": 50.0,
         "issues": [
           {
             "course": "HUM4144",
@@ -270,8 +270,8 @@
       "total_courses": 8,
       "theory": {
         "total": 4,
-        "full_matches": 1,
-        "match_percent": 25.0,
+        "full_matches": 2,
+        "match_percent": 50.0,
         "issues": [
           {
             "course": "Math4341",
@@ -385,11 +385,11 @@
       }
     },
     "FH": {
-      "total_courses": 15,
+      "total_courses": 16,
       "theory": {
-        "total": 9,
-        "full_matches": 6,
-        "match_percent": 66.7,
+        "total": 10,
+        "full_matches": 7,
+        "match_percent": 70.0,
         "issues": [
           {
             "course": "CSE4301",

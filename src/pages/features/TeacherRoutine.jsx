@@ -173,6 +173,7 @@ const TeacherRoutine = () => {
           day: dayMapping[dayIndex],
           time: `${startTime}-${endTime}`,
           section: section,
+          type: courseType,
           room: courseData["assigned_room"][index],
           status: classStatus,
         });
@@ -385,7 +386,9 @@ const TeacherRoutine = () => {
         ((selectedRescheduleTime - 1) % totalSlotsPerDay) + 1;
       const newDay = dayMapping[newDayIndex];
       const newStartTime = timeMapping[newTimeIndex].split("-")[0];
+      console.log("New Start Time: ", newStartTime);
       const newEndTime = timeMapping[newTimeIndex].split("-")[1];
+      console.log("New End Time: ", newEndTime);
       const newTime = `${newStartTime}-${newEndTime}`;
 
       // First, cancel the original class
@@ -524,7 +527,9 @@ const TeacherRoutine = () => {
           semesterCollection,
           secondTimeSlot.toString()
         );
-        const newTimeIndex2 = secondTimeSlot + 1;
+        const newTimeIndex2 = secondTimeSlot;
+        console.log("New time index 2: ", newTimeIndex2);
+
         const newStartTime2 = timeMapping[newTimeIndex2].split("-")[0];
         const newEndTime2 = timeMapping[newTimeIndex2].split("-")[1];
         const newTime2 = `${newStartTime2}-${newEndTime2}`;
@@ -588,6 +593,7 @@ const TeacherRoutine = () => {
     setSelectedTime(time);
     setSelectedSection(section);
     setSelectedRoom(room);
+    console.log("Selected Course Type: ", type);
     setSelectedCourseType(type);
 
     let sem = course.toString().charAt(course.toString().length - 3);
@@ -767,7 +773,7 @@ const TeacherRoutine = () => {
       </thead>
       <tbody>
         {schedule.map((slot, index) => (
-          <tr key={`${slot.courseCode}-${slot.day}-${slot.time}-${index}`}>
+          <tr key={`${slot.courseCode}-${slot.day}-${slot.time}-${index}$`}>
             <td>{slot.courseCode}</td>
             <td>{slot.day}</td>
             <td>{slot.room}</td>
@@ -911,16 +917,20 @@ const TeacherRoutine = () => {
   };
 
   const handleSlotSelect = async (day, time, slot) => {
-    if (slot.type !== selectedCourseType) {
+    console.log("Slot Type: ", slot.type);
+    console.log("Selected Course Type: ", selectedCourseType);
+    if (!slot.isFree && slot.type !== selectedCourseType) {
       alert("Lab classes cannot be swapped with Theory classes!");
       console.log("slot: ", slot);
     }
+
     if (selectedCourseType === "lab") {
       let timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
-      let nexTimeSlot = timeSlot + 1;
+      let nextTimeSlot = timeSlot + 1;
       if (slot.isFree) {
         timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
-        nexTimeSlot = timeSlot + 1;
+        nextTimeSlot = timeSlot + 1;
+        console.log("First Time Slot is free");
       }
       if (
         Math.floor((nextTimeSlot - 1) / 6) !== Math.floor((timeSlot - 1) / 6) ||
@@ -933,7 +943,13 @@ const TeacherRoutine = () => {
       const nextSlot = semesterClasses.find(
         (classSlot) => Number(classSlot.timeSlot) === nextTimeSlot
       );
-      if (nextSlot && nextSlot.isFree) {
+
+      console.log("Next Time Slot: ", nextTimeSlot);
+
+      console.log("Time Slot: ", timeSlot);
+
+      if (!nextSlot) {
+        console.log("Second Time Slot is free");
         setSelectedRescheduleTime(timeSlot);
         await fetchAvailableRooms(timeSlot);
       } else {
