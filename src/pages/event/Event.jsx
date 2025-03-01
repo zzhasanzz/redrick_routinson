@@ -248,6 +248,10 @@ const Event = () => {
                     roadmap,
                     creatorEmail: currentUser.email,
                     foodOptions, // Save selected food options
+                    breakfast: [],  // ✅ Initialize empty food arrays
+                    lunch: [],
+                    dinner: [],
+                    snacks: []
                 });
             }
 
