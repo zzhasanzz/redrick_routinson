@@ -8,7 +8,7 @@ import csv
 import random
 import firebase_admin
 from firebase_admin import credentials, firestore
-
+import time
 
 
 app = Flask(__name__)
@@ -449,8 +449,11 @@ def generate_seat_plan_api():
 
          # Store seating plan in Firestore
         firebase_response = store_seating_plan_in_firebase(seating_plan["seating_plan"],"summer_morning")
-        firebase_response = store_seating_plan_in_firebase(seating_plan_day["seating_plan"],"summer_day")
-        return jsonify(firebase_response_day)
+        firebase_response_day = store_seating_plan_in_firebase(seating_plan_day["seating_plan"],"summer_day")
+        # return jsonify(firebase_response_day)
+        # time.sleep(5)
+        return jsonify({"status": "success", "message": "Seat plan generated successfully!"}), 200
+
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
@@ -489,7 +492,9 @@ def generate_seat_plan_api_winter():
 
         firebase_response = store_seating_plan_in_firebase(seating_plan["seating_plan"],"winter_morning")
         firebase_response_day = store_seating_plan_in_firebase(seating_plan_day["seating_plan"],"winter_day")
-        return jsonify(firebase_response_day)
+        # return jsonify(firebase_response_day)
+        return jsonify({"status": "success", "message": "Seat plan generated successfully!"}), 200
+
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
 
