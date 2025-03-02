@@ -1,4 +1,15 @@
 import React from "react";
+import {
+  Box,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Tag,
+  useColorModeValue,
+} from "@chakra-ui/react";
 
 const SemesterRoutineTable = ({
   semesterClasses,
@@ -6,21 +17,21 @@ const SemesterRoutineTable = ({
   dayMapping,
   onSlotSelect,
 }) => {
-  // Create time-based organization of classes
-  const routineByTime = {};
+  // Create day-based organization of classes
+  const routineByDay = {};
 
-  timeSlots.forEach((time) => {
-    routineByTime[time] = {};
-    Object.values(dayMapping).forEach((day) => {
-      routineByTime[time][day] = { isFree: true };
+  Object.values(dayMapping).forEach((day) => {
+    routineByDay[day] = {};
+    timeSlots.forEach((time) => {
+      routineByDay[day][time] = { isFree: true };
     });
   });
 
   // Fill in the classes with special handling for labs
   semesterClasses.forEach((cls) => {
-    if (routineByTime[cls.time] && routineByTime[cls.time][cls.day]) {
+    if (routineByDay[cls.day] && routineByDay[cls.day][cls.time]) {
       let isLab = false;
-      // Check if it's a lab course (course code ends with even number)
+      // Check if it's a lab course
       if (cls.type === "lab") {
         isLab = true;
       }
@@ -31,7 +42,7 @@ const SemesterRoutineTable = ({
         const currentTimeIndex = timeSlots.indexOf(cls.time);
         if (currentTimeIndex >= 0 && currentTimeIndex < timeSlots.length - 1) {
           // Mark current time slot
-          routineByTime[cls.time][cls.day] = {
+          routineByDay[cls.day][cls.time] = {
             isFree: false,
             isLabFirst: true,
             ...cls,
@@ -39,7 +50,7 @@ const SemesterRoutineTable = ({
 
           // Mark next time slot
           const nextTime = timeSlots[currentTimeIndex + 1];
-          routineByTime[nextTime][cls.day] = {
+          routineByDay[cls.day][nextTime] = {
             isFree: false,
             isLabSecond: true,
             ...cls,
@@ -47,7 +58,7 @@ const SemesterRoutineTable = ({
         }
       } else {
         // For regular theory classes, mark single time slot
-        routineByTime[cls.time][cls.day] = {
+        routineByDay[cls.day][cls.time] = {
           isFree: false,
           ...cls,
         };
@@ -55,57 +66,111 @@ const SemesterRoutineTable = ({
     }
   });
 
+  const renderCourseCell = (slot) => {
+    if (slot.isFree) {
+      return (
+        <Tag
+          colorScheme="gray"
+          variant="subtle"
+          borderRadius="md"
+          size="md"
+          w="100%"
+          py={2}
+          whiteSpace="normal"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          textAlign="center"
+          minH="60px"
+        >
+          Free Slot
+        </Tag>
+      );
+    }
+
+    const isLab = slot.isLabFirst || slot.isLabSecond;
+    const colorScheme = isLab ? "green" : "blue";
+
+    return (
+      <Tag
+        colorScheme={colorScheme}
+        variant="subtle"
+        borderRadius="md"
+        size="md"
+        w="100%"
+        py={2}
+        whiteSpace="normal"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        textAlign="center"
+        minH="60px"
+      >
+        <div>
+          <div>{slot.course}</div>
+          <div>Room: {slot.room}</div>
+          <div>
+            Teachers: {slot.teacher1} {slot.teacher2}
+          </div>
+
+          <div>Type: {slot.type || "theory"}</div>
+        </div>
+      </Tag>
+    );
+  };
+
   return (
-    <div className="semester-routine">
-      <table border="1" style={{ borderCollapse: "collapse", width: "100%" }}>
-        <thead>
-          <tr>
-            <th>Time / Day</th>
-            {Object.values(dayMapping).map((day) => (
-              <th key={day}>{day}</th>
+    <Box overflowX="auto" mb={8}>
+      <Table variant="striped" border="black" colorScheme="white" size="xl">
+        <Thead bg="rgb(43, 65, 98)">
+          <Tr>
+            <Th width="15%" textAlign="center" color="rgb(43, 41, 41)">
+              Day / Time
+            </Th>
+            {timeSlots.map((time) => (
+              <Th
+                key={time}
+                textAlign="center"
+                fontSize="15px"
+                width={`${82 / 6}%`}
+                color="rgb(43, 41, 41)"
+              >
+                {time}
+              </Th>
             ))}
-          </tr>
-        </thead>
-        <tbody>
-          {timeSlots.map((time) => (
-            <tr key={time}>
-              <td>{time}</td>
-              {Object.values(dayMapping).map((day) => {
-                const slot = routineByTime[time][day];
+          </Tr>
+        </Thead>
+        <Tbody>
+          {Object.values(dayMapping).map((day) => (
+            <Tr key={day}>
+              <Td
+                fontWeight="600"
+                textAlign="center"
+                bg={useColorModeValue("white", "gray.800")}
+              >
+                {day}
+              </Td>
+              {timeSlots.map((time) => {
+                const slot = routineByDay[day][time];
                 return (
-                  <td
+                  <Td
                     key={`${day}-${time}`}
+                    textAlign="center"
+                    p={2}
                     onClick={() => onSlotSelect(day, time, slot)}
-                    style={{
-                      cursor: "pointer",
-                      backgroundColor: slot.isFree ? "#e8f5e9" : "#fff3e0",
-                      ...(slot.isLabSecond && {
-                        borderTop: "none",
-                      }),
-                      ...(slot.isLabFirst && {
-                        borderBottom: "none",
-                      }),
-                    }}
+                    cursor="pointer"
+                    borderTop={slot?.isLabSecond ? "none" : "1px solid"}
+                    borderBottom={slot?.isLabFirst ? "none" : "1px solid"}
                   >
-                    {slot.isFree ? (
-                      "Free Slot"
-                    ) : (
-                      <div>
-                        <div>{slot.course}</div>
-                        <div>Room: {slot.room}</div>
-                        <div>Teacher: {slot.teacher}</div>
-                        <div>Type: {slot.type || "theory"}</div>
-                        {slot.isLabFirst && <div>(Lab - 2 slots)</div>}
-                      </div>
-                    )}
-                  </td>
+                    {slot ? renderCourseCell(slot) : "---"}
+                  </Td>
                 );
               })}
-            </tr>
+            </Tr>
           ))}
-        </tbody>
-      </table>
-    </div>
+        </Tbody>
+      </Table>
+    </Box>
   );
 };
 
