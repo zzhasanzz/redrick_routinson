@@ -588,6 +588,54 @@ def write_schedule_to_csv(scheduled, filename="final_schedule.csv"):
                 # Add a blank row between sections
                 writer.writerow([])
 
+def update_courses_collection(scheduled_classes):
+    """Store course information in Firestore"""
+    try:
+        # Create a dictionary to hold course information
+        courses_data = defaultdict(lambda: {"course_type": "", "assigned_teachers": set()})
+        
+        # Extract course information from scheduled classes
+        for cls in scheduled_classes:
+            course_code = cls.code
+            course_type = "lab" if len(cls.times) == 2 else "theory"
+            
+            # Update course type
+            courses_data[course_code]["course_type"] = course_type
+            
+            # Add teachers to the set (using set to avoid duplicates)
+            for teacher in cls.teachers:
+                if teacher:  # Only add non-empty teacher names
+                    courses_data[course_code]["assigned_teachers"].add(teacher)
+        
+        # Write to Firestore courses collection
+        batch = db.batch()
+        count = 0
+        batch_limit = 490  # Firestore batch limit is 500, using 490 for safety
+        
+        for course_code, data in courses_data.items():
+            # Convert set to list for JSON serialization
+            doc_data = {
+                "course_type": data["course_type"],
+                "assigned_teachers": list(data["assigned_teachers"])
+            }
+            
+            ref = db.collection('courses').document(course_code)
+            batch.set(ref, doc_data)
+            count += 1
+            
+            if count >= batch_limit:
+                batch.commit()
+                batch = db.batch()
+                count = 0
+                time.sleep(0.5)  # Small delay between batches
+        
+        if count > 0:
+            batch.commit()
+            
+        print(f"Updated {len(courses_data)} courses in Firestore.")
+    except Exception as e:
+        print(f"Error updating courses collection: {e}")
+
 # Main function
 def main():
     try:
@@ -622,6 +670,9 @@ def main():
         
         # Schedule remaining classes with faculty preferences
         unscheduled = schedule_remaining_classes(regular_classes, scheduled, faculty_details)
+        
+        # Store course information in Firestore
+        update_courses_collection(scheduled)
         
         # Write final schedule to JSON
         write_schedule_to_json(scheduled)
