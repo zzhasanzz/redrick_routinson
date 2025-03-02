@@ -255,6 +255,7 @@ const TeacherRoutine = () => {
     let rooms = [];
     let room = "";
     let timeSlot = 0;
+
     try {
       const courseRef = doc(
         db,
@@ -311,8 +312,9 @@ const TeacherRoutine = () => {
       console.error("Error canceling class:", error);
       alert("Failed to cancel class.");
     }
-
+    console.log("Selected Course Type: ", selectedCourseType);
     if (selectedCourseType === "lab") {
+      console.log("Lab course detected, updating second time slot");
       timeSlot++;
       try {
         const roomRef = doc(
@@ -333,21 +335,22 @@ const TeacherRoutine = () => {
       const courseInfoRef = doc(db, "courses", courseId.toString());
       const courseInfoSnapshot = await getDoc(courseInfoRef);
       const courseInfoData = courseInfoSnapshot.data();
-
-      const otherTeacherName = courseInfoData["assigned_teachers"][1];
+      let index = 1;
+      if (teacherName === courseInfoData["assigned_teachers"][0]) {
+        index = 0;
+      }
+      const otherTeacherName = courseInfoData["assigned_teachers"][index];
       try {
         const courseRef = doc(
           db,
           `teachers/${otherTeacherName}/courses`,
           courseId.toString() + "_" + section
         );
+        console.log("Updating other teacher's course");
         const courseSnapshot = await getDoc(courseRef);
         const courseData = courseSnapshot.data();
         selectedCourseType = courseData["course_type"];
         const classCancelledStatus = courseData["class_cancelled_status"];
-        console.log("Day: ", day);
-        console.log("Time: ", time);
-        timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
         console.log("Time Slot: ", timeSlot);
         rooms = courseData["assigned_room"];
         classCancelledStatus.forEach((stat, idx) => {
@@ -369,6 +372,10 @@ const TeacherRoutine = () => {
         const semester = "semester_" + sem + "_" + section;
         const timeSlotRef = doc(db, semester, timeSlot.toString());
         const timeSlotSnapshot = await getDoc(timeSlotRef);
+        console.log("Updating semester collection for labs");
+        console.log("Time Slot: ", timeSlot);
+        console.log("Semester: ", semester);
+        console.log("Course ID: ", courseId);
         if (timeSlotSnapshot.exists()) {
           await updateDoc(timeSlotRef, {
             class_cancelled: 1,
@@ -406,8 +413,11 @@ const TeacherRoutine = () => {
       const courseInfoRef = doc(db, "courses", selectedCourse.toString());
       const courseInfoSnapshot = await getDoc(courseInfoRef);
       const courseInfoData = courseInfoSnapshot.data();
-
-      const otherTeacherName = courseInfoData["assigned_teachers"][1] || "";
+      let index = 0;
+      if (teacherName === courseInfoData["assigned_teachers"][0]) {
+        index = 1;
+      }
+      const otherTeacherName = courseInfoData["assigned_teachers"][index];
 
       // Calculate day and time information for the new timeslot
       const totalSlotsPerDay = Object.keys(timeMapping).length;
@@ -445,7 +455,7 @@ const TeacherRoutine = () => {
       await setDoc(
         timeSlotDocRef,
         {
-          class_cancelled: 0,
+          class_cancelled: 1,
           rescheduled: 1,
           temp_course_code: selectedCourse,
           temp_course_type: selectedCourseType,
@@ -453,17 +463,8 @@ const TeacherRoutine = () => {
           temp_section: selectedSection,
           temp_time_1: newTime,
           temp_teacher_1: teacherName,
-          temp_teacher_2: otherTeacherName,
           temp_day: newDay,
           // Preserve permanent fields if any
-          perm_course_code: "",
-          perm_course_type: "",
-          perm_room: "",
-          perm_teacher_1: "",
-          perm_teacher_2: "",
-          perm_day: "",
-          perm_time_1: "",
-          perm_time_2: "",
         },
         { merge: true }
       );
@@ -483,15 +484,12 @@ const TeacherRoutine = () => {
       await setDoc(
         roomRef,
         {
-          class_cancelled: 0,
+          class_cancelled: 1,
           rescheduled: 1,
-          course_type: selectedCourseType,
+          temp_course_type: selectedCourseType,
           temp_course_code: selectedCourse,
-          temp_teacher_2: otherTeacherName,
+          temp_teacher_1: teacherName,
           temp_section: selectedSection,
-          perm_course_code: "",
-          perm_teacher_1: "",
-          perm_teacher_2: "",
         },
         { merge: true }
       );
@@ -553,6 +551,20 @@ const TeacherRoutine = () => {
         console.log("Rescheduling lab class, updating second time slot");
         const secondTimeSlot = Number(selectedRescheduleTime) + 1;
         console.log("Second time slot: ", secondTimeSlot);
+        await setDoc(
+          timeSlotDocRef,
+          {
+            temp_teacher_2: otherTeacherName,
+          },
+          { merge: true }
+        );
+        await setDoc(
+          roomRef,
+          {
+            temp_teacher_2: otherTeacherName,
+          },
+          { merge: true }
+        );
 
         const courseRef = doc(
           db,
@@ -620,7 +632,7 @@ const TeacherRoutine = () => {
         await setDoc(
           secondTimeSlotRef,
           {
-            class_cancelled: 0,
+            class_cancelled: 1,
             rescheduled: 0,
             temp_course_code: selectedCourse,
             course_type: "lab",
@@ -628,6 +640,7 @@ const TeacherRoutine = () => {
             temp_section: selectedSection,
             temp_time_1: newTime2,
             temp_teacher_1: teacherName,
+            temp_teacher_2: otherTeacherName,
             temp_day: newDay,
           },
           { merge: true }
@@ -642,11 +655,12 @@ const TeacherRoutine = () => {
         await setDoc(
           secondRoomRef,
           {
-            class_cancelled: 0,
+            class_cancelled: 1,
             rescheduled: 0,
             course_type: "lab",
             temp_course_code: selectedCourse,
             temp_teacher_1: teacherName,
+            temp_teacher_2: otherTeacherName,
             temp_section: selectedSection,
           },
           { merge: true }
@@ -775,8 +789,11 @@ const TeacherRoutine = () => {
         const courseInfoRef = doc(db, "courses", courseId.toString());
         const courseInfoSnapshot = await getDoc(courseInfoRef);
         const courseInfoData = courseInfoSnapshot.data();
-
-        const otherTeacherName = courseInfoData["assigned_teachers"][1];
+        let index = 0;
+        if (teacherName === courseInfoData["assigned_teachers"][0]) {
+          index = 1;
+        }
+        const otherTeacherName = courseInfoData["assigned_teachers"][index];
         const courseRef = doc(
           db,
           `teachers/${otherTeacherName}/courses`,
@@ -816,7 +833,7 @@ const TeacherRoutine = () => {
     try {
       // Calculate timeslot
       const timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
-
+      console.log("Time Slot: ", timeSlot);
       // Get course reference and data
       const courseRef = doc(
         db,
@@ -831,7 +848,8 @@ const TeacherRoutine = () => {
         (slot) => String(slot)
       );
       let tempRooms = courseData.assigned_temp_room || [];
-
+      console.log("Temp Time Slots: ", tempTimeSlots);
+      console.log("Temp Rooms: ", tempRooms);
       // Find the index using string comparison
       const slotIndex = tempTimeSlots.indexOf(String(timeSlot));
 
@@ -846,6 +864,7 @@ const TeacherRoutine = () => {
           assigned_temp_time_slots: tempTimeSlots,
           assigned_temp_room: tempRooms,
         });
+        console.log("Updated course document");
 
         // Update semester document
         const sem = courseId.charAt(courseId.length - 3);
@@ -856,12 +875,12 @@ const TeacherRoutine = () => {
           temp_course_type: "",
           temp_room: "",
           temp_teacher_1: "",
+          temp_teacher_2: "",
           temp_day: "",
           temp_time_1: "",
           temp_section: "",
-          rescheduled: 0,
-          class_cancelled: 0,
         });
+        console.log("Updated semester document");
 
         // Update room document
         const roomRef = doc(db, `time_slots/${timeSlot}/rooms/${room}`);
@@ -870,10 +889,82 @@ const TeacherRoutine = () => {
           temp_course_type: "",
           temp_room: "",
           temp_teacher_1: "",
+          temp_teacher_2: "",
           temp_section: "",
-          class_cancelled: 0,
         });
+        console.log("Updated room document");
+        if (courseData.course_type === "lab") {
+          const nextTimeSlot = timeSlot + 1; // For lab courses, update the next time slot as well
+          const nextTimeSlotRef = doc(db, semester, String(nextTimeSlot));
+          console.log("Next Time Slot: ", nextTimeSlot);
+          await updateDoc(nextTimeSlotRef, {
+            temp_course_code: "",
+            temp_course_type: "",
+            temp_room: "",
+            temp_teacher_1: "",
+            temp_teacher_2: "",
+            temp_day: "",
+            temp_time_1: "",
+            temp_section: "",
+          });
+          console.log("Updated next semester document");
+          const nextRoomRef = doc(
+            db,
+            `time_slots/${nextTimeSlot}/rooms/${room}`
+          );
+          await updateDoc(nextRoomRef, {
+            // Update the next room document
+            temp_course_code: "",
+            temp_course_type: "",
+            temp_room: "",
+            temp_teacher_1: "",
+            temp_teacher_2: "",
+            temp_section: "",
+          });
+          console.log("Updated next room document");
+          let index = 0;
+          const courseDataDocRef = doc(db, `courses`, courseId.toString());
+          const courseDataDoc = await getDoc(courseDataDocRef);
+          const courseData = courseDataDoc.data();
 
+          console.log("Course Teacher: ", courseData);
+          if (teacherName === courseData["assigned_teachers"][0]) {
+            index = 1;
+          }
+          console.log("Index: ", index);
+          const otherTeacherName = courseData["assigned_teachers"][index];
+          console.log("Other Teacher Name: ", otherTeacherName);
+          const otherCourseRef = doc(
+            db,
+            `teachers/${otherTeacherName}/courses`,
+            `${courseId}_${section}`
+          );
+          console.log("Other Course Ref: ", otherCourseRef);
+          const otherCourseSnapshot = await getDoc(otherCourseRef);
+          const otherCourseData = otherCourseSnapshot.data();
+          let otherTempTimeSlots =
+            otherCourseData.assigned_temp_time_slots || [];
+          let otherTempRooms = otherCourseData.assigned_temp_room || [];
+          const otherSlotIndex = otherTempTimeSlots.indexOf(
+            String(nextTimeSlot)
+          );
+          console.log("Other Temp Time Slots: ", otherTempTimeSlots);
+          console.log("Other Temp Rooms: ", otherTempRooms);
+          if (otherSlotIndex > -1) {
+            otherTempTimeSlots = otherTempTimeSlots.filter(
+              (_, index) => index !== otherSlotIndex
+            );
+            otherTempRooms = otherTempRooms.filter(
+              (_, index) => index !== otherSlotIndex
+            );
+            console.log("Other Temp Time Slots UPdated: ", otherTempTimeSlots);
+            console.log("OTher Temp Rooms Updated: ", otherTempRooms);
+            await updateDoc(otherCourseRef, {
+              assigned_temp_time_slots: otherTempTimeSlots,
+              assigned_temp_room: otherTempRooms,
+            });
+          }
+        }
         // Refresh the schedule
         const updatedSchedule = schedule.filter(
           (slot) =>
@@ -1062,6 +1153,7 @@ const TeacherRoutine = () => {
     if (!slot.isFree && slot.type !== selectedCourseType) {
       alert("Lab classes cannot be swapped with Theory classes!");
       console.log("slot: ", slot);
+      return;
     }
 
     if (selectedCourseType === "lab") {
@@ -1105,11 +1197,11 @@ const TeacherRoutine = () => {
         const timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
         setSelectedRescheduleTime(timeSlot);
         await fetchAvailableRooms(timeSlot);
-      } else if (slot.teacher !== teacherName) {
+      } else if (slot.teacher1 !== teacherName) {
         // Handle occupied slot selection for swap
         setTargetClass({
           timeSlot: revDayMapping[day] * 6 + revTimeMapping[time],
-          teacher: slot.teacher,
+          teacher: slot.teacher1,
           course: slot.course,
           day: day,
           time: time,
@@ -1219,7 +1311,6 @@ const TeacherRoutine = () => {
         // Find the index of the permanent class that matches the timeslot
         const reqTimeSlots = reqCourseData.assigned_time_slots || [];
         let reqCancelledStatus = reqCourseData.class_cancelled_status || [];
-        let reqRescheduledStatus = reqCourseData.rescheduled_status || [];
 
         // Find the index by matching timeslot
         let reqCancelIndex = -1;
@@ -1233,14 +1324,12 @@ const TeacherRoutine = () => {
         // Update the specific class's cancelled and rescheduled status
         if (reqCancelIndex !== -1) {
           reqCancelledStatus[reqCancelIndex] = 1;
-          reqRescheduledStatus[reqCancelIndex] = 1;
         }
 
         await updateDoc(reqCourseRef, {
           assigned_temp_time_slots: arrayUnion(targetTimeSlot),
           assigned_temp_room: arrayUnion(targetRoom),
           class_cancelled_status: reqCancelledStatus,
-          rescheduled_status: reqRescheduledStatus,
         });
 
         console.log(
@@ -1261,7 +1350,6 @@ const TeacherRoutine = () => {
         const targetTimeSlots = targetCourseData.assigned_time_slots || [];
         let targetCancelledStatus =
           targetCourseData.class_cancelled_status || [];
-        let targetRescheduledStatus = targetCourseData.rescheduled_status || [];
 
         // Find the index by matching timeslot
         let targetCancelIndex = -1;
@@ -1275,14 +1363,12 @@ const TeacherRoutine = () => {
         // Update the specific class's cancelled and rescheduled status
         if (targetCancelIndex !== -1) {
           targetCancelledStatus[targetCancelIndex] = 1;
-          targetRescheduledStatus[targetCancelIndex] = 1;
         }
 
         await updateDoc(targetCourseRef, {
           assigned_temp_time_slots: arrayUnion(reqTimeSlot),
           assigned_temp_room: arrayUnion(reqRoom),
           class_cancelled_status: targetCancelledStatus,
-          rescheduled_status: targetRescheduledStatus,
         });
 
         console.log(
@@ -1325,7 +1411,7 @@ const TeacherRoutine = () => {
         temp_section: targetSection,
         temp_day: dayMapping[reqDayIndex],
         temp_time_1: `${reqStartTime}-${reqEndTime}`,
-        rescheduled: 1,
+
         class_cancelled: 1,
       });
 
@@ -1342,7 +1428,6 @@ const TeacherRoutine = () => {
         temp_day: dayMapping[targetDayIndex],
         temp_time_1: `${targetStartTime}-${targetEndTime}`,
 
-        rescheduled: 1,
         class_cancelled: 1,
       });
 

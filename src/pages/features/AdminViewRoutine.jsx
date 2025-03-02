@@ -70,8 +70,12 @@ const AdminViewRoutine = () => {
               const data = doc.data();
               if (!data.class_cancelled || data.temp_course_code) {
                 const courseInfo = data.temp_course_code
-                  ? `${data.temp_course_code}\n${data.temp_teacher_1}\n${data.temp_room}`
-                  : `${data.perm_course_code}\n${data.perm_teacher_1}\n${data.perm_room}`;
+                  ? `${data.temp_course_code}\n${data.temp_teacher_1}${
+                      " " + data.temp_teacher_2
+                    }\n${data.temp_room}`
+                  : `${data.perm_course_code}\n${data.perm_teacher_1}${
+                      " " + data.perm_teacher_2
+                    }\n${data.perm_room}`;
 
                 const dayIndex = days.indexOf(data.temp_day || data.perm_day);
                 const timeIndex = timeSlots.indexOf(
