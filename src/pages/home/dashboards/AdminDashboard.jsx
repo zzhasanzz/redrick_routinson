@@ -28,21 +28,21 @@ const handleGenerateRoutine = async () => {
   }
 };
 
-const handleSeatPlanClick = async () => {
-  try {
-    const response = await axios.post("http://localhost:5000/api/seat-plan");
+// const handleSeatPlanClick = async () => {
+//   try {
+//     const response = await axios.post("http://localhost:5000/api/seat-plan-admin");
 
-    console.log("✅ Full Response:", response.data); // Debug entire response
+//     console.log("✅ Full Response:", response.data); // Debug entire response
 
-    // If you want to trigger Firebase function after fetching seat plans:
-    // await generateSeatPlanInFirebase();
-  } catch (error) {
-    console.error(
-      "❌ Error in seat plan admin frontend: ",
-      error.response?.data?.message || error.message
-    );
-  }
-};
+//     // If you want to trigger Firebase function after fetching seat plans:
+//     // await generateSeatPlanInFirebase();
+//   } catch (error) {
+//     console.error(
+//       "❌ Error in seat plan admin frontend: ",
+//       error.response?.data?.message || error.message
+//     );
+//   }
+// };
 
 // export const generateSeatPlanInFirebase = async () => {
 //     try {
@@ -237,7 +237,7 @@ const AdminDashboard = () => {
             </Button>
           </Link>
 
-          <Link to="/seat-plan">
+          <Link to="/admin-home/admin-generate-seat-plan">
             <Button
               height="250px"
               width={["100%", "450px"]}
@@ -247,7 +247,7 @@ const AdminDashboard = () => {
               bg="gray.100"
               _hover={{ transform: "translateY(-5px)", boxShadow: "lg" }}
               boxShadow="md"
-              //onClick={handleSeatPlanClick}
+              // onClick={handleSeatPlanClick}
             >
               <Icon as={FaChair} boxSize={20} color="gray.700" />
               <Text fontSize="2xl" fontWeight="600" color="gray.700">
