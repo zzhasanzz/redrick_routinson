@@ -92,13 +92,13 @@ const AdminSidebar = () => {
             {/* Display User Info (username, email, profile picture) */}
             {currentUser && (
                 <div className="sidebar__user-info">
-                    {/* <img 
-                        src={userData.profilePic || "https://via.placeholder.com/150"} 
+                    <img 
+                        src={userData?.profilePic || "https://via.placeholder.com/150"} 
                         alt="Profile"
                         className="sidebar__user-info__image"
-                    /> */}
+                    />
                     <div className="sidebar__user-info__details">
-                        {/* <p className="sidebar__user-info__name">{userData.displayName}</p> */}
+                        <p className="sidebar__user-info__name">Admin</p>
                         <p className="sidebar__user-info__email">{currentUser.email}</p>
                     </div>
                 </div>

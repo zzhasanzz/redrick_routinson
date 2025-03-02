@@ -90,6 +90,10 @@ const UsersProfile = () => {
             facebook: profileDetails.facebook,
             instagram: profileDetails.instagram,
             linkedin: profileDetails.linkedin,
+            id: userData?.id || "N/A",
+            displayName: userData?.displayName || "N/A",
+            semester: userData?.semester || "N/A",
+            academicYear: userData?.academicYear || "2023-2024",
         };
 
         await updateDoc(doc(db, "users", currentUser.email), updatedData);
