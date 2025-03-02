@@ -1,25 +1,24 @@
 import React, { useState, useRef } from "react";
-import { QrReader } from "react-qr-reader";  // QR Scanner Library
+import { QrReader } from "react-qr-reader";
 import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "../../firebase";
 import { Box, Heading, Text, Button, useToast } from "@chakra-ui/react";
 
-const SCAN_COOLDOWN = 2000; // Cooldown period (2 seconds)
+const SCAN_COOLDOWN = 2000;
 
 const FoodScanner = () => {
     const [scanResult, setScanResult] = useState(null);
-    const isScanning = useRef(false); // ✅ Ref prevents multiple scans
+    const isScanning = useRef(false);
     const toast = useToast();
 
     const handleScan = async (result) => {
-        if (!result?.text || isScanning.current) return;  // ✅ Ignore duplicate scans
-        isScanning.current = true; // ✅ Set scanning lock to prevent multiple scans
+        if (!result?.text || isScanning.current) return;
+        isScanning.current = true;
 
         const scannedData = result.text.trim();
         setScanResult(scannedData);
 
         const [eventId, userEmail, foodItem] = scannedData.split("-");
-        console.log("Scanned:", { eventId, userEmail, foodItem });
 
         if (!eventId || !userEmail || !foodItem) {
             toast({
@@ -38,13 +37,14 @@ const FoodScanner = () => {
             const eventDoc = await getDoc(eventDocRef);
 
             if (eventDoc.exists()) {
-                let eventData = eventDoc.data();
+                const eventData = eventDoc.data();
 
-                // ✅ Ensure food tracking arrays exist
-                let foodTrackingArray = eventData[foodItem] || [];
-                let participantIndex = eventData.participantList.indexOf(userEmail);
+                // Check if participant exists
+                const participantExists = eventData.participantList?.some(
+                    p => p.email === userEmail
+                );
 
-                if (participantIndex === -1) {
+                if (!participantExists) {
                     toast({
                         title: "Not Registered",
                         description: "This user is not registered for the event.",
@@ -56,11 +56,14 @@ const FoodScanner = () => {
                     return;
                 }
 
-                // ✅ Check if the participant already claimed this food item
-                if (foodTrackingArray.includes(participantIndex)) {
+                // Get food tracking array
+                let foodTrackingArray = eventData[foodItem.toLowerCase()] || [];
+
+                // Check if already claimed
+                if (foodTrackingArray.includes(userEmail)) {
                     toast({
                         title: "Already Claimed",
-                        description: `You have already taken ${foodItem}.`,
+                        description: `${userEmail} already claimed ${foodItem}.`,
                         status: "error",
                         duration: 3000,
                         isClosable: true,
@@ -69,14 +72,14 @@ const FoodScanner = () => {
                     return;
                 }
 
-                // ✅ Mark the food item as claimed by adding the participant index
+                // Update food tracking with user email instead of index
                 await updateDoc(eventDocRef, {
-                    [foodItem]: arrayUnion(participantIndex) // Prevents duplicate claims
+                    [foodItem.toLowerCase()]: arrayUnion(userEmail)
                 });
 
                 toast({
                     title: "Success",
-                    description: `You successfully claimed ${foodItem}.`,
+                    description: `${userEmail} successfully claimed ${foodItem}.`,
                     status: "success",
                     duration: 3000,
                     isClosable: true,
@@ -102,10 +105,9 @@ const FoodScanner = () => {
             });
         }
 
-        resetScanning(); // ✅ Reset scan lock after cooldown
+        resetScanning();
     };
 
-    // ✅ Reset scanning flag after cooldown
     const resetScanning = () => {
         setTimeout(() => {
             isScanning.current = false;
@@ -115,7 +117,6 @@ const FoodScanner = () => {
     return (
         <Box textAlign="center" p={5}>
             <Heading>Scan Food Token</Heading>
-
             <QrReader
                 onResult={(result, error) => {
                     if (result) handleScan(result);
@@ -124,15 +125,13 @@ const FoodScanner = () => {
                 constraints={{ facingMode: "environment" }}
                 style={{ width: "100%", maxWidth: "400px", margin: "auto" }}
             />
-
             {scanResult && <Text mt={4}>Scanned: {scanResult}</Text>}
-
             <Button
                 colorScheme="blue"
                 mt={5}
                 onClick={() => {
                     setScanResult(null);
-                    isScanning.current = false; // ✅ Reset scanning flag manually if needed
+                    isScanning.current = false;
                 }}
             >
                 Reset Scanner

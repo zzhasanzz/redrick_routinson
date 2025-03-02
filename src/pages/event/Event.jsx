@@ -32,6 +32,7 @@ import {
     Tr,
     Th,
     Td,
+    Select,
     useToast,
 } from "@chakra-ui/react";
 import {
@@ -105,6 +106,30 @@ const Event = () => {
 
     const navigate = useNavigate();
 
+    const [selectedFoodItem, setSelectedFoodItem] = useState("");
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [totalTokens, setTotalTokens] = useState(0);
+
+    const {
+        isOpen: isRegisterModalOpen,
+        onOpen: onRegisterModalOpen,
+        onClose: onRegisterModalClose
+    } = useDisclosure();
+    const [formData, setFormData] = useState({
+        name: '',
+        studentId: '',
+        department: '',
+        image: null
+    });
+    const [selectedEventForRegistration, setSelectedEventForRegistration] = useState(null);
+
+
+    const {
+        isOpen: isProfileOpen,
+        onOpen: onProfileOpen,
+        onClose: onProfileClose,
+    } = useDisclosure();
+    const [selectedParticipant, setSelectedParticipant] = useState(null);
 
 
 
@@ -117,7 +142,9 @@ const Event = () => {
 
 
 
-   // _____________________________________________________________________
+
+
+    // _____________________________________________________________________
 
 
     // Add this function to fetch teachers
@@ -222,50 +249,30 @@ const Event = () => {
 
     const handleViewTokens = async (event) => {
         try {
-            console.log("Fetching tokens for event:", event.id); // ✅ Debugging log
             const eventDocRef = doc(db, "events", event.id);
             const eventDoc = await getDoc(eventDocRef);
 
             if (eventDoc.exists()) {
                 const eventData = eventDoc.data();
-                console.log("Event Data:", eventData); // ✅ Debugging log
-
                 const userTokens = eventData.foodTokens?.[currentUser.email] || {};
-                console.log("User Tokens:", userTokens); // ✅ Debugging log
 
                 if (Object.keys(userTokens).length === 0) {
-                    toast({
-                        title: "No QR Tokens",
-                        description: "You have not received any QR tokens for this event.",
-                        status: "warning",
-                        duration: 3000,
-                        isClosable: true,
-                    });
+                    toast({ /* ... */ });
                     return;
                 }
 
+                const firstTokenKey = Object.keys(userTokens)[0];
                 setSelectedTokens(userTokens);
-                onOpenTokensModal(); // ✅ Open Modal after state update
-            } else {
-                toast({
-                    title: "Event Not Found",
-                    description: "Could not find the selected event.",
-                    status: "error",
-                    duration: 3000,
-                    isClosable: true,
-                });
+                setSelectedFoodItem(firstTokenKey);
+                setCurrentIndex(0);
+                setTotalTokens(Object.keys(userTokens).length);
+                onOpenTokensModal();
             }
         } catch (error) {
-            console.error("Error fetching tokens: ", error);
-            toast({
-                title: "Error",
-                description: "Failed to retrieve QR tokens. Please try again.",
-                status: "error",
-                duration: 3000,
-                isClosable: true,
-            });
+            // Handle error
         }
     };
+
 
 
     const handleImageUpload = (e) => {
@@ -500,6 +507,18 @@ const Event = () => {
 
     const handleRegister = async (eventId, selectedFoodOptions) => {
         try {
+            // Validate form data
+            if (!formData.name || !formData.studentId || !formData.department) {
+                toast({
+                    title: "Missing Information",
+                    description: "Please fill all required fields",
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                });
+                return;
+            }
+
             const eventDocRef = doc(db, "events", eventId);
             const eventDoc = await getDoc(eventDocRef);
 
@@ -507,7 +526,12 @@ const Event = () => {
                 const eventData = eventDoc.data();
                 const participantList = eventData.participantList || [];
 
-                if (participantList.includes(currentUser.email)) {
+                // Check if already registered
+                const isRegistered = participantList.some(
+                    participant => participant.email === currentUser.email
+                );
+
+                if (isRegistered) {
                     toast({
                         title: "Already Registered",
                         description: "You have already registered for this event.",
@@ -518,28 +542,46 @@ const Event = () => {
                     return;
                 }
 
-                // ✅ Generate QR Codes with RAW DATA instead of a URL
-                let foodTokens = eventData.foodTokens || {}; // Keep existing tokens
-                foodTokens[currentUser.email] = {}; // Create space for this user
+                // Create participant object
+                const participantData = {
+                    name: formData.name,
+                    studentId: formData.studentId,
+                    department: formData.department,
+                    image: formData.image,
+                    email: currentUser.email,
+                    registrationDate: new Date().toISOString()
+                };
+
+                // Generate food tokens
+                let foodTokens = eventData.foodTokens || {};
+                foodTokens[currentUser.email] = {};
 
                 selectedFoodOptions.forEach(food => {
-                    foodTokens[currentUser.email][food] = `${eventId}-${currentUser.email}-${food}`; // ✅ Store raw QR code format
+                    foodTokens[currentUser.email][food] = `${eventId}-${currentUser.email}-${food}`;
                 });
 
-                // ✅ Save Tokens & Participant Info
+                // Update document
                 await updateDoc(eventDocRef, {
-                    participantList: arrayUnion(currentUser.email),
-                    foodTokens, // ✅ Save tokens in raw format
+                    participantList: arrayUnion(participantData),
+                    foodTokens,
                 });
 
                 toast({
                     title: "Registration Successful",
-                    description: "You have received food tokens.",
+                    description: "Your registration has been completed!",
                     status: "success",
                     duration: 3000,
                     isClosable: true,
                 });
 
+                // Reset form and close modal
+                setFormData({
+                    name: '',
+                    studentId: '',
+                    department: '',
+                    image: null
+                });
+                onRegisterModalClose();
                 fetchEvents();
             }
         } catch (error) {
@@ -555,11 +597,12 @@ const Event = () => {
     };
 
 
-
     const handleViewParticipants = (event) => {
-        setParticipantList(event.participantList);
+        setParticipantList(event.participantList || []); // Ensure participantList is an array
         onParticipantsOpen();
     };
+
+
 
 
     return (
@@ -606,8 +649,15 @@ const Event = () => {
                                 <FormLabel>Event Start Date</FormLabel>
                                 <DatePicker
                                     selected={startDate}
-                                    onChange={(date) => setStartDate(date)}
+                                    onChange={(date) => {
+                                        setStartDate(date);
+                                        // If the current end date is before the new start date, update the end date
+                                        if (endDate < date) {
+                                            setEndDate(date);
+                                        }
+                                    }}
                                     dateFormat="MMMM d, yyyy"
+                                    minDate={new Date()}
                                 />
                             </FormControl>
                             <FormControl isRequired>
@@ -616,6 +666,7 @@ const Event = () => {
                                     selected={endDate}
                                     onChange={(date) => setEndDate(date)}
                                     dateFormat="MMMM d, yyyy"
+                                    minDate={startDate} // Set the minimum date to the start date
                                 />
                             </FormControl>
                             <FormControl isRequired>
@@ -884,7 +935,7 @@ const Event = () => {
                                     <Button size="sm" colorScheme="purple" onClick={() => handleViewParticipants(event)}>
                                         View Participants
                                     </Button>
-                                ) : event.participantList?.includes(currentUser.email) ? ( // ✅ FIXED THIS LINE
+                                ) :  event.participantList?.some(p => p.email === currentUser.email) ? (
                                     <Button
                                         size="sm"
                                         colorScheme="purple"
@@ -896,7 +947,10 @@ const Event = () => {
                                     <Button
                                         size="sm"
                                         colorScheme="blue"
-                                        onClick={() => handleRegister(event.id, event.foodOptions)}
+                                        onClick={() => {
+                                            setSelectedEventForRegistration(event);
+                                            onRegisterModalOpen();
+                                        }}
                                     >
                                         Register
                                     </Button>
@@ -1029,13 +1083,37 @@ const Event = () => {
                             <Table size="sm">
                                 <Thead>
                                     <Tr>
-                                        <Th>Email</Th>
+                                        <Th>Name</Th>
+                                        <Th>Photo</Th>
+                                        <Th>Actions</Th>
                                     </Tr>
                                 </Thead>
                                 <Tbody>
-                                    {participantList.map((email, index) => (
+                                    {participantList.map((participant, index) => (
                                         <Tr key={index}>
-                                            <Td>{email}</Td>
+                                            <Td>{participant.name}</Td>
+                                            <Td>
+                                                {participant.image && (
+                                                    <Image
+                                                        src={participant.image}
+                                                        boxSize="50px"
+                                                        objectFit="cover"
+                                                        borderRadius="full"
+                                                    />
+                                                )}
+                                            </Td>
+                                            <Td>
+                                                <Button
+                                                    size="sm"
+                                                    colorScheme="blue"
+                                                    onClick={() => {
+                                                        setSelectedParticipant(participant);
+                                                        onProfileOpen();
+                                                    }}
+                                                >
+                                                    Profile
+                                                </Button>
+                                            </Td>
                                         </Tr>
                                     ))}
                                 </Tbody>
@@ -1051,22 +1129,52 @@ const Event = () => {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-
-            <Modal isOpen={isOpenTokensModal} onClose={onCloseTokensModal}>
+            <Modal isOpen={isOpenTokensModal} onClose={onCloseTokensModal} size="lg">
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Your Food Tokens</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        {Object.keys(selectedTokens).length > 0 ? (  // ✅ Check if tokens exist
-                            Object.entries(selectedTokens).map(([foodItem, qrData]) => (
-                                <Box key={foodItem} textAlign="center" mb={4}>
-                                    <Text fontWeight="bold">{foodItem}</Text>
-                                    <QRCodeSVG value={qrData} size={200} />
+                        {Object.keys(selectedTokens).length > 0 ? (
+                            <VStack spacing={4}>
+                                {/* Navigation Controls */}
+                                <HStack justifyContent="space-between" w="full">
+                                    <Button
+                                        onClick={() => setSelectedFoodItem(prev => {
+                                            const keys = Object.keys(selectedTokens);
+                                            const newIndex = (keys.indexOf(prev) - 1 + keys.length) % keys.length;
+                                            return keys[newIndex];
+                                        })}
+                                        isDisabled={Object.keys(selectedTokens).length <= 1}
+                                    >
+                                        Previous
+                                    </Button>
+                                    <Button
+                                        onClick={() => setSelectedFoodItem(prev => {
+                                            const keys = Object.keys(selectedTokens);
+                                            const newIndex = (keys.indexOf(prev) + 1) % keys.length;
+                                            return keys[newIndex];
+                                        })}
+                                        isDisabled={Object.keys(selectedTokens).length <= 1}
+                                    >
+                                        Next
+                                    </Button>
+                                </HStack>
+
+                                {/* QR Code Display */}
+                                <Box textAlign="center" w="full">
+                                    <Text fontSize="xl" mb={4} fontWeight="bold">
+                                        {selectedFoodItem}
+                                    </Text>
+                                    <QRCodeSVG
+                                        value={selectedTokens[selectedFoodItem]}
+                                        size={256}
+                                        style={{ margin: '0 auto' }}
+                                    />
                                 </Box>
-                            ))
+                            </VStack>
                         ) : (
-                            <Text>No QR tokens found for this event.</Text>  // ✅ Error message if empty
+                            <Text>No QR tokens found for this event.</Text>
                         )}
                     </ModalBody>
                     <ModalFooter>
@@ -1118,6 +1226,126 @@ const Event = () => {
             {/*        </ModalFooter>*/}
             {/*    </ModalContent>*/}
             {/*</Modal>*/}
+
+            <Modal isOpen={isRegisterModalOpen} onClose={onRegisterModalClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Registration Form</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <VStack spacing={4}>
+                            <FormControl isRequired>
+                                <FormLabel>Full Name</FormLabel>
+                                <Input
+                                    placeholder="Enter your full name"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                />
+                            </FormControl>
+                            <FormControl isRequired>
+                                <FormLabel>Student ID</FormLabel>
+                                <Input
+                                    placeholder="Enter your student ID"
+                                    value={formData.studentId}
+                                    onChange={(e) => setFormData({...formData, studentId: e.target.value})}
+                                />
+                            </FormControl>
+                            <FormControl isRequired>
+                                <FormLabel>Department</FormLabel>
+                                <Select
+                                    placeholder="Select department"
+                                    value={formData.department}
+                                    onChange={(e) => setFormData({...formData, department: e.target.value})}
+                                >
+                                    {departments.map(dept => (
+                                        <option key={dept} value={dept}>{dept}</option>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel>Upload Profile Image</FormLabel>
+                                <Input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        const file = e.target.files[0];
+                                        if (file) {
+                                            const reader = new FileReader();
+                                            reader.onloadend = () => {
+                                                setFormData({...formData, image: reader.result});
+                                            };
+                                            reader.readAsDataURL(file);
+                                        }
+                                    }}
+                                />
+                            </FormControl>
+                        </VStack>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button
+                            colorScheme="blue"
+                            onClick={() => handleRegister(selectedEventForRegistration.id, selectedEventForRegistration.foodOptions)}
+                        >
+                            Submit Registration
+                        </Button>
+                        <Button variant="ghost" onClick={onRegisterModalClose}>Cancel</Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+            <Modal isOpen={isProfileOpen} onClose={onProfileClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Participant Details</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        {selectedParticipant && (
+                            <VStack spacing={4} align="stretch">
+                                <Center>
+                                    {selectedParticipant.image && (
+                                        <Image
+                                            src={selectedParticipant.image}
+                                            boxSize="200px"
+                                            borderRadius="full"
+                                            objectFit="cover"
+                                            mb={4}
+                                        />
+                                    )}
+                                </Center>
+                                <Box>
+                                    <Text fontWeight="bold">Name:</Text>
+                                    <Text>{selectedParticipant.name}</Text>
+                                </Box>
+                                <Box>
+                                    <Text fontWeight="bold">Student ID:</Text>
+                                    <Text>{selectedParticipant.studentId}</Text>
+                                </Box>
+                                <Box>
+                                    <Text fontWeight="bold">Department:</Text>
+                                    <Text>{selectedParticipant.department}</Text>
+                                </Box>
+                                <Box>
+                                    <Text fontWeight="bold">Email:</Text>
+                                    <Text>{selectedParticipant.email}</Text>
+                                </Box>
+                                <Box>
+                                    <Text fontWeight="bold">Registration Date:</Text>
+                                    <Text>
+                                        {new Date(
+                                            selectedParticipant.registrationDate
+                                        ).toLocaleDateString()}
+                                    </Text>
+                                </Box>
+                            </VStack>
+                        )}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button colorScheme="blue" onClick={onProfileClose}>
+                            Close
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
 
 
 

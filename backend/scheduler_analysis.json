@@ -1,12 +1,12 @@
 {
-  "total_courses": 212,
-  "theory_courses": 100,
+  "total_courses": 215,
+  "theory_courses": 103,
   "lab_courses": 112,
   "theory_full_matches": 72,
   "lab_full_matches": 94,
   "lab_partial_matches": 14,
-  "no_matches": 32,
-  "theory_success_rate": 72.0,
+  "no_matches": 35,
+  "theory_success_rate": 69.9,
   "lab_full_match_percent": 83.9,
   "lab_partial_match_percent": 12.5,
   "faculty_details": {
@@ -14,13 +14,19 @@
       "total_courses": 8,
       "theory": {
         "total": 8,
-        "full_matches": 6,
-        "match_percent": 75.0,
+        "full_matches": 4,
+        "match_percent": 50.0,
         "issues": [
           {
             "course": "HUM4144",
             "day": "Wednesday",
             "time": "10:30-11:45",
+            "type": "theory_no_match"
+          },
+          {
+            "course": "Hum4144",
+            "day": "Tuesday",
+            "time": "2:30-3:45",
             "type": "theory_no_match"
           },
           {
@@ -107,16 +113,6 @@
             "type": "theory_no_match"
           }
         ]
-        "full_matches": 3,
-        "match_percent": 75.0,
-        "issues": [
-          {
-            "course": "Math4141",
-            "day": "Monday",
-            "time": "9:15-10:30",
-            "type": "theory_no_match"
-          }
-        ]
       },
       "labs": {
         "total": 0,
@@ -131,9 +127,6 @@
       "total_courses": 2,
       "theory": {
         "total": 2,
-        "full_matches": 2,
-        "match_percent": 100.0,
-        "issues": []
         "full_matches": 2,
         "match_percent": 100.0,
         "issues": []
@@ -181,16 +174,6 @@
       "total_courses": 6,
       "theory": {
         "total": 4,
-        "full_matches": 3,
-        "match_percent": 75.0,
-        "issues": [
-          {
-            "course": "CSE4105",
-            "day": "Thursday",
-            "time": "10:30-11:45",
-            "type": "theory_no_match"
-          }
-        ]
         "full_matches": 3,
         "match_percent": 75.0,
         "issues": [
@@ -287,8 +270,8 @@
       "total_courses": 8,
       "theory": {
         "total": 4,
-        "full_matches": 1,
-        "match_percent": 25.0,
+        "full_matches": 2,
+        "match_percent": 50.0,
         "issues": [
           {
             "course": "Math4341",
@@ -402,12 +385,18 @@
       }
     },
     "FH": {
-      "total_courses": 14,
+      "total_courses": 16,
       "theory": {
-        "total": 8,
-        "full_matches": 6,
-        "match_percent": 75.0,
+        "total": 10,
+        "full_matches": 7,
+        "match_percent": 70.0,
         "issues": [
+          {
+            "course": "CSE4301",
+            "day": "Monday",
+            "time": "9:15-10:30",
+            "type": "theory_no_match"
+          },
           {
             "course": "CSE4511",
             "day": "Thursday",
@@ -664,16 +653,9 @@
       "total_courses": 4,
       "theory": {
         "total": 4,
-        "full_matches": 3,
-        "match_percent": 75.0,
-        "issues": [
-          {
-            "course": "CSE4501",
-            "day": "Wednesday",
-            "time": "9:15-10:30",
-            "type": "theory_no_match"
-          }
-        ]
+        "full_matches": 4,
+        "match_percent": 100.0,
+        "issues": []
       },
       "labs": {
         "total": 0,
@@ -702,16 +684,22 @@
       }
     },
     "AKA": {
-      "total_courses": 4,
+      "total_courses": 5,
       "theory": {
-        "total": 4,
+        "total": 5,
         "full_matches": 3,
-        "match_percent": 75.0,
+        "match_percent": 60.0,
         "issues": [
           {
             "course": "Math4541",
             "day": "Thursday",
             "time": "10:30-11:45",
+            "type": "theory_no_match"
+          },
+          {
+            "course": "Math4541",
+            "day": "Friday",
+            "time": "9:15-10:30",
             "type": "theory_no_match"
           }
         ]
@@ -780,8 +768,6 @@
           },
           {
             "course": "CSE4703",
-            "day": "Wednesday",
-            "time": "11:45-1:00",
             "day": "Wednesday",
             "time": "11:45-1:00",
             "type": "theory_no_match"
