@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../../firebase";
-import { collection, getDocs, onSnapshot, doc } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import Papa from "papaparse";
 import {
   Box,
@@ -22,10 +22,9 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-const AdminGenerateRoutine = () => {
+const AdminViewRoutine = () => {
   const [timetableData, setTimetableData] = useState({});
   const [loading, setLoading] = useState(true);
-  const [isRoutineGenerating, setIsRoutineGenerating] = useState(true);
   const [activeSemester, setActiveSemester] = useState("1");
 
   const timeSlots = [
@@ -40,115 +39,98 @@ const AdminGenerateRoutine = () => {
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
   useEffect(() => {
-    // First, check if routine generation is complete
-    const unsubscribe = onSnapshot(
-      doc(db, "routine_status", "generation"),
-      (doc) => {
-        if (doc.exists() && doc.data().status === "complete") {
-          setIsRoutineGenerating(false);
-          fetchAllRoutines();
-        }
-      },
-      (error) => {
-        console.error("Error listening to routine status:", error);
-        setIsRoutineGenerating(false);
-        setLoading(false);
-      }
-    );
+    const fetchAllRoutines = async () => {
+      try {
+        const processedData = {};
+        const semesters = ["1", "3", "5", "7"];
+        const sections = ["A", "B"];
 
-    return () => unsubscribe();
-  }, []);
+        for (const semester of semesters) {
+          processedData[semester] = {};
 
-  const fetchAllRoutines = async () => {
-    try {
-      const processedData = {};
-      const semesters = ["1", "3", "5", "7"];
-      const sections = ["A", "B"];
+          for (const section of sections) {
+            const routineData = [];
+            const semesterRef = collection(
+              db,
+              `semester_${semester}_${section}`
+            );
+            const snapshot = await getDocs(semesterRef);
 
-      for (const semester of semesters) {
-        processedData[semester] = {};
+            // Initialize empty routine structure
+            const routineStructure = days.map((day) => {
+              const row = [day];
+              for (let i = 0; i < timeSlots.length; i++) {
+                row.push(null);
+              }
+              return row;
+            });
 
-        for (const section of sections) {
-          const routineData = [];
-          const semesterRef = collection(db, `semester_${semester}_${section}`);
-          const snapshot = await getDocs(semesterRef);
+            // Fill in the routine with actual data
+            snapshot.forEach((doc) => {
+              const data = doc.data();
+              if (!data.class_cancelled || data.temp_course_code) {
+                const courseInfo = data.temp_course_code
+                  ? `${data.temp_course_code}\n${data.temp_teacher_1}\n${data.temp_room}`
+                  : `${data.perm_course_code}\n${data.perm_teacher_1}\n${data.perm_room}`;
 
-          // Initialize empty routine structure
-          const routineStructure = days.map((day) => {
-            const row = [day];
-            for (let i = 0; i < timeSlots.length; i++) {
-              row.push(null);
-            }
-            return row;
-          });
+                const dayIndex = days.indexOf(data.temp_day || data.perm_day);
+                const timeIndex = timeSlots.indexOf(
+                  data.temp_time_1 || data.perm_time_1
+                );
 
-          // Fill in the routine with actual data
-          snapshot.forEach((doc) => {
-            const data = doc.data();
-            if (!data.class_cancelled || data.temp_course_code) {
-              const courseInfo = data.temp_course_code
-                ? `${data.temp_course_code}\n${data.temp_teacher_1}\n${data.temp_room}`
-                : `${data.perm_course_code}\n${data.perm_teacher_1}\n${data.perm_room}`;
+                if (dayIndex !== -1 && timeIndex !== -1) {
+                  routineStructure[dayIndex][timeIndex + 1] = courseInfo;
 
-              const dayIndex = days.indexOf(data.temp_day || data.perm_day);
-              const timeIndex = timeSlots.indexOf(
-                data.temp_time_1 || data.perm_time_1
-              );
-
-              if (dayIndex !== -1 && timeIndex !== -1) {
-                routineStructure[dayIndex][timeIndex + 1] = courseInfo;
-
-                // If it's a lab, fill the next slot too
-                const courseType =
-                  data.temp_course_type || data.perm_course_type;
-                if (courseType === "lab" && timeIndex + 2 <= timeSlots.length) {
-                  routineStructure[dayIndex][timeIndex + 2] = courseInfo;
+                  // If it's a lab, fill the next slot too
+                  const courseType =
+                    data.temp_course_type || data.perm_course_type;
+                  if (
+                    courseType === "lab" &&
+                    timeIndex + 2 <= timeSlots.length
+                  ) {
+                    routineStructure[dayIndex][timeIndex + 2] = courseInfo;
+                  }
                 }
               }
-            }
-          });
+            });
 
-          processedData[semester][section] = routineStructure;
+            processedData[semester][section] = routineStructure;
+          }
         }
-      }
 
-      setTimetableData(processedData);
-    } catch (error) {
-      console.error("Error fetching routines:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+        setTimetableData(processedData);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching routines:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchAllRoutines();
+  }, []);
 
   const renderCourseCell = (course) => {
     if (!course) return null;
 
-    const [code, teacher, room] = course.split("\n");
-    // Check if course code ends with 2 (lab courses) or contains "LAB"
-    const isLab = code.endsWith("2") || code.includes("LAB");
+    const isLab = course.includes(" + ") || course.includes("Lab");
+    const colorScheme = isLab ? "green" : "blue";
 
     return (
       <Tag
-        colorScheme={isLab ? "purple" : "blue"}
+        colorScheme={colorScheme}
         variant="subtle"
         borderRadius="md"
         size="md"
         w="100%"
         py={2}
-        whiteSpace="pre-wrap"
+        whiteSpace="normal"
         display="flex"
-        flexDirection="column"
         justifyContent="center"
         alignItems="center"
         textAlign="center"
-        minH="60px"
-        bg={isLab ? "purple.50" : "blue.50"}
-        color={isLab ? "purple.800" : "blue.800"}
-        boxShadow={`inset 0 0 0 1px ${isLab ? "purple.200" : "blue.200"}`}
+        minH="60px" // Set minimum height for consistency
       >
-        <Text fontWeight="bold">{code}</Text>
-        <Text fontSize="sm">{teacher}</Text>
-        <Text fontSize="sm">Room: {room}</Text>
+        {course}
       </Tag>
     );
   };
@@ -208,20 +190,6 @@ const AdminGenerateRoutine = () => {
       </Box>
     );
   };
-
-  if (isRoutineGenerating) {
-    return (
-      <Box textAlign="center" p={8}>
-        <Spinner size="xl" thickness="4px" speed="0.65s" color="blue.500" />
-        <Text mt={4} fontSize="lg" fontWeight="bold">
-          Generating Routine...
-        </Text>
-        <Text mt={2} color="gray.600">
-          Please wait while we optimize the class schedule
-        </Text>
-      </Box>
-    );
-  }
 
   if (loading) {
     return (
@@ -335,4 +303,4 @@ const AdminGenerateRoutine = () => {
   );
 };
 
-export default AdminGenerateRoutine;
+export default AdminViewRoutine;

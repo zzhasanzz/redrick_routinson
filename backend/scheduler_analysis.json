@@ -1,44 +1,44 @@
 {
-  "total_courses": 228,
-  "theory_courses": 100,
-  "lab_courses": 128,
-  "theory_full_matches": 58,
-  "lab_full_matches": 107,
-  "lab_partial_matches": 15,
-  "no_matches": 48,
-  "theory_success_rate": 58.0,
-  "lab_full_match_percent": 83.6,
-  "lab_partial_match_percent": 11.7,
+  "total_courses": 215,
+  "theory_courses": 103,
+  "lab_courses": 112,
+  "theory_full_matches": 72,
+  "lab_full_matches": 94,
+  "lab_partial_matches": 14,
+  "no_matches": 35,
+  "theory_success_rate": 69.9,
+  "lab_full_match_percent": 83.9,
+  "lab_partial_match_percent": 12.5,
   "faculty_details": {
     "MMH": {
-      "total_courses": 4,
+      "total_courses": 8,
       "theory": {
-        "total": 4,
-        "full_matches": 0,
-        "match_percent": 0.0,
+        "total": 8,
+        "full_matches": 4,
+        "match_percent": 50.0,
         "issues": [
           {
-            "course": "Hum4147",
+            "course": "HUM4144",
             "day": "Wednesday",
-            "time": "8:00-9:15",
+            "time": "10:30-11:45",
             "type": "theory_no_match"
           },
           {
-            "course": "Hum4147",
-            "day": "Monday",
+            "course": "Hum4144",
+            "day": "Tuesday",
             "time": "2:30-3:45",
             "type": "theory_no_match"
           },
           {
-            "course": "Hum4147",
-            "day": "Thursday",
-            "time": "8:00-9:15",
+            "course": "HUM4144",
+            "day": "Monday",
+            "time": "11:45-1:00",
             "type": "theory_no_match"
           },
           {
-            "course": "Hum4147",
-            "day": "Friday",
-            "time": "10:30-11:45",
+            "course": "Hum4144",
+            "day": "Monday",
+            "time": "2:30-3:45",
             "type": "theory_no_match"
           }
         ]
@@ -61,14 +61,14 @@
         "issues": [
           {
             "course": "Phy4141",
-            "day": "Thursday",
-            "time": "3:45-5:00",
+            "day": "Monday",
+            "time": "8:00-9:15",
             "type": "theory_no_match"
           },
           {
             "course": "Phy4141",
-            "day": "Monday",
-            "time": "3:45-5:00",
+            "day": "Friday",
+            "time": "9:15-10:30",
             "type": "theory_no_match"
           }
         ]
@@ -86,16 +86,9 @@
       "total_courses": 4,
       "theory": {
         "total": 4,
-        "full_matches": 3,
-        "match_percent": 75.0,
-        "issues": [
-          {
-            "course": "CSE4107",
-            "day": "Thursday",
-            "time": "3:45-5:00",
-            "type": "theory_no_match"
-          }
-        ]
+        "full_matches": 4,
+        "match_percent": 100.0,
+        "issues": []
       },
       "labs": {
         "total": 0,
@@ -110,9 +103,16 @@
       "total_courses": 4,
       "theory": {
         "total": 4,
-        "full_matches": 4,
-        "match_percent": 100.0,
-        "issues": []
+        "full_matches": 3,
+        "match_percent": 75.0,
+        "issues": [
+          {
+            "course": "Math4141",
+            "day": "Monday",
+            "time": "9:15-10:30",
+            "type": "theory_no_match"
+          }
+        ]
       },
       "labs": {
         "total": 0,
@@ -127,22 +127,9 @@
       "total_courses": 2,
       "theory": {
         "total": 2,
-        "full_matches": 0,
-        "match_percent": 0.0,
-        "issues": [
-          {
-            "course": "HUM4142",
-            "day": "Tuesday",
-            "time": "2:30-3:45",
-            "type": "theory_no_match"
-          },
-          {
-            "course": "HUM4142",
-            "day": "Friday",
-            "time": "11:45-1:00",
-            "type": "theory_no_match"
-          }
-        ]
+        "full_matches": 2,
+        "match_percent": 100.0,
+        "issues": []
       },
       "labs": {
         "total": 0,
@@ -157,25 +144,19 @@
       "total_courses": 4,
       "theory": {
         "total": 4,
-        "full_matches": 1,
-        "match_percent": 25.0,
+        "full_matches": 2,
+        "match_percent": 50.0,
         "issues": [
           {
-            "course": "HUM4145",
+            "course": "Hum4147",
             "day": "Tuesday",
             "time": "8:00-9:15",
             "type": "theory_no_match"
           },
           {
-            "course": "HUM4145",
+            "course": "Hum4147",
             "day": "Monday",
             "time": "3:45-5:00",
-            "type": "theory_no_match"
-          },
-          {
-            "course": "HUM4145",
-            "day": "Thursday",
-            "time": "10:30-11:45",
             "type": "theory_no_match"
           }
         ]
@@ -190,7 +171,7 @@
       }
     },
     "KH": {
-      "total_courses": 8,
+      "total_courses": 6,
       "theory": {
         "total": 4,
         "full_matches": 3,
@@ -199,14 +180,14 @@
           {
             "course": "CSE4105",
             "day": "Thursday",
-            "time": "2:30-3:45",
+            "time": "10:30-11:45",
             "type": "theory_no_match"
           }
         ]
       },
       "labs": {
-        "total": 4,
-        "full_matches": 4,
+        "total": 2,
+        "full_matches": 2,
         "partial_matches": 0,
         "full_match_percent": 100.0,
         "partial_match_percent": 0.0,
@@ -289,48 +270,30 @@
       "total_courses": 8,
       "theory": {
         "total": 4,
-        "full_matches": 1,
-        "match_percent": 25.0,
+        "full_matches": 2,
+        "match_percent": 50.0,
         "issues": [
           {
             "course": "Math4341",
-            "day": "Tuesday",
-            "time": "2:30-3:45",
-            "type": "theory_no_match"
-          },
-          {
-            "course": "Math4341",
             "day": "Wednesday",
-            "time": "11:45-1:00",
+            "time": "8:00-9:15",
             "type": "theory_no_match"
           },
           {
             "course": "Math4341",
-            "day": "Thursday",
-            "time": "2:30-3:45",
+            "day": "Friday",
+            "time": "8:00-9:15",
             "type": "theory_no_match"
           }
         ]
       },
       "labs": {
         "total": 4,
-        "full_matches": 0,
+        "full_matches": 2,
         "partial_matches": 0,
-        "full_match_percent": 0.0,
+        "full_match_percent": 50.0,
         "partial_match_percent": 0.0,
         "issues": [
-          {
-            "course": "CSE4104",
-            "day": "Tuesday",
-            "time": "10:30-11:45",
-            "type": "lab_no_match"
-          },
-          {
-            "course": "CSE4104",
-            "day": "Tuesday",
-            "time": "11:45-1:00",
-            "type": "lab_no_match"
-          },
           {
             "course": "CSE4104",
             "day": "Friday",
@@ -422,28 +385,28 @@
       }
     },
     "FH": {
-      "total_courses": 10,
+      "total_courses": 16,
       "theory": {
-        "total": 4,
-        "full_matches": 1,
-        "match_percent": 25.0,
+        "total": 10,
+        "full_matches": 7,
+        "match_percent": 70.0,
         "issues": [
           {
             "course": "CSE4301",
             "day": "Monday",
-            "time": "2:30-3:45",
+            "time": "9:15-10:30",
             "type": "theory_no_match"
           },
           {
-            "course": "CSE4301",
-            "day": "Tuesday",
-            "time": "3:45-5:00",
-            "type": "theory_no_match"
-          },
-          {
-            "course": "CSE4301",
+            "course": "CSE4511",
             "day": "Thursday",
-            "time": "3:45-5:00",
+            "time": "9:15-10:30",
+            "type": "theory_no_match"
+          },
+          {
+            "course": "CSE4511",
+            "day": "Tuesday",
+            "time": "9:15-10:30",
             "type": "theory_no_match"
           }
         ]
@@ -497,24 +460,12 @@
       "total_courses": 4,
       "theory": {
         "total": 4,
-        "full_matches": 1,
-        "match_percent": 25.0,
+        "full_matches": 3,
+        "match_percent": 75.0,
         "issues": [
           {
             "course": "CSE4303",
-            "day": "Thursday",
-            "time": "9:15-10:30",
-            "type": "theory_no_match"
-          },
-          {
-            "course": "CSE4303",
             "day": "Friday",
-            "time": "10:30-11:45",
-            "type": "theory_no_match"
-          },
-          {
-            "course": "CSE4303",
-            "day": "Monday",
             "time": "9:15-10:30",
             "type": "theory_no_match"
           }
@@ -533,19 +484,13 @@
       "total_courses": 4,
       "theory": {
         "total": 4,
-        "full_matches": 2,
-        "match_percent": 50.0,
+        "full_matches": 3,
+        "match_percent": 75.0,
         "issues": [
           {
             "course": "CSE4307",
-            "day": "Tuesday",
-            "time": "11:45-1:00",
-            "type": "theory_no_match"
-          },
-          {
-            "course": "CSE4307",
             "day": "Friday",
-            "time": "9:15-10:30",
+            "time": "8:00-9:15",
             "type": "theory_no_match"
           }
         ]
@@ -577,7 +522,7 @@
       }
     },
     "MAMR": {
-      "total_courses": 12,
+      "total_courses": 10,
       "theory": {
         "total": 4,
         "full_matches": 4,
@@ -585,8 +530,8 @@
         "issues": []
       },
       "labs": {
-        "total": 8,
-        "full_matches": 8,
+        "total": 6,
+        "full_matches": 6,
         "partial_matches": 0,
         "full_match_percent": 100.0,
         "partial_match_percent": 0.0,
@@ -704,85 +649,7 @@
         ]
       }
     },
-    "SH": {
-      "total_courses": 4,
-      "theory": {
-        "total": 4,
-        "full_matches": 2,
-        "match_percent": 50.0,
-        "issues": [
-          {
-            "course": "CSE4511",
-            "day": "Monday",
-            "time": "10:30-11:45",
-            "type": "theory_no_match"
-          },
-          {
-            "course": "CSE4511",
-            "day": "Tuesday",
-            "time": "11:45-1:00",
-            "type": "theory_no_match"
-          }
-        ]
-      },
-      "labs": {
-        "total": 0,
-        "full_matches": 0,
-        "partial_matches": 0,
-        "full_match_percent": 0.0,
-        "partial_match_percent": 0.0,
-        "issues": []
-      }
-    },
     "MRK": {
-      "total_courses": 4,
-      "theory": {
-        "total": 4,
-        "full_matches": 3,
-        "match_percent": 75.0,
-        "issues": [
-          {
-            "course": "CSE4501",
-            "day": "Wednesday",
-            "time": "9:15-10:30",
-            "type": "theory_no_match"
-          }
-        ]
-      },
-      "labs": {
-        "total": 0,
-        "full_matches": 0,
-        "partial_matches": 0,
-        "full_match_percent": 0.0,
-        "partial_match_percent": 0.0,
-        "issues": []
-      }
-    },
-    "SAH": {
-      "total_courses": 6,
-      "theory": {
-        "total": 4,
-        "full_matches": 3,
-        "match_percent": 75.0,
-        "issues": [
-          {
-            "course": "CSE4513",
-            "day": "Tuesday",
-            "time": "9:15-10:30",
-            "type": "theory_no_match"
-          }
-        ]
-      },
-      "labs": {
-        "total": 2,
-        "full_matches": 2,
-        "partial_matches": 0,
-        "full_match_percent": 100.0,
-        "partial_match_percent": 0.0,
-        "issues": []
-      }
-    },
-    "MIA": {
       "total_courses": 4,
       "theory": {
         "total": 4,
@@ -799,17 +666,34 @@
         "issues": []
       }
     },
-    "AKA": {
-      "total_courses": 4,
+    "SAH": {
+      "total_courses": 6,
       "theory": {
         "total": 4,
+        "full_matches": 4,
+        "match_percent": 100.0,
+        "issues": []
+      },
+      "labs": {
+        "total": 2,
         "full_matches": 2,
-        "match_percent": 50.0,
+        "partial_matches": 0,
+        "full_match_percent": 100.0,
+        "partial_match_percent": 0.0,
+        "issues": []
+      }
+    },
+    "AKA": {
+      "total_courses": 5,
+      "theory": {
+        "total": 5,
+        "full_matches": 3,
+        "match_percent": 60.0,
         "issues": [
           {
             "course": "Math4541",
-            "day": "Monday",
-            "time": "11:45-1:00",
+            "day": "Thursday",
+            "time": "10:30-11:45",
             "type": "theory_no_match"
           },
           {
@@ -830,7 +714,7 @@
       }
     },
     "FI": {
-      "total_courses": 14,
+      "total_courses": 12,
       "theory": {
         "total": 2,
         "full_matches": 2,
@@ -838,8 +722,8 @@
         "issues": []
       },
       "labs": {
-        "total": 12,
-        "full_matches": 12,
+        "total": 10,
+        "full_matches": 10,
         "partial_matches": 0,
         "full_match_percent": 100.0,
         "partial_match_percent": 0.0,
@@ -872,7 +756,13 @@
         "issues": [
           {
             "course": "CSE4703",
-            "day": "Monday",
+            "day": "Tuesday",
+            "time": "8:00-9:15",
+            "type": "theory_no_match"
+          },
+          {
+            "course": "CSE4703",
+            "day": "Thursday",
             "time": "10:30-11:45",
             "type": "theory_no_match"
           },
@@ -884,14 +774,8 @@
           },
           {
             "course": "CSE4703",
-            "day": "Tuesday",
-            "time": "3:45-5:00",
-            "type": "theory_no_match"
-          },
-          {
-            "course": "CSE4703",
-            "day": "Thursday",
-            "time": "3:45-5:00",
+            "day": "Monday",
+            "time": "8:00-9:15",
             "type": "theory_no_match"
           }
         ]
@@ -960,23 +844,6 @@
       }
     },
     "TSA": {
-      "total_courses": 8,
-      "theory": {
-        "total": 0,
-        "full_matches": 0,
-        "match_percent": 0.0,
-        "issues": []
-      },
-      "labs": {
-        "total": 8,
-        "full_matches": 8,
-        "partial_matches": 0,
-        "full_match_percent": 100.0,
-        "partial_match_percent": 0.0,
-        "issues": []
-      }
-    },
-    "HM": {
       "total_courses": 6,
       "theory": {
         "total": 0,
@@ -986,10 +853,27 @@
       },
       "labs": {
         "total": 6,
-        "full_matches": 2,
-        "partial_matches": 4,
-        "full_match_percent": 33.3,
-        "partial_match_percent": 66.7,
+        "full_matches": 6,
+        "partial_matches": 0,
+        "full_match_percent": 100.0,
+        "partial_match_percent": 0.0,
+        "issues": []
+      }
+    },
+    "HM": {
+      "total_courses": 4,
+      "theory": {
+        "total": 0,
+        "full_matches": 0,
+        "match_percent": 0.0,
+        "issues": []
+      },
+      "labs": {
+        "total": 4,
+        "full_matches": 1,
+        "partial_matches": 3,
+        "full_match_percent": 25.0,
+        "partial_match_percent": 75.0,
         "issues": [
           {
             "course": "CSE4510",
@@ -1001,12 +885,6 @@
             "course": "CSE4510",
             "day": "Thursday",
             "time": "3:45-5:00",
-            "type": "lab_partial_match"
-          },
-          {
-            "course": "CSE4700",
-            "day": "Thursday",
-            "time": "8:00-9:15",
             "type": "lab_partial_match"
           },
           {
@@ -1027,7 +905,7 @@
         "issues": [
           {
             "course": "Math4741",
-            "day": "Tuesday",
+            "day": "Wednesday",
             "time": "9:15-10:30",
             "type": "theory_no_match"
           }
@@ -1046,13 +924,19 @@
       "total_courses": 4,
       "theory": {
         "total": 4,
-        "full_matches": 3,
-        "match_percent": 75.0,
+        "full_matches": 2,
+        "match_percent": 50.0,
         "issues": [
           {
             "course": "Hum4743",
-            "day": "Monday",
-            "time": "8:00-9:15",
+            "day": "Thursday",
+            "time": "11:45-1:00",
+            "type": "theory_no_match"
+          },
+          {
+            "course": "Hum4743",
+            "day": "Tuesday",
+            "time": "10:30-11:45",
             "type": "theory_no_match"
           }
         ]
@@ -1067,29 +951,23 @@
       }
     },
     "MBH": {
-      "total_courses": 8,
+      "total_courses": 6,
       "theory": {
         "total": 4,
-        "full_matches": 2,
-        "match_percent": 50.0,
+        "full_matches": 3,
+        "match_percent": 75.0,
         "issues": [
           {
             "course": "CSE4733",
-            "day": "Monday",
-            "time": "9:15-10:30",
-            "type": "theory_no_match"
-          },
-          {
-            "course": "CSE4733",
-            "day": "Thursday",
-            "time": "2:30-3:45",
+            "day": "Friday",
+            "time": "11:45-1:00",
             "type": "theory_no_match"
           }
         ]
       },
       "labs": {
-        "total": 4,
-        "full_matches": 4,
+        "total": 2,
+        "full_matches": 2,
         "partial_matches": 0,
         "full_match_percent": 100.0,
         "partial_match_percent": 0.0,
@@ -1097,7 +975,7 @@
       }
     },
     "NY": {
-      "total_courses": 12,
+      "total_courses": 8,
       "theory": {
         "total": 4,
         "full_matches": 4,
@@ -1105,8 +983,8 @@
         "issues": []
       },
       "labs": {
-        "total": 8,
-        "full_matches": 8,
+        "total": 4,
+        "full_matches": 4,
         "partial_matches": 0,
         "full_match_percent": 100.0,
         "partial_match_percent": 0.0,

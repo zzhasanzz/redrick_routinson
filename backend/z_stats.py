@@ -19,6 +19,14 @@ def analyze_scheduler(file_path):
     }
 
     for faculty, data in faculty_data.items():
+
+        courses = data.get('courses', [])  # ← Safe access
+        preferred_times = data.get('preferred_times', [])
+
+        if not courses:
+            print(f"⚠️ Warning: No courses found for {faculty}")
+            continue 
+        
         faculty_stats = {
             'total_courses': 0,
             'theory': {
