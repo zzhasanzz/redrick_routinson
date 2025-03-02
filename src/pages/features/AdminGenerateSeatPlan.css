@@ -1,100 +1,112 @@
-/* GenerateSeatPlan.css */
 .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
     min-height: 100vh;
-    background-color: #f3f4f6; /* Light Gray Background */
+    text-align: center;
+    background-color: #f9fafb;
 }
 
-.title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
-.button-container {
+.header {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.room-grid {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 15px;
 }
 
-.button {
-    padding: 12px 24px;
+.room-box {
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
     font-size: 16px;
-    font-weight: 600;
-    color: white;
-    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    border: none;
-    outline: none;
+    transition: all 0.3s ease;
+    background-color: white;
 }
 
-.button:hover {
+.room-box.selected {
+    background-color: #3b82f6;
+    color: white;
+}
+/* Header styling (Align title and Add Room button) */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+/* Add Room Input Container (Appears when + is clicked) */
+.add-room-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.add-room-container .input-field {
+    width: 200px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-align: center;
+}
+
+/* Room Actions (Edit, Remove, Cancel Buttons) */
+.room-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* Responsive Grid for Room Display */
+.room-grid {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+/* Room Box (Clickable) */
+.room-box {
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: white;
+    border: 1px solid #ddd;
+}
+
+.room-box:hover {
+    background-color: #e2e8f0;
     transform: scale(1.05);
 }
 
-.summer {
-    background-color: #3b82f6; /* Blue */
-}
-
-.summer:hover {
-    background-color: #2563eb; /* Darker Blue */
-}
-
-.winter {
-    background-color: #10b981; /* Green */
-}
-
-.winter:hover {
-    background-color: #059669; /* Darker Green */
-}
-
-/* Loading Overlay */
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.room-box.selected {
+    background-color: #3b82f6;
     color: white;
-    font-size: 18px;
-    font-weight: bold;
-    z-index: 9999;
+    border-color: #2563eb;
+    transform: scale(1.05);
 }
 
-/* Loading Spinner */
-.loading-spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid white;
-    border-top: 5px solid #3498db;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 10px;
+/* Button Container */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
 }
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Disable button when loading */
-.button:disabled {
-    background: gray;
-    cursor: not-allowed;
-}
-
-/* Success/Error Message */
-.status-message {
-    margin-top: 15px;
-    font-size: 16px;
-    font-weight: bold;
-}
-

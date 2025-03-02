@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../../firebase';
-import { collection, getDocs, doc, setDoc, onSnapshot } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc, onSnapshot, writeBatch } from 'firebase/firestore';
 import {
   Box,
   Heading,
@@ -45,58 +45,127 @@ const AdminManageSeatPlan = () => {
 
 
   // Initialize rooms with dummy fields (runs once on mount)
+  // useEffect(() => {
+  //   const initializeRooms = async () => {
+  //     try {
+  //       const roomsRef = collection(db, selectedCollection);
+  //       const snapshot = await getDocs(roomsRef);
+
+  //       if (!snapshot.empty) {
+  //         console.log('No rooms found. Creating initial rooms...');
+  //         for (let roomId = 1; roomId <= 28; roomId++) {
+  //           const roomRef = doc(db, selectedCollection, roomId.toString());
+  //           await setDoc(roomRef, { dummy2: 'dummy2' }, { merge: true });
+  //         }
+  //         toast({
+  //           title: 'Rooms initialized',
+  //           description: 'Dummy fields added to all rooms.',
+  //           status: 'success',
+  //           duration: 3000,
+  //           isClosable: true,
+  //         });
+  //       }
+  //     } catch (error) {
+  //       console.error('Error initializing rooms:', error);
+  //       setError('Failed to initialize rooms');
+  //     }
+  //   };
+
+  //   initializeRooms();
+  // }, [toast, selectedCollection]);
   useEffect(() => {
     const initializeRooms = async () => {
       try {
-        const roomsRef = collection(db, selectedCollection);
-        const snapshot = await getDocs(roomsRef);
+        const seatPlanRef = collection(db, "seat_plan_rooms");
+        const seatPlanSnapshot = await getDocs(seatPlanRef);
 
-        if (!snapshot.empty) {
-          console.log('No rooms found. Creating initial rooms...');
-          for (let roomId = 1; roomId <= 28; roomId++) {
-            const roomRef = doc(db, selectedCollection, roomId.toString());
-            await setDoc(roomRef, { dummy2: 'dummy2' }, { merge: true });
-          }
-          toast({
-            title: 'Rooms initialized',
-            description: 'Dummy fields added to all rooms.',
-            status: 'success',
-            duration: 3000,
-            isClosable: true,
-          });
+        if (seatPlanSnapshot.empty) {
+          console.log("No room IDs found in seat_plan_rooms.");
+          return;
         }
+
+        const roomIds = seatPlanSnapshot.docs.map((doc) => doc.data().room_no);
+
+        if (roomIds.length === 0) {
+          console.log("No valid room numbers found.");
+          return;
+        }
+
+        console.log("Initializing rooms with IDs:", roomIds);
+
+        for (const roomId of roomIds) {
+          const roomRef = doc(db, selectedCollection, roomId.toString());
+          await setDoc(roomRef, { dummy2: "dummy2" }, { merge: true });
+        }
+
+        toast({
+          title: "Rooms initialized",
+          description: "Dummy fields added to all rooms.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
       } catch (error) {
-        console.error('Error initializing rooms:', error);
-        setError('Failed to initialize rooms');
+        console.error("Error initializing rooms:", error);
+        setError("Failed to initialize rooms");
       }
     };
 
     initializeRooms();
-  }, [toast, selectedCollection]);
+  }, [toast, selectedCollection, db]);
 
+
+
+
+  
   // Fetch rooms
+  // useEffect(() => {
+  //   const fetchRooms = async () => {
+  //     try {
+  //       const roomsRef = collection(db, selectedCollection);
+  //       const snapshot = await getDocs(roomsRef);
+        
+  //       if (snapshot.empty) {
+  //         setError('No rooms found');
+  //         return;
+  //       }
+
+  //       const roomIds = snapshot.docs.map(doc => doc.id);
+  //       setRooms(roomIds);
+  //     } catch (error) {
+  //       console.error('Error fetching rooms:', error);
+  //       setError('Failed to load rooms');
+  //     }
+  //   };
+
+  //   fetchRooms();
+  // }, [selectedCollection]);
+  
+
   useEffect(() => {
     const fetchRooms = async () => {
       try {
         const roomsRef = collection(db, selectedCollection);
         const snapshot = await getDocs(roomsRef);
-        
+  
         if (snapshot.empty) {
-          setError('No rooms found');
+          setError("No rooms found.");
           return;
         }
-
-        const roomIds = snapshot.docs.map(doc => doc.id);
-        setRooms(roomIds);
+  
+        // Fetch and sort room_no field in ascending order
+        const roomList = snapshot.docs
+          .map((doc) => doc.id)
+          .sort((a, b) => (parseInt(a) > parseInt(b) ? 1 : -1));
+  
+        setRooms(roomList);
       } catch (error) {
-        console.error('Error fetching rooms:', error);
-        setError('Failed to load rooms');
+        console.error("Error fetching rooms:", error);
+        setError("Failed to load rooms.");
       }
     };
-
     fetchRooms();
   }, [selectedCollection]);
-
   // Fetch seats for selected room
   // useEffect(() => {
   //   if (!selectedRoom) return;

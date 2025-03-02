@@ -320,7 +320,18 @@ def generate_seating_arrangement(
 
     try:
         # List of all rooms (assuming 30 rooms)
-        ROOMS = list(range(1, 31))  # Rooms are numbered 1-30
+        db = firestore.client()  # Initialize Firestore client
+
+        # Fetch all room numbers from Firebase and sort them numerically
+        rooms_ref = db.collection("seat_plan_rooms").stream()
+        ROOMS = sorted(
+            [room.to_dict().get("room_no") for room in rooms_ref if "room_no" in room.to_dict()],
+            key=lambda x: int(x) if str(x).isdigit() else x  # Sorting numerically for proper order
+        )
+
+        if not ROOMS:
+            print("❌ No rooms found in seat_plan_rooms!")
+            return {"status": "error", "message": "No rooms found in database."}
         SEATS_PER_ROOM = 60  # 60 seats per room
 
         # Extract student lists from JSON response
@@ -375,11 +386,50 @@ def generate_seating_arrangement(
 
 
 
+# def store_seating_plan_in_firebase(seating_plan, shift):
+#     """
+#     Stores the generated seating arrangement in Firebase Firestore and updates student records with their room using batch operations.
+
+#     :param seating_plan: Dictionary containing the seating arrangement per room.
+#     """
+#     try:
+#         db = firestore.client()  # Initialize Firestore client
+#         seat_plan_collection = f"seat_plan_{shift}"
+#         seat_plan_ref = db.collection(seat_plan_collection)  # Firestore Collection
+#         users_ref = db.collection("seat_plan_USERS")  # Firestore Collection for users
+#         batch = db.batch()
+
+#         for room, seats in seating_plan.items():
+#             room_ref = seat_plan_ref.document(str(room))  # Room document
+
+#             for seat in seats:
+#                 seat_ref = room_ref.collection("seats").document(str(seat["seat_no"]))
+#                 batch.set(seat_ref, seat)  # Add seat data to batch
+
+#                 # Update student's document in seat_plan_USERS collection
+#                 student_id = seat["id"]
+#                 student_query = users_ref.where("id", "==", student_id).limit(1).stream()
+
+#                 for doc in student_query:
+#                     doc_ref = users_ref.document(doc.id)
+#                     batch.update(doc_ref, {"room": room})  # Batch update
+#                     print(f"✅ Queued update for student {student_id} with room {room} in seat_plan_USERS.")
+        
+#         batch.commit()  # Commit all batched writes at once
+#         print("✅ Seating Plan successfully stored in Firebase Firestore!")
+#         return {"status": "success", "message": "Seating plan stored in Firebase and student records updated"}
+
+#     except Exception as e:
+#         print(f"❌ Error storing seating plan in Firebase: {str(e)}")
+#         return {"status": "error", "message": str(e)}
+# from firebase_admin import firestore
+
 def store_seating_plan_in_firebase(seating_plan, shift):
     """
     Stores the generated seating arrangement in Firebase Firestore and updates student records with their room using batch operations.
 
     :param seating_plan: Dictionary containing the seating arrangement per room.
+    :param shift: The shift identifier for the collection name.
     """
     try:
         db = firestore.client()  # Initialize Firestore client
@@ -388,11 +438,14 @@ def store_seating_plan_in_firebase(seating_plan, shift):
         users_ref = db.collection("seat_plan_USERS")  # Firestore Collection for users
         batch = db.batch()
 
-        for room, seats in seating_plan.items():
-            room_ref = seat_plan_ref.document(str(room))  # Room document
+        # Iterate over seating_plan dictionary
+        for room_seats in seating_plan.values():  # Now iterating over the list of student seat data
+            for seat in room_seats:
+                room = seat["room"]  # Get room from seat object
 
-            for seat in seats:
-                seat_ref = room_ref.collection("seats").document(str(seat["seat_no"]))
+                room_ref = seat_plan_ref.document(str(room))  # Room document reference
+                seat_ref = room_ref.collection("seats").document(str(seat["seat_no"]))  # Seat document reference
+                
                 batch.set(seat_ref, seat)  # Add seat data to batch
 
                 # Update student's document in seat_plan_USERS collection
@@ -401,7 +454,7 @@ def store_seating_plan_in_firebase(seating_plan, shift):
 
                 for doc in student_query:
                     doc_ref = users_ref.document(doc.id)
-                    batch.update(doc_ref, {"room": room})  # Batch update
+                    batch.update(doc_ref, {"room": room})  # Batch update student's room
                     print(f"✅ Queued update for student {student_id} with room {room} in seat_plan_USERS.")
         
         batch.commit()  # Commit all batched writes at once
@@ -450,7 +503,7 @@ def generate_seat_plan_api():
          # Store seating plan in Firestore
         firebase_response = store_seating_plan_in_firebase(seating_plan["seating_plan"],"summer_morning")
         firebase_response_day = store_seating_plan_in_firebase(seating_plan_day["seating_plan"],"summer_day")
-        # return jsonify(firebase_response_day)
+        # return jsonify(seating_plan)
         # time.sleep(5)
         return jsonify({"status": "success", "message": "Seat plan generated successfully!"}), 200
 
