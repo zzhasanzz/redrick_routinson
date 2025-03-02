@@ -27,6 +27,8 @@ import AdminGenerateSeatPlan from './pages/features/AdminManageSeatPlan.jsx';
 import LostAndFound from './pages/features/LostandFound.jsx';
 
 import Event from "./pages/event/Event.jsx";
+import Forum from './pages/forum/forum.jsx';
+
 
 
 
@@ -173,12 +175,12 @@ function App() {
                 </RequireAuth>
 
             }/>
-            <Route path="/student-home/forum" element={
+           <Route path="/student-home/forum" element={
                 <RequireAuth allowedRoles={["student"]}>
-                    <div> hola este es un forum </div>
+                    <Forum />
                 </RequireAuth>
+}/>
 
-            }/>
 
         </Route>
 
