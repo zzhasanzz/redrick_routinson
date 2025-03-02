@@ -29,7 +29,7 @@ import AdminGenerateRoutine from "./pages/features/AdminGenerateRoutine.jsx";
 import AdminViewRoutine from "./pages/features/AdminViewRoutine.jsx";
 import AdminManageUsers from "./pages/features/AdminManageUsers.jsx";
 import AdminGenerateSeatPlan from "./pages/features/AdminManageSeatPlan.jsx";
-import LostAndFound from "./pages/features/LostAndFound.jsx"
+import LostAndFound from "./pages/features/LostAndFound.jsx";
 import FoodScanner from "./pages/event/Scanner.jsx";
 import UsersProfile from "./pages/features/UsersProfile.jsx";
 
@@ -171,12 +171,14 @@ function App() {
                 </RequireAuth>
               }
             />
-            <Route path="/student-home/scanner" element={
+            <Route
+              path="/student-home/scanner"
+              element={
                 <RequireAuth allowedRoles={["student"]}>
-                    <FoodScanner/>
+                  <FoodScanner />
                 </RequireAuth>
-
-            }/>
+              }
+            />
 
             <Route
               path="/student-home/lost-and-found"
@@ -200,7 +202,7 @@ function App() {
               path="/student-home/user"
               element={
                 <RequireAuth allowedRoles={["student"]}>
-                  <UsersProfile/>
+                  <UsersProfile />
                 </RequireAuth>
               }
             />
@@ -213,14 +215,14 @@ function App() {
               }
             />
 
-              <Route
-                  path="/student-home/event/invite/:eventId"
-                  element={
-                      <RequireAuth allowedRoles={["student"]}>
-                          <InviteTeacher/>
-                      </RequireAuth>
-                  }
-              />
+            <Route
+              path="/student-home/event/invite/:eventId"
+              element={
+                <RequireAuth allowedRoles={["student"]}>
+                  <InviteTeacher />
+                </RequireAuth>
+              }
+            />
             <Route
               path="/student-home/logout"
               element={
@@ -271,8 +273,8 @@ function App() {
               path="/teacher-home/event"
               element={
                 // <RequireAuth allowedRoles={["teacher"]}>
-                  <TeacherEvents/>
-               // </RequireAuth>
+                <TeacherEvents />
+                // </RequireAuth>
               }
             />
             <Route
