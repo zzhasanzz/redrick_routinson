@@ -1,5 +1,6 @@
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import React from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, SimpleGrid, Button, Icon, Text } from "@chakra-ui/react";
 import {
@@ -139,7 +140,7 @@ import { useState } from "react";
 
 
 const GenerateSeatPlan = () => {
-    
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
 
@@ -162,6 +163,10 @@ const handleSeatPlanSummerClick = async () => {
       setMessage("❌ Failed to generate Summer seat plan. Try again.");
     }
     setLoading(false);
+    // if(loading == false && message == "✅ Summer seat plan successfully generated!")
+    // {
+    //   setTimeout(() => navigate('/admin-home/admin-manage-seat-plan'));
+    // }
   };
   const handleSeatPlanWinterClick = async () => {
     setLoading(true);
@@ -173,7 +178,7 @@ const handleSeatPlanSummerClick = async () => {
   
       // If you want to trigger Firebase function after fetching seat plans:
       // await generateSeatPlanInFirebase();
-      setMessage("✅ Summer seat plan successfully generated!");
+      setMessage("✅ Winter seat plan successfully generated!");
 
     } catch (error) {
       console.error(
@@ -184,7 +189,16 @@ const handleSeatPlanSummerClick = async () => {
 
     }
     setLoading(false);
+    // if(loading == false && message == "✅ Winter seat plan successfully generated!")
+    //   {
+    //     setTimeout(() => navigate('/admin-home/admin-manage-seat-plan'));
+    //   }
   };
+  useEffect(() => {
+    if (message.includes("successfully generated")) {
+        setTimeout(() => navigate('/admin-home/admin-manage-seat-plan'));
+    }
+  }, [message, navigate]);
 
     return (
         <div className="container">

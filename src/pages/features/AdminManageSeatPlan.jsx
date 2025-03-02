@@ -26,6 +26,14 @@ const departmentColors = {
   TVE: 'pink.400',
 };
 
+const collections = [
+  'seat_plan_summer_day',
+  'seat_plan_summer_morning',
+  'seat_plan_winter_day',
+  'seat_plan_winter_morning',
+];
+
+
 const AdminManageSeatPlan = () => {
   const [rooms, setRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState('');
@@ -33,18 +41,20 @@ const AdminManageSeatPlan = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const toast = useToast();
+  const [selectedCollection, setSelectedCollection] = useState('seat_plan_summer_day');
+
 
   // Initialize rooms with dummy fields (runs once on mount)
   useEffect(() => {
     const initializeRooms = async () => {
       try {
-        const roomsRef = collection(db, 'seat_plan_summer_day');
+        const roomsRef = collection(db, selectedCollection);
         const snapshot = await getDocs(roomsRef);
 
         if (!snapshot.empty) {
           console.log('No rooms found. Creating initial rooms...');
           for (let roomId = 1; roomId <= 28; roomId++) {
-            const roomRef = doc(db, 'seat_plan_summer_day', roomId.toString());
+            const roomRef = doc(db, selectedCollection, roomId.toString());
             await setDoc(roomRef, { dummy2: 'dummy2' }, { merge: true });
           }
           toast({
@@ -62,13 +72,13 @@ const AdminManageSeatPlan = () => {
     };
 
     initializeRooms();
-  }, [toast]);
+  }, [toast, selectedCollection]);
 
   // Fetch rooms
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const roomsRef = collection(db, 'seat_plan_summer_day');
+        const roomsRef = collection(db, selectedCollection);
         const snapshot = await getDocs(roomsRef);
         
         if (snapshot.empty) {
@@ -85,30 +95,66 @@ const AdminManageSeatPlan = () => {
     };
 
     fetchRooms();
-  }, []);
+  }, [selectedCollection]);
 
   // Fetch seats for selected room
+  // useEffect(() => {
+  //   if (!selectedRoom) return;
+
+  //   setLoading(true);
+  //   const seatsRef = collection(db, `${selectedCollection}/${selectedRoom}/seats`);
+    
+  //   const unsubscribe = onSnapshot(seatsRef, (snapshot) => {
+  //     const seatsData = snapshot.docs.map(doc => ({
+  //       seatNumber: doc.id,
+  //       ...doc.data()
+  //     }));
+  //     setSeats(seatsData);
+  //     setLoading(false);
+  //   }, (error) => {
+  //     console.error('Error fetching seats:', error);
+  //     setError('Failed to load seats');
+  //     setLoading(false);
+  //   });
+
+  //   return () => unsubscribe();
+  // }, [selectedRoom, selectedCollection]);
+
   useEffect(() => {
     if (!selectedRoom) return;
-
+  
     setLoading(true);
-    const seatsRef = collection(db, `seat_plan_summer_day/${selectedRoom}/seats`);
+    const seatsRef = collection(db, `${selectedCollection}/${selectedRoom}/seats`);
     
     const unsubscribe = onSnapshot(seatsRef, (snapshot) => {
       const seatsData = snapshot.docs.map(doc => ({
-        seatNumber: doc.id,
+        seatNumber: parseInt(doc.id, 10),
         ...doc.data()
       }));
-      setSeats(seatsData);
+  
+      // Generate an array of all seat numbers (1-60)
+      const allSeats = Array.from({ length: 60 }, (_, i) => ({
+        seatNumber: i + 1,  // Seat numbers from 1 to 60
+        id: null,  // No student assigned
+        dept: null // No department
+      }));
+  
+      // Merge the existing seat data into the full list
+      seatsData.forEach(seat => {
+        allSeats[seat.seatNumber - 1] = seat;
+      });
+  
+      setSeats(allSeats);
       setLoading(false);
     }, (error) => {
       console.error('Error fetching seats:', error);
       setError('Failed to load seats');
       setLoading(false);
     });
-
+  
     return () => unsubscribe();
-  }, [selectedRoom]);
+  }, [selectedRoom, selectedCollection]);
+  
 
   // Sort seats numerically
   const sortedSeats = [...seats].sort((a, b) => parseInt(a.seatNumber) - parseInt(b.seatNumber));
@@ -141,6 +187,18 @@ const AdminManageSeatPlan = () => {
 
       {/* Room Selection Dropdown */}
       <Box mb={8}>
+      <Select
+          placeholder="Select a Collection"
+          value={selectedCollection}
+          onChange={(e) => setSelectedCollection(e.target.value)}
+          bg="white"
+          maxW="400px"
+          mb={4}
+        >
+          {collections.map(collection => (
+            <option key={collection} value={collection}>{collection.replace(/_/g, ' ')}</option>
+          ))}
+        </Select>
         <Select
           placeholder="Select a Room"
           value={selectedRoom}
