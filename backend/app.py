@@ -304,6 +304,84 @@ def generate_seat_plan(target_departments, semester):
         print(f"❌ Error retrieving seat plan: {str(e)}")
         return {"status": "error", "message": str(e)}
 
+# def generate_seating_arrangement(
+#     result_sem_1_container_1, result_sem_1_container_2,
+#     result_sem_3_container_1, result_sem_3_container_2
+# ):
+#     """
+#     Generates seating arrangements where:
+#     - First two seats: result_sem_1_container_1, result_sem_1_container_2
+#     - Next two seats: result_sem_2_container_2, result_sem_2_container_1
+#     - This pattern continues until no data is left.
+
+#     If a container runs out of data, skip that seat and maintain order.
+#     Each room has 60 seats.
+#     """
+
+#     try:
+#         # List of all rooms (assuming 30 rooms)
+#         db = firestore.client()  # Initialize Firestore client
+
+#         # Fetch all room numbers from Firebase and sort them numerically
+#         rooms_ref = db.collection("seat_plan_rooms").stream()
+#         ROOMS = sorted(
+#             [room.to_dict().get("room_no") for room in rooms_ref if "room_no" in room.to_dict()],
+#             key=lambda x: int(x) if str(x).isdigit() else x  # Sorting numerically for proper order
+#         )
+
+#         if not ROOMS:
+#             print("❌ No rooms found in seat_plan_rooms!")
+#             return {"status": "error", "message": "No rooms found in database."}
+#         SEATS_PER_ROOM = 60  # 60 seats per room
+
+#         # Extract student lists from JSON response
+#         queue_1 = sum([result_sem_1_container_1["seat_plan"].get(dept, []) for dept in ["CSE", "MPE", "SWE", "IPE"]], [])
+#         queue_2 = sum([result_sem_1_container_2["seat_plan"].get(dept, []) for dept in ["EEE","CEE", "TVE","BTM"]], [])
+#         queue_3 = sum([result_sem_3_container_2["seat_plan"].get(dept, []) for dept in ["BTM","CEE", "TVE", "EEE"]], [])
+#         queue_4 = sum([result_sem_3_container_1["seat_plan"].get(dept, []) for dept in ["MPE", "SWE", "IPE" ,"CSE"]], [])
+
+#         seating_plan = {}  # Dictionary to store seating arrangements per room
+
+#         # Initialize room structure
+#         for room in ROOMS:
+#             seating_plan[room] = []
+
+#         room_index = 0  # Track current room
+#         seat_no = 1  # Track seat number in each room
+
+#         # Define the order of seating
+#         seat_order = [queue_1, queue_2, queue_3, queue_4]  # Rotate in this order
+
+#         # Loop until all queues are exhausted
+#         while any(len(queue) > 0 for queue in seat_order):  # Stop when all lists are empty
+#             for queue in seat_order:
+#                 if queue:  # If queue is not empty
+#                     student = queue.pop(0)  # Take first student
+#                     seating_plan[ROOMS[room_index]].append({
+#                         "room": ROOMS[room_index],
+#                         "seat_no": seat_no,
+#                         "id": student["id"],
+#                         "dept": student["dept"],
+#                         "semester": student["semester"],
+#                         "role": student.get("role", "student"),
+#                         "displayName": student.get("displayName", "")
+#                     })
+                    
+#                 # Move to next seat
+#                 seat_no += 1
+#                 # If room is full, go to next room
+#                 if seat_no > SEATS_PER_ROOM:
+#                     seat_no = 1  # Reset seat number
+#                     room_index += 1  # Move to next room
+#                     if room_index >= len(ROOMS):  # If no more rooms left, stop
+#                         break  # Exit the loop
+
+#         print("✅ Seating arrangement generated successfully.")
+#         return {"status": "success", "seating_plan": seating_plan}
+
+#     except Exception as e:
+#         print(f"❌ Error generating seating arrangement: {str(e)}")
+#         return {"status": "error", "message": str(e)}
 def generate_seating_arrangement(
     result_sem_1_container_1, result_sem_1_container_2,
     result_sem_3_container_1, result_sem_3_container_2
@@ -315,36 +393,41 @@ def generate_seating_arrangement(
     - This pattern continues until no data is left.
 
     If a container runs out of data, skip that seat and maintain order.
-    Each room has 60 seats.
+    Each room has a dynamically assigned number of seats from Firebase.
     """
 
     try:
-        # List of all rooms (assuming 30 rooms)
-        db = firestore.client()  # Initialize Firestore client
+        # Initialize Firestore client
+        db = firestore.client()
 
-        # Fetch all room numbers from Firebase and sort them numerically
+        # Fetch all room numbers and total seats from Firebase
         rooms_ref = db.collection("seat_plan_rooms").stream()
-        ROOMS = sorted(
-            [room.to_dict().get("room_no") for room in rooms_ref if "room_no" in room.to_dict()],
-            key=lambda x: int(x) if str(x).isdigit() else x  # Sorting numerically for proper order
-        )
+        ROOMS = [
+            {
+                "room_no": room.to_dict().get("room_no"),
+                "total_seats": int(room.to_dict().get("total_seats", 60))  # Default to 60 if not specified
+            }
+            for room in rooms_ref if "room_no" in room.to_dict()
+        ]
+
+        # Sort rooms numerically
+        ROOMS.sort(key=lambda x: int(x["room_no"]) if str(x["room_no"]).isdigit() else x["room_no"])
 
         if not ROOMS:
             print("❌ No rooms found in seat_plan_rooms!")
             return {"status": "error", "message": "No rooms found in database."}
-        SEATS_PER_ROOM = 60  # 60 seats per room
 
         # Extract student lists from JSON response
         queue_1 = sum([result_sem_1_container_1["seat_plan"].get(dept, []) for dept in ["CSE", "MPE", "SWE", "IPE"]], [])
-        queue_2 = sum([result_sem_1_container_2["seat_plan"].get(dept, []) for dept in ["EEE","CEE", "TVE","BTM"]], [])
-        queue_3 = sum([result_sem_3_container_2["seat_plan"].get(dept, []) for dept in ["BTM","CEE", "TVE", "EEE"]], [])
-        queue_4 = sum([result_sem_3_container_1["seat_plan"].get(dept, []) for dept in ["MPE", "SWE", "IPE" ,"CSE"]], [])
+        queue_2 = sum([result_sem_1_container_2["seat_plan"].get(dept, []) for dept in ["EEE", "CEE", "TVE", "BTM"]], [])
+        queue_3 = sum([result_sem_3_container_2["seat_plan"].get(dept, []) for dept in ["BTM", "CEE", "TVE", "EEE"]], [])
+        queue_4 = sum([result_sem_3_container_1["seat_plan"].get(dept, []) for dept in ["MPE", "SWE", "IPE", "CSE"]], [])
 
         seating_plan = {}  # Dictionary to store seating arrangements per room
 
         # Initialize room structure
         for room in ROOMS:
-            seating_plan[room] = []
+            seating_plan[room["room_no"]] = []
 
         room_index = 0  # Track current room
         seat_no = 1  # Track seat number in each room
@@ -357,8 +440,11 @@ def generate_seating_arrangement(
             for queue in seat_order:
                 if queue:  # If queue is not empty
                     student = queue.pop(0)  # Take first student
-                    seating_plan[ROOMS[room_index]].append({
-                        "room": ROOMS[room_index],
+                    room_no = ROOMS[room_index]["room_no"]
+                    total_seats = ROOMS[room_index]["total_seats"]
+
+                    seating_plan[room_no].append({
+                        "room": room_no,
                         "seat_no": seat_no,
                         "id": student["id"],
                         "dept": student["dept"],
@@ -370,7 +456,7 @@ def generate_seating_arrangement(
                 # Move to next seat
                 seat_no += 1
                 # If room is full, go to next room
-                if seat_no > SEATS_PER_ROOM:
+                if seat_no > total_seats:
                     seat_no = 1  # Reset seat number
                     room_index += 1  # Move to next room
                     if room_index >= len(ROOMS):  # If no more rooms left, stop
