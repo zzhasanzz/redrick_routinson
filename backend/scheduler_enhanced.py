@@ -589,23 +589,27 @@ def write_schedule_to_csv(scheduled, filename="final_schedule.csv"):
                 writer.writerow([])
 
 def update_courses_collection(scheduled_classes):
-    """Store course information in Firestore"""
+    """Store course information in Firestore with sections subcollections"""
     try:
         # Create a dictionary to hold course information
-        courses_data = defaultdict(lambda: {"course_type": "", "assigned_teachers": set()})
+        courses_data = defaultdict(lambda: {
+            "course_type": "",
+            "sections": defaultdict(lambda: {"assigned_teachers": set()})
+        })
         
         # Extract course information from scheduled classes
         for cls in scheduled_classes:
             course_code = cls.code
             course_type = "lab" if len(cls.times) == 2 else "theory"
+            section = cls.section
             
             # Update course type
             courses_data[course_code]["course_type"] = course_type
             
-            # Add teachers to the set (using set to avoid duplicates)
+            # Add teachers to the set for this section
             for teacher in cls.teachers:
                 if teacher:  # Only add non-empty teacher names
-                    courses_data[course_code]["assigned_teachers"].add(teacher)
+                    courses_data[course_code]["sections"][section]["assigned_teachers"].add(teacher)
         
         # Write to Firestore courses collection
         batch = db.batch()
@@ -613,15 +617,20 @@ def update_courses_collection(scheduled_classes):
         batch_limit = 490  # Firestore batch limit is 500, using 490 for safety
         
         for course_code, data in courses_data.items():
-            # Convert set to list for JSON serialization
-            doc_data = {
-                "course_type": data["course_type"],
-                "assigned_teachers": list(data["assigned_teachers"])
-            }
-            
-            ref = db.collection('courses').document(course_code)
-            batch.set(ref, doc_data)
+            # Set the course type in the main document
+            course_ref = db.collection('courses').document(course_code)
+            batch.set(course_ref, {"course_type": data["course_type"]})
             count += 1
+            
+            # Create section documents in subcollection
+            for section, section_data in data["sections"].items():
+                section_ref = course_ref.collection('sections').document(section)
+                section_doc = {
+                    "assigned_teachers": list(section_data["assigned_teachers"]),
+                    "section": section
+                }
+                batch.set(section_ref, section_doc)
+                count += 1
             
             if count >= batch_limit:
                 batch.commit()
@@ -632,7 +641,7 @@ def update_courses_collection(scheduled_classes):
         if count > 0:
             batch.commit()
             
-        print(f"Updated {len(courses_data)} courses in Firestore.")
+        print(f"Updated {len(courses_data)} courses in Firestore with sections.")
     except Exception as e:
         print(f"Error updating courses collection: {e}")
 

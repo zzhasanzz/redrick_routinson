@@ -339,7 +339,7 @@ const TeacherRoutine = () => {
         console.error("Error canceling class:", error);
         alert("Failed to cancel class.");
       }
-      const courseInfoRef = doc(db, "courses", courseId.toString());
+      const courseInfoRef = doc(db, `courses/${courseId}/sections`, section);
       const courseInfoSnapshot = await getDoc(courseInfoRef);
       const courseInfoData = courseInfoSnapshot.data();
       let index = 1;
@@ -421,7 +421,11 @@ const TeacherRoutine = () => {
         .charAt(selectedCourse.toString().length - 3);
       const semesterCollection = `semester_${sem}_${selectedSection}`;
 
-      const courseInfoRef = doc(db, "courses", selectedCourse.toString());
+      const courseInfoRef = doc(
+        db,
+        `courses/${selectedCourse}/sections`,
+        selectedSection
+      );
       const courseInfoSnapshot = await getDoc(courseInfoRef);
       const courseInfoData = courseInfoSnapshot.data();
       let index = 0;
@@ -833,7 +837,7 @@ const TeacherRoutine = () => {
         });
         console.log("Updated Next Semester Document");
 
-        const courseInfoRef = doc(db, "courses", courseId.toString());
+        const courseInfoRef = doc(db, `courses/${courseId}/sections`, section);
         const courseInfoSnapshot = await getDoc(courseInfoRef);
         const courseInfoData = courseInfoSnapshot.data();
         let index = 0;
@@ -982,7 +986,11 @@ const TeacherRoutine = () => {
           });
           console.log("Updated next room document");
           let index = 0;
-          const courseDataDocRef = doc(db, `courses`, courseId.toString());
+          const courseDataDocRef = doc(
+            db,
+            `courses/${courseId}/sections`,
+            section
+          );
           const courseDataDoc = await getDoc(courseDataDocRef);
           const courseData = courseDataDoc.data();
 
