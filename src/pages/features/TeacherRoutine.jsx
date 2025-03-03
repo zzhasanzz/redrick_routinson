@@ -36,8 +36,12 @@ const TeacherRoutine = () => {
   const [showUnifiedRescheduleModal, setShowUnifiedRescheduleModal] =
     useState(false);
   const [selectedSlot, setSelectedSlot] = useState(null);
-  const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
   const [availableRooms, setAvailableRooms] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [processingAction, setProcessingAction] = useState("");
+  const [swapProcessing, setSwapProcessing] = useState(false);
+  const [confirmRescheduleProcessing, setConfirmRescheduleProcessing] =
+    useState(false);
 
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
   const times = {
@@ -251,6 +255,8 @@ const TeacherRoutine = () => {
   }
 
   const handleCancelClass = async (courseId, day, time, section) => {
+    setIsProcessing(true);
+    setProcessingAction(`cancel-${courseId}-${day}-${time}-${section}`);
     let selectedCourseType = "";
     let rooms = [];
     let room = "";
@@ -389,9 +395,12 @@ const TeacherRoutine = () => {
       }
     }
     await fetchSchedule(); // Refresh the schedule after cancellation
+    setIsProcessing(false);
+    setProcessingAction("");
   };
 
   const confirmReschedule = async () => {
+    setConfirmRescheduleProcessing(true);
     try {
       console.log(`Selected Room: ${selectedRoom}`);
       console.log(`Selected Reschedule Time: ${selectedRescheduleTime}`);
@@ -674,6 +683,8 @@ const TeacherRoutine = () => {
     } catch (error) {
       console.error("Error in confirmReschedule:", error);
       alert(`Failed to reschedule class: ${error.message}`);
+    } finally {
+      setConfirmRescheduleProcessing(false);
     }
   };
 
@@ -685,6 +696,9 @@ const TeacherRoutine = () => {
     room,
     type
   ) => {
+    setIsProcessing(true);
+    setProcessingAction(`reschedule-${course}-${day}-${time}-${section}`);
+
     setSelectedCourse(course);
     setSelectedDay(day);
     setSelectedTime(time);
@@ -696,9 +710,13 @@ const TeacherRoutine = () => {
     let sem = course.toString().charAt(course.toString().length - 3);
     await fetchSemesterClasses(sem, section);
     setShowUnifiedRescheduleModal(true);
+    setIsProcessing(false);
+    setProcessingAction("");
   };
 
   const handleUndoCancelledClass = async (courseId, day, time, section) => {
+    setIsProcessing(true);
+    setProcessingAction(`undo-${courseId}-${day}-${time}-${section}`);
     let selectedCourseType = "";
     let rooms = [];
     let room = "";
@@ -815,6 +833,8 @@ const TeacherRoutine = () => {
       alert("Failed to undo cancelled class.");
     }
     await fetchSchedule(); // Refresh the schedule after undo
+    setIsProcessing(false);
+    setProcessingAction("");
   };
 
   const handleCancelTemporaryClass = async (
@@ -824,6 +844,8 @@ const TeacherRoutine = () => {
     room,
     section
   ) => {
+    setIsProcessing(true);
+    setProcessingAction(`cancel-temp-${courseId}-${day}-${time}-${room}`);
     console.log("Cancelling temporary class");
     console.log("Course ID: ", courseId);
     console.log("Day: ", day);
@@ -985,6 +1007,8 @@ const TeacherRoutine = () => {
       alert("Failed to cancel temporary class.");
     }
     await fetchSchedule(); // Refresh the schedule after cancellation
+    setIsProcessing(false);
+    setProcessingAction("");
   };
 
   const renderTable = () => (
@@ -1001,73 +1025,88 @@ const TeacherRoutine = () => {
         </tr>
       </thead>
       <tbody>
-        {schedule.map((slot, index) => (
-          <tr key={`${slot.courseCode}-${slot.day}-${slot.time}-${index}$`}>
-            <td>{slot.courseCode}</td>
-            <td>{slot.day}</td>
-            <td>{slot.room}</td>
-            <td>{slot.time}</td>
-            <td>{slot.status}</td>
-            <td>{slot.section}</td>
-            <td>
-              {slot.status === "Temporary" ? (
+        {schedule.map((slot, index) => {
+          const actionKey = `${slot.courseCode}-${slot.day}-${slot.time}-${slot.section}`;
+          return (
+            <tr key={`${actionKey}-${index}`}>
+              <td>{slot.courseCode}</td>
+              <td>{slot.day}</td>
+              <td>{slot.room}</td>
+              <td>{slot.time}</td>
+              <td>{slot.status}</td>
+              <td>{slot.section}</td>
+              <td>
+                {slot.status === "Temporary" ? (
+                  <button
+                    onClick={() =>
+                      handleCancelTemporaryClass(
+                        slot.courseCode,
+                        slot.day,
+                        slot.time,
+                        slot.room,
+                        slot.section
+                      )
+                    }
+                    disabled={isProcessing}
+                  >
+                    {processingAction === `cancelTemp-${actionKey}`
+                      ? "Processing..."
+                      : "Cancel Temporary Class"}
+                  </button>
+                ) : slot.status === "Cancelled" ? (
+                  <button
+                    onClick={() =>
+                      handleUndoCancelledClass(
+                        slot.courseCode,
+                        slot.day,
+                        slot.time,
+                        slot.section
+                      )
+                    }
+                    disabled={isProcessing}
+                  >
+                    {processingAction === `undo-${actionKey}`
+                      ? "Processing..."
+                      : "Undo Cancel"}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() =>
+                      handleCancelClass(
+                        slot.courseCode,
+                        slot.day,
+                        slot.time,
+                        slot.section
+                      )
+                    }
+                    disabled={isProcessing}
+                  >
+                    {processingAction === `cancel-${actionKey}`
+                      ? "Processing..."
+                      : "Cancel Class"}
+                  </button>
+                )}
                 <button
                   onClick={() =>
-                    handleCancelTemporaryClass(
+                    handleRescheduleClass(
                       slot.courseCode,
                       slot.day,
                       slot.time,
+                      slot.section,
                       slot.room,
-                      slot.section
+                      slot.type
                     )
                   }
+                  disabled={isProcessing}
                 >
-                  Cancel Temporary Class
+                  {processingAction === `reschedule-${actionKey}`
+                    ? "Processing..."
+                    : "Reschedule"}
                 </button>
-              ) : slot.status === "Cancelled" ? (
-                <button
-                  onClick={() =>
-                    handleUndoCancelledClass(
-                      slot.courseCode,
-                      slot.day,
-                      slot.time,
-                      slot.section
-                    )
-                  }
-                >
-                  Undo Cancel
-                </button>
-              ) : (
-                <button
-                  onClick={() =>
-                    handleCancelClass(
-                      slot.courseCode,
-                      slot.day,
-                      slot.time,
-                      slot.section
-                    )
-                  }
-                >
-                  Cancel Class
-                </button>
-              )}
-              <button
-                onClick={() =>
-                  handleRescheduleClass(
-                    slot.courseCode,
-                    slot.day,
-                    slot.time,
-                    slot.section,
-                    slot.room,
-                    slot.type
-                  )
-                }
-              >
-                Reschedule
-              </button>
-            </td>
-          </tr>
-        ))}
+              </td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );
@@ -1217,6 +1256,7 @@ const TeacherRoutine = () => {
   };
 
   const sendSwapRequest = async () => {
+    setSwapProcessing(true);
     try {
       const swapRequestRef = collection(db, "swap_requests");
       await addDoc(swapRequestRef, {
@@ -1239,10 +1279,14 @@ const TeacherRoutine = () => {
     } catch (error) {
       console.error("Error sending swap request:", error);
       alert(`Failed to send swap request: ${error.message}`);
+    } finally {
+      setSwapProcessing(false);
     }
   };
 
   const handleSwapResponse = async (requestId, accept) => {
+    setIsProcessing(true);
+    setProcessingAction(`swap-${requestId}`);
     try {
       const request = swapRequests.find((req) => req.id === requestId);
       if (!request) return;
@@ -1260,6 +1304,9 @@ const TeacherRoutine = () => {
     } catch (error) {
       console.error("Error handling swap response:", error);
       alert(`Failed to process swap response: ${error.message}`);
+    } finally {
+      setIsProcessing(false);
+      setProcessingAction("");
     }
     await fetchSchedule(); // Refresh the schedule after swap
   };
@@ -1483,14 +1530,20 @@ const TeacherRoutine = () => {
                 timeSlots={Object.values(timeMapping)}
                 dayMapping={dayMapping}
                 onSlotSelect={handleSlotSelect}
+                isProcessing={isProcessing}
               />
 
               {selectedSlot && !selectedSlot.isFree && showSwapRequestModal && (
                 <div className="swap-confirmation">
                   <h4>Confirm Swap Request</h4>
                   <p>Request to swap with {targetClass.teacher}'s class?</p>
-                  <button onClick={sendSwapRequest}>Send Swap Request</button>
-                  <button onClick={() => setShowSwapRequestModal(false)}>
+                  <button onClick={sendSwapRequest} disabled={swapProcessing}>
+                    {swapProcessing ? "Processing..." : "Send Swap Request"}
+                  </button>
+                  <button
+                    onClick={() => setShowSwapRequestModal(false)}
+                    disabled={swapProcessing}
+                  >
                     Cancel
                   </button>
                 </div>
@@ -1502,7 +1555,10 @@ const TeacherRoutine = () => {
                   0 && (
                   <div className="room-selection">
                     <h4>Select Room</h4>
-                    <select onChange={(e) => setSelectedRoom(e.target.value)}>
+                    <select
+                      onChange={(e) => setSelectedRoom(e.target.value)}
+                      disabled={confirmRescheduleProcessing}
+                    >
                       <option value="" disabled selected>
                         -- Select a room --
                       </option>
@@ -1514,14 +1570,20 @@ const TeacherRoutine = () => {
                         </option>
                       ))}
                     </select>
-                    <button onClick={confirmReschedule}>
-                      Confirm Reschedule
+                    <button
+                      onClick={confirmReschedule}
+                      disabled={confirmRescheduleProcessing}
+                    >
+                      {confirmRescheduleProcessing
+                        ? "Processing..."
+                        : "Confirm Reschedule"}
                     </button>
                   </div>
                 )}
 
               <button
                 onClick={() => setShowUnifiedRescheduleModal(false)}
+                disabled={confirmRescheduleProcessing || swapProcessing}
                 style={{ marginTop: "20px" }}
               >
                 Close
@@ -1541,11 +1603,21 @@ const TeacherRoutine = () => {
                   {request.requestingCourse} class with your{" "}
                   {request.targetCourse} class
                 </p>
-                <button onClick={() => handleSwapResponse(request.id, true)}>
-                  Accept
+                <button
+                  onClick={() => handleSwapResponse(request.id, true)}
+                  disabled={isProcessing}
+                >
+                  {processingAction === `swap-${request.id}`
+                    ? "Processing..."
+                    : "Accept"}
                 </button>
-                <button onClick={() => handleSwapResponse(request.id, false)}>
-                  Reject
+                <button
+                  onClick={() => handleSwapResponse(request.id, false)}
+                  disabled={isProcessing}
+                >
+                  {processingAction === `swap-${request.id}`
+                    ? "Processing..."
+                    : "Reject"}
                 </button>
               </div>
             ))}
