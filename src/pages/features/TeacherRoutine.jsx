@@ -26,6 +26,7 @@ const TeacherRoutine = () => {
   const [selectedDay, setSelectedDay] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedSection, setSelectedSection] = useState("");
+  const [toBeRescheduledRoom, setToBeRescheduledRoom] = useState("");
 
   const [selectedRescheduleTime, setSelectedRescheduleTime] = useState("");
   const [selectedRoom, setSelectedRoom] = useState("");
@@ -410,6 +411,7 @@ const TeacherRoutine = () => {
 
       if (!selectedRoom || !selectedRescheduleTime) {
         alert("Please select both a room and a time slot for rescheduling.");
+        setConfirmRescheduleProcessing(true);
         return;
       }
 
@@ -679,6 +681,7 @@ const TeacherRoutine = () => {
       // Refresh the schedule and close modal
       await fetchSchedule();
       setShowUnifiedRescheduleModal(false);
+      resetRescheduleStates();
       alert("Class rescheduled successfully!");
     } catch (error) {
       console.error("Error in confirmReschedule:", error);
@@ -686,6 +689,14 @@ const TeacherRoutine = () => {
     } finally {
       setConfirmRescheduleProcessing(false);
     }
+  };
+
+  const resetRescheduleStates = () => {
+    setSelectedSlot(null);
+    setSelectedRescheduleTime("");
+    setSelectedRoom(""); // Ensure room is reset
+    setAvailableRooms(new Map());
+    // toBeRescheduledRoom = "";
   };
 
   const handleRescheduleClass = async (
@@ -696,6 +707,13 @@ const TeacherRoutine = () => {
     room,
     type
   ) => {
+    console.log("Rescheduling class");
+    console.log("Course: ", course);
+    console.log("Day: ", day);
+    console.log("Time: ", time);
+    console.log("Section: ", section);
+    console.log("Room: ", room);
+    console.log("Type: ", type);
     setIsProcessing(true);
     setProcessingAction(`reschedule-${course}-${day}-${time}-${section}`);
 
@@ -704,6 +722,8 @@ const TeacherRoutine = () => {
     setSelectedTime(time);
     setSelectedSection(section);
     setSelectedRoom(room);
+    setToBeRescheduledRoom(room);
+    console.log("Selected Room: ", toBeRescheduledRoom);
     console.log("Selected Course Type: ", type);
     setSelectedCourseType(type);
 
@@ -767,20 +787,23 @@ const TeacherRoutine = () => {
           return;
         }
       }
-
+      console.log("Class Cancelled Status: ", classCancelledStatus);
       classCancelledStatus.forEach((stat, idx) => {
         if (courseData["assigned_time_slots"][idx] === timeSlot) {
           classCancelledStatus[idx] = 0;
           room = rooms[idx];
         }
       });
+
       await updateDoc(courseRef, {
         class_cancelled_status: classCancelledStatus,
       });
+      console.log("Updated Techers Course Document");
 
       await updateDoc(roomRef, {
         class_cancelled: 0,
       });
+      console.log("Updated Room Document from Time Slots");
 
       let sem = courseId.toString().charAt(courseId.toString().length - 3);
       const semester = "semester_" + sem + "_" + section;
@@ -789,20 +812,26 @@ const TeacherRoutine = () => {
         class_cancelled: 0,
       });
 
+      console.log("Updated Semester Document");
+
       if (selectedCourseType === "lab") {
+        console.log("Cancelled lab class, updating second time slot");
         const nextTimeSlot = timeSlot + 1;
         const nextRoomRef = doc(
           db,
           `time_slots/${nextTimeSlot}/rooms`,
           room.toString()
         );
+        console.log("Next Time Slot: ", nextTimeSlot);
         await updateDoc(nextRoomRef, {
           class_cancelled: 0,
         });
+        console.log("Updated Next Room Document from Time Slots");
         const nextTimeSlotRef = doc(db, semester, nextTimeSlot.toString());
         await updateDoc(nextTimeSlotRef, {
           class_cancelled: 0,
         });
+        console.log("Updated Next Semester Document");
 
         const courseInfoRef = doc(db, "courses", courseId.toString());
         const courseInfoSnapshot = await getDoc(courseInfoRef);
@@ -811,22 +840,30 @@ const TeacherRoutine = () => {
         if (teacherName === courseInfoData["assigned_teachers"][0]) {
           index = 1;
         }
+        console.log("Teacher Name: ", teacherName);
+
         const otherTeacherName = courseInfoData["assigned_teachers"][index];
+        console.log("Other Teacher Name: ", otherTeacherName);
         const courseRef = doc(
           db,
           `teachers/${otherTeacherName}/courses`,
           courseId.toString() + "_" + section
         );
+        console.log("Other Course Ref: ", courseRef);
         const courseSnapshot = await getDoc(courseRef);
+        const courseData = courseSnapshot.data();
+        const classCancelledStatus = courseData["class_cancelled_status"];
         classCancelledStatus.forEach((stat, idx) => {
           if (courseData["assigned_time_slots"][idx] === nextTimeSlot) {
             classCancelledStatus[idx] = 0;
             room = rooms[idx];
           }
         });
+        console.log("Class Cancelled Status: ", classCancelledStatus);
         await updateDoc(courseRef, {
           class_cancelled_status: classCancelledStatus,
         });
+        console.log("Updated Other Teacher Course Document");
       }
     } catch (error) {
       console.error("Error undoing cancelled class:", error);
@@ -1087,7 +1124,8 @@ const TeacherRoutine = () => {
                   </button>
                 )}
                 <button
-                  onClick={() =>
+                  onClick={() => {
+                    console.log("Reschedule Room: ", slot.room);
                     handleRescheduleClass(
                       slot.courseCode,
                       slot.day,
@@ -1095,8 +1133,8 @@ const TeacherRoutine = () => {
                       slot.section,
                       slot.room,
                       slot.type
-                    )
-                  }
+                    );
+                  }}
                   disabled={isProcessing}
                 >
                   {processingAction === `reschedule-${actionKey}`
@@ -1138,25 +1176,25 @@ const TeacherRoutine = () => {
     for (const doc of semesterSnapshot.docs) {
       const data = doc.data();
 
-      console.log("Timeslots: ", doc.id);
-      console.log(
-        "perm Data: ",
-        data.perm_course_code,
-        data.perm_teacher_1,
-        data.perm_day,
-        data.perm_time_1,
-        data.perm_room,
-        section
-      );
-      console.log(
-        "temp Data: ",
-        data.temp_course_code,
-        data.temp_teacher_1,
-        data.temp_day,
-        data.temp_time_1,
-        data.temp_room,
-        data.temp_section
-      );
+      // console.log("Timeslots: ", doc.id);
+      // console.log(
+      //   "perm Data: ",
+      //   data.perm_course_code,
+      //   data.perm_teacher_1,
+      //   data.perm_day,
+      //   data.perm_time_1,
+      //   data.perm_room,
+      //   section
+      // );
+      // console.log(
+      //   "temp Data: ",
+      //   data.temp_course_code,
+      //   data.temp_teacher_1,
+      //   data.temp_day,
+      //   data.temp_time_1,
+      //   data.temp_room,
+      //   data.temp_section
+      // );
       if (data.perm_teacher_1 && !data.class_cancelled) {
         classes.push({
           timeSlot: doc.id,
@@ -1186,7 +1224,17 @@ const TeacherRoutine = () => {
     setSemesterClasses(classes);
   };
 
+  // Add new useEffect to reset selectedRoom when modal opens
+  useEffect(() => {
+    if (showUnifiedRescheduleModal) {
+      setSelectedRoom("");
+    }
+  }, [showUnifiedRescheduleModal]);
+
   const handleSlotSelect = async (day, time, slot) => {
+    // Reset selectedRoom at the start of slot selection
+    setSelectedRoom("");
+
     console.log("Slot Type: ", slot.type);
     console.log("Selected Course Type: ", selectedCourseType);
     if (!slot.isFree && slot.type !== selectedCourseType) {
@@ -1258,13 +1306,15 @@ const TeacherRoutine = () => {
   const sendSwapRequest = async () => {
     setSwapProcessing(true);
     try {
+      console.log("Sending swap request");
+      console.log("requesting Room: ", toBeRescheduledRoom);
       const swapRequestRef = collection(db, "swap_requests");
       await addDoc(swapRequestRef, {
         requestingTeacher: teacherName,
         requestingCourse: `${selectedCourse}`,
         requestingTimeSlot:
           revDayMapping[selectedDay] * 6 + revTimeMapping[selectedTime],
-        requestingRoom: selectedRoom, // Add requesting room
+        requestingRoom: toBeRescheduledRoom,
         targetTeacher: targetClass.teacher,
         targetCourse: `${targetClass.course}`,
         targetTimeSlot: targetClass.timeSlot,
@@ -1556,12 +1606,13 @@ const TeacherRoutine = () => {
                   <div className="room-selection">
                     <h4>Select Room</h4>
                     <select
-                      onChange={(e) => setSelectedRoom(e.target.value)}
+                      onChange={(e) => {
+                        setSelectedRoom(e.target.value);
+                      }}
                       disabled={confirmRescheduleProcessing}
+                      value={selectedRoom}
                     >
-                      <option value="" disabled selected>
-                        -- Select a room --
-                      </option>
+                      <option value="">-- Select a room --</option>
                       {Array.from(
                         availableRooms.get(Number(selectedRescheduleTime))
                       ).map((room) => (
@@ -1570,19 +1621,24 @@ const TeacherRoutine = () => {
                         </option>
                       ))}
                     </select>
-                    <button
-                      onClick={confirmReschedule}
-                      disabled={confirmRescheduleProcessing}
-                    >
-                      {confirmRescheduleProcessing
-                        ? "Processing..."
-                        : "Confirm Reschedule"}
-                    </button>
+                    {selectedRoom && ( // Only render button if room is selected
+                      <button
+                        onClick={confirmReschedule}
+                        disabled={confirmRescheduleProcessing}
+                      >
+                        {confirmRescheduleProcessing
+                          ? "Processing..."
+                          : "Confirm Reschedule"}
+                      </button>
+                    )}
                   </div>
                 )}
 
               <button
-                onClick={() => setShowUnifiedRescheduleModal(false)}
+                onClick={() => {
+                  setShowUnifiedRescheduleModal(false);
+                  resetRescheduleStates();
+                }}
                 disabled={confirmRescheduleProcessing || swapProcessing}
                 style={{ marginTop: "20px" }}
               >
