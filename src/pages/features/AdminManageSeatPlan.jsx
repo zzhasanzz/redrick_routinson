@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../../firebase';
-import { collection, getDocs, doc, setDoc, onSnapshot, writeBatch } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc, onSnapshot, writeBatch,getDoc } from 'firebase/firestore';
 import {
   Box,
   Heading,
@@ -42,6 +42,8 @@ const AdminManageSeatPlan = () => {
   const [error, setError] = useState('');
   const toast = useToast();
   const [selectedCollection, setSelectedCollection] = useState('seat_plan_summer_day');
+  // const [totalSeats, setTotalSeats] = useState(); // State to store total seats
+  let totalSeats = 60;
 
 
   // Initialize rooms with dummy fields (runs once on mount)
@@ -113,6 +115,39 @@ const AdminManageSeatPlan = () => {
 
     initializeRooms();
   }, [toast, selectedCollection, db]);
+
+  useEffect(() => {
+    if (!selectedRoom) return;
+
+    const fetchTotalSeats = async (room) => {
+        try {
+            const seatPlanRef = collection(db, "seat_plan_rooms");
+            const seatPlanSnapshot = await getDocs(seatPlanRef);
+
+            if (!seatPlanSnapshot.empty) {
+                const matchedRoom = seatPlanSnapshot.docs.find(doc => doc.data().room_no === room);
+                if (matchedRoom) {
+                    const data = matchedRoom.data();
+                    // setTotalSeats(data.total_seats || 0); // Store total_seats or default to 0
+                    totalSeats = data.total_seats;
+                    console.log(totalSeats);
+                } else {
+                    console.log("No matching room found.");
+                    // setTotalSeats(0);
+                }
+            } else {
+                console.log("No rooms found in seat_plan_rooms collection.");
+                // setTotalSeats(0);
+            }
+        } catch (error) {
+            console.error("Error fetching total seats:", error);
+            // setTotalSeats(0);
+        }
+    };
+    fetchTotalSeats(selectedRoom);
+}, [selectedRoom]);
+
+
 
 
 
@@ -202,7 +237,7 @@ const AdminManageSeatPlan = () => {
       }));
   
       // Generate an array of all seat numbers (1-60)
-      const allSeats = Array.from({ length: 60 }, (_, i) => ({
+      const allSeats = Array.from({ length: totalSeats }, (_, i) => ({
         seatNumber: i + 1,  // Seat numbers from 1 to 60
         id: null,  // No student assigned
         dept: null // No department
@@ -319,7 +354,7 @@ const AdminManageSeatPlan = () => {
                     display="flex"
                     gap={2}
                   >
-                    {pair.map((seat) => (
+                    {pair.map((seat) => ( 
                       <Box
                         key={seat.seatNumber}
                         flex={1}
