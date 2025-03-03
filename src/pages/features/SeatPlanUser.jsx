@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { db, auth } from '../../firebase';
-import { collection, getDocs, doc, setDoc, onSnapshot, writeBatch,getDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc, onSnapshot, getDoc } from 'firebase/firestore';
 import {
   Box,
   Heading,
-  Select,
   Grid,
   GridItem,
   Text,
@@ -33,7 +32,6 @@ const collections = [
   'seat_plan_winter_morning',
 ];
 
-
 const AdminManageSeatPlan = () => {
   const [rooms, setRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState('');
@@ -42,12 +40,9 @@ const AdminManageSeatPlan = () => {
   const [error, setError] = useState('');
   const toast = useToast();
   const [selectedCollection, setSelectedCollection] = useState('seat_plan_summer_day');
-  // const [totalSeats, setTotalSeats] = useState(); // State to store total seats
+  const [theUserID, setTheUserID] = useState(null); // Store theUserID in state
   let totalSeats = 60;
   const currentUser = auth.currentUser;
-//   const [theUserID, setTheUserID] = useState();
-let theUserID = 0;
-
 
   useEffect(() => {
     const initializeRooms = async () => {
@@ -94,50 +89,44 @@ let theUserID = 0;
     if (!selectedRoom) return;
 
     const fetchTotalSeats = async (room) => {
-        try {
-            const seatPlanRef = collection(db, "seat_plan_rooms");
-            const seatPlanSnapshot = await getDocs(seatPlanRef);
+      try {
+        const seatPlanRef = collection(db, "seat_plan_rooms");
+        const seatPlanSnapshot = await getDocs(seatPlanRef);
 
-            if (!seatPlanSnapshot.empty) {
-                const matchedRoom = seatPlanSnapshot.docs.find(doc => doc.data().room_no === room);
-                if (matchedRoom) {
-                    const data = matchedRoom.data();
-                    // setTotalSeats(data.total_seats || 0); // Store total_seats or default to 0
-                    totalSeats = data.total_seats;
-                    console.log(totalSeats);
-                } else {
-                    console.log("No matching room found.");
-                    // setTotalSeats(0);
-                }
-            } else {
-                console.log("No rooms found in seat_plan_rooms collection.");
-                // setTotalSeats(0);
-            }
-        } catch (error) {
-            console.error("Error fetching total seats:", error);
-            // setTotalSeats(0);
+        if (!seatPlanSnapshot.empty) {
+          const matchedRoom = seatPlanSnapshot.docs.find(doc => doc.data().room_no === room);
+          if (matchedRoom) {
+            const data = matchedRoom.data();
+            totalSeats = data.total_seats;
+            console.log(totalSeats);
+          } else {
+            console.log("No matching room found.");
+          }
+        } else {
+          console.log("No rooms found in seat_plan_rooms collection.");
         }
+      } catch (error) {
+        console.error("Error fetching total seats:", error);
+      }
     };
     fetchTotalSeats(selectedRoom);
-}, [selectedRoom]);
-
+  }, [selectedRoom]);
 
   useEffect(() => {
     const fetchRooms = async () => {
       try {
         const roomsRef = collection(db, selectedCollection);
         const snapshot = await getDocs(roomsRef);
-  
+
         if (snapshot.empty) {
           setError("No rooms found.");
           return;
         }
-  
-        // Fetch and sort room_no field in ascending order
+
         const roomList = snapshot.docs
           .map((doc) => doc.id)
           .sort((a, b) => (parseInt(a) > parseInt(b) ? 1 : -1));
-  
+
         setRooms(roomList);
       } catch (error) {
         console.error("Error fetching rooms:", error);
@@ -149,47 +138,45 @@ let theUserID = 0;
 
   useEffect(() => {
     const fetchRoom = async () => {
-        if (!currentUser?.email) return; // Ensure currentUser.email exists
+      if (!currentUser?.email) return;
 
-        const userDocRef = doc(db, "users", currentUser.email); // Reference to Firestore document
-        const userDocSnap = await getDoc(userDocRef); // Fetch document
+      const userDocRef = doc(db, "users", currentUser.email);
+      const userDocSnap = await getDoc(userDocRef);
 
-        if (userDocSnap.exists()) {
-            setSelectedRoom(userDocSnap.data().room); // Set room field
-            theUserID = userDocSnap.data().id;
-            console.log(theUserID);
-        } else {
-            console.log("No such document!");
-        }
+      if (userDocSnap.exists()) {
+        setSelectedRoom(userDocSnap.data().room);
+        setTheUserID(userDocSnap.data().id); // Set theUserID in state
+        console.log(theUserID);
+      } else {
+        console.log("No such document!");
+      }
     };
 
     fetchRoom();
-}, []); // Run when currentUser changes
+  }, [currentUser]);
 
   useEffect(() => {
     if (!selectedRoom) return;
-  
+
     setLoading(true);
     const seatsRef = collection(db, `${selectedCollection}/${selectedRoom}/seats`);
-    
+
     const unsubscribe = onSnapshot(seatsRef, (snapshot) => {
       const seatsData = snapshot.docs.map(doc => ({
         seatNumber: parseInt(doc.id, 10),
         ...doc.data()
       }));
-  
-      // Generate an array of all seat numbers (1-60)
+
       const allSeats = Array.from({ length: totalSeats }, (_, i) => ({
-        seatNumber: i + 1,  // Seat numbers from 1 to 60
-        id: null,  // No student assigned
-        dept: null // No department
+        seatNumber: i + 1,
+        id: null,
+        dept: null
       }));
-  
-      // Merge the existing seat data into the full list
+
       seatsData.forEach(seat => {
         allSeats[seat.seatNumber - 1] = seat;
       });
-  
+
       setSeats(allSeats);
       setLoading(false);
     }, (error) => {
@@ -197,21 +184,16 @@ let theUserID = 0;
       setError('Failed to load seats');
       setLoading(false);
     });
-  
+
     return () => unsubscribe();
-  }, [selectedRoom, selectedCollection]);
-  
+  }, [selectedRoom, selectedCollection, totalSeats]);
 
-  // Sort seats numerically
   const sortedSeats = [...seats].sort((a, b) => parseInt(a.seatNumber) - parseInt(b.seatNumber));
-
-  // Group seats into pairs (e.g., [1, 2], [3, 4], etc.)
   const seatPairs = [];
   for (let i = 0; i < sortedSeats.length; i += 2) {
     seatPairs.push(sortedSeats.slice(i, i + 2));
   }
 
-  // Group pairs into columns (10 pairs per column)
   const seatColumns = [];
   for (let i = 0; i < seatPairs.length; i += 10) {
     seatColumns.push(seatPairs.slice(i, i + 10));
@@ -219,9 +201,12 @@ let theUserID = 0;
 
   return (
     <Box p={6}>
-      {/* <Heading as="h1" size="xl" mb={6}>
-        Manage Seat Plan
-      </Heading> */}
+      {/* Display the user's room number */}
+      {selectedRoom && (
+        <Heading as="h2" size="lg" mb={6}>
+          Room: {selectedRoom}
+        </Heading>
+      )}
 
       {/* Error Alert */}
       {error && (
@@ -231,36 +216,6 @@ let theUserID = 0;
         </Alert>
       )}
 
-      {/* Room Selection Dropdown */}
-      {/* <Box mb={8}>
-      <Select
-          placeholder="Select a Collection"
-          value={selectedCollection}
-          onChange={(e) => setSelectedCollection(e.target.value)}
-          bg="white"
-          maxW="400px"
-          mb={4}
-        >
-          {collections.map(collection => (
-            <option key={collection} value={collection}>{collection.replace(/_/g, ' ')}</option>
-          ))}
-        </Select>
-        <Select
-          placeholder="Select a Room"
-          value={selectedRoom}
-          onChange={(e) => setSelectedRoom(e.target.value)}
-          bg="white"
-          maxW="300px"
-        >
-          {rooms.map(room => (
-            <option key={room} value={room}>
-              Room {room}
-            </option>
-          ))}
-        </Select>
-      </Box> */}
-
-      {/* Loading Spinner */}
       {loading && (
         <Box textAlign="center" py={8}>
           <Spinner size="xl" />
@@ -270,23 +225,6 @@ let theUserID = 0;
       {/* Seat Plan */}
       {selectedRoom && !loading && (
         <Box>
-          {/* Invigilator Table */}
-          {/* <Box
-            bg="gray.100"
-            p={4}
-            mb={6}
-            borderRadius="md"
-            textAlign="center"
-          >
-            <Text fontSize="lg" fontWeight="bold">
-              Invigilator Table
-            </Text>
-            <Text fontSize="sm" color="gray.600">
-              (Invigilator names will appear here)
-            </Text>
-          </Box> */}
-
-          {/* Seat Grid */}
           <Grid templateColumns={`repeat(${seatColumns.length}, 1fr)`} gap={12}>
             {seatColumns.map((column, columnIndex) => (
               <Grid key={columnIndex} templateRows="repeat(10, 1fr)" gap={1}>
@@ -296,16 +234,17 @@ let theUserID = 0;
                     display="flex"
                     gap={2}
                   >
-                    {pair.map((seat) => ( 
+                    {pair.map((seat) => (
                       <Box
                         key={seat.seatNumber}
                         flex={1}
                         p={4}
-                        borderWidth="1px"
+                        borderWidth="4px"
                         borderRadius="md"
                         bg={seat.id ? departmentColors[seat.dept] || 'gray.100' : 'gray.50'}
                         _hover={{ bg: seat.id ? `${departmentColors[seat.dept].replace('.100', '.200')}` : 'gray.100' }}
                         textAlign="center"
+                        borderColor={seat.id === theUserID ? 'blue.500' : 'transparent'} // Highlight the seat with theUserID
                       >
                         <Text fontSize="xs" color="gray.500">
                           Seat {seat.seatNumber}
