@@ -773,6 +773,8 @@ const TeacherRoutine = () => {
         alert(
           "Cannot undo cancelled class with a temporary class rescheduled."
         );
+        setIsProcessing(false);
+        setProcessingAction("");
         return;
       }
       if (selectedCourseType === "lab") {
