@@ -8,11 +8,14 @@ import csv
 import random
 import firebase_admin
 from firebase_admin import credentials, firestore
+import logging
+
 import time
 
 
 app = Flask(__name__)
 CORS(app)
+logging.basicConfig(level=logging.DEBUG)
 
 # Firebase Initialization
 cred = credentials.Certificate("./ServiceAccountKey.json")  # Update with your Firebase credentials JSON file
@@ -23,7 +26,7 @@ db = firestore.client()
 with open('offered_courses.json', 'r') as file:
     offered_courses = json.load(file)
 
-with open('input_courses.json', 'r') as file:
+with open('input_courses_winter.json', 'r') as file:
     input_courses = json.load(file)
 
 with open('faculty_details.json', 'r') as file:
@@ -38,9 +41,74 @@ def get_offered_courses():
         return jsonify(offered_courses)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/offered-labs', methods=['GET'])
+def get_offered_labs():
+    try:
+        # Read fresh data from offered_labs.json
+        with open('offered_labs.json', 'r') as file:
+            offered_labs = json.load(file)
+
+        # Create a deep copy of offered_labs to avoid modifying the original
+        merged_labs = json.loads(json.dumps(offered_labs))
+
+        # Iterate through each semester in the offered_labs
+        for semester_data in merged_labs['semesters']:
+            semester = semester_data['semester']
+
+            # Determine which input file to use based on the semester
+            if semester in [1, 3, 5, 7]:
+                input_file = 'input_file_lab_winter.json'
+            elif semester in [2, 4, 6, 8]:
+                input_file = 'input_file_lab_summer.json'
+            else:
+                continue  # Skip invalid semesters
+
+            # Load the corresponding input file
+            with open(input_file, 'r') as file:
+                input_labs = json.load(file)
+
+            # Find the corresponding semester in the input file
+            input_semester_data = next(
+                (sem for sem in input_labs['semesters'] if sem['semester'] == semester),
+                None
+            )
+
+            if not input_semester_data:
+                continue  # Skip if semester not found in input file
+
+            # Merge teacher data from input file into the copied offered_labs
+            for course in semester_data['courses']:
+                course_code = course['course']
+
+                # Find the lab in the input file for Section A and Section B
+                for section in input_semester_data['sections']:
+                    for lab in section['labs']:
+                        if lab['course'] == course_code:
+                            # Add teacher data for Section A
+                            if section['section'] == 'A':
+                                course['sectionA'] = {
+                                    'teacher1': lab.get('teacher1', ''),
+                                    'teacher2': lab.get('teacher2', ''),
+                                }
+                            # Add teacher data for Section B
+                            elif section['section'] == 'B':
+                                course['sectionB'] = {
+                                    'teacher1': lab.get('teacher1', ''),
+                                    'teacher2': lab.get('teacher2', ''),
+                                }
+                            break
+
+        return jsonify(merged_labs)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
     
 @app.route('/api/unassigned-courses/<int:semester>', methods=['GET'])
 def get_unassigned_courses(semester):
+    with open('offered_courses.json', 'r') as file:
+        offered_courses = json.load(file)
     try:
         # Find the semester in offered_courses.json
         semester_data = next((sem for sem in offered_courses['semesters'] if sem['semester'] == semester), None)
@@ -51,6 +119,23 @@ def get_unassigned_courses(semester):
         unassigned_courses = [course for course in semester_data['courses'] if not course['assigned']]
 
         return jsonify(unassigned_courses), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/api/unassigned-labs/<int:semester>', methods=['GET'])
+def get_unassigned_labs(semester):
+    with open('offered_labs.json', 'r') as file:
+        offered_labs = json.load(file)
+    try:
+        # Find the semester in offered_labs.json
+        semester_data = next((sem for sem in offered_labs['semesters'] if sem['semester'] == semester), None)
+        if not semester_data:
+            return jsonify({"error": f"Semester {semester} not found"}), 404
+
+        # Filter unassigned labs
+        unassigned_labs = [lab for lab in semester_data['courses'] if not lab['assigned']]
+
+        return jsonify(unassigned_labs), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
@@ -66,6 +151,21 @@ def delete_course():
 
         semester = data['semester']
         course_code = data['course']
+
+        # Determine which input file to update based on the semester
+        if semester in [1, 3, 5, 7]:
+            input_file = 'input_courses_winter.json'
+        elif semester in [2, 4, 6, 8]:
+            input_file = 'input_courses_summer.json'
+        else:
+            return jsonify({"error": "Invalid semester provided"}), 400
+
+        # Load fresh data from files
+        with open('offered_courses.json', 'r') as f:
+            offered_courses = json.load(f)
+        
+        with open(input_file, 'r') as f:
+            input_courses = json.load(f)
 
         # Check if offered_courses.json has the 'semesters' key
         if 'semesters' not in offered_courses:
@@ -90,27 +190,111 @@ def delete_course():
         if not course_found:
             return jsonify({"error": f"Course {course_code} not found in semester {semester}"}), 404
 
-        # Check if input_courses.json has the 'semesters' key
+        # Check if input_courses has the 'semesters' key
         if 'semesters' not in input_courses:
-            return jsonify({"error": "Invalid structure: 'semesters' key not found in input_courses.json"}), 500
+            return jsonify({"error": f"Invalid structure: 'semesters' key not found in {input_file}"}), 500
 
-        # Update input_courses.json (remove the course)
+        # Update input_courses (remove the course)
         for sem in input_courses['semesters']:
             if sem['semester'] == semester:
                 sem['courses'] = [c for c in sem['courses'] if c['course'] != course_code]
                 break
 
-        # Save changes to files
-        with open('offered_courses.json', 'w') as file:
-            json.dump(offered_courses, file, indent=2)
+        # Save changes to files atomically
+        try:
+            # Write to temporary files first
+            with open('offered_courses.tmp', 'w') as f:
+                json.dump(offered_courses, f, indent=2)
+            with open(f'{input_file}.tmp', 'w') as f:
+                json.dump(input_courses, f, indent=2)
 
-        with open('input_courses.json', 'w') as file:
-            json.dump(input_courses, file, indent=2)
+            # Rename temporary files to replace the original files
+            os.replace('offered_courses.tmp', 'offered_courses.json')
+            os.replace(f'{input_file}.tmp', input_file)
+        except Exception as e:
+            return jsonify({"error": f"Failed to save changes: {str(e)}"}), 500
 
         return jsonify({"message": "Course deleted successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+@app.route('/api/delete-lab', methods=['POST'])
+def delete_lab():
+    try:
+        data = request.json
+
+        # Validate required fields
+        if not all(key in data for key in ['semester', 'course']):
+            return jsonify({"error": "Missing required fields: semester or course"}), 400
+
+        semester = data['semester']
+        course_code = data['course']
+
+        # Determine which input file to update based on the semester
+        if semester in [1, 3, 5, 7]:
+            input_file = 'input_file_lab_winter.json'
+        elif semester in [2, 4, 6, 8]:
+            input_file = 'input_file_lab_summer.json'
+        else:
+            return jsonify({"error": "Invalid semester provided"}), 400
+
+        # Load fresh data from files
+        with open('offered_labs.json', 'r') as f:
+            offered_labs = json.load(f)
+        
+        with open(input_file, 'r') as f:
+            input_labs = json.load(f)
+
+        # Update offered_labs.json (set assigned to false)
+        semester_found = False
+        course_found = False
+
+        for sem in offered_labs['semesters']:
+            if sem['semester'] == semester:
+                semester_found = True
+                for course in sem['courses']:
+                    if course['course'] == course_code:
+                        course_found = True
+                        course['assigned'] = False  # Set assigned to false
+                        break
+                break
+
+        if not semester_found:
+            return jsonify({"error": f"Semester {semester} not found"}), 404
+        if not course_found:
+            return jsonify({"error": f"Course {course_code} not found in semester {semester}"}), 404
+
+        # Update input_labs (remove the lab from all sections)
+        semester_found_input = False
+        for sem in input_labs['semesters']:
+            if sem['semester'] == semester:
+                semester_found_input = True
+                for sec in sem['sections']:
+                    sec['labs'] = [lab for lab in sec['labs'] if lab['course'] != course_code]
+                break
+
+        if not semester_found_input:
+            return jsonify({"error": f"Semester {semester} not found in {input_file}"}), 404
+
+        # Save changes to files atomically
+        try:
+            # Write to temporary files first
+            with open('offered_labs.tmp', 'w') as f:
+                json.dump(offered_labs, f, indent=2)
+            with open(f'{input_file}.tmp', 'w') as f:
+                json.dump(input_labs, f, indent=2)
+
+            # Rename temporary files to replace the original files
+            os.replace('offered_labs.tmp', 'offered_labs.json')
+            os.replace(f'{input_file}.tmp', input_file)
+        except Exception as e:
+            return jsonify({"error": f"Failed to save changes: {str(e)}"}), 500
+
+        return jsonify({"message": "Lab unassigned successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+
 @app.route('/api/faculty-ranks', methods=['GET'])
 def get_faculty_ranks():
     try:
@@ -119,14 +303,16 @@ def get_faculty_ranks():
         return jsonify(faculty_ranks), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
+
 @app.route('/api/update-faculty', methods=['POST'])
 def update_faculty():
     try:
         data = request.get_json()
         if not data:
             return jsonify({"error": "No data provided"}), 400
-            
+
+        # Check for required fields
         required = ['semester', 'course', 'teacher']
         if not all(key in data for key in required):
             return jsonify({
@@ -138,10 +324,19 @@ def update_faculty():
         course_code = data['course']
         new_teacher = data['teacher']
 
+        # Determine which input file to update based on the semester
+        if semester in [1, 3, 5, 7]:
+            input_file = 'input_courses_winter.json'
+        elif semester in [2, 4, 6, 8]:
+            input_file = 'input_courses_summer.json'
+        else:
+            return jsonify({"error": "Invalid semester provided"}), 400
+
         # Load fresh data from files
         with open('offered_courses.json', 'r') as f:
             offered = json.load(f)
-        with open('input_courses.json', 'r') as f:
+        
+        with open(input_file, 'r') as f:
             input_courses = json.load(f)
 
         # Update offered_courses.json
@@ -156,7 +351,7 @@ def update_faculty():
                 if updated_offered:
                     break
 
-        # Update input_courses.json
+        # Update the appropriate input file
         updated_input = False
         for sem in input_courses['semesters']:
             if sem['semester'] == semester:
@@ -171,18 +366,119 @@ def update_faculty():
         if not updated_offered:
             return jsonify({"error": "Course not found in offered courses"}), 404
         if not updated_input:
-            return jsonify({"error": "Course not found in input courses"}), 404
+            return jsonify({"error": f"Course not found in {input_file}"}), 404
 
-        # Save changes
-        with open('offered_courses.json', 'w') as f:
-            json.dump(offered, f, indent=2)
-        with open('input_courses.json', 'w') as f:
-            json.dump(input_courses, f, indent=2)
+        # Save changes atomically
+        try:
+            # Write to a temporary file first
+            with open('offered_courses.tmp', 'w') as f:
+                json.dump(offered, f, indent=2)
+            with open(f'{input_file}.tmp', 'w') as f:
+                json.dump(input_courses, f, indent=2)
+
+            # Rename the temporary files to replace the original files
+            os.replace('offered_courses.tmp', 'offered_courses.json')
+            os.replace(f'{input_file}.tmp', input_file)
+        except Exception as e:
+            return jsonify({"error": f"Failed to save changes: {str(e)}"}), 500
 
         return jsonify({"message": "Faculty updated successfully"}), 200
 
     except Exception as e:
         return jsonify({"error": f"Server error: {str(e)}"}), 500
+
+
+@app.route('/api/update-lab', methods=['POST'])
+def update_lab():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+
+        # Check for required fields
+        required = ['semester', 'section', 'course', 'teacher1', 'teacher2']
+        if not all(key in data for key in required):
+            return jsonify({
+                "error": f"Missing fields. Required: {', '.join(required)}",
+                "received": list(data.keys())
+            }), 400
+
+        semester = data['semester']
+        section = data['section']
+        course_code = data['course']
+        new_teacher1 = data['teacher1']
+        new_teacher2 = data['teacher2']
+
+        # Determine which input file to update based on the semester
+        if semester in [1, 3, 5, 7]:
+            input_file = 'input_file_lab_winter.json'
+        elif semester in [2, 4, 6, 8]:
+            input_file = 'input_file_lab_summer.json'
+        else:
+            return jsonify({"error": "Invalid semester provided"}), 400
+
+        # Load fresh data from files
+        with open('offered_labs.json', 'r') as f:
+            offered = json.load(f)
+        
+        with open(input_file, 'r') as f:
+            input_labs = json.load(f)
+
+        # Update offered_labs.json
+        updated_offered = False
+        for sem in offered['semesters']:
+            if sem['semester'] == semester:
+                for course in sem['courses']:
+                    if course['course'] == course_code:
+                        course['teacher1'] = new_teacher1
+                        course['teacher2'] = new_teacher2
+                        updated_offered = True
+                        break
+                if updated_offered:
+                    break
+
+        # Update the appropriate input file
+        updated_input = False
+        for sem in input_labs['semesters']:
+            if sem['semester'] == semester:
+                for sec in sem['sections']:
+                    if sec['section'] == section:
+                        for lab in sec['labs']:
+                            if lab['course'] == course_code:
+                                lab['teacher1'] = new_teacher1
+                                lab['teacher2'] = new_teacher2
+                                updated_input = True
+                                break
+                        if updated_input:
+                            break
+                if updated_input:
+                    break
+
+        if not updated_offered:
+            return jsonify({"error": "Lab not found in offered labs"}), 404
+        if not updated_input:
+            return jsonify({"error": f"Lab not found in {input_file}"}), 404
+
+        # Save changes atomically
+        try:
+            # Write to a temporary file first
+            with open('offered_labs.tmp', 'w') as f:
+                json.dump(offered, f, indent=2)
+            with open(f'{input_file}.tmp', 'w') as f:
+                json.dump(input_labs, f, indent=2)
+
+            # Rename the temporary files to replace the original files
+            os.replace('offered_labs.tmp', 'offered_labs.json')
+            os.replace(f'{input_file}.tmp', input_file)
+        except Exception as e:
+            return jsonify({"error": f"Failed to save changes: {str(e)}"}), 500
+
+        return jsonify({"message": "Lab teachers updated successfully"}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Server error: {str(e)}"}), 500
+    
+
 
 
 @app.route('/api/add-course', methods=['POST'])
@@ -198,30 +494,167 @@ def add_course():
         course_code = data['course']
         teacher = data['teacher']
 
+        # Determine which input file to update based on the semester
+        if semester in [1, 3, 5, 7]:
+            input_file = 'input_courses_winter.json'
+        elif semester in [2, 4, 6, 8]:
+            input_file = 'input_courses_summer.json'
+        else:
+            return jsonify({"error": "Invalid semester provided"}), 400
+
+        # Load fresh data from files
+        with open('offered_courses.json', 'r') as f:
+            offered_courses = json.load(f)
+        
+        with open(input_file, 'r') as f:
+            input_courses = json.load(f)
+
         # Update offered_courses.json (set assigned to true)
+        semester_found = False
+        course_found = False
+
         for sem in offered_courses['semesters']:
             if sem['semester'] == semester:
+                semester_found = True
                 for course in sem['courses']:
                     if course['course'] == course_code:
+                        course_found = True
                         course['assigned'] = True
                         course['teacher'] = teacher
                         break
                 break
 
-        # Add the course to input_courses.json
+        if not semester_found:
+            return jsonify({"error": f"Semester {semester} not found in offered courses"}), 404
+        if not course_found:
+            return jsonify({"error": f"Course {course_code} not found in semester {semester}"}), 404
+
+        # Add the course to the appropriate input file
+        semester_found_input = False
         for sem in input_courses['semesters']:
             if sem['semester'] == semester:
+                semester_found_input = True
+                # Check if the course already exists
+                if any(c['course'] == course_code for c in sem['courses']):
+                    return jsonify({"error": f"Course {course_code} already exists in semester {semester}"}), 400
+                # Add the course
                 sem['courses'].append({"course": course_code, "credit": 3, "teacher": teacher})
                 break
 
-        # Save changes to files
-        with open('offered_courses.json', 'w') as file:
-            json.dump(offered_courses, file, indent=2)
+        if not semester_found_input:
+            return jsonify({"error": f"Semester {semester} not found in {input_file}"}), 404
 
-        with open('input_courses.json', 'w') as file:
-            json.dump(input_courses, file, indent=2)
+        # Save changes to files atomically
+        try:
+            # Write to temporary files first
+            with open('offered_courses.tmp', 'w') as f:
+                json.dump(offered_courses, f, indent=2)
+            with open(f'{input_file}.tmp', 'w') as f:
+                json.dump(input_courses, f, indent=2)
+
+            # Rename temporary files to replace the original files
+            os.replace('offered_courses.tmp', 'offered_courses.json')
+            os.replace(f'{input_file}.tmp', input_file)
+        except Exception as e:
+            return jsonify({"error": f"Failed to save changes: {str(e)}"}), 500
 
         return jsonify({"message": "Course added successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+
+@app.route('/api/add-lab', methods=['POST'])
+def add_lab():
+    try:
+        data = request.json
+
+        # Validate required fields
+        required_fields = ['semester', 'course', 'sectionA', 'sectionB']
+        if not all(key in data for key in required_fields):
+            return jsonify({"error": f"Missing required fields: {', '.join(required_fields)}"}), 400
+
+        semester = data['semester']
+        course_code = data['course']
+        section_a = data['sectionA']
+        section_b = data['sectionB']
+
+        # Validate section data
+        if not all(key in section_a for key in ['teacher1', 'teacher2']):
+            return jsonify({"error": "Missing teacher1 or teacher2 in Section A"}), 400
+        if not all(key in section_b for key in ['teacher1', 'teacher2']):
+            return jsonify({"error": "Missing teacher1 or teacher2 in Section B"}), 400
+
+        # Determine which input file to update based on the semester
+        if semester in [1, 3, 5, 7]:
+            input_file = 'input_file_lab_winter.json'
+        elif semester in [2, 4, 6, 8]:
+            input_file = 'input_file_lab_summer.json'
+        else:
+            return jsonify({"error": "Invalid semester provided"}), 400
+
+        # Load fresh data from files
+        with open('offered_labs.json', 'r') as f:
+            offered_labs = json.load(f)
+        
+        with open(input_file, 'r') as f:
+            input_labs = json.load(f)
+
+        # Update offered_labs.json (set assigned to true)
+        semester_found = False
+        course_found = False
+
+        for sem in offered_labs['semesters']:
+            if sem['semester'] == semester:
+                semester_found = True
+                for course in sem['courses']:
+                    if course['course'] == course_code:
+                        course_found = True
+                        course['assigned'] = True
+                        break
+                break
+
+        if not semester_found:
+            return jsonify({"error": f"Semester {semester} not found in offered labs"}), 404
+        if not course_found:
+            return jsonify({"error": f"Course {course_code} not found in semester {semester}"}), 404
+
+        # Add the lab to the appropriate input file for both sections
+        semester_found_input = False
+        for sem in input_labs['semesters']:
+            if sem['semester'] == semester:
+                semester_found_input = True
+                # Add lab to Section A
+                sem['sections'][0]['labs'].append({
+                    "course": course_code,
+                    "teacher1": section_a['teacher1'],
+                    "teacher2": section_a['teacher2']
+                })
+                # Add lab to Section B
+                sem['sections'][1]['labs'].append({
+                    "course": course_code,
+                    "teacher1": section_b['teacher1'],
+                    "teacher2": section_b['teacher2']
+                })
+                break
+
+        if not semester_found_input:
+            return jsonify({"error": f"Semester {semester} not found in {input_file}"}), 404
+
+        # Save changes to files atomically
+        try:
+            # Write to temporary files first
+            with open('offered_labs.tmp', 'w') as f:
+                json.dump(offered_labs, f, indent=2)
+            with open(f'{input_file}.tmp', 'w') as f:
+                json.dump(input_labs, f, indent=2)
+
+            # Rename temporary files to replace the original files
+            os.replace('offered_labs.tmp', 'offered_labs.json')
+            os.replace(f'{input_file}.tmp', input_file)
+        except Exception as e:
+            return jsonify({"error": f"Failed to save changes: {str(e)}"}), 500
+
+        return jsonify({"message": "Lab added successfully to both sections"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
@@ -638,20 +1071,39 @@ def generate_seat_plan_api_winter():
         return jsonify({"status": "error", "message": str(e)})
 
 # Endpoint to generate routine
-@app.route('/admin-home/admin-dashboard', methods=['POST'])
+@app.route('/admin-home/admin-generate-routine', methods=['POST'])
 def generate_routine():
     try:
-        # Execute the Python scripts sequentially
-        subprocess.run(['python', 'scheduler.py'], check=True)
-        subprocess.run(['python', 'scheduler_enhanced.py'], check=True)
+        data = request.get_json()
+        season = data.get("season", "winter")  # Default to winter if not specified
+
+        logging.info(f"Generating {season} routine...")
+
+        if season == "summer":
+            # Run summer-specific scripts
+            subprocess.run(['python', 'scheduler_summer.py'], check=True)
+            subprocess.run(['python', 'scheduler_labs_summer.py'], check=True)
+            subprocess.run(['python', 'scheduler_enhanced_summer.py'], check=True)
+        else:
+            # Run winter-specific scripts
+            subprocess.run(['python', 'scheduler.py'], check=True)
+            subprocess.run(['python', 'scheduler_labs.py'], check=True)
+            subprocess.run(['python', 'scheduler_enhanced.py'], check=True)
+
+        # Run common script
         subprocess.run(['python', 'z_stats.py'], check=True)
 
-        # Return success response
-        return jsonify({"message": "Routine generated successfully!"}), 200
+        logging.info(f"{season.capitalize()} routine generated successfully!")
+        return jsonify({"message": f"{season.capitalize()} routine generated successfully!"}), 200
+
     except subprocess.CalledProcessError as e:
+        logging.error(f"Subprocess error: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     except Exception as e:
+        logging.error(f"Unexpected error: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
+    
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)
+

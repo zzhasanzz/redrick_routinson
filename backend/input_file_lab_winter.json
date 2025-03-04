@@ -1,0 +1,229 @@
+{
+  "semesters": [
+    {
+      "semester": 1,
+      "sections": [
+        {
+          "section": "A",
+          "labs": [
+            {
+              "course": "CSE4108",
+              "teacher1": "SRR",
+              "teacher2": "RHJ"
+            },
+            {
+              "course": "CSE4104",
+              "teacher1": "AA",
+              "teacher2": "MKS"
+            },
+            {
+              "course": "Phy4142",
+              "teacher1": "DFS",
+              "teacher2": "AZR"
+            }
+          ]
+        },
+        {
+          "section": "B",
+          "labs": [
+            {
+              "course": "CSE4108",
+              "teacher1": "SRR",
+              "teacher2": "RHJ"
+            },
+            {
+              "course": "CSE4104",
+              "teacher1": "AA",
+              "teacher2": "MKS"
+            },
+            {
+              "course": "Phy4142",
+              "teacher1": "AZR",
+              "teacher2": "DFS"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "semester": 3,
+      "sections": [
+        {
+          "section": "A",
+          "labs": [
+            {
+              "course": "EEE4384",
+              "teacher1": "SHR",
+              "teacher2": "HJA"
+            },
+            {
+              "course": "CSE4302",
+              "teacher1": "MAMR",
+              "teacher2": "FH"
+            },
+            {
+              "course": "CSE4304",
+              "teacher1": "RH",
+              "teacher2": "AAR"
+            },
+            {
+              "course": "CSE4308",
+              "teacher1": "TZF",
+              "teacher2": "IT"
+            }
+          ]
+        },
+        {
+          "section": "B",
+          "labs": [
+            {
+              "course": "EEE4384",
+              "teacher1": "SHR",
+              "teacher2": "HJA"
+            },
+            {
+              "course": "CSE4302",
+              "teacher1": "MAMR",
+              "teacher2": "FH"
+            },
+            {
+              "course": "CSE4304",
+              "teacher1": "RH",
+              "teacher2": "AAR"
+            },
+            {
+              "course": "CSE4308",
+              "teacher1": "TZF",
+              "teacher2": "IT"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "semester": 5,
+      "sections": [
+        {
+          "section": "A",
+          "labs": [
+            {
+              "course": "CSE4502",
+              "teacher1": "RH",
+              "teacher2": "FI"
+            },
+            {
+              "course": "CSE4504",
+              "teacher1": "ASH",
+              "teacher2": "OR"
+            },
+            {
+              "course": "CSE4508",
+              "teacher1": "FI",
+              "teacher2": "TZF"
+            },
+            {
+              "course": "CSE4510",
+              "teacher1": "AZM",
+              "teacher2": "TMC"
+            },
+            {
+              "course": "CSE4512",
+              "teacher1": "SB",
+              "teacher2": "TAS"
+            },
+            {
+              "course": "CSE4550",
+              "teacher1": "FI",
+              "teacher2": "TAS"
+            }
+          ]
+        },
+        {
+          "section": "B",
+          "labs": [
+            {
+              "course": "CSE4502",
+              "teacher1": "RH",
+              "teacher2": "FI"
+            },
+            {
+              "course": "CSE4504",
+              "teacher1": "ASH",
+              "teacher2": "FH"
+            },
+            {
+              "course": "CSE4508",
+              "teacher1": "FI",
+              "teacher2": "TZF"
+            },
+            {
+              "course": "CSE4510",
+              "teacher1": "SAH",
+              "teacher2": "HM"
+            },
+            {
+              "course": "CSE4512",
+              "teacher1": "SB",
+              "teacher2": "TAS"
+            },
+            {
+              "course": "CSE4540",
+              "teacher1": "FI",
+              "teacher2": "TSA"
+            },
+            {
+              "course": "CSE4550",
+              "teacher1": "FI",
+              "teacher2": "TAS"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "semester": 7,
+      "sections": [
+        {
+          "section": "A",
+          "labs": [
+            {
+              "course": "CSE4710",
+              "teacher1": "NY",
+              "teacher2": "NY"
+            },
+            {
+              "course": "CSE4734",
+              "teacher1": "MBH",
+              "teacher2": "MAMR"
+            },
+            {
+              "course": "CSE4700",
+              "teacher1": "KH",
+              "teacher2": "HM"
+            }
+          ]
+        },
+        {
+          "section": "B",
+          "labs": [
+            {
+              "course": "CSE4710",
+              "teacher1": "NY",
+              "teacher2": "NY"
+            },
+            {
+              "course": "CSE4734",
+              "teacher1": "MBH",
+              "teacher2": "MAMR"
+            },
+            {
+              "course": "CSE4700",
+              "teacher1": "KH",
+              "teacher2": "HM"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

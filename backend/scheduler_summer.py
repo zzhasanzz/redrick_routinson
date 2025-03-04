@@ -10,7 +10,7 @@ CLASSROOMS = ["1", "2", "3", "4", "5", "6", "301", "302", "304", "204", "104", "
 SECTIONS = ["A", "B"]
 
 # Load courses from JSON
-with open("input_courses_winter.json", "r") as file:
+with open("input_courses_summer.json", "r") as file:
     data = json.load(file)
 
 # Extract courses and define required classes per course-section
@@ -188,7 +188,7 @@ for entry in best:
     })
 
 # Write to JSON file
-with open("first_schedule.json", "w") as f:
+with open("first_schedule_summer.json", "w") as f:
     json.dump(output, f, indent=2)
 
-print("Schedule written to first_schedule.json")
+print("Schedule written to first_schedule_summer.json")

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../../firebase";
-import { collection, getDocs, onSnapshot, doc } from "firebase/firestore";
-import Papa from "papaparse";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import {
   Box,
   Table,
@@ -20,13 +19,20 @@ import {
   useColorModeValue,
   Spinner,
   Text,
+  Button,
+  Flex,
+  useToast,
 } from "@chakra-ui/react";
+import axios from "axios";
 
 const AdminGenerateRoutine = () => {
-  const [timetableData, setTimetableData] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [isRoutineGenerating, setIsRoutineGenerating] = useState(true);
+  const [timetableData, setTimetableData] = useState(null); // Initialize as null
+  const [loading, setLoading] = useState(false);
+  const [isRoutineGenerating, setIsRoutineGenerating] = useState(false);
   const [activeSemester, setActiveSemester] = useState("1");
+  const [currentSeason, setCurrentSeason] = useState(null); // Track the last generated season
+  const [lastGeneratedTimestamp, setLastGeneratedTimestamp] = useState(null); // Track the last generated timestamp
+  const toast = useToast();
 
   const timeSlots = [
     "8:00-9:15",
@@ -40,29 +46,37 @@ const AdminGenerateRoutine = () => {
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
   useEffect(() => {
-    // First, check if routine generation is complete
-    const unsubscribe = onSnapshot(
-      doc(db, "routine_status", "generation"),
-      (doc) => {
-        if (doc.exists() && doc.data().status === "complete") {
-          setIsRoutineGenerating(false);
-          fetchAllRoutines();
-        }
-      },
-      (error) => {
-        console.error("Error listening to routine status:", error);
-        setIsRoutineGenerating(false);
-        setLoading(false);
-      }
-    );
+    // Fetch the last generated routine type and timestamp from Firestore
+    const fetchLastGeneratedRoutine = async () => {
+      try {
+        const docRef = doc(db, "routine_status", "generation");
+        const docSnap = await getDoc(docRef);
 
-    return () => unsubscribe();
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setCurrentSeason(data.season); 
+          setLastGeneratedTimestamp(data.timestamp.toDate().toLocaleString()); // Convert Firestore timestamp to readable format
+        }
+      } catch (error) {
+        console.error("Error fetching last generated routine:", error);
+      }
+    };
+
+    fetchLastGeneratedRoutine();
   }, []);
+
+  useEffect(() => {
+    // Fetch routine data only if a season has been generated
+    if (currentSeason) {
+      fetchAllRoutines();
+    }
+  }, [currentSeason]);
 
   const fetchAllRoutines = async () => {
     try {
+      setLoading(true);
       const processedData = {};
-      const semesters = ["1", "3", "5", "7"];
+      const semesters = currentSeason === "summer" ? ["2", "4", "6", "8"] : ["1", "3", "5", "7"];
       const sections = ["A", "B"];
 
       for (const semester of semesters) {
@@ -115,8 +129,47 @@ const AdminGenerateRoutine = () => {
       setTimetableData(processedData);
     } catch (error) {
       console.error("Error fetching routines:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch routine data.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGenerateRoutine = async (season) => {
+    try {
+      setIsRoutineGenerating(true);
+      const response = await axios.post(
+        "http://localhost:5000/admin-home/admin-generate-routine", // Correct URL
+        { season }
+      );
+
+      if (response.status === 200) {
+        setCurrentSeason(season); // Update the current season
+        toast({
+          title: "Success",
+          description: `Routine generation for ${season} started successfully!`,
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error generating routine:", error);
+      toast({
+        title: "Error",
+        description: `Failed to generate routine for ${season}.`,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsRoutineGenerating(false);
     }
   };
 
@@ -124,7 +177,6 @@ const AdminGenerateRoutine = () => {
     if (!course) return null;
 
     const [code, teacher, room] = course.split("\n");
-    // Check if course code ends with 2 (lab courses) or contains "LAB"
     const isLab = code.endsWith("2") || code.includes("LAB");
 
     return (
@@ -157,7 +209,7 @@ const AdminGenerateRoutine = () => {
     return (
       <Box overflowX="auto" mb={8}>
         <Table variant="striped" border="black" colorScheme="white" size="xl">
-          <Thead bg="rgb(43, 65, 98)">
+          <Thead bg="rgb(179, 188, 201)" height ="60px">
             <Tr>
               <Th width="15%" textAlign="center" color="rgb(43, 41, 41)">
                 Day
@@ -194,7 +246,6 @@ const AdminGenerateRoutine = () => {
                         key={timeIndex}
                         textAlign="center"
                         p={2}
-                        //bg={course ? useColorModeValue('white', 'gray.800') : useColorModeValue('gray.100', 'gray.700')}
                       >
                         {course ? renderCourseCell(course) : "---"}
                       </Td>
@@ -234,103 +285,89 @@ const AdminGenerateRoutine = () => {
     );
   }
 
+  const semesters = currentSeason === "summer" ? ["2", "4", "6", "8"] : ["1", "3", "5", "7"];
+
   return (
     <Box p={6}>
       <Heading mb={6} color="rgb(43, 65, 98)">
         Routine for All Ongoing Semesters
       </Heading>
 
-      <Tabs
-        colorScheme="gray"
-        _hover={{
-          bg: "white", // Light gray on hover
-          transition: "background 0.4s ease-in-out",
-        }}
-        onChange={(index) => setActiveSemester(["1", "3", "5", "7"][index])}
-      >
-        <TabList mb={6}>
-          <Tab
-            _hover={{
-              bg: "gray.100", // Light gray on hover
-              transition: "background 0.4s ease-in-out",
-            }}
-          >
-            Semester 1
-          </Tab>
-          <Tab
-            _hover={{
-              bg: "gray.100", // Light gray on hover
-              transition: "background 0.4s ease-in-out",
-            }}
-          >
-            Semester 3
-          </Tab>
-          <Tab
-            _hover={{
-              bg: "gray.100", // Light gray on hover
-              transition: "background 0.4s ease-in-out",
-            }}
-          >
-            Semester 5
-          </Tab>
-          <Tab
-            _hover={{
-              bg: "gray.100", // Light gray on hover
-              transition: "background 0.4s ease-in-out",
-            }}
-          >
-            Semester 7
-          </Tab>
-        </TabList>
+      {/* Buttons for generating routines */}
+      <Flex mb={6} gap={4}>
+        <Button
+          colorScheme="teal"
+          onClick={() => handleGenerateRoutine("summer")}
+          isLoading={isRoutineGenerating}
+        >
+          Generate Summer Routine
+        </Button>
+        <Button
+          colorScheme="blue"
+          onClick={() => handleGenerateRoutine("winter")}
+          isLoading={isRoutineGenerating}
+        >
+          Generate Winter Routine
+        </Button>
+      </Flex>
 
-        <TabPanels>
-          {["1", "3", "5", "7"].map((semester) => (
-            <TabPanel key={semester} p={0}>
-              <Tabs variant="enclosed" colorScheme="teal">
-                <TabList>
-                  <Tab
-                    _hover={{
-                      bg: "gray.100", // Light gray on hover
-                      transition: "background 0.4s ease-in-out",
-                    }}
-                  >
-                    Section A
-                  </Tab>
-                  <Tab
-                    _hover={{
-                      bg: "gray.100", // Light gray on hover
-                      transition: "background 0.4s ease-in-out",
-                    }}
-                  >
-                    Section B
-                  </Tab>
-                </TabList>
+      {timetableData ? (
+        <>
+          <Text textAlign="center" mb={8} fontSize="lg" fontWeight="bold">
+            Last Generated Routine: {currentSeason === "summer" ? "Summer" : "Winter"} (Generated on: {lastGeneratedTimestamp})
+          </Text>
+          <Tabs
+            colorScheme="gray"
+            onChange={(index) => setActiveSemester(semesters[index])}
+          >
+            <TabList mb={6}>
+              {semesters.map((semester) => (
+                <Tab key={semester} _hover={{ bg: "gray.100" }}>
+                  Semester {semester}
+                </Tab>
+              ))}
+            </TabList>
 
-                <TabPanels mt={4}>
-                  <TabPanel p={2}>
-                    {timetableData[semester]?.A ? (
-                      renderSectionTable(timetableData[semester].A)
-                    ) : (
-                      <Text textAlign="center" p={4}>
-                        No data for Section A
-                      </Text>
-                    )}
-                  </TabPanel>
-                  <TabPanel p={2}>
-                    {timetableData[semester]?.B ? (
-                      renderSectionTable(timetableData[semester].B)
-                    ) : (
-                      <Text textAlign="center" p={4}>
-                        No data for Section B
-                      </Text>
-                    )}
-                  </TabPanel>
-                </TabPanels>
-              </Tabs>
-            </TabPanel>
-          ))}
-        </TabPanels>
-      </Tabs>
+            <TabPanels>
+              {semesters.map((semester) => (
+                <TabPanel key={semester} p={2}>
+                  <Tabs variant="enclosed" colorScheme="teal">
+                    <TabList>
+                      <Tab _hover={{ bg: "gray.100" }}>Section A</Tab>
+                      <Tab _hover={{ bg: "gray.100" }}>Section B</Tab>
+                    </TabList>
+
+                    <TabPanels mt={4}>
+                      <TabPanel p={2}>
+                        {timetableData[semester]?.A ? (
+                          renderSectionTable(timetableData[semester].A)
+                        ) : (
+                          <Text textAlign="center" p={4}>
+                            No data for Section A
+                          </Text>
+                        )}
+                      </TabPanel>
+                      <TabPanel p={2}>
+                        {timetableData[semester]?.B ? (
+                          renderSectionTable(timetableData[semester].B)
+                        ) : (
+                          <Text textAlign="center" p={4}>
+                            No data for Section B
+                          </Text>
+                        )}
+                      </TabPanel>
+                    </TabPanels>
+                  </Tabs>
+                </TabPanel>
+              ))}
+            </TabPanels>
+          </Tabs>
+        </>
+      ) : (
+        <Text textAlign="center" p={4}>
+          No routine generated yet. Please generate a routine.
+        </Text>
+      )}
     </Box>
   );
 };

@@ -4,114 +4,109 @@
       "rank": "Part-Time"
     }
   ],
-
-  "DFS" : [
+  "DFS": [
     {
       "rank": "Professor"
     }
   ],
-
-  "BS" : [
+  "BS": [
     {
       "rank": "Assistant Professor"
     }
   ],
-
-  "MM" : [
+  "MM": [
     {
       "rank": "Assistant Professor"
     }
   ],
-
-  "FAK" : [
+  "FAK": [
     {
       "rank": "Professor"
     }
   ],
-
-  "AH" : [
+  "AH": [
     {
       "rank": "Assistant Professor"
     }
   ],
-  "MMH" : [
+  "MMH": [
     {
       "rank": "Part-Time"
     }
   ],
-  "KH" : [
+  "KH": [
     {
       "rank": "Professor"
     }
   ],
-  "MKS" : [
+  "MKS": [
     {
       "rank": "Assistant Professor"
     }
-  ] ,
-  "AA" : [
+  ],
+  "AA": [
     {
       "rank": "Junior Lecturer"
     }
   ],
-  "MUA" : [
+  "MUA": [
     {
       "rank": "Part-Time"
     }
   ],
-  "SRR" : [
+  "SRR": [
     {
       "rank": "Lecturer"
     }
   ],
-  "RHJ" : [
+  "RHJ": [
     {
-      "rank" : "Junior Lecturer"
+      "rank": "Junior Lecturer"
     }
   ],
-  "MAMR" : [
+  "MAMR": [
     {
       "rank": "Lecturer"
     }
   ],
-  "FH" : [
+  "FH": [
     {
       "rank": "Assistant Professor"
     }
   ],
-  "SHR" : [
+  "SHR": [
     {
-      "rank" : "Lecturer"
+      "rank": "Lecturer"
     }
   ],
-  "HJA" : [
+  "HJA": [
     {
-      "rank" : "Lecturer"
+      "rank": "Lecturer"
     }
   ],
-  "ARMK" : [
+  "ARMK": [
     {
-      "rank" : "Professor"
+      "rank": "Professor"
     }
   ],
-  "SA" : [
+  "SA": [
     {
-      "rank" : "Assistant Professor"
+      "rank": "Assistant Professor"
     }
   ],
   "MHA": [
     {
-      "rank" : "Assistant Professor"
+      "rank": "Assistant Professor"
     }
   ],
-  "TZF" : [
+  "TZF": [
     {
-      "rank" : "Junior Lecturer"
+      "rank": "Junior Lecturer"
     }
   ],
   "IT": [
     {
-      "rank" : "Lecturer"
+      "rank": "Lecturer"
     }
   ],
   "RH": [
@@ -141,7 +136,7 @@
   ],
   "FI": [
     {
-      "rank" : "Lecturer"
+      "rank": "Lecturer"
     }
   ],
   "AKA": [
@@ -166,7 +161,7 @@
   ],
   "HM": [
     {
-      "rank" : "Professor"
+      "rank": "Professor"
     }
   ],
   "AZM": [
@@ -176,7 +171,12 @@
   ],
   "TMC": [
     {
-      "rank":"Assistant Professor"
+      "rank": "Assistant Professor"
+    }
+  ],
+  "TAS": [
+    {
+      "rank": "Junior Lecturer"
     }
   ],
   "ASH": [
@@ -202,6 +202,66 @@
   "NY": [
     {
       "rank": "Lecturer"
+    }
+  ],
+  "MEA": [
+    {
+      "rank": "Lecturer"
+    }
+  ],
+  "FF": [
+    {
+      "rank": "Lecturer"
+    }
+  ],
+  "MSFI": [
+    {
+      "rank": "Assistant Professor"
+    }
+  ],
+  "MIA": [
+    {
+      "rank": "Lecturer"
+    }
+  ],
+  "NFS": [
+    {
+      "rank": "Lecturer"
+    }
+  ],
+  "SMA": [
+    {
+      "rank": "Lecturer"
+    }
+  ],
+  "MSS": [
+    {
+      "rank": "Lecturer"
+    }
+  ],
+  "SI": [
+    {
+      "rank": "Assistant Professor"
+    }
+  ],
+  "RK": [
+    {
+      "rank": "Assistant Professor"
+    }
+  ],
+  "AAK": [
+    {
+      "rank": "Professor"
+    }
+  ],
+  "MRH": [
+    {
+      "rank": "Professor"
+    }
+  ],
+  "HK": [
+    {
+      "rank": "Professor"
     }
   ]
 }
