@@ -24,7 +24,8 @@ import TeacherPreference from "./pages/features/TeacherPreference.jsx";
 
 import AdminHome from "./pages/home/AdminHome.jsx";
 import AdminDashboard from "./pages/home/dashboards/AdminDashboard.jsx";
-import AdminManageRoutine from "./pages/features/AdminManageRoutine.jsx";
+import AdminManageCourses from "./pages/features/AdminManageCourses.jsx";
+import AdminManageLabs from "./pages/features/AdminManageLabs.jsx";
 import AdminGenerateRoutine from "./pages/features/AdminGenerateRoutine.jsx";
 import AdminViewRoutine from "./pages/features/AdminViewRoutine.jsx";
 import AdminManageUsers from "./pages/features/AdminManageUsers.jsx";
@@ -84,10 +85,18 @@ function App() {
             />
 
             <Route
-              path="/admin-home/admin-manage-routine"
+              path="/admin-home/admin-manage-courses"
               element={
                 <RequireAuth allowedRoles={["admin"]}>
-                  <AdminManageRoutine />
+                  <AdminManageCourses />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/admin-home/admin-manage-labs"
+              element={
+                <RequireAuth allowedRoles={["admin"]}>
+                  <AdminManageLabs />
                 </RequireAuth>
               }
             />

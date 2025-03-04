@@ -1,8 +1,21 @@
-import "./StudentRoutine.scss"; // Import the CSS file
 import React, { useState, useEffect, useContext } from "react";
-import { db, auth } from "../../firebase";
+import { db } from "../../firebase";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { AuthContext } from "../../context/AuthContext";
+import {
+  Box,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Heading,
+  Tag,
+  useColorModeValue,
+  Spinner,
+  Text,
+} from "@chakra-ui/react";
 
 const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const Slots = [
@@ -19,14 +32,6 @@ const StudentRoutine = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { currentUser } = useContext(AuthContext);
-  let course_code = "";
-  let course_title = "";
-  let teacher_1 = "";
-  let teacher_2 = "";
-  let room = "";
-  let day = "";
-  let time = "";
-  let course_type = "";
 
   useEffect(() => {
     const fetchRoutine = async () => {
@@ -71,12 +76,12 @@ const StudentRoutine = () => {
               var slotIndex = -1;
               var slotIndex2 = -1;
 
-              course_code = perm_course_code;
-              course_title = perm_course_code;
-              teacher_1 = perm_teacher_1;
-              teacher_2 = perm_teacher_2;
-              course_type = perm_course_type;
-              room = perm_room;
+              let course_code = perm_course_code;
+              let course_title = perm_course_title;
+              let teacher_1 = perm_teacher_1;
+              let teacher_2 = perm_teacher_2;
+              let course_type = perm_course_type;
+              let room = perm_room;
 
               var dayIndex = daysOfWeek.indexOf(perm_day);
               slotIndex = Slots.indexOf(timeSlotData.perm_time_1); // Assuming perm_time_1 corresponds to the slot time
@@ -152,50 +157,112 @@ const StudentRoutine = () => {
     fetchRoutine();
   }, [currentUser]);
 
+  const renderCourseCell = (course) => {
+    if (!course) return null;
+
+    const isLab = course.course_type === "lab";
+    const colorScheme = isLab ? "green" : "blue";
+
+    return (
+      <Tag
+        colorScheme={colorScheme}
+        variant="subtle"
+        borderRadius="md"
+        size="md"
+        w="100%"
+        py={2}
+        whiteSpace="normal"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        textAlign="center"
+        minH="60px" // Set minimum height for consistency
+      >
+        {course.course_code}
+        <br />
+        {course.teacher_1} {course.teacher_2 && `& ${course.teacher_2}`}
+        <br />
+        {course.room}
+      </Tag>
+    );
+  };
+
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return (
+      <Box textAlign="center" p={8}>
+        <Spinner size="xl" />
+        <Text mt={4} fontSize="lg">
+          Loading timetable data...
+        </Text>
+      </Box>
+    );
   }
 
   if (error) {
-    return <div className="error-message">{error}</div>;
+    return (
+      <Box textAlign="center" p={8}>
+        <Text fontSize="lg" color="red.500">
+          {error}
+        </Text>
+      </Box>
+    );
   }
 
   return (
-    <div className="routine-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Day/Slot</th>
-            {Slots.map((slot, index) => (
-              <th key={index}>{slot}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {daysOfWeek.map((day, dayIndex) => (
-            <tr key={day}>
-              <td>{day}</td>
-              {routine[dayIndex].map((slot, slotIndex) => (
-                <td key={slotIndex}>
-                  {slot ? (
-                    <div>
-                      <p>{slot.course_code}</p>
+    <Box p={6}>
+      <Heading mb={6} color="rgb(43, 65, 98)">
+        Your Routine
+      </Heading>
 
-                      <p>
-                        {slot.teacher_1} --- {slot.teacher_2}
-                      </p>
-                      <p>{slot.room}</p>
-                    </div>
-                  ) : (
-                    <p>No class</p>
-                  )}
-                </td>
+      <Box overflowX="auto">
+        <Table variant="striped" border="black" colorScheme="white" size="xl">
+          <Thead bg="rgba(205, 219, 242, 0.89)" height="60px">
+            <Tr>
+              <Th width="15%" textAlign="center" color="rgb(43, 41, 41)">
+                Day
+              </Th>
+              {Slots.map((time, index) => (
+                <Th
+                  key={index}
+                  textAlign="center"
+                  fontSize="15px"
+                  width={`${82 / 6}%`}
+                  color="rgb(43, 41, 41)"
+                >
+                  {time}
+                </Th>
               ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {daysOfWeek.map((day, dayIndex) => (
+              <Tr key={dayIndex}>
+                <Td
+                  fontWeight="600"
+                  textAlign="center"
+                  bg={useColorModeValue("white", "gray.800")}
+                >
+                  {day}
+                </Td>
+                {Slots.map((_, timeIndex) => {
+                  const course = routine[dayIndex][timeIndex];
+                  return (
+                    <Td
+                      key={timeIndex}
+                      textAlign="center"
+                      p={2}
+                      //bg={course ? useColorModeValue('white', 'gray.800') : useColorModeValue('gray.100', 'gray.700')}
+                    >
+                      {course ? renderCourseCell(course) : "---"}
+                    </Td>
+                  );
+                })}
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </Box>
+    </Box>
   );
 };
 

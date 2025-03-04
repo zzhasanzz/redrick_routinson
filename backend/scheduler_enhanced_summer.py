@@ -236,7 +236,7 @@ def delete_collection(collection_ref, batch_size=500):
 # Initialize semester timeslots with sections and days
 semester_timeslots = {
     sem: {sec: {day: {time: False for time in TIME_SLOTS} for day in DAYS} for sec in SECTIONS}
-    for sem in [1, 3, 5, 7]
+    for sem in [2, 4, 6, 8]
 }
 course_slots = {}
 room_slots = {room: {day: {time: False for time in TIME_SLOTS} for day in DAYS} for room in CLASSROOMS}
@@ -266,7 +266,7 @@ def load_faculty_details(filename="faculty_details.json"):
 
 
 # In the hardcode_labs function:
-def hardcode_labs(scheduled, filename="optimized_lab_schedule.json"):
+def hardcode_labs(scheduled, filename="optimized_lab_schedule_summer.json"):
     labs_data = load_json(filename)
     for semester in labs_data["semesters"]:
         for section in semester["sections"]:
@@ -292,36 +292,6 @@ def hardcode_labs(scheduled, filename="optimized_lab_schedule.json"):
                     for teacher in lab_class.teachers:
                         teacher_slots[teacher][lab_class.day][time] = True
                 scheduled.append(lab_class)
-
-
-# In the hardcode_part_time_teachers function:
-# def hardcode_part_time_teachers(scheduled, filename="input_file_part_time.json"):
-#     part_time_data = load_json(filename)
-#     for semester in part_time_data["semesters"]:
-#         for section in semester["sections"]:
-#             for course in section["courses"]:
-#                 for schedule in course["schedule"]:
-#                     # Create Class instance for part-time class
-#                     pt_class = Class(
-#                         semester=semester["semester"],
-#                         section=section["section"],
-#                         code=course["course"],
-#                         day=schedule["day"],
-#                         times=[schedule["time"]],
-#                         room=schedule["room"],  # Ensure room is a string
-#                         teachers=[schedule["teacher"]]
-#                     )
-#                     # Initialize teacher in teacher_slots if not already present
-#                     for teacher in pt_class.teachers:
-#                         if teacher not in teacher_slots:
-#                             teacher_slots[teacher] = {day: {time: False for time in TIME_SLOTS} for day in DAYS}
-#                     # Mark slots as occupied
-#                     for time in pt_class.times:
-#                         semester_timeslots[pt_class.semester][pt_class.section][pt_class.day][time] = True
-#                         room_slots[pt_class.room][pt_class.day][time] = True
-#                         for teacher in pt_class.teachers:
-#                             teacher_slots[teacher][pt_class.day][time] = True
-#                     scheduled.append(pt_class)
 
 
 # Check for collisions
@@ -478,7 +448,7 @@ def schedule_remaining_classes(classes, scheduled, faculty_details):
 
 
 # Write schedule to JSON
-def write_schedule_to_json(scheduled, filename="final_schedule.json"):
+def write_schedule_to_json(scheduled, filename="final_schedule_summer.json"):
     output = {"semesters": []}
     for cls in scheduled:
         semester = next((s for s in output["semesters"] if s["semester"] == cls.semester), None)
@@ -517,7 +487,7 @@ def write_schedule_to_json(scheduled, filename="final_schedule.json"):
     with open(filename, "w") as file:
         json.dump(output, file, indent=2)
 
-def write_schedule_to_csv(scheduled, filename="final_schedule.csv"):
+def write_schedule_to_csv(scheduled, filename="final_schedule_summer.csv"):
     # Organize data by semester, section, day, and time slot
     schedule_data = {}
     for cls in scheduled:
@@ -566,7 +536,7 @@ def main():
         #hardcode_part_time_teachers(scheduled)
         
         # Load regular classes from JSON
-        regular_data = load_json("first_schedule.json")
+        regular_data = load_json("first_schedule_summer.json")
         regular_classes = []
         for semester in regular_data["semesters"]:
             for section in semester["sections"]:
