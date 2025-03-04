@@ -31,9 +31,15 @@ import AdminViewRoutine from "./pages/features/AdminViewRoutine.jsx";
 import AdminManageUsers from "./pages/features/AdminManageUsers.jsx";
 import AdminGenerateSeatPlan from "./pages/features/AdminManageSeatPlan.jsx";
 import LostAndFound from "./pages/features/LostAndFound.jsx";
+import FoodScanner from "./pages/event/Scanner.jsx";
+import UsersProfile from "./pages/features/UsersProfile.jsx";
 
 import Event from "./pages/event/Event.jsx";
 import AdminStats from "./pages/features/AdminStats.jsx";
+import AdminGenerateSeatPlanForAll from "./pages/features/adminGenerateSeatPlan.jsx"
+import TeacherEvents from "./pages/event/TeacherEvents.jsx";
+import InviteTeacher from "./pages/event/InviteTeacher.jsx";
+import SeatPlanUser from "./pages/features/SeatPlanUser.jsx"
 
 function App() {
   const { currentUser, role } = useContext(AuthContext);
@@ -125,6 +131,14 @@ function App() {
                 </RequireAuth>
               }
             />
+             <Route
+              path="/admin-home/admin-generate-seat-plan"
+              element={
+                <RequireAuth allowedRoles={["admin"]}>
+                  <AdminGenerateSeatPlanForAll/>
+                </RequireAuth>
+              }
+            />
             <Route
               path="/admin-home/admin-generate-routine"
               element={
@@ -167,12 +181,28 @@ function App() {
                 </RequireAuth>
               }
             />
+            <Route
+              path="/student-home/student-seat-plan"
+              element={
+                <RequireAuth allowedRoles={["student"]}>
+                  <SeatPlanUser />
+                </RequireAuth>
+              }
+            />
 
             <Route
               path="/student-home/myevents"
               element={
                 <RequireAuth allowedRoles={["student"]}>
                   <Blank />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/student-home/scanner"
+              element={
+                <RequireAuth allowedRoles={["student"]}>
+                  <FoodScanner />
                 </RequireAuth>
               }
             />
@@ -199,7 +229,7 @@ function App() {
               path="/student-home/user"
               element={
                 <RequireAuth allowedRoles={["student"]}>
-                  <Blank />
+                  <UsersProfile />
                 </RequireAuth>
               }
             />
@@ -208,6 +238,15 @@ function App() {
               element={
                 <RequireAuth allowedRoles={["student"]}>
                   <Event />
+                </RequireAuth>
+              }
+            />
+
+            <Route
+              path="/student-home/event/invite/:eventId"
+              element={
+                <RequireAuth allowedRoles={["student"]}>
+                  <InviteTeacher />
                 </RequireAuth>
               }
             />
@@ -258,11 +297,11 @@ function App() {
             />
 
             <Route
-              path="/teacher-home/myevents"
+              path="/teacher-home/event"
               element={
-                <RequireAuth allowedRoles={["teacher"]}>
-                  <Blank />
-                </RequireAuth>
+                // <RequireAuth allowedRoles={["teacher"]}>
+                <TeacherEvents />
+                // </RequireAuth>
               }
             />
             <Route

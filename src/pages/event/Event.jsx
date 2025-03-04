@@ -32,6 +32,7 @@ import {
     Tr,
     Th,
     Td,
+    Select,
     useToast,
 } from "@chakra-ui/react";
 import {
@@ -44,8 +45,18 @@ import "react-datepicker/dist/react-datepicker.css";
 import { db } from "../../firebase";
 import { collection, addDoc, getDocs, getDoc, doc, deleteDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { AuthContext } from "../../context/AuthContext";
+import { QRCodeSVG, QRCodeCanvas } from "qrcode.react";
+import {useNavigate} from "react-router-dom";
+
+
+
 
 const Event = () => {
+    // const [showInvitePage, setShowInvitePage] = useState(false);
+    // const [selectedEventForInvite, setSelectedEventForInvite] = useState(null);
+    const [selectedTokens, setSelectedTokens] = useState({});
+    const [foodOptions, setFoodOptions] = useState([]);
+    const foodItems = ["Breakfast", "Lunch", "Snack", "Dinner"];
     const { currentUser } = useContext(AuthContext);
     const [events, setEvents] = useState([]);
     const [filteredEvents, setFilteredEvents] = useState([]);
@@ -66,7 +77,7 @@ const Event = () => {
     const [isFilteringMyEvents, setIsFilteringMyEvents] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [editingEventId, setEditingEventId] = useState(null);
-
+    const [participantList, setParticipantList] = useState([]);
     const {
         isOpen: isOpenVolunteerModal,
         onOpen: openVolunteerModal,
@@ -78,8 +89,125 @@ const Event = () => {
         onOpen: onDetailsOpen,
         onClose: onDetailsClose,
     } = useDisclosure();
+    const {
+        isOpen: isOpenTokensModal,
+        onOpen: onOpenTokensModal,
+        onClose: onCloseTokensModal,
+    } = useDisclosure();
+
+    const { isOpen: isParticipantsOpen, onOpen: onParticipantsOpen, onClose: onParticipantsClose } = useDisclosure();
 
     const toast = useToast();
+
+    // const [isInviteModalOpen, setInviteModalOpen] = useState(false);
+    // const [teachers, setTeachers] = useState([]);
+    // const [selectedTeacher, setSelectedTeacher] = useState(null);
+    // const [invitationMessage, setInvitationMessage] = useState("");
+
+    const navigate = useNavigate();
+
+    const [selectedFoodItem, setSelectedFoodItem] = useState("");
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [totalTokens, setTotalTokens] = useState(0);
+
+    const {
+        isOpen: isRegisterModalOpen,
+        onOpen: onRegisterModalOpen,
+        onClose: onRegisterModalClose
+    } = useDisclosure();
+    const [formData, setFormData] = useState({
+        name: '',
+        studentId: '',
+        department: '',
+        image: null
+    });
+    const [selectedEventForRegistration, setSelectedEventForRegistration] = useState(null);
+
+
+    const {
+        isOpen: isProfileOpen,
+        onOpen: onProfileOpen,
+        onClose: onProfileClose,
+    } = useDisclosure();
+    const [selectedParticipant, setSelectedParticipant] = useState(null);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // _____________________________________________________________________
+
+
+    // Add this function to fetch teachers
+//     const fetchTeachers = async () => {
+//         try {
+//             const usersCollection = collection(db, "users");
+//             const snapshot = await getDocs(usersCollection);
+//             const teacherList = [];
+//             snapshot.forEach(doc => {
+//                 const userData = doc.data();
+//                 if(userData.role === "teacher") {
+//                     teacherList.push({ id: doc.id, ...userData });
+//                 }
+//             });
+//             setTeachers(teacherList);
+//         } catch (error) {
+//             console.error("Error fetching teachers:", error);
+//         }
+//     };
+//
+// // Add this function to send invitation
+//     const sendInvitation = async () => {
+//         if(!selectedTeacher || !invitationMessage) {
+//             toast({
+//                 title: "Missing Information",
+//                 description: "Please select a teacher and write a message",
+//                 status: "error",
+//                 duration: 3000,
+//                 isClosable: true,
+//             });
+//             return;
+//         }
+//
+//         try {
+//             await addDoc(collection(db, "invitations"), {
+//                 eventId: selectedEvent.id,
+//                 eventName: selectedEvent.eventName,
+//                 senderEmail: currentUser.email,
+//                 teacherEmail: selectedTeacher.email,
+//                 message: invitationMessage,
+//                 status: "pending",
+//                 timestamp: new Date().toISOString()
+//             });
+//
+//             toast({
+//                 title: "Invitation Sent!",
+//                 description: "Your invitation has been successfully sent",
+//                 status: "success",
+//                 duration: 3000,
+//                 isClosable: true,
+//             });
+//             setInviteModalOpen(false);
+//         } catch (error) {
+//             console.error("Error sending invitation:", error);
+//             toast({
+//                 title: "Error",
+//                 description: "Failed to send invitation",
+//                 status: "error",
+//                 duration: 3000,
+//                 isClosable: true,
+//             });
+//         }
+//     };
 
     const fetchEvents = async () => {
         setLoading(true);
@@ -117,6 +245,35 @@ const Event = () => {
         fetchEvents();
         fetchUserRole();
     }, []);
+
+
+    const handleViewTokens = async (event) => {
+        try {
+            const eventDocRef = doc(db, "events", event.id);
+            const eventDoc = await getDoc(eventDocRef);
+
+            if (eventDoc.exists()) {
+                const eventData = eventDoc.data();
+                const userTokens = eventData.foodTokens?.[currentUser.email] || {};
+
+                if (Object.keys(userTokens).length === 0) {
+                    toast({ /* ... */ });
+                    return;
+                }
+
+                const firstTokenKey = Object.keys(userTokens)[0];
+                setSelectedTokens(userTokens);
+                setSelectedFoodItem(firstTokenKey);
+                setCurrentIndex(0);
+                setTotalTokens(Object.keys(userTokens).length);
+                onOpenTokensModal();
+            }
+        } catch (error) {
+            // Handle error
+        }
+    };
+
+
 
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
@@ -157,20 +314,8 @@ const Event = () => {
             return;
         }
 
-        if (enableVolunteer && allowedDepartments.length === 0) {
-            toast({
-                title: "Allowed Departments Required",
-                description: "Please select at least one department for volunteering.",
-                status: "warning",
-                duration: 3000,
-                isClosable: true,
-            });
-            return;
-        }
-
         try {
             if (isEditing) {
-                // Update existing event
                 const eventDocRef = doc(db, "events", editingEventId);
                 await updateDoc(eventDocRef, {
                     eventName,
@@ -182,17 +327,9 @@ const Event = () => {
                     allowedDepartments,
                     image,
                     roadmap,
-                });
-
-                toast({
-                    title: "Event Updated",
-                    description: "The event has been successfully updated.",
-                    status: "success",
-                    duration: 3000,
-                    isClosable: true,
+                    foodOptions, // Save selected food options
                 });
             } else {
-                // Create new event
                 const eventRef = collection(db, "events");
                 await addDoc(eventRef, {
                     eventName,
@@ -205,19 +342,24 @@ const Event = () => {
                     allowedDepartments,
                     image,
                     roadmap,
-                    creatorEmail: currentUser.email, // Save the creator's email
-                });
-
-                toast({
-                    title: "Event Created",
-                    description: "Your event has been successfully created.",
-                    status: "success",
-                    duration: 3000,
-                    isClosable: true,
+                    creatorEmail: currentUser.email,
+                    foodOptions, // Save selected food options
+                    breakfast: [],  // ✅ Initialize empty food arrays
+                    lunch: [],
+                    dinner: [],
+                    snacks: []
                 });
             }
 
-            // Reset state
+            toast({
+                title: isEditing ? "Event Updated" : "Event Created",
+                description: isEditing ? "Event updated successfully." : "Event created successfully.",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+            });
+
+            // Reset fields
             setIsEditing(false);
             setEditingEventId(null);
             setEventName("");
@@ -229,6 +371,7 @@ const Event = () => {
             setImage(null);
             setRoadmap([]);
             setAllowedDepartments([]);
+            setFoodOptions([]);
 
             fetchEvents();
             onClose();
@@ -243,6 +386,7 @@ const Event = () => {
             });
         }
     };
+
 
     const handleEditEvent = (event) => {
         setIsEditing(true);
@@ -267,7 +411,7 @@ const Event = () => {
             if (eventDoc.exists()) {
                 const eventData = eventDoc.data();
                 const volunteerList = eventData.volunteerList || [];
-                const allowedDepartments = eventData.allowedDepartments || [];
+                // const allowedDepartments = eventData.allowedDepartments || [];
 
                 if (volunteerList.includes(currentUser.email)) {
                     toast({
@@ -361,6 +505,106 @@ const Event = () => {
         setIsFilteringMyEvents(!isFilteringMyEvents); // Toggle the state
     };
 
+    const handleRegister = async (eventId, selectedFoodOptions) => {
+        try {
+            // Validate form data
+            if (!formData.name || !formData.studentId || !formData.department) {
+                toast({
+                    title: "Missing Information",
+                    description: "Please fill all required fields",
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                });
+                return;
+            }
+
+            const eventDocRef = doc(db, "events", eventId);
+            const eventDoc = await getDoc(eventDocRef);
+
+            if (eventDoc.exists()) {
+                const eventData = eventDoc.data();
+                const participantList = eventData.participantList || [];
+
+                // Check if already registered
+                const isRegistered = participantList.some(
+                    participant => participant.email === currentUser.email
+                );
+
+                if (isRegistered) {
+                    toast({
+                        title: "Already Registered",
+                        description: "You have already registered for this event.",
+                        status: "info",
+                        duration: 3000,
+                        isClosable: true,
+                    });
+                    return;
+                }
+
+                // Create participant object
+                const participantData = {
+                    name: formData.name,
+                    studentId: formData.studentId,
+                    department: formData.department,
+                    image: formData.image,
+                    email: currentUser.email,
+                    registrationDate: new Date().toISOString()
+                };
+
+                // Generate food tokens
+                let foodTokens = eventData.foodTokens || {};
+                foodTokens[currentUser.email] = {};
+
+                selectedFoodOptions.forEach(food => {
+                    foodTokens[currentUser.email][food] = `${eventId}-${currentUser.email}-${food}`;
+                });
+
+                // Update document
+                await updateDoc(eventDocRef, {
+                    participantList: arrayUnion(participantData),
+                    foodTokens,
+                });
+
+                toast({
+                    title: "Registration Successful",
+                    description: "Your registration has been completed!",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                });
+
+                // Reset form and close modal
+                setFormData({
+                    name: '',
+                    studentId: '',
+                    department: '',
+                    image: null
+                });
+                onRegisterModalClose();
+                fetchEvents();
+            }
+        } catch (error) {
+            console.error("Error registering for event: ", error);
+            toast({
+                title: "Error",
+                description: "Failed to register. Please try again.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+    };
+
+
+    const handleViewParticipants = (event) => {
+        setParticipantList(event.participantList || []); // Ensure participantList is an array
+        onParticipantsOpen();
+    };
+
+
+
+
     return (
         <Box p={5}>
             {isPresident && (
@@ -374,6 +618,14 @@ const Event = () => {
                         mb={5}
                     >
                         {isFilteringMyEvents ? "View All Events" : "Events Created by Me"}
+                    </Button>
+
+                    <Button
+                        colorScheme="red"
+                        onClick={() => window.location.href = "/student-home/scanner"}
+                        mb={5}
+                    >
+                        Scanner
                     </Button>
                 </>
             )}
@@ -397,8 +649,15 @@ const Event = () => {
                                 <FormLabel>Event Start Date</FormLabel>
                                 <DatePicker
                                     selected={startDate}
-                                    onChange={(date) => setStartDate(date)}
+                                    onChange={(date) => {
+                                        setStartDate(date);
+                                        // If the current end date is before the new start date, update the end date
+                                        if (endDate < date) {
+                                            setEndDate(date);
+                                        }
+                                    }}
                                     dateFormat="MMMM d, yyyy"
+                                    minDate={new Date()}
                                 />
                             </FormControl>
                             <FormControl isRequired>
@@ -407,6 +666,7 @@ const Event = () => {
                                     selected={endDate}
                                     onChange={(date) => setEndDate(date)}
                                     dateFormat="MMMM d, yyyy"
+                                    minDate={startDate} // Set the minimum date to the start date
                                 />
                             </FormControl>
                             <FormControl isRequired>
@@ -425,6 +685,24 @@ const Event = () => {
                                     value={subscriptionFee}
                                     onChange={(e) => setSubscriptionFee(e.target.value)}
                                 />
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel>Food Options</FormLabel>
+                                <SimpleGrid columns={2} spacing={2}>
+                                    {foodItems.map((food) => (
+                                        <Checkbox
+                                            key={food}
+                                            isChecked={foodOptions.includes(food)}
+                                            onChange={() =>
+                                                setFoodOptions((prev) =>
+                                                    prev.includes(food) ? prev.filter((f) => f !== food) : [...prev, food]
+                                                )
+                                            }
+                                        >
+                                            {food}
+                                        </Checkbox>
+                                    ))}
+                                </SimpleGrid>
                             </FormControl>
                             <FormControl>
                                 <FormLabel>Upload Event Image</FormLabel>
@@ -626,6 +904,16 @@ const Event = () => {
                                         >
                                             Edit Event
                                         </Button>
+
+                                        <Button
+                                            colorScheme="teal"
+                                            onClick={() => navigate(`/student-home/event/invite/${event.id}`)}
+                                            ml={2}
+                                        >
+                                            Invite Teachers
+                                        </Button>
+
+
                                         <Button
                                             size="sm"
                                             colorScheme="red"
@@ -643,6 +931,31 @@ const Event = () => {
                                         Volunteer
                                     </Button>
                                 )}
+                                {event.creatorEmail === currentUser.email ? (
+                                    <Button size="sm" colorScheme="purple" onClick={() => handleViewParticipants(event)}>
+                                        View Participants
+                                    </Button>
+                                ) :  event.participantList?.some(p => p.email === currentUser.email) ? (
+                                    <Button
+                                        size="sm"
+                                        colorScheme="purple"
+                                        onClick={() => handleViewTokens(event)}
+                                    >
+                                        Token
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        size="sm"
+                                        colorScheme="blue"
+                                        onClick={() => {
+                                            setSelectedEventForRegistration(event);
+                                            onRegisterModalOpen();
+                                        }}
+                                    >
+                                        Register
+                                    </Button>
+                                )}
+
                                 <Button
                                     size="sm"
                                     colorScheme="blue"
@@ -678,6 +991,16 @@ const Event = () => {
                         <Text fontWeight="bold">Description:</Text>
                         <Text>{selectedEvent?.description}</Text>
                         <Text fontWeight="bold">Roadmap:</Text>
+                        <Text fontWeight="bold" mt={4}>Food Options:</Text>
+                        {selectedEvent?.foodOptions && selectedEvent.foodOptions.length > 0 ? (
+                            <SimpleGrid columns={2} spacing={2} mt={2}>
+                                {selectedEvent.foodOptions.map((food, index) => (
+                                    <Badge key={index} colorScheme="orange">{food}</Badge>
+                                ))}
+                            </SimpleGrid>
+                        ) : (
+                            <Text>No food options available.</Text>
+                        )}
                         <Table size="sm" mt={4}>
                             <Thead>
                                 <Tr>
@@ -750,6 +1073,283 @@ const Event = () => {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
+            <Modal isOpen={isParticipantsOpen} onClose={onParticipantsClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Registered Participants</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        {participantList.length > 0 ? (
+                            <Table size="sm">
+                                <Thead>
+                                    <Tr>
+                                        <Th>Name</Th>
+                                        <Th>Photo</Th>
+                                        <Th>Actions</Th>
+                                    </Tr>
+                                </Thead>
+                                <Tbody>
+                                    {participantList.map((participant, index) => (
+                                        <Tr key={index}>
+                                            <Td>{participant.name}</Td>
+                                            <Td>
+                                                {participant.image && (
+                                                    <Image
+                                                        src={participant.image}
+                                                        boxSize="50px"
+                                                        objectFit="cover"
+                                                        borderRadius="full"
+                                                    />
+                                                )}
+                                            </Td>
+                                            <Td>
+                                                <Button
+                                                    size="sm"
+                                                    colorScheme="blue"
+                                                    onClick={() => {
+                                                        setSelectedParticipant(participant);
+                                                        onProfileOpen();
+                                                    }}
+                                                >
+                                                    Profile
+                                                </Button>
+                                            </Td>
+                                        </Tr>
+                                    ))}
+                                </Tbody>
+                            </Table>
+                        ) : (
+                            <Text>No participants registered yet.</Text>
+                        )}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button colorScheme="blue" onClick={onParticipantsClose}>
+                            Close
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+            <Modal isOpen={isOpenTokensModal} onClose={onCloseTokensModal} size="lg">
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Your Food Tokens</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        {Object.keys(selectedTokens).length > 0 ? (
+                            <VStack spacing={4}>
+                                {/* Navigation Controls */}
+                                <HStack justifyContent="space-between" w="full">
+                                    <Button
+                                        onClick={() => setSelectedFoodItem(prev => {
+                                            const keys = Object.keys(selectedTokens);
+                                            const newIndex = (keys.indexOf(prev) - 1 + keys.length) % keys.length;
+                                            return keys[newIndex];
+                                        })}
+                                        isDisabled={Object.keys(selectedTokens).length <= 1}
+                                    >
+                                        Previous
+                                    </Button>
+                                    <Button
+                                        onClick={() => setSelectedFoodItem(prev => {
+                                            const keys = Object.keys(selectedTokens);
+                                            const newIndex = (keys.indexOf(prev) + 1) % keys.length;
+                                            return keys[newIndex];
+                                        })}
+                                        isDisabled={Object.keys(selectedTokens).length <= 1}
+                                    >
+                                        Next
+                                    </Button>
+                                </HStack>
+
+                                {/* QR Code Display */}
+                                <Box textAlign="center" w="full">
+                                    <Text fontSize="xl" mb={4} fontWeight="bold">
+                                        {selectedFoodItem}
+                                    </Text>
+                                    <QRCodeSVG
+                                        value={selectedTokens[selectedFoodItem]}
+                                        size={256}
+                                        style={{ margin: '0 auto' }}
+                                    />
+                                </Box>
+                            </VStack>
+                        ) : (
+                            <Text>No QR tokens found for this event.</Text>
+                        )}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button colorScheme="blue" onClick={onCloseTokensModal}>
+                            Close
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+            {/*<Modal isOpen={isInviteModalOpen} onClose={() => setInviteModalOpen(false)}>*/}
+            {/*    <ModalOverlay />*/}
+            {/*    <ModalContent>*/}
+            {/*        <ModalHeader>Invite Teachers</ModalHeader>*/}
+            {/*        <ModalCloseButton />*/}
+            {/*        <ModalBody>*/}
+            {/*            <Textarea*/}
+            {/*                placeholder="Dear Professor [Name],\n\nWe would be honored to have your expertise and guidance for our upcoming event [Event Name]. Your involvement would greatly enrich our program..."*/}
+            {/*                value={invitationMessage}*/}
+            {/*                onChange={(e) => setInvitationMessage(e.target.value)}*/}
+            {/*                minHeight="200px"*/}
+            {/*                mb={4}*/}
+            {/*            />*/}
+
+            {/*            <Text fontWeight="bold" mb={2}>Select Teacher:</Text>*/}
+            {/*            <SimpleGrid columns={1} spacing={2}>*/}
+            {/*                {teachers.map(teacher => (*/}
+            {/*                    <Card*/}
+            {/*                        p={3}*/}
+            {/*                        key={teacher.id}*/}
+            {/*                        cursor="pointer"*/}
+            {/*                        border={selectedTeacher?.id === teacher.id ? "2px solid teal" : "1px solid gray"}*/}
+            {/*                        onClick={() => setSelectedTeacher(teacher)}*/}
+            {/*                    >*/}
+            {/*                        <Text fontWeight="bold">{teacher.name}</Text>*/}
+            {/*                        <Text>{teacher.email}</Text>*/}
+            {/*                        <Text>{teacher.department}</Text>*/}
+            {/*                    </Card>*/}
+            {/*                ))}*/}
+            {/*            </SimpleGrid>*/}
+            {/*        </ModalBody>*/}
+            {/*        <ModalFooter>*/}
+            {/*            <Button colorScheme="teal" onClick={sendInvitation}>*/}
+            {/*                Send Invitation*/}
+            {/*            </Button>*/}
+            {/*            <Button variant="outline" ml={3} onClick={() => setInviteModalOpen(false)}>*/}
+            {/*                Cancel*/}
+            {/*            </Button>*/}
+            {/*        </ModalFooter>*/}
+            {/*    </ModalContent>*/}
+            {/*</Modal>*/}
+
+            <Modal isOpen={isRegisterModalOpen} onClose={onRegisterModalClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Registration Form</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <VStack spacing={4}>
+                            <FormControl isRequired>
+                                <FormLabel>Full Name</FormLabel>
+                                <Input
+                                    placeholder="Enter your full name"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                />
+                            </FormControl>
+                            <FormControl isRequired>
+                                <FormLabel>Student ID</FormLabel>
+                                <Input
+                                    placeholder="Enter your student ID"
+                                    value={formData.studentId}
+                                    onChange={(e) => setFormData({...formData, studentId: e.target.value})}
+                                />
+                            </FormControl>
+                            <FormControl isRequired>
+                                <FormLabel>Department</FormLabel>
+                                <Select
+                                    placeholder="Select department"
+                                    value={formData.department}
+                                    onChange={(e) => setFormData({...formData, department: e.target.value})}
+                                >
+                                    {departments.map(dept => (
+                                        <option key={dept} value={dept}>{dept}</option>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel>Upload Profile Image</FormLabel>
+                                <Input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        const file = e.target.files[0];
+                                        if (file) {
+                                            const reader = new FileReader();
+                                            reader.onloadend = () => {
+                                                setFormData({...formData, image: reader.result});
+                                            };
+                                            reader.readAsDataURL(file);
+                                        }
+                                    }}
+                                />
+                            </FormControl>
+                        </VStack>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button
+                            colorScheme="blue"
+                            onClick={() => handleRegister(selectedEventForRegistration.id, selectedEventForRegistration.foodOptions)}
+                        >
+                            Submit Registration
+                        </Button>
+                        <Button variant="ghost" onClick={onRegisterModalClose}>Cancel</Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+            <Modal isOpen={isProfileOpen} onClose={onProfileClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Participant Details</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        {selectedParticipant && (
+                            <VStack spacing={4} align="stretch">
+                                <Center>
+                                    {selectedParticipant.image && (
+                                        <Image
+                                            src={selectedParticipant.image}
+                                            boxSize="200px"
+                                            borderRadius="full"
+                                            objectFit="cover"
+                                            mb={4}
+                                        />
+                                    )}
+                                </Center>
+                                <Box>
+                                    <Text fontWeight="bold">Name:</Text>
+                                    <Text>{selectedParticipant.name}</Text>
+                                </Box>
+                                <Box>
+                                    <Text fontWeight="bold">Student ID:</Text>
+                                    <Text>{selectedParticipant.studentId}</Text>
+                                </Box>
+                                <Box>
+                                    <Text fontWeight="bold">Department:</Text>
+                                    <Text>{selectedParticipant.department}</Text>
+                                </Box>
+                                <Box>
+                                    <Text fontWeight="bold">Email:</Text>
+                                    <Text>{selectedParticipant.email}</Text>
+                                </Box>
+                                <Box>
+                                    <Text fontWeight="bold">Registration Date:</Text>
+                                    <Text>
+                                        {new Date(
+                                            selectedParticipant.registrationDate
+                                        ).toLocaleDateString()}
+                                    </Text>
+                                </Box>
+                            </VStack>
+                        )}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button colorScheme="blue" onClick={onProfileClose}>
+                            Close
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+
+
+
         </Box>
     );
 };

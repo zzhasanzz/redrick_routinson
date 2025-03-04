@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   Table,
   Thead,
@@ -30,7 +30,7 @@ import {
   FormLabel,
   Select,
   useDisclosure,
-} from '@chakra-ui/react';
+} from "@chakra-ui/react";
 
 const AdminManageCourses = () => {
   const [courses, setCourses] = useState([]);
@@ -38,13 +38,17 @@ const AdminManageCourses = () => {
   const [error, setError] = useState(null);
   const [unassignedCourses, setUnassignedCourses] = useState([]);
   const [facultyList, setFacultyList] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState('');
-  const [selectedFaculty, setSelectedFaculty] = useState('');
+  const [selectedCourse, setSelectedCourse] = useState("");
+  const [selectedFaculty, setSelectedFaculty] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [currentSemester, setCurrentSemester] = useState(null);
   const [updatingCourse, setUpdatingCourse] = useState(null);
-  const [selectedUpdateFaculty, setSelectedUpdateFaculty] = useState('');
-  const { isOpen: isUpdateOpen, onOpen: onUpdateOpen, onClose: onUpdateClose } = useDisclosure();
+  const [selectedUpdateFaculty, setSelectedUpdateFaculty] = useState("");
+  const {
+    isOpen: isUpdateOpen,
+    onOpen: onUpdateOpen,
+    onClose: onUpdateClose,
+  } = useDisclosure();
   const toast = useToast();
 
   useEffect(() => {
@@ -85,16 +89,16 @@ const AdminManageCourses = () => {
 
   const fetchFacultyList = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/faculty-ranks');
-      if (!response.ok) throw new Error('Failed to fetch faculty');
+      const response = await fetch("http://localhost:5000/api/faculty-ranks");
+      if (!response.ok) throw new Error("Failed to fetch faculty");
 
       const data = await response.json();
       setFacultyList(Object.keys(data));
     } catch (err) {
       toast({
-        title: 'Error',
+        title: "Error",
         description: err.message,
-        status: 'error',
+        status: "error",
         duration: 3000,
         isClosable: true,
       });
@@ -117,9 +121,9 @@ const AdminManageCourses = () => {
     } catch (err) {
       console.error('Error fetching unassigned courses:', err);
       toast({
-        title: 'Error',
+        title: "Error",
         description: err.message,
-        status: 'error',
+        status: "error",
         duration: 3000,
         isClosable: true,
       });
@@ -128,19 +132,24 @@ const AdminManageCourses = () => {
 
   const handleDeleteCourse = async (semester, courseCode) => {
     try {
-      const response = await fetch('http://localhost:5000/api/delete-course', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ semester, course: courseCode, updateOfferedCourses: true }),
+      const response = await fetch("http://localhost:5000/api/delete-course", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          semester,
+          course: courseCode,
+          updateOfferedCourses: true,
+        }),
       });
 
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Failed to delete course');
+      if (!response.ok)
+        throw new Error(result.error || "Failed to delete course");
 
       toast({
-        title: 'Deleted!',
+        title: "Deleted!",
         description: `Course ${courseCode} removed`,
-        status: 'success',
+        status: "success",
         duration: 3000,
         isClosable: true,
       });
@@ -148,9 +157,9 @@ const AdminManageCourses = () => {
       await fetchCourses();
     } catch (err) {
       toast({
-        title: 'Error',
+        title: "Error",
         description: err.message,
-        status: 'error',
+        status: "error",
         duration: 3000,
         isClosable: true,
       });
@@ -160,26 +169,27 @@ const AdminManageCourses = () => {
   const handleUpdateFaculty = async () => {
     try {
       if (!updatingCourse || !selectedUpdateFaculty) {
-        throw new Error('Please select a faculty');
+        throw new Error("Please select a faculty");
       }
 
-      const response = await fetch('http://localhost:5000/api/update-faculty', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("http://localhost:5000/api/update-faculty", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           semester: updatingCourse.semester, // Now properly structured
           course: updatingCourse.course,
-          teacher: selectedUpdateFaculty
+          teacher: selectedUpdateFaculty,
         }),
       });
 
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Failed to update faculty');
+      if (!response.ok)
+        throw new Error(result.error || "Failed to update faculty");
 
       toast({
-        title: 'Updated!',
+        title: "Updated!",
         description: `Faculty updated for ${updatingCourse.course}`,
-        status: 'success',
+        status: "success",
         duration: 3000,
         isClosable: true,
       });
@@ -188,14 +198,14 @@ const AdminManageCourses = () => {
       await fetchCourses(); // Refresh the data
     } catch (err) {
       toast({
-        title: 'Update Failed',
+        title: "Update Failed",
         description: err.message,
-        status: 'error',
+        status: "error",
         duration: 3000,
         isClosable: true,
       });
     } finally {
-      setSelectedUpdateFaculty('');
+      setSelectedUpdateFaculty("");
       setUpdatingCourse(null);
     }
   };
@@ -203,12 +213,12 @@ const AdminManageCourses = () => {
   const handleAddCourse = async () => {
     try {
       if (!currentSemester || !selectedCourse || !selectedFaculty) {
-        throw new Error('Please select both course and faculty');
+        throw new Error("Please select both course and faculty");
       }
 
-      const response = await fetch('http://localhost:5000/api/add-course', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("http://localhost:5000/api/add-course", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           semester: currentSemester,
           course: selectedCourse,
@@ -217,25 +227,25 @@ const AdminManageCourses = () => {
       });
 
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Failed to add course');
+      if (!response.ok) throw new Error(result.error || "Failed to add course");
 
       toast({
-        title: 'Added!',
+        title: "Added!",
         description: `Course ${selectedCourse} added`,
-        status: 'success',
+        status: "success",
         duration: 3000,
         isClosable: true,
       });
 
-      setSelectedCourse('');
-      setSelectedFaculty('');
+      setSelectedCourse("");
+      setSelectedFaculty("");
       onClose();
       await fetchCourses();
     } catch (err) {
       toast({
-        title: 'Error',
+        title: "Error",
         description: err.message,
-        status: 'error',
+        status: "error",
         duration: 3000,
         isClosable: true,
       });
@@ -255,7 +265,9 @@ const AdminManageCourses = () => {
 
   return (
     <Container maxW="container.xl" py={8}>
-      <Heading mb={6} fontSize="2xl">Assigned Courses Schedule</Heading>
+      <Heading mb={6} fontSize="2xl">
+        Assigned Courses Schedule
+      </Heading>
 
       {loading ? (
         <Skeleton height="400px" borderRadius="md" />
@@ -267,11 +279,11 @@ const AdminManageCourses = () => {
       ) : (
         <Tabs
           variant="enclosed"
-          index={courses.findIndex(sem => sem.semester === currentSemester)}
-          onChange={index => setCurrentSemester(courses[index]?.semester)}
+          index={courses.findIndex((sem) => sem.semester === currentSemester)}
+          onChange={(index) => setCurrentSemester(courses[index]?.semester)}
         >
           <TabList>
-            {courses.map(semester => (
+            {courses.map((semester) => (
               <Tab key={semester.semester} fontSize="lg">
                 Semester {semester.semester}
               </Tab>
@@ -279,26 +291,44 @@ const AdminManageCourses = () => {
           </TabList>
 
           <TabPanels>
-            {courses.map(semester => (
+            {courses.map((semester) => (
               <TabPanel key={semester.semester}>
                 <Box overflowX="auto" minWidth="800px">
                   <Table variant="striped" colorScheme="gray">
                     <Thead>
                       <Tr>
-                        <Th width="20%" textAlign="center">Course Code</Th>
-                        <Th width="35%" textAlign="center">Course Name</Th>
-                        <Th width="15%" textAlign="center">Credits</Th>
-                        <Th width="20%" textAlign="center">Faculty</Th>
-                        <Th width="10%" textAlign="center">Actions</Th>
+                        <Th width="20%" textAlign="center">
+                          Course Code
+                        </Th>
+                        <Th width="35%" textAlign="center">
+                          Course Name
+                        </Th>
+                        <Th width="15%" textAlign="center">
+                          Credits
+                        </Th>
+                        <Th width="20%" textAlign="center">
+                          Faculty
+                        </Th>
+                        <Th width="10%" textAlign="center">
+                          Actions
+                        </Th>
                       </Tr>
                     </Thead>
                     <Tbody>
-                      {semester.courses.map(course => (
+                      {semester.courses.map((course) => (
                         <Tr key={course.course}>
-                          <Td padding="2" fontWeight="600" textAlign="center">{course.course}</Td>
-                          <Td padding="2" textAlign="center">{course.course_name}</Td>
-                          <Td padding="2" textAlign="center">{course.credit}</Td>
-                          <Td padding="2" textAlign="center">{course.teacher}</Td>
+                          <Td padding="2" fontWeight="600" textAlign="center">
+                            {course.course}
+                          </Td>
+                          <Td padding="2" textAlign="center">
+                            {course.course_name}
+                          </Td>
+                          <Td padding="2" textAlign="center">
+                            {course.credit}
+                          </Td>
+                          <Td padding="2" textAlign="center">
+                            {course.teacher}
+                          </Td>
                           <Td padding="2" textAlign="center">
                             <Button
                               color="rgb(253, 253, 253)"
@@ -309,7 +339,12 @@ const AdminManageCourses = () => {
                                 transition: "background 0.33s ease-in-out",
                               }}
                               size="sm"
-                              onClick={() => handleDeleteCourse(semester.semester, course.course)}
+                              onClick={() =>
+                                handleDeleteCourse(
+                                  semester.semester,
+                                  course.course
+                                )
+                              }
                               isLoading={loading} // Add loading state
                             >
                               Delete
@@ -325,9 +360,9 @@ const AdminManageCourses = () => {
                               onClick={() => {
                                 setUpdatingCourse({
                                   ...course,
-                                  semester: semester.semester // Add semester context
+                                  semester: semester.semester, // Add semester context
                                 });
-                                setSelectedUpdateFaculty(course.teacher || '');
+                                setSelectedUpdateFaculty(course.teacher || "");
                                 onUpdateOpen();
                               }}
                             >
@@ -370,9 +405,9 @@ const AdminManageCourses = () => {
               <Select
                 placeholder="Select course"
                 value={selectedCourse}
-                onChange={e => setSelectedCourse(e.target.value)}
+                onChange={(e) => setSelectedCourse(e.target.value)}
               >
-                {unassignedCourses.map(course => (
+                {unassignedCourses.map((course) => (
                   <option key={course.course} value={course.course}>
                     {course.course} - {course.course_name}
                   </option>
@@ -385,9 +420,9 @@ const AdminManageCourses = () => {
               <Select
                 placeholder="Select faculty"
                 value={selectedFaculty}
-                onChange={e => setSelectedFaculty(e.target.value)}
+                onChange={(e) => setSelectedFaculty(e.target.value)}
               >
-                {facultyList.map(faculty => (
+                {facultyList.map((faculty) => (
                   <option key={faculty} value={faculty}>
                     {faculty}
                   </option>
@@ -416,9 +451,9 @@ const AdminManageCourses = () => {
               <Select
                 placeholder="Select faculty"
                 value={selectedUpdateFaculty}
-                onChange={e => setSelectedUpdateFaculty(e.target.value)}
+                onChange={(e) => setSelectedUpdateFaculty(e.target.value)}
               >
-                {facultyList.map(faculty => (
+                {facultyList.map((faculty) => (
                   <option key={faculty} value={faculty}>
                     {faculty}
                   </option>
@@ -430,7 +465,9 @@ const AdminManageCourses = () => {
             <Button colorScheme="blue" onClick={handleUpdateFaculty}>
               Update
             </Button>
-            <Button ml={3} onClick={onUpdateClose}>Cancel</Button>
+            <Button ml={3} onClick={onUpdateClose}>
+              Cancel
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

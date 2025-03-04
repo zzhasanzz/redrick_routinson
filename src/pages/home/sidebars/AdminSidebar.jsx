@@ -2,6 +2,8 @@ import { useEffect, useRef, useState, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { AuthContext } from "../../../context/AuthContext"; // Import the AuthContext
 import './adminSidebar.scss';
+import { db } from "../../../firebase.js"; // Import Firestore
+import { doc, getDoc } from "firebase/firestore";
 
 const sidebarNavItems = [
     {
@@ -55,7 +57,22 @@ const AdminSidebar = () => {
     const sidebarRef = useRef();
     const indicatorRef = useRef();
     const location = useLocation();
+    const [userData, setUserData] = useState(null);
 
+    useEffect(() => {
+        // Fetch user data from Firestore
+        const fetchUserData = async () => {
+            if (currentUser?.email) {
+                const userDocRef = doc(db, "users", currentUser.email);
+                const userSnapshot = await getDoc(userDocRef);
+                if (userSnapshot.exists()) {
+                    setUserData(userSnapshot.data()); // Store user data in state
+                }
+            }
+        };
+        fetchUserData();
+    }, [currentUser]);
+    
     useEffect(() => {
         // Set the initial height of the indicator based on the first menu item
         const sidebarItem = sidebarRef.current.querySelector('.sidebar__menu__item');
@@ -82,12 +99,12 @@ const AdminSidebar = () => {
             {currentUser && (
                 <div className="sidebar__user-info">
                     <img 
-                        src={currentUser.photoURL} 
+                        src={userData?.profilePic || "https://via.placeholder.com/150"} 
                         alt="Profile"
                         className="sidebar__user-info__image"
                     />
                     <div className="sidebar__user-info__details">
-                        <p className="sidebar__user-info__name">{currentUser.displayName}</p>
+                        <p className="sidebar__user-info__name">Admin</p>
                         <p className="sidebar__user-info__email">{currentUser.email}</p>
                     </div>
                 </div>

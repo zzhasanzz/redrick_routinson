@@ -433,9 +433,9 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Tuesday",
+                  "day": "Monday",
                   "time": "2:30-3:45",
-                  "room": "2",
+                  "room": "105",
                   "teacher": "ARMK"
                 },
                 {
@@ -764,7 +764,7 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Thursday",
+                  "day": "Friday",
                   "time": "9:15-10:30",
                   "room": "105",
                   "teacher": "AZM"

@@ -87,13 +87,13 @@ const StudentRoutine = () => {
               slotIndex = Slots.indexOf(timeSlotData.perm_time_1); // Assuming perm_time_1 corresponds to the slot time
               slotIndex2 = Slots.indexOf(timeSlotData.perm_time_1);
 
-              if (class_cancelled === 1 || rescheduled === 1) {
+              if (class_cancelled === 1) {
                 course_code = "Cancelled";
                 course_title = "";
                 teacher_1 = "";
                 teacher_2 = "";
                 room = "";
-                console.log("Class Cancelled or Rescheduled");
+                console.log("Class Cancelled");
               }
               if (temp_course_code !== "") {
                 course_code = temp_course_code;
