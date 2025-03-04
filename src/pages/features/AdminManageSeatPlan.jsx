@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../../firebase';
-import { collection, getDocs, doc, setDoc, onSnapshot, writeBatch } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc, onSnapshot, writeBatch,getDoc } from 'firebase/firestore';
 import {
   Box,
   Heading,
@@ -42,7 +42,124 @@ const AdminManageSeatPlan = () => {
   const [error, setError] = useState('');
   const toast = useToast();
   const [selectedCollection, setSelectedCollection] = useState('seat_plan_summer_day');
+  // const [totalSeats, setTotalSeats] = useState(); // State to store total seats
+  let totalSeats = 60;
 
+// export const generateSeatPlanInFirebase = async () => {
+//     try {
+//         console.log("Generating seat plan data in Firebase...")
+//         const departmentsWith60Students = ["IPE", "SWE", "TVE", "BTM"];
+//         const departments = ["CSE", "EEE", "CEE", "MPE","IPE", "SWE", "TVE", "BTM"];
+//         const semesters = [1, 3, 5, 7]
+//         for(const department of departments)
+//         {
+//             console.log(department);
+
+//             for(const semester of semesters)
+//             {
+//                 let studentCount = departmentsWith60Students.includes(department) ? 60:120;
+//                 if(department == "EEE")
+//                 {
+//                     studentCount = 180;
+//                 }
+
+//                 let studentID = "";
+//                 if(semester == 1)
+//                 {
+//                     studentID = studentID + "2300";
+//                 }
+//                 else if(semester == 3)
+//                 {
+//                     studentID = studentID + "2200";
+//                 }
+//                 else if(semester == 5)
+//                 {
+//                     studentID = studentID + "2100";
+//                 }
+//                 else
+//                 {
+//                     studentID = studentID + "2000";
+//                 }
+
+//                 if(department == "MPE")
+//                 {
+//                     studentID = studentID + "11";
+//                 }
+//                 else if(department == "IPE")
+//                 {
+//                     studentID = studentID + "12";
+//                 }
+//                 else if(department == "EEE")
+//                 {
+//                     studentID = studentID + "21";
+//                 }
+//                 else if(department == "CEE")
+//                 {
+//                     studentID = studentID + "51";
+//                 }
+//                 else if(department == "CSE")
+//                 {
+//                     studentID = studentID + "41";
+//                 }
+//                 else if(department == "SWE")
+//                 {
+//                     studentID = studentID + "42";
+//                 }
+//                 else if(department == "TVE")
+//                 {
+//                     studentID = studentID + "32";
+//                 }
+//                 else if(department == "BTM")
+//                 {
+//                     studentID = studentID + "61";
+//                 }
+
+//                 for(let i=1; i<=studentCount; i++)
+//                 {
+//                     let fullSID = "";
+//                     let first9Digits = "";
+//                     if(i<10)
+//                     {
+//                         first9Digits = first9Digits + "0";
+//                     }
+//                     if(i>60 && i<70)
+//                     {
+//                         first9Digits = first9Digits + "0";
+//                     }
+//                     if(i>120 && i<130)
+//                     {
+//                         first9Digits = first9Digits + "0";
+//                     }
+
+//                     if(studentCount <61)
+//                     {
+//                         fullSID = studentID + "0" +first9Digits+ i.toString();
+//                     }
+//                     else if(i<61)
+//                     {
+//                         fullSID = studentID + "1" +first9Digits+ i.toString();
+//                     }
+//                     else if(i<121)
+//                     {
+//                         fullSID = studentID + "2" +first9Digits+ (i-60).toString();
+//                     }
+//                     else
+//                     {
+//                         fullSID = studentID + "3" +first9Digits+ (i-120).toString();
+//                     }
+
+//                     const usersRef = doc(db, `seat_plan_USERS`, `${department.toLowerCase()}_sem${semester}_id${fullSID}_@gmail.com`)
+//                     await setDoc(usersRef, {id : fullSID, dept: department, semester: semester, role: "student", isPresident: false, displayName:`Tanjil${fullSID}`});
+//                 }
+//             }
+//         }
+
+//         console.log("✅ Seat plan data successfully added to Firebase!");
+//     } catch (error) {
+//         console.error("❌ Error generating seat plan in Firebase:", error);
+//         throw error;
+//     }
+// };
 
   // Initialize rooms with dummy fields (runs once on mount)
   // useEffect(() => {
@@ -113,6 +230,39 @@ const AdminManageSeatPlan = () => {
 
     initializeRooms();
   }, [toast, selectedCollection, db]);
+
+  useEffect(() => {
+    if (!selectedRoom) return;
+
+    const fetchTotalSeats = async (room) => {
+        try {
+            const seatPlanRef = collection(db, "seat_plan_rooms");
+            const seatPlanSnapshot = await getDocs(seatPlanRef);
+
+            if (!seatPlanSnapshot.empty) {
+                const matchedRoom = seatPlanSnapshot.docs.find(doc => doc.data().room_no === room);
+                if (matchedRoom) {
+                    const data = matchedRoom.data();
+                    // setTotalSeats(data.total_seats || 0); // Store total_seats or default to 0
+                    totalSeats = data.total_seats;
+                    console.log(totalSeats);
+                } else {
+                    console.log("No matching room found.");
+                    // setTotalSeats(0);
+                }
+            } else {
+                console.log("No rooms found in seat_plan_rooms collection.");
+                // setTotalSeats(0);
+            }
+        } catch (error) {
+            console.error("Error fetching total seats:", error);
+            // setTotalSeats(0);
+        }
+    };
+    fetchTotalSeats(selectedRoom);
+}, [selectedRoom]);
+
+
 
 
 
@@ -202,7 +352,7 @@ const AdminManageSeatPlan = () => {
       }));
   
       // Generate an array of all seat numbers (1-60)
-      const allSeats = Array.from({ length: 60 }, (_, i) => ({
+      const allSeats = Array.from({ length: totalSeats }, (_, i) => ({
         seatNumber: i + 1,  // Seat numbers from 1 to 60
         id: null,  // No student assigned
         dept: null // No department
@@ -319,7 +469,7 @@ const AdminManageSeatPlan = () => {
                     display="flex"
                     gap={2}
                   >
-                    {pair.map((seat) => (
+                    {pair.map((seat) => ( 
                       <Box
                         key={seat.seatNumber}
                         flex={1}

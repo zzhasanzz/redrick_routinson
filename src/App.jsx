@@ -38,6 +38,7 @@ import AdminStats from "./pages/features/AdminStats.jsx";
 import AdminGenerateSeatPlanForAll from "./pages/features/adminGenerateSeatPlan.jsx"
 import TeacherEvents from "./pages/event/TeacherEvents.jsx";
 import InviteTeacher from "./pages/event/InviteTeacher.jsx";
+import SeatPlanUser from "./pages/features/SeatPlanUser.jsx"
 
 function App() {
   const { currentUser, role } = useContext(AuthContext);
@@ -168,6 +169,14 @@ function App() {
               element={
                 <RequireAuth allowedRoles={["student"]}>
                   <StudentRoutine />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/student-home/student-seat-plan"
+              element={
+                <RequireAuth allowedRoles={["student"]}>
+                  <SeatPlanUser />
                 </RequireAuth>
               }
             />

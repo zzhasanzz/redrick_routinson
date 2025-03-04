@@ -33,7 +33,9 @@ const GenerateSeatPlan = () => {
   const [roomsLoading, setRoomsLoading] = useState(true);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [newRoomNo, setNewRoomNo] = useState("");
+  const [newTotalSeats, setNewTotalSeats] = useState("");
   const [addRoomNo, setAddRoomNo] = useState("");
+  const [addTotalSeats, setAddTotalSeats] = useState("");
   const [showAddRoom, setShowAddRoom] = useState(false); // Toggle state for showing the input field
 
   const handleSeatPlanSummerClick = async () => {
@@ -136,13 +138,18 @@ const GenerateSeatPlan = () => {
 
   // Handle updating a room number in Firebase
   const handleEditRoom = async () => {
-    if (!selectedRoom || !newRoomNo.trim()) return;
+    if (!selectedRoom || !newRoomNo.trim() || !newTotalSeats.trim()) return;
     try {
       const roomRef = doc(db, "seat_plan_rooms", selectedRoom.id);
-      await updateDoc(roomRef, { room_no: newRoomNo });
+      await updateDoc(roomRef, {
+        room_no: newRoomNo,
+        total_seats: newTotalSeats,
+      });
       setRooms(
         rooms.map((room) =>
-          room.id === selectedRoom.id ? { ...room, room_no: newRoomNo } : room
+          room.id === selectedRoom.id
+            ? { ...room, room_no: newRoomNo, total_seats: newTotalSeats }
+            : room
         )
       );
       setSelectedRoom(null);
@@ -159,22 +166,39 @@ const GenerateSeatPlan = () => {
         duration: 3000,
         isClosable: true,
       });
-      console.error("❌ Error updating room:", error);
     }
   };
 
   // Handle adding a new room
+  // const handleAddRoom = async () => {
+  //     if (!addRoomNo.trim()) return;
+  //     try {
+  //         const newRoomRef = doc(collection(db, "seat_plan_rooms"));
+  //         await setDoc(newRoomRef, { room_no: addRoomNo });
+  //         setRooms([...rooms, { id: newRoomRef.id, room_no: addRoomNo }].sort((a, b) => a.room_no.localeCompare(b.room_no)));
+  //         setAddRoomNo("");
+  //         toast({ title: "Room added successfully!", status: "success", duration: 3000, isClosable: true });
+  //     } catch (error) {
+  //         toast({ title: "Failed to add room.", status: "error", duration: 3000, isClosable: true });
+  //         console.error("❌ Error adding room:", error);
+  //     }
+  // };
   const handleAddRoom = async () => {
-    if (!addRoomNo.trim()) return;
+    if (!addRoomNo.trim() || !addTotalSeats.trim()) return;
     try {
       const newRoomRef = doc(collection(db, "seat_plan_rooms"));
-      await setDoc(newRoomRef, { room_no: addRoomNo });
+      await setDoc(newRoomRef, {
+        room_no: addRoomNo,
+        total_seats: addTotalSeats,
+      });
       setRooms(
-        [...rooms, { id: newRoomRef.id, room_no: addRoomNo }].sort((a, b) =>
-          a.room_no.localeCompare(b.room_no)
-        )
+        [
+          ...rooms,
+          { id: newRoomRef.id, room_no: addRoomNo, total_seats: addTotalSeats },
+        ].sort((a, b) => a.room_no.localeCompare(b.room_no))
       );
       setAddRoomNo("");
+      setAddTotalSeats("");
       toast({
         title: "Room added successfully!",
         status: "success",
@@ -188,16 +212,13 @@ const GenerateSeatPlan = () => {
         duration: 3000,
         isClosable: true,
       });
-      console.error("❌ Error adding room:", error);
+      console.error("❌ Error updating room:", error);
     }
   };
-
   return (
     <div className="container">
       <HStack className="header">
         <h1 className="title">Generate Seat Plan</h1>
-
-        {/* Add Room Toggle Button */}
         <IconButton
           icon={showAddRoom ? <MinusIcon /> : <AddIcon />}
           colorScheme={showAddRoom ? "red" : "green"}
@@ -205,7 +226,6 @@ const GenerateSeatPlan = () => {
         />
       </HStack>
 
-      {/* Add Room Input (Only visible when + button is pressed) */}
       {showAddRoom && (
         <HStack className="add-room-container">
           <Input
@@ -213,6 +233,13 @@ const GenerateSeatPlan = () => {
             value={addRoomNo}
             onChange={(e) => setAddRoomNo(e.target.value)}
             placeholder="Enter room number"
+            className="input-field"
+          />
+          <Input
+            type="number"
+            value={addTotalSeats}
+            onChange={(e) => setAddTotalSeats(e.target.value)}
+            placeholder="Total seats"
             className="input-field"
           />
           <Button colorScheme="blue" onClick={handleAddRoom}>
@@ -237,6 +264,13 @@ const GenerateSeatPlan = () => {
               value={newRoomNo}
               onChange={(e) => setNewRoomNo(e.target.value)}
               placeholder="Enter new room number"
+              className="input-field"
+            />
+            <Input
+              type="number"
+              value={newTotalSeats}
+              onChange={(e) => setNewTotalSeats(e.target.value)}
+              placeholder="Enter total seats"
               className="input-field"
             />
             <Button colorScheme="yellow" onClick={handleEditRoom}>
@@ -269,7 +303,7 @@ const GenerateSeatPlan = () => {
               onClick={() => handleRoomSelect(room)}
             >
               <Text fontSize="lg" fontWeight="bold">
-                Room {room.room_no}
+                Room {room.room_no} ({room.total_seats || "N/A"} seats)
               </Text>
             </Box>
           ))}
