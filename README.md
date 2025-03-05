@@ -57,3 +57,4 @@ python app.py
 
 
 npm install html2canvas --legacy-peer-deps
+npm install recharts --legacy-peer-deps

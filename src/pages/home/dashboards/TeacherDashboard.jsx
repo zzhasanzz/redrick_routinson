@@ -142,13 +142,15 @@ const TeacherDashboard = () => {
                 </Link>
 
                 <Link to="/seat-plan">
-                    <Button
+                <Button
                         height="250px"
                         width="450px"
                         flexDirection="column"
                         justifyContent="center"
                         borderRadius="30px"
                         backgroundColor="#edf8fb"
+                        backgroundImage="url('../assets/others.png')"
+                        backgroundSize="cover"
                         border="2px solid rgba(255, 255, 255, 0.7)"
                         color="black"
                         _hover={{
@@ -160,12 +162,7 @@ const TeacherDashboard = () => {
                             backgroundColor: "rgba(255, 255, 255, 0.3)"
                         }}
                     >
-                        <Image
-                            src="../assets/others.png"
-                            boxSize="150px" // Adjust size as needed
-                            alt="Others"
-                        />
-                        <Text fontSize="3xl" fontFamily="sans serif" color="#415c77">Others</Text>
+
                     </Button>
                 </Link>
 
