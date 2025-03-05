@@ -32,7 +32,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 
-const AdminManageRoutine = () => {
+const AdminManageCourses = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -58,23 +58,28 @@ const AdminManageRoutine = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/offered-courses?t=${Date.now()}`
-      );
-      if (!response.ok) throw new Error("Failed to fetch courses");
-
+      const response = await fetch(`http://localhost:5000/api/offered-courses?t=${Date.now()}`);
+      if (!response.ok) throw new Error('Failed to fetch courses');
+  
       const data = await response.json();
-      if (!data?.semesters) throw new Error("Invalid data structure");
-
-      const processed = data.semesters
-        .map((sem) => ({
-          semester: sem.semester,
-          courses: (sem.courses || []).filter((c) => c.assigned),
-        }))
-        .filter((sem) => sem.courses.length > 0);
-
-      setCourses(processed);
-      if (processed.length > 0) setCurrentSemester(processed[0].semester);
+      if (!data?.semesters) throw new Error('Invalid data structure');
+  
+      // Create a map of all semesters (1 to 8)
+      const allSemesters = Array.from({ length: 8 }, (_, i) => i + 1).map(semester => ({
+        semester,
+        courses: [],
+      }));
+  
+      // Merge the fetched data into the allSemesters array
+      data.semesters.forEach(sem => {
+        const index = allSemesters.findIndex(s => s.semester === sem.semester);
+        if (index !== -1) {
+          allSemesters[index].courses = (sem.courses || []).filter(c => c.assigned);
+        }
+      });
+  
+      setCourses(allSemesters);
+      if (allSemesters.length > 0) setCurrentSemester(allSemesters[0].semester);
       setLoading(false);
     } catch (err) {
       setError(err.message);
@@ -102,14 +107,19 @@ const AdminManageRoutine = () => {
 
   const fetchUnassignedCourses = async (semester) => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/unassigned-courses/${semester}`
-      );
-      if (!response.ok) throw new Error("Failed to fetch unassigned courses");
-
+      console.log(`Fetching unassigned courses for semester: ${semester}`);
+      const response = await fetch(`http://localhost:5000/api/unassigned-courses/${semester}`);
+      
+      if (!response.ok) {
+        console.error('API response not OK:', response.status, response.statusText);
+        throw new Error('Failed to fetch unassigned courses');
+      }
+  
       const data = await response.json();
+      console.log('Unassigned courses data:', data);
       setUnassignedCourses(data);
     } catch (err) {
+      console.error('Error fetching unassigned courses:', err);
       toast({
         title: "Error",
         description: err.message,
@@ -465,4 +475,4 @@ const AdminManageRoutine = () => {
   );
 };
 
-export default AdminManageRoutine;
+export default AdminManageCourses;

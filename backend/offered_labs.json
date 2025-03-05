@@ -1,160 +1,350 @@
 {
-    "semesters": [
-      {
-        "semester": 1,
-        "courses": [
-          {
-            "course": "Phy4142",
-            "course_name": "Physics I Lab",
-            "course_type": "lab",
-            "credit": 0.75,
-            "teacher": "",
-            "assigned": false
-          },
-          {
-            "course": "CSE4104",
-            "course_name": "Engineering Drawing Lab",
-            "course_type": "lab",
-            "credit": 0.75,
-            "teacher": "",
-            "assigned": false
-          },
-          {
-            "course": "CSE4108",
-            "course_name": "Structured Programming I Lab",
-            "course_type": "lab",
-            "credit": 1.5,
-            "teacher": "",
-            "assigned": false
-          }
-        ]
-      },
-      {
-        "semester": 3,
-        "courses": [
-          {
-            "course": "EEE4384",
-            "course_name": "Electronic Devices and Circuits Lab",
-            "course_type": "lab",
-            "credit": 0.75,
-            "teacher": "",
-            "assigned": false
-          },
-          {
-            "course": "CSE4302",
-            "course_name": "Object Oriented Programming Lab",
-            "course_type": "lab",
-            "credit": 1.5,
-            "teacher": "",
-            "assigned": false
-          },
-          {
-            "course": "CSE4304",
-            "course_name": "Data Structures Lab",
-            "course_type": "lab",
-            "credit": 1.5,
-            "teacher": "",
-            "assigned": false
-          },
-          {
-            "course": "CSE4308",
-            "course_name": "Database Management Systems Lab",
-            "course_type": "lab",
-            "credit": 1.0,
-            "teacher": "",
-            "assigned": false
-          }
-        ]
-      },
-      {
-        "semester": 5,
-        "courses": [
-          {
-            "course": "CSE4502",
-            "course_name": "Operating Systems Lab",
-            "course_type": "lab",
-            "credit": 1.0,
-            "teacher": "",
-            "assigned": false
-          },
-          {
-            "course": "CSE4504",
-            "course_name": "Microprocessor and Assembly Language Lab",
-            "course_type": "lab",
-            "credit": 0.75,
-            "teacher": "",
-            "assigned": false
-          },
-          {
-            "course": "CSE4508",
-            "course_name": "RDBMS Programming Lab",
-            "course_type": "lab",
-            "credit": 1.5,
-            "teacher": "",
-            "assigned": false
-          },
-          {
-            "course": "CSE4510",
-            "course_name": "Software Development",
-            "course_type": "lab",
-            "credit": 0.75,
-            "teacher": "",
-            "assigned": false
-          },
-          {
-            "course": "CSE4512",
-            "course_name": "Computer Networks Lab",
-            "course_type": "lab",
-            "credit": 1.5,
-            "teacher": "",
-            "assigned": false
-          },
-          {
-            "course": "CSE4540",
-            "course_name": "Web Programming Lab",
-            "course_type": "lab",
-            "credit": 0.75,
-            "teacher": "",
-            "assigned": false
-          }
-        ]
-      },
-      {
-        "semester": 7,
-        "courses": [
-          {
-            "course": "CSE4710",
-            "course_name": "Machine Learning Lab",
-            "course_type": "lab",
-            "credit": 0.75,
-            "teacher": "",
-            "assigned": false
-          },
-          {
-            "course": "CSE4734",
-            "course_name": "Digital Image Processing Lab",
-            "course_type": "lab",
-            "credit": 0.75,
-            "teacher": "",
-            "assigned": false
-          },
-          {
-            "course": "CSE4700",
-            "course_name": "Project/Thesis",
-            "course_type": "lab",
-            "credit": 3.0,
-            "teacher": "",
-            "assigned": false
-          },
-          {
-            "course": "CSE4790",
-            "course_name": "Industrial Training",
-            "course_type": "lab",
-            "credit": 1.0,
-            "teacher": "",
-            "assigned": false
-          }
-        ]
-      }
-    ]
-  }
+  "semesters": [
+    {
+      "semester": 1,
+      "courses": [
+        {
+          "course": "Phy4142",
+          "course_name": "Physics I Lab",
+          "course_type": "lab",
+          "credit": 0.75,
+          "teacher1": "DFS",
+          "teacher2": "AZR",
+          "assigned": true
+        },
+        {
+          "course": "CSE4104",
+          "course_name": "Engineering Drawing Lab",
+          "course_type": "lab",
+          "credit": 0.75,
+          "teacher1": "AA",
+          "teacher2": "MKS",
+          "assigned": true
+        },
+        {
+          "course": "CSE4108",
+          "course_name": "Structured Programming I Lab",
+          "course_type": "lab",
+          "credit": 1.5,
+          "teacher1": "SRR",
+          "teacher2": "RHJ",
+          "assigned": true
+        }
+      ]
+    },
+    {
+      "semester": 2,
+      "courses": [
+        {
+          "course": "Phy4242",
+          "course_name": "Physics II Lab",
+          "course_type": "lab",
+          "credit": 0.75,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "Chem4242",
+          "course_name": "Chemistry Lab",
+          "course_type": "lab",
+          "credit": 0.75,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4202",
+          "course_name": "Structured Programming II Lab",
+          "course_type": "lab",
+          "credit": 1.5,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4206",
+          "course_name": "Digital Logic Design Lab",
+          "course_type": "lab",
+          "credit": 0.75,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        }
+      ]
+    },
+    {
+      "semester": 3,
+      "courses": [
+        {
+          "course": "EEE4384",
+          "course_name": "Electronic Devices and Circuits Lab",
+          "course_type": "lab",
+          "credit": 0.75,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4302",
+          "course_name": "Object Oriented Programming Lab",
+          "course_type": "lab",
+          "credit": 1.5,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4304",
+          "course_name": "Data Structures Lab",
+          "course_type": "lab",
+          "credit": 1.5,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4308",
+          "course_name": "Database Management Systems Lab",
+          "course_type": "lab",
+          "credit": 1.0,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        }
+      ]
+    },
+    {
+      "semester": 4,
+      "courses": [
+        {
+          "course": "EEE4484",
+          "course_name": "Digital Electronics and Pulse Techniques Lab",
+          "course_type": "lab",
+          "credit": 0.75,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4402",
+          "course_name": "Visual Programming Lab",
+          "course_type": "lab",
+          "credit": 1.5,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4404",
+          "course_name": "Algorithms Lab",
+          "course_type": "lab",
+          "credit": 1.0,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4408",
+          "course_name": "System Analysis and Design Lab",
+          "course_type": "lab",
+          "credit": 1.0,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        }
+      ]
+    },
+    {
+      "semester": 5,
+      "courses": [
+        {
+          "course": "CSE4502",
+          "course_name": "Operating Systems Lab",
+          "course_type": "lab",
+          "credit": 1.0,
+          "teacher1": "RH",
+          "teacher2": "FI",
+          "assigned": true
+        },
+        {
+          "course": "CSE4504",
+          "course_name": "Microprocessor and Assembly Language Lab",
+          "course_type": "lab",
+          "credit": 0.75,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4508",
+          "course_name": "RDBMS Programming Lab",
+          "course_type": "lab",
+          "credit": 1.5,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4510",
+          "course_name": "Software Development",
+          "course_type": "lab",
+          "credit": 0.75,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4512",
+          "course_name": "Computer Networks Lab",
+          "course_type": "lab",
+          "credit": 1.5,
+          "teacher1": "SB",
+          "teacher2": "TAS",
+          "assigned": true
+        },
+        {
+          "course": "CSE4550",
+          "course_name": "Simulation & Modeling Lab",
+          "course_type": "lab",
+          "credit": 0.75,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        }
+      ]
+    },
+    {
+      "semester": 6,
+      "courses": [
+        {
+          "course": "CSE4616",
+          "course_name": "Wireless Networks Lab",
+          "course_type": "lab",
+          "credit": 0.75,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4618",
+          "course_name": "Artificial Intelligence Lab",
+          "course_type": "lab",
+          "credit": 0.75,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4620",
+          "course_name": "Peripherals and Interfacing Lab",
+          "course_type": "lab",
+          "credit": 0.75,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "Math4642",
+          "course_name": "Numerical Methods Lab",
+          "course_type": "lab",
+          "credit": 0.75,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4650",
+          "course_name": "Systems Programming Lab",
+          "course_type": "lab",
+          "credit": 0.75,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": false
+        }
+      ]
+    },
+    {
+      "semester": 7,
+      "courses": [
+        {
+          "course": "CSE4710",
+          "course_name": "Machine Learning Lab",
+          "course_type": "lab",
+          "credit": 0.75,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4734",
+          "course_name": "Digital Image Processing Lab",
+          "course_type": "lab",
+          "credit": 0.75,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4700",
+          "course_name": "Project/Thesis",
+          "course_type": "lab",
+          "credit": 3.0,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4790",
+          "course_name": "Industrial Training",
+          "course_type": "lab",
+          "credit": 1.0,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": false
+        }
+      ]
+    },
+    {
+      "semester": 8,
+      "courses": [
+        {
+          "course": "CSE4802",
+          "course_name": "Compiler Design Lab",
+          "course_type": "lab",
+          "credit": 0.75,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4810",
+          "course_name": "Algorithm Engineering Lab",
+          "course_type": "lab",
+          "credit": 0.75,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4836",
+          "course_name": "Pattern Recognition Lab",
+          "course_type": "lab",
+          "credit": 0.75,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4800",
+          "course_name": "Project/Thesis",
+          "course_type": "lab",
+          "credit": 3.0,
+          "teacher1": "",
+          "teacher2": "",
+          "assigned": true
+        }
+      ]
+    }
+  ]
+}

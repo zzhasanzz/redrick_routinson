@@ -1,0 +1,164 @@
+{
+  "semesters": [
+    {
+      "semester": 2,
+      "courses": [
+        {
+          "course": "Hum4241",
+          "credit": 2.0,
+          "teacher": "ASH"
+        },
+        {
+          "course": "Math4241",
+          "credit": 4.0,
+          "teacher": "AZM"
+        },
+        {
+          "course": "Phy4241",
+          "credit": 3.0,
+          "teacher": "FI"
+        },
+        {
+          "course": "Chem4241",
+          "credit": 3.0,
+          "teacher": "HJA"
+        },
+        {
+          "course": "CSE4203",
+          "credit": 3.0,
+          "teacher": "IT"
+        },
+        {
+          "course": "Hum4242",
+          "credit": 1.0,
+          "teacher": "MM"
+        }
+      ]
+    },
+    {
+      "semester": 4,
+      "courses": [
+        {
+          "course": "Hum4441",
+          "credit": 3.0,
+          "teacher": "MRH"
+        },
+        {
+          "course": "Math4441",
+          "credit": 3.0,
+          "teacher": "MMA"
+        },
+        {
+          "course": "EEE4483",
+          "credit": 3.0,
+          "teacher": "SHR"
+        },
+        {
+          "course": "CSE4403",
+          "credit": 3.0,
+          "teacher": "MM"
+        },
+        {
+          "course": "CSE4405",
+          "credit": 4.0,
+          "teacher": "RH"
+        },
+        {
+          "course": "CSE4407",
+          "credit": 2.0,
+          "teacher": "SH"
+        }
+      ]
+    },
+    {
+      "semester": 6,
+      "courses": [
+        {
+          "course": "Hum4641",
+          "credit": 3.0,
+          "teacher": "SMA"
+        },
+        {
+          "course": "CSE4615",
+          "credit": 2.0,
+          "teacher": "HK"
+        },
+        {
+          "course": "CSE4617",
+          "credit": 3.0,
+          "teacher": "TZF"
+        },
+        {
+          "course": "CSE4619",
+          "credit": 3.0,
+          "teacher": "HM"
+        },
+        {
+          "course": "Math4641",
+          "credit": 3.0,
+          "teacher": "TMC"
+        },
+        {
+          "course": "CSE4631",
+          "credit": 3.0,
+          "teacher": "SI"
+        },
+        {
+          "course": "CSE4635",
+          "credit": 3.0,
+          "teacher": "SB"
+        },
+        {
+          "course": "CSE4649",
+          "credit": 3.0,
+          "teacher": "SAH"
+        }
+      ]
+    },
+    {
+      "semester": 8,
+      "courses": [
+        {
+          "course": "CSE4801",
+          "credit": 3.0,
+          "teacher": "FH"
+        },
+        {
+          "course": "CSE4803",
+          "credit": 3.0,
+          "teacher": "RK"
+        },
+        {
+          "course": "CSE4809",
+          "credit": 2.0,
+          "teacher": "ASH"
+        },
+        {
+          "course": "CSE4841",
+          "credit": 3.0,
+          "teacher": "AZM"
+        },
+        {
+          "course": "CSE4847",
+          "credit": 3.0,
+          "teacher": "FI"
+        },
+        {
+          "course": "CSE4849",
+          "credit": 3.0,
+          "teacher": "HJA"
+        },
+        {
+          "course": "CSE4833",
+          "credit": 3.0,
+          "teacher": "IT"
+        },
+        {
+          "course": "CSE4835",
+          "credit": 3.0,
+          "teacher": "MMA"
+        }
+      ]
+    }
+  ]
+}

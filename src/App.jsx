@@ -24,7 +24,8 @@ import TeacherPreference from "./pages/features/TeacherPreference.jsx";
 
 import AdminHome from "./pages/home/AdminHome.jsx";
 import AdminDashboard from "./pages/home/dashboards/AdminDashboard.jsx";
-import AdminManageRoutine from "./pages/features/AdminManageRoutine.jsx";
+import AdminManageCourses from "./pages/features/AdminManageCourses.jsx";
+import AdminManageLabs from "./pages/features/AdminManageLabs.jsx";
 import AdminGenerateRoutine from "./pages/features/AdminGenerateRoutine.jsx";
 import AdminViewRoutine from "./pages/features/AdminViewRoutine.jsx";
 import AdminManageUsers from "./pages/features/AdminManageUsers.jsx";
@@ -35,8 +36,10 @@ import UsersProfile from "./pages/features/UsersProfile.jsx";
 
 import Event from "./pages/event/Event.jsx";
 import AdminStats from "./pages/features/AdminStats.jsx";
+import AdminGenerateSeatPlanForAll from "./pages/features/adminGenerateSeatPlan.jsx"
 import TeacherEvents from "./pages/event/TeacherEvents.jsx";
 import InviteTeacher from "./pages/event/InviteTeacher.jsx";
+import SeatPlanUser from "./pages/features/SeatPlanUser.jsx"
 
 function App() {
   const { currentUser, role } = useContext(AuthContext);
@@ -88,10 +91,18 @@ function App() {
             />
 
             <Route
-              path="/admin-home/admin-manage-routine"
+              path="/admin-home/admin-manage-courses"
               element={
                 <RequireAuth allowedRoles={["admin"]}>
-                  <AdminManageRoutine />
+                  <AdminManageCourses />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/admin-home/admin-manage-labs"
+              element={
+                <RequireAuth allowedRoles={["admin"]}>
+                  <AdminManageLabs />
                 </RequireAuth>
               }
             />
@@ -117,6 +128,14 @@ function App() {
               element={
                 <RequireAuth allowedRoles={["admin"]}>
                   <AdminGenerateSeatPlan />
+                </RequireAuth>
+              }
+            />
+             <Route
+              path="/admin-home/admin-generate-seat-plan"
+              element={
+                <RequireAuth allowedRoles={["admin"]}>
+                  <AdminGenerateSeatPlanForAll/>
                 </RequireAuth>
               }
             />
@@ -159,6 +178,14 @@ function App() {
               element={
                 <RequireAuth allowedRoles={["student"]}>
                   <StudentRoutine />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/student-home/student-seat-plan"
+              element={
+                <RequireAuth allowedRoles={["student"]}>
+                  <SeatPlanUser />
                 </RequireAuth>
               }
             />

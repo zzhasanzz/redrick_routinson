@@ -4,14 +4,6 @@
       "semester": 1,
       "courses": [
         {
-          "course": "Hum4144",
-          "course_name": "Islamiat",
-          "course_type": "theory",
-          "credit": 2.0,
-          "teacher": "MMH",
-          "assigned": true
-        },
-        {
           "course": "Hum4147",
           "course_name": "Technology, Environment and Society",
           "course_type": "theory",
@@ -70,6 +62,67 @@
       ]
     },
     {
+      "semester": 2,
+      "courses": [
+        {
+          "course": "Hum4241",
+          "course_name": "Islamic History Science and Culture",
+          "course_type": "theory",
+          "credit": 2.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "Math4241",
+          "course_name": "Integral Calculus and Differential Equations",
+          "course_type": "theory",
+          "credit": 4.0,
+          "teacher": "TSA",
+          "assigned": true
+        },
+        {
+          "course": "Phy4241",
+          "course_name": "Physics II",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "Chem4241",
+          "course_name": "Chemistry",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4203",
+          "course_name": "Discrete Mathematics",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "MRK",
+          "assigned": true
+        },
+        {
+          "course": "CSE4205",
+          "course_name": "Digital Logic Design",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "MHA",
+          "assigned": true
+        },
+        {
+          "course": "Hum4242",
+          "course_name": "Arabic II",
+          "course_type": "theory",
+          "credit": 1.0,
+          "teacher": "",
+          "assigned": true
+        }
+      ]
+    },
+    {
       "semester": 3,
       "courses": [
         {
@@ -123,6 +176,59 @@
       ]
     },
     {
+      "semester": 4,
+      "courses": [
+        {
+          "course": "Hum4441",
+          "course_name": "Engineering Ethics",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "Math4441",
+          "course_name": "Probability and Statistics",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "EEE4483",
+          "course_name": "Digital Electronics and Pulse Techniques",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4403",
+          "course_name": "Algorithms",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "MM",
+          "assigned": true
+        },
+        {
+          "course": "CSE4405",
+          "course_name": "Data and Telecommunications",
+          "course_type": "theory",
+          "credit": 4.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4407",
+          "course_name": "System Analysis and Design",
+          "course_type": "theory",
+          "credit": 2.0,
+          "teacher": "",
+          "assigned": true
+        }
+      ]
+    },
+    {
       "semester": 5,
       "courses": [
         {
@@ -131,6 +237,14 @@
           "course_type": "theory",
           "credit": 3.0,
           "teacher": "MRK",
+          "assigned": true
+        },
+        {
+          "course": "CSE4503",
+          "course_name": "Microprocessor & Assembly Language",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "OR",
           "assigned": true
         },
         {
@@ -158,11 +272,96 @@
           "assigned": true
         },
         {
-          "course": "CSE4539",
-          "course_name": "Web Programming",
+          "course": "CSE4549",
+          "course_name": "Simulation and Modeling",
           "course_type": "theory",
           "credit": 3.0,
-          "teacher": "MIA",
+          "teacher": "FI",
+          "assigned": true
+        }
+      ]
+    },
+    {
+      "semester": 6,
+      "courses": [
+        {
+          "course": "Hum4641",
+          "course_name": "Accounting",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4615",
+          "course_name": "Wireless Networks",
+          "course_type": "theory",
+          "credit": 2.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4617",
+          "course_name": "Artificial Intelligence",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4619",
+          "course_name": "Peripherals and Interfacing",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "Math4641",
+          "course_name": "Numerical Methods",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4641",
+          "course_name": "Distributed Operating Systems",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": false
+        },
+        {
+          "course": "CSE4643",
+          "course_name": "Mobile Application Development",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": false
+        },
+        {
+          "course": "CSE4631",
+          "course_name": "Digital Signal Processing",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4635",
+          "course_name": "Web Architecture",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4649",
+          "course_name": "Systems Programming",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
           "assigned": true
         }
       ]
@@ -217,6 +416,91 @@
           "credit": 3.0,
           "teacher": "MBH",
           "assigned": true
+        }
+      ]
+    },
+    {
+      "semester": 8,
+      "courses": [
+        {
+          "course": "CSE4801",
+          "course_name": "Compiler Design",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4803",
+          "course_name": "Graph Theory",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4807",
+          "course_name": "IT Organization and Management",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": false
+        },
+        {
+          "course": "CSE4809",
+          "course_name": "Algorithm Engineering",
+          "course_type": "theory",
+          "credit": 2.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4841",
+          "course_name": "Introduction to Optimization",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4847",
+          "course_name": "Information and OS Security",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4849",
+          "course_name": "Human Computer Interaction",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4833",
+          "course_name": "VLSI Design and Testing",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4835",
+          "course_name": "Pattern Recognition",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": true
+        },
+        {
+          "course": "CSE4839",
+          "course_name": "Internetworking Protocols",
+          "course_type": "theory",
+          "credit": 3.0,
+          "teacher": "",
+          "assigned": false
         }
       ]
     }

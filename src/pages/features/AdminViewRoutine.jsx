@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../../firebase";
 import { collection, getDocs } from "firebase/firestore";
-import Papa from "papaparse";
 import {
   Box,
   Table,
@@ -25,7 +24,8 @@ import {
 const AdminViewRoutine = () => {
   const [timetableData, setTimetableData] = useState({});
   const [loading, setLoading] = useState(true);
-  const [activeSemester, setActiveSemester] = useState("1");
+  const [activeSemester, setActiveSemester] = useState(null); // Initialize as null
+  const [availableSemesters, setAvailableSemesters] = useState([]); // Track available semesters
 
   const timeSlots = [
     "8:00-9:15",
@@ -42,63 +42,73 @@ const AdminViewRoutine = () => {
     const fetchAllRoutines = async () => {
       try {
         const processedData = {};
-        const semesters = ["1", "3", "5", "7"];
+        const semesters = ["1", "2", "3", "4", "5", "6", "7", "8"]; // All possible semesters
         const sections = ["A", "B"];
+        const availableSems = []; // To store semesters that exist in Firestore
 
         for (const semester of semesters) {
-          processedData[semester] = {};
+          let semesterExists = false;
 
           for (const section of sections) {
-            const routineData = [];
-            const semesterRef = collection(
-              db,
-              `semester_${semester}_${section}`
-            );
+            const semesterRef = collection(db, `semester_${semester}_${section}`);
             const snapshot = await getDocs(semesterRef);
 
-            // Initialize empty routine structure
-            const routineStructure = days.map((day) => {
-              const row = [day];
-              for (let i = 0; i < timeSlots.length; i++) {
-                row.push(null);
-              }
-              return row;
-            });
+            if (!snapshot.empty) {
+              semesterExists = true;
+              processedData[semester] = processedData[semester] || {};
 
-            // Fill in the routine with actual data
-            snapshot.forEach((doc) => {
-              const data = doc.data();
-              if (!data.class_cancelled || data.temp_course_code) {
-                const courseInfo = data.temp_course_code
-                  ? `${data.temp_course_code}\n${data.temp_teacher_1}\n${data.temp_room}`
-                  : `${data.perm_course_code}\n${data.perm_teacher_1}\n${data.perm_room}`;
+              // Initialize empty routine structure
+              const routineStructure = days.map((day) => {
+                const row = [day];
+                for (let i = 0; i < timeSlots.length; i++) {
+                  row.push(null);
+                }
+                return row;
+              });
 
-                const dayIndex = days.indexOf(data.temp_day || data.perm_day);
-                const timeIndex = timeSlots.indexOf(
-                  data.temp_time_1 || data.perm_time_1
-                );
+              // Fill in the routine with actual data
+              snapshot.forEach((doc) => {
+                const data = doc.data();
+                if (!data.class_cancelled || data.temp_course_code) {
+                  const courseInfo = data.temp_course_code
+                    ? `${data.temp_course_code}\n${data.temp_teacher_1}\n${data.temp_room}`
+                    : `${data.perm_course_code}\n${data.perm_teacher_1}\n${data.perm_room}`;
 
-                if (dayIndex !== -1 && timeIndex !== -1) {
-                  routineStructure[dayIndex][timeIndex + 1] = courseInfo;
+                  const dayIndex = days.indexOf(data.temp_day || data.perm_day);
+                  const timeIndex = timeSlots.indexOf(
+                    data.temp_time_1 || data.perm_time_1
+                  );
 
-                  // If it's a lab, fill the next slot too
-                  const courseType =
-                    data.temp_course_type || data.perm_course_type;
-                  if (
-                    courseType === "lab" &&
-                    timeIndex + 2 <= timeSlots.length
-                  ) {
-                    routineStructure[dayIndex][timeIndex + 2] = courseInfo;
+                  if (dayIndex !== -1 && timeIndex !== -1) {
+                    routineStructure[dayIndex][timeIndex + 1] = courseInfo;
+
+                    // If it's a lab, fill the next slot too
+                    const courseType =
+                      data.temp_course_type || data.perm_course_type;
+                    if (
+                      courseType === "lab" &&
+                      timeIndex + 2 <= timeSlots.length
+                    ) {
+                      routineStructure[dayIndex][timeIndex + 2] = courseInfo;
+                    }
                   }
                 }
-              }
-            });
+              });
 
-            processedData[semester][section] = routineStructure;
+              processedData[semester][section] = routineStructure;
+            }
+          }
+
+          if (semesterExists) {
+            availableSems.push(semester); // Add semester to available list
           }
         }
 
         setTimetableData(processedData);
+        setAvailableSemesters(availableSems); // Set available semesters
+        if (availableSems.length > 0) {
+          setActiveSemester(availableSems[0]); // Set the first available semester as active
+        }
         setLoading(false);
       } catch (error) {
         console.error("Error fetching routines:", error);
@@ -139,7 +149,7 @@ const AdminViewRoutine = () => {
     return (
       <Box overflowX="auto" mb={8}>
         <Table variant="striped" border="black" colorScheme="white" size="xl">
-          <Thead bg="rgb(43, 65, 98)">
+          <Thead bg="rgba(205, 219, 242, 0.89)" height="60px">
             <Tr>
               <Th width="15%" textAlign="center" color="rgb(43, 41, 41)">
                 Day
@@ -176,7 +186,6 @@ const AdminViewRoutine = () => {
                         key={timeIndex}
                         textAlign="center"
                         p={2}
-                        //bg={course ? useColorModeValue('white', 'gray.800') : useColorModeValue('gray.100', 'gray.700')}
                       >
                         {course ? renderCourseCell(course) : "---"}
                       </Td>
@@ -208,97 +217,82 @@ const AdminViewRoutine = () => {
         Routine for All Ongoing Semesters
       </Heading>
 
-      <Tabs
-        colorScheme="gray"
-        _hover={{
-          bg: "white", // Light gray on hover
-          transition: "background 0.4s ease-in-out",
-        }}
-        onChange={(index) => setActiveSemester(["1", "3", "5", "7"][index])}
-      >
-        <TabList mb={6}>
-          <Tab
-            _hover={{
-              bg: "gray.100", // Light gray on hover
-              transition: "background 0.4s ease-in-out",
-            }}
-          >
-            Semester 1
-          </Tab>
-          <Tab
-            _hover={{
-              bg: "gray.100", // Light gray on hover
-              transition: "background 0.4s ease-in-out",
-            }}
-          >
-            Semester 3
-          </Tab>
-          <Tab
-            _hover={{
-              bg: "gray.100", // Light gray on hover
-              transition: "background 0.4s ease-in-out",
-            }}
-          >
-            Semester 5
-          </Tab>
-          <Tab
-            _hover={{
-              bg: "gray.100", // Light gray on hover
-              transition: "background 0.4s ease-in-out",
-            }}
-          >
-            Semester 7
-          </Tab>
-        </TabList>
+      {availableSemesters.length > 0 ? (
+        <Tabs
+          colorScheme="gray"
+          _hover={{
+            bg: "white", // Light gray on hover
+            transition: "background 0.4s ease-in-out",
+          }}
+          onChange={(index) => setActiveSemester(availableSemesters[index])}
+        >
+          <TabList mb={6}>
+            {availableSemesters.map((semester) => (
+              <Tab
+                key={semester}
+                _hover={{
+                  bg: "gray.100", // Light gray on hover
+                  transition: "background 0.4s ease-in-out",
+                }}
+              >
+                Semester {semester}
+              </Tab>
+            ))}
+          </TabList>
 
-        <TabPanels>
-          {["1", "3", "5", "7"].map((semester) => (
-            <TabPanel key={semester} p={0}>
-              <Tabs variant="enclosed" colorScheme="teal">
-                <TabList>
-                  <Tab
-                    _hover={{
-                      bg: "gray.100", // Light gray on hover
-                      transition: "background 0.4s ease-in-out",
-                    }}
-                  >
-                    Section A
-                  </Tab>
-                  <Tab
-                    _hover={{
-                      bg: "gray.100", // Light gray on hover
-                      transition: "background 0.4s ease-in-out",
-                    }}
-                  >
-                    Section B
-                  </Tab>
-                </TabList>
+          <TabPanels>
+            {availableSemesters.map((semester) => (
+              <TabPanel key={semester} p={0}>
+                <Tabs variant="enclosed" colorScheme="teal">
+                  <TabList>
+                    <Tab
+                      _hover={{
+                        bg: "gray.100", // Light gray on hover
+                        transition: "background 0.4s ease-in-out",
+                      }}
+                    >
+                      Section A
+                    </Tab>
+                    <Tab
+                      _hover={{
+                        bg: "gray.100", // Light gray on hover
+                        transition: "background 0.4s ease-in-out",
+                      }}
+                    >
+                      Section B
+                    </Tab>
+                  </TabList>
 
-                <TabPanels mt={4}>
-                  <TabPanel p={2}>
-                    {timetableData[semester]?.A ? (
-                      renderSectionTable(timetableData[semester].A)
-                    ) : (
-                      <Text textAlign="center" p={4}>
-                        No data for Section A
-                      </Text>
-                    )}
-                  </TabPanel>
-                  <TabPanel p={2}>
-                    {timetableData[semester]?.B ? (
-                      renderSectionTable(timetableData[semester].B)
-                    ) : (
-                      <Text textAlign="center" p={4}>
-                        No data for Section B
-                      </Text>
-                    )}
-                  </TabPanel>
-                </TabPanels>
-              </Tabs>
-            </TabPanel>
-          ))}
-        </TabPanels>
-      </Tabs>
+                  <TabPanels mt={4}>
+                    <TabPanel p={2}>
+                      {timetableData[semester]?.A ? (
+                        renderSectionTable(timetableData[semester].A)
+                      ) : (
+                        <Text textAlign="center" p={4}>
+                          No data for Section A
+                        </Text>
+                      )}
+                    </TabPanel>
+                    <TabPanel p={2}>
+                      {timetableData[semester]?.B ? (
+                        renderSectionTable(timetableData[semester].B)
+                      ) : (
+                        <Text textAlign="center" p={4}>
+                          No data for Section B
+                        </Text>
+                      )}
+                    </TabPanel>
+                  </TabPanels>
+                </Tabs>
+              </TabPanel>
+            ))}
+          </TabPanels>
+        </Tabs>
+      ) : (
+        <Text textAlign="center" p={4}>
+          No routine data available.
+        </Text>
+      )}
     </Box>
   );
 };

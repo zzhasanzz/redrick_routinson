@@ -52,7 +52,6 @@ def write_routine_to_firestore(scheduled_classes):
             "Sunday": 6
         }
         # Create a set of semester-section combinations
-        add_dummy_fields()
         semestersBySections = set()
         for cls in scheduled_classes:
             combination = f"{cls.semester}{cls.section}"  # This will create strings like "1A", "1B", "3A", etc.
@@ -61,15 +60,13 @@ def write_routine_to_firestore(scheduled_classes):
         
         # Now you can iterate through the combinations
         for semester_section in semestersBySections:
-           
             semester = semester_section[0]  # Gets the first character (the semester number)
             section = semester_section[1]  # Gets the second character (the section letter)
-            semester_section_ref = db.collection(f'semester_{semester}_{section}')
-            print("Deleting collection", semester_section_ref.id)
+            semester_section_ref = db.collection(f'semester_{cls.semester}_{cls.section}')
             delete_collection(semester_section_ref)
         
         # Delete collections before writing new data
-        delete_collection(db.collection('time_slots'))
+        delete_collections(['time_slots', 'teachers'])
 
         # Prepare data structures for batch processing
         semester_data = defaultdict(list)
@@ -125,7 +122,6 @@ def write_routine_to_firestore(scheduled_classes):
                 'class_cancelled': 0,
                 'rescheduled': 0,
                 'temp_course_code': '',
-                'temp_course_type': '',
                 'temp_section': '',
                 'temp_teacher_1': '',
                 'temp_teacher_2': '',
@@ -155,13 +151,16 @@ def write_routine_to_firestore(scheduled_classes):
                     teacher_data[teacher][class_code_with_section]['class_cancelled_status'].append(0)
                     teacher_data[teacher][class_code_with_section]['rescheduled_status'].append(0)
 
-        
+        # Clear existing data
+        delete_collections(['time_slots', 'teachers'])
+        for semester_key in semester_data.keys():
+            delete_collection(db.collection(semester_key))
 
         # Batch write with efficient chunking
         def chunked_batch_write(data_dict, collection_path, is_nested=False):
             batch = db.batch()
             count = 0
-            batch_limit = 490  # Firestore batch limit is 500, using 450 for safety
+            batch_limit = 450  # Firestore batch limit is 500, using 450 for safety
 
             for key, items in data_dict.items():
                 if is_nested:
@@ -189,7 +188,6 @@ def write_routine_to_firestore(scheduled_classes):
         chunked_batch_write(semester_data, None)
         chunked_batch_write(timeslot_data, 'time_slots', True)
         
-        
         # Write teacher data
         batch = db.batch()
         count = 0
@@ -213,65 +211,32 @@ def write_routine_to_firestore(scheduled_classes):
         print(f"Error in write_routine_to_firestore: {e}")
         update_generation_status("error")
         raise e
-    
-    
-def add_dummy_fields():
-    for doc_id in range(1, 31):  # IDs 1-30 inclusive
-        doc_ref = db.collection('time_slots').document(str(doc_id))
-        try:
-            # Force-create document with dummy field if missing, or update existing
-            doc_ref.set({'dummy': True}, merge=True)
-            print(f"✅ Processed document {doc_id}")
-        except Exception as e:
-            print(f"🚨 Error processing document {doc_id}: {str(e)}")
 
-def delete_collection(collection_ref, batch_size=490):
-    """Delete all documents in a Firestore collection, including subcollections."""
-    try:
-        docs = collection_ref.limit(batch_size).stream()
-        deleted = 0
-        print(f"Deleting collection {collection_ref.id}")
+def delete_collections(collection_names):
+    """Delete multiple collections efficiently"""
+    for name in collection_names:
+        delete_collection(db.collection(name))
+
+def delete_collection(collection_ref, batch_size=500):
+    """More efficient collection deletion"""
+    docs = collection_ref.limit(batch_size).stream()
+    deleted = 0
+
+    for doc in docs:
+        # Handle subcollections first
+        for subcoll in doc.reference.collections():
+            delete_collection(subcoll, batch_size)
         
-        # Delete documents and their subcollections in batches
-        batch = db.batch()
-        for doc in docs:
-            print(f"Deleting document {doc.id}")
-            # First delete all subcollections for this document
-            for subcoll in doc.reference.collections():
-                delete_collection(subcoll, batch_size)
-                print(f"Deleting subcollection {subcoll.id} from document {doc.id}")
-            
-            print(f"Deleting document {doc.id} from {collection_ref.id}")
-            batch.delete(doc.reference)
-            deleted += 1
+        doc.reference.delete()
+        deleted += 1
 
-            # Commit batch when limit is reached
-            if deleted >= batch_size:
-                batch.commit()
-                batch = db.batch()
-                deleted = 0
-
-        # Commit any remaining documents
-        if deleted > 0:
-            batch.commit()
-            
-        # Get and delete any remaining documents
-        remaining_docs = collection_ref.limit(batch_size).stream()
-        if any(True for _ in remaining_docs):
-            delete_collection(collection_ref, batch_size)
-            
-        return True
-    except Exception as e:
-        print(f"Error deleting collection {collection_ref.id}: {e}")
-        return False
-
-
-
+    if deleted >= batch_size:
+        return delete_collection(collection_ref, batch_size)
 
 # Initialize semester timeslots with sections and days
 semester_timeslots = {
     sem: {sec: {day: {time: False for time in TIME_SLOTS} for day in DAYS} for sec in SECTIONS}
-    for sem in [1, 3, 5, 7]
+    for sem in [2, 4, 6, 8]
 }
 course_slots = {}
 room_slots = {room: {day: {time: False for time in TIME_SLOTS} for day in DAYS} for room in CLASSROOMS}
@@ -301,7 +266,7 @@ def load_faculty_details(filename="faculty_details.json"):
 
 
 # In the hardcode_labs function:
-def hardcode_labs(scheduled, filename="optimized_lab_schedule.json"):
+def hardcode_labs(scheduled, filename="optimized_lab_schedule_summer.json"):
     labs_data = load_json(filename)
     for semester in labs_data["semesters"]:
         for section in semester["sections"]:
@@ -327,36 +292,6 @@ def hardcode_labs(scheduled, filename="optimized_lab_schedule.json"):
                     for teacher in lab_class.teachers:
                         teacher_slots[teacher][lab_class.day][time] = True
                 scheduled.append(lab_class)
-
-
-# In the hardcode_part_time_teachers function:
-# def hardcode_part_time_teachers(scheduled, filename="input_file_part_time.json"):
-#     part_time_data = load_json(filename)
-#     for semester in part_time_data["semesters"]:
-#         for section in semester["sections"]:
-#             for course in section["courses"]:
-#                 for schedule in course["schedule"]:
-#                     # Create Class instance for part-time class
-#                     pt_class = Class(
-#                         semester=semester["semester"],
-#                         section=section["section"],
-#                         code=course["course"],
-#                         day=schedule["day"],
-#                         times=[schedule["time"]],
-#                         room=schedule["room"],  # Ensure room is a string
-#                         teachers=[schedule["teacher"]]
-#                     )
-#                     # Initialize teacher in teacher_slots if not already present
-#                     for teacher in pt_class.teachers:
-#                         if teacher not in teacher_slots:
-#                             teacher_slots[teacher] = {day: {time: False for time in TIME_SLOTS} for day in DAYS}
-#                     # Mark slots as occupied
-#                     for time in pt_class.times:
-#                         semester_timeslots[pt_class.semester][pt_class.section][pt_class.day][time] = True
-#                         room_slots[pt_class.room][pt_class.day][time] = True
-#                         for teacher in pt_class.teachers:
-#                             teacher_slots[teacher][pt_class.day][time] = True
-#                     scheduled.append(pt_class)
 
 
 # Check for collisions
@@ -513,7 +448,7 @@ def schedule_remaining_classes(classes, scheduled, faculty_details):
 
 
 # Write schedule to JSON
-def write_schedule_to_json(scheduled, filename="final_schedule.json"):
+def write_schedule_to_json(scheduled, filename="final_schedule_summer.json"):
     output = {"semesters": []}
     for cls in scheduled:
         semester = next((s for s in output["semesters"] if s["semester"] == cls.semester), None)
@@ -552,7 +487,7 @@ def write_schedule_to_json(scheduled, filename="final_schedule.json"):
     with open(filename, "w") as file:
         json.dump(output, file, indent=2)
 
-def write_schedule_to_csv(scheduled, filename="final_schedule.csv"):
+def write_schedule_to_csv(scheduled, filename="final_schedule_summer.csv"):
     # Organize data by semester, section, day, and time slot
     schedule_data = {}
     for cls in scheduled:
@@ -588,63 +523,6 @@ def write_schedule_to_csv(scheduled, filename="final_schedule.csv"):
                 # Add a blank row between sections
                 writer.writerow([])
 
-def update_courses_collection(scheduled_classes):
-    """Store course information in Firestore with sections subcollections"""
-    try:
-        # Create a dictionary to hold course information
-        courses_data = defaultdict(lambda: {
-            "course_type": "",
-            "sections": defaultdict(lambda: {"assigned_teachers": set()})
-        })
-        
-        # Extract course information from scheduled classes
-        for cls in scheduled_classes:
-            course_code = cls.code
-            course_type = "lab" if len(cls.times) == 2 else "theory"
-            section = cls.section
-            
-            # Update course type
-            courses_data[course_code]["course_type"] = course_type
-            
-            # Add teachers to the set for this section
-            for teacher in cls.teachers:
-                if teacher:  # Only add non-empty teacher names
-                    courses_data[course_code]["sections"][section]["assigned_teachers"].add(teacher)
-        
-        # Write to Firestore courses collection
-        batch = db.batch()
-        count = 0
-        batch_limit = 490  # Firestore batch limit is 500, using 490 for safety
-        
-        for course_code, data in courses_data.items():
-            # Set the course type in the main document
-            course_ref = db.collection('courses').document(course_code)
-            batch.set(course_ref, {"course_type": data["course_type"]})
-            count += 1
-            
-            # Create section documents in subcollection
-            for section, section_data in data["sections"].items():
-                section_ref = course_ref.collection('sections').document(section)
-                section_doc = {
-                    "assigned_teachers": list(section_data["assigned_teachers"]),
-                    "section": section
-                }
-                batch.set(section_ref, section_doc)
-                count += 1
-            
-            if count >= batch_limit:
-                batch.commit()
-                batch = db.batch()
-                count = 0
-                time.sleep(0.5)  # Small delay between batches
-        
-        if count > 0:
-            batch.commit()
-            
-        print(f"Updated {len(courses_data)} courses in Firestore with sections.")
-    except Exception as e:
-        print(f"Error updating courses collection: {e}")
-
 # Main function
 def main():
     try:
@@ -658,7 +536,7 @@ def main():
         #hardcode_part_time_teachers(scheduled)
         
         # Load regular classes from JSON
-        regular_data = load_json("first_schedule.json")
+        regular_data = load_json("first_schedule_summer.json")
         regular_classes = []
         for semester in regular_data["semesters"]:
             for section in semester["sections"]:
@@ -679,9 +557,6 @@ def main():
         
         # Schedule remaining classes with faculty preferences
         unscheduled = schedule_remaining_classes(regular_classes, scheduled, faculty_details)
-        
-        # Store course information in Firestore
-        update_courses_collection(scheduled)
         
         # Write final schedule to JSON
         write_schedule_to_json(scheduled)
