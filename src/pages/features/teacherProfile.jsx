@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { db, auth } from "../../firebase";
 import { doc, getDoc, updateDoc, collection, getDocs } from "firebase/firestore";
-import "./UserProfile.css";
+import "./teacherProfile.css";
 import galleryIcon from "../../../images/gallery.png";
 import facebookIcon from "../../../images/facebook.png";
 import instagramIcon from "../../../images/instagram.png";
