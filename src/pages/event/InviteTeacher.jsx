@@ -19,12 +19,18 @@ import {
     FormControl,
     FormLabel,
     Image,
-    Tag
+    Tag,
+    List,
+    ListItem,
+    Badge,
+    Avatar,
+    Stack,
+    Spacer,
 } from "@chakra-ui/react";
+import { ChevronLeftIcon, CheckCircleIcon, TimeIcon, NotAllowedIcon } from "@chakra-ui/icons";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { db,auth } from "../../firebase";
-import { collection, getDocs, doc, getDoc, addDoc } from "firebase/firestore";
+import { db, auth } from "../../firebase";
+import { collection, getDocs, doc, getDoc, addDoc, query, where } from "firebase/firestore";
 import { AuthContext } from "../../context/AuthContext";
 import html2canvas from "html2canvas";
 
@@ -41,23 +47,18 @@ const InviteTeacher = () => {
     const [loading, setLoading] = useState(true);
     const [isSending, setIsSending] = useState(false);
     const toast = useToast();
+    const [invitations, setInvitations] = useState([]); // State for storing invitations
 
     const clubOptions = [
         "IUT COMPUTER SOCIETY",
         "IUT PHOTOGRAPHIC SOCIETY",
         "IUT DEBATING SOCIETY",
-        "IUT SOCIETY OF ISLAMIC KNOWLEDGE SEEKERS"
+        "IUT SOCIETY OF ISLAMIC KNOWLEDGE SEEKERS",
     ];
 
-    const positionOptions = [
-        "Judge",
-        "Chief Guest",
-        "Guest Speaker",
-        "Mentor"
-    ];
+    const positionOptions = ["Judge", "Chief Guest", "Guest Speaker", "Mentor"];
 
-
-
+    // Fetch event and teachers data
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -72,14 +73,14 @@ const InviteTeacher = () => {
 
                 const usersSnapshot = await getDocs(collection(db, "users"));
                 const teacherList = [];
-                usersSnapshot.forEach(doc => {
+                usersSnapshot.forEach((doc) => {
                     const userData = doc.data();
                     if (userData.role === "teacher") {
                         teacherList.push({
                             id: doc.id,
                             name: userData.name || userData.email,
                             email: userData.email,
-                            department: userData.department
+                            department: userData.department,
                         });
                     }
                 });
@@ -88,7 +89,7 @@ const InviteTeacher = () => {
                 toast({
                     title: "Error loading data",
                     description: error.message,
-                    status: "error"
+                    status: "error",
                 });
             } finally {
                 setLoading(false);
@@ -97,12 +98,41 @@ const InviteTeacher = () => {
         fetchData();
     }, [eventId, navigate, toast]);
 
+    // Fetch invitations for the event
+    useEffect(() => {
+        const fetchInvitations = async () => {
+            try {
+                const invitationsRef = collection(db, "invitations");
+                const q = query(invitationsRef, where("eventId", "==", eventId));
+                const querySnapshot = await getDocs(q);
+
+                const invitationsData = querySnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+                setInvitations(invitationsData);
+            } catch (error) {
+                console.error("Error fetching invitations:", error);
+                toast({
+                    title: "Error fetching invitations",
+                    description: error.message,
+                    status: "error",
+                });
+            }
+        };
+
+        if (eventId) {
+            fetchInvitations();
+        }
+    }, [eventId, toast]);
+
+    // Handle sending invitations
     const handleSendInvitation = async () => {
         if (!selectedTeacher || !selectedClub || !selectedPosition || !message.trim()) {
             toast({
                 title: "Incomplete details",
                 description: "Please fill all fields",
-                status: "warning"
+                status: "warning",
             });
             return;
         }
@@ -113,7 +143,7 @@ const InviteTeacher = () => {
             const canvas = await html2canvas(element, { scale: 2 });
             const designImage = canvas.toDataURL("image/png");
 
-            await addDoc(collection(db, "invitations"), {
+            const docRef = await addDoc(collection(db, "invitations"), {
                 eventId: event.id,
                 teacherEmail: selectedTeacher,
                 senderEmail: currentUser.email,
@@ -123,22 +153,55 @@ const InviteTeacher = () => {
                 status: "pending",
                 sentAt: new Date().toISOString(),
                 design: designImage,
-                eventName: event.eventName
+                eventName: event.eventName,
             });
+
+            // Update local state with the new invitation
+            setInvitations((prev) => [
+                ...prev,
+                {
+                    id: docRef.id,
+                    teacherEmail: selectedTeacher,
+                    guestPosition: selectedPosition,
+                    status: "pending",
+                    sentAt: new Date().toISOString(),
+                },
+            ]);
 
             toast({
                 title: "Invitation sent!",
-                status: "success"
+                status: "success",
             });
             navigate(`/student-home/event`);
         } catch (error) {
             toast({
                 title: "Failed to send invitation",
                 description: error.message,
-                status: "error"
+                status: "error",
             });
         }
         setIsSending(false);
+    };
+
+    // Status badge component
+    const StatusBadge = ({ status }) => {
+        const statusColors = {
+            pending: "yellow",
+            accepted: "green",
+            rejected: "red",
+        };
+
+        const statusIcons = {
+            pending: <TimeIcon />,
+            accepted: <CheckCircleIcon />,
+            rejected: <NotAllowedIcon />,
+        };
+
+        return (
+            <Badge colorScheme={statusColors[status] || "gray"} ml={2}>
+                {statusIcons[status]} {status.toUpperCase()}
+            </Badge>
+        );
     };
 
     if (loading) {
@@ -166,98 +229,142 @@ const InviteTeacher = () => {
                 </Flex>
 
                 <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={8}>
-                    {/* Form Section */}
-                    <Card bg="white" boxShadow="lg" borderRadius="xl">
-                        <CardBody>
-                            <VStack spacing={6} align="stretch">
-                                <Heading size="md" color="gray.700">
-                                    Invitation Details
+                    {/* Left Column */}
+                    <Stack spacing={8}>
+                        {/* Invited Teachers List */}
+                        <Card bg="white" boxShadow="lg" borderRadius="xl">
+                            <CardBody>
+                                <Heading size="md" mb={4} color="gray.700">
+                                    Invited Faculty
                                 </Heading>
 
-                                <FormControl>
-                                    <FormLabel fontWeight="500" color="gray.600">
-                                        Faculty Member
-                                        <Tag colorScheme="red" size="sm" ml={2}>
-                                            Required
-                                        </Tag>
-                                    </FormLabel>
-                                    <Select
-                                        placeholder="Select faculty member"
-                                        size="lg"
-                                        icon={<ChevronLeftIcon transform="rotate(270deg)" />}
-                                        value={selectedTeacher}
-                                        onChange={e => setSelectedTeacher(e.target.value)}
-                                    >
-                                        {teachers.map(t => (
-                                            <option key={t.email} value={t.email}>
-                                                {t.name} ({t.department})
-                                            </option>
-                                        ))}
-                                    </Select>
-                                </FormControl>
+                                <List spacing={3}>
+                                    {invitations.map((invitation) => (
+                                        <ListItem key={invitation.id} p={3} borderRadius="md" borderWidth="1px">
+                                            <Flex align="center">
+                                                <Avatar
+                                                    name={invitation.teacherEmail.split("@")[0]}
+                                                    size="sm"
+                                                    mr={3}
+                                                />
+                                                <Box>
+                                                    <Text fontWeight="500">{invitation.teacherEmail}</Text>
+                                                    <Text fontSize="sm" color="gray.500">
+                                                        {invitation.guestPosition}
+                                                    </Text>
+                                                </Box>
+                                                <Spacer />
+                                                <StatusBadge status={invitation.status} />
+                                            </Flex>
+                                        </ListItem>
+                                    ))}
+                                </List>
 
-                                <FormControl>
-                                    <FormLabel fontWeight="500" color="gray.600">
-                                        Club/Organization
-                                        <Tag colorScheme="red" size="sm" ml={2}>
-                                            Required
-                                        </Tag>
-                                    </FormLabel>
-                                    <Select
-                                        placeholder="Select club"
-                                        size="lg"
-                                        value={selectedClub}
-                                        onChange={e => setSelectedClub(e.target.value)}
-                                    >
-                                        {clubOptions.map(club => (
-                                            <option key={club} value={club}>{club}</option>
-                                        ))}
-                                    </Select>
-                                </FormControl>
+                                {invitations.length === 0 && (
+                                    <Text color="gray.500" textAlign="center" py={4}>
+                                        No invitations sent yet
+                                    </Text>
+                                )}
+                            </CardBody>
+                        </Card>
 
-                                <FormControl>
-                                    <FormLabel fontWeight="500" color="gray.600">
-                                        Role/Position
-                                        <Tag colorScheme="red" size="sm" ml={2}>
-                                            Required
-                                        </Tag>
-                                    </FormLabel>
-                                    <Select
-                                        placeholder="Select position"
-                                        size="lg"
-                                        value={selectedPosition}
-                                        onChange={e => setSelectedPosition(e.target.value)}
-                                    >
-                                        {positionOptions.map(pos => (
-                                            <option key={pos} value={pos}>{pos}</option>
-                                        ))}
-                                    </Select>
-                                </FormControl>
+                        {/* Form Section */}
+                        <Card bg="white" boxShadow="lg" borderRadius="xl">
+                            <CardBody>
+                                <VStack spacing={6} align="stretch">
+                                    <Heading size="md" color="gray.700">
+                                        Invitation Details
+                                    </Heading>
 
-                                <FormControl>
-                                    <FormLabel fontWeight="500" color="gray.600">
-                                        Invitation Letter Content
-                                        <Tag colorScheme="red" size="sm" ml={2}>
-                                            Required
-                                        </Tag>
-                                    </FormLabel>
-                                    <Textarea
-                                        value={message}
-                                        onChange={e => setMessage(e.target.value)}
-                                        height="300px"
-                                        fontFamily="Georgia, serif"
-                                        fontSize="md"
-                                        lineHeight="1.8"
-                                        placeholder="Dear Professor [Name],\n\nWe are honored to invite you..."
-                                        p={4}
-                                        borderRadius="lg"
-                                        borderColor="gray.200"
-                                        _focus={{ borderColor: "teal.300" }}
-                                    />
-                                </FormControl>
-                            </VStack>
-                        </CardBody>
-                    </Card>
+                                    <FormControl>
+                                        <FormLabel fontWeight="500" color="gray.600">
+                                            Faculty Member
+                                            <Tag colorScheme="red" size="sm" ml={2}>
+                                                Required
+                                            </Tag>
+                                        </FormLabel>
+                                        <Select
+                                            placeholder="Select faculty member"
+                                            size="lg"
+                                            icon={<ChevronLeftIcon transform="rotate(270deg)" />}
+                                            value={selectedTeacher}
+                                            onChange={(e) => setSelectedTeacher(e.target.value)}
+                                        >
+                                            {teachers.map((t) => (
+                                                <option key={t.email} value={t.email}>
+                                                    {t.name} ({t.department})
+                                                </option>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+
+                                    <FormControl>
+                                        <FormLabel fontWeight="500" color="gray.600">
+                                            Club/Organization
+                                            <Tag colorScheme="red" size="sm" ml={2}>
+                                                Required
+                                            </Tag>
+                                        </FormLabel>
+                                        <Select
+                                            placeholder="Select club"
+                                            size="lg"
+                                            value={selectedClub}
+                                            onChange={(e) => setSelectedClub(e.target.value)}
+                                        >
+                                            {clubOptions.map((club) => (
+                                                <option key={club} value={club}>
+                                                    {club}
+                                                </option>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+
+                                    <FormControl>
+                                        <FormLabel fontWeight="500" color="gray.600">
+                                            Role/Position
+                                            <Tag colorScheme="red" size="sm" ml={2}>
+                                                Required
+                                            </Tag>
+                                        </FormLabel>
+                                        <Select
+                                            placeholder="Select position"
+                                            size="lg"
+                                            value={selectedPosition}
+                                            onChange={(e) => setSelectedPosition(e.target.value)}
+                                        >
+                                            {positionOptions.map((pos) => (
+                                                <option key={pos} value={pos}>
+                                                    {pos}
+                                                </option>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+
+                                    <FormControl>
+                                        <FormLabel fontWeight="500" color="gray.600">
+                                            Invitation Letter Content
+                                            <Tag colorScheme="red" size="sm" ml={2}>
+                                                Required
+                                            </Tag>
+                                        </FormLabel>
+                                        <Textarea
+                                            value={message}
+                                            onChange={(e) => setMessage(e.target.value)}
+                                            height="300px"
+                                            fontFamily="Georgia, serif"
+                                            fontSize="md"
+                                            lineHeight="1.8"
+                                            placeholder="Dear Professor [Name],\n\nWe are honored to invite you..."
+                                            p={4}
+                                            borderRadius="lg"
+                                            borderColor="gray.200"
+                                            _focus={{ borderColor: "teal.300" }}
+                                        />
+                                    </FormControl>
+                                </VStack>
+                            </CardBody>
+                        </Card>
+                    </Stack>
 
                     {/* Preview Section */}
                     <Card id="invitation-preview" bg="white" boxShadow="lg" borderRadius="xl">

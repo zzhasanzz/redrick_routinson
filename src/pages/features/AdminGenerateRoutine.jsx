@@ -53,8 +53,11 @@ const AdminGenerateRoutine = () => {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
+          console.log("Document data:", docSnap.data());
           const data = docSnap.data();
-          setCurrentSeason(data.season); 
+
+          setCurrentSeason(data.season.toLocaleString()); // Set the current season
+          console.log("Current Season: ", data["season"]);
           setLastGeneratedTimestamp(data.timestamp.toDate().toLocaleString()); // Convert Firestore timestamp to readable format
         }
       } catch (error) {
@@ -76,7 +79,10 @@ const AdminGenerateRoutine = () => {
     try {
       setLoading(true);
       const processedData = {};
-      const semesters = currentSeason === "summer" ? ["2", "4", "6", "8"] : ["1", "3", "5", "7"];
+      const semesters =
+        currentSeason === "summer"
+          ? ["2", "4", "6", "8"]
+          : ["1", "3", "5", "7"];
       const sections = ["A", "B"];
 
       for (const semester of semesters) {
@@ -99,27 +105,24 @@ const AdminGenerateRoutine = () => {
           // Fill in the routine with actual data
           snapshot.forEach((doc) => {
             const data = doc.data();
-            if (!data.class_cancelled || data.temp_course_code) {
-              const courseInfo = data.temp_course_code
-                ? `${data.temp_course_code}\n${data.temp_teacher_1}\n${data.temp_room}`
-                : `${data.perm_course_code}\n${data.perm_teacher_1}\n${data.perm_room}`;
+            
+              const courseInfo =  `${data.perm_course_code}\n${data.perm_teacher_1}\n${data.perm_teacher_2}\n${data.perm_room}`;
 
-              const dayIndex = days.indexOf(data.temp_day || data.perm_day);
+              const dayIndex = days.indexOf( data.perm_day);
               const timeIndex = timeSlots.indexOf(
-                data.temp_time_1 || data.perm_time_1
+              data.perm_time_1
               );
 
               if (dayIndex !== -1 && timeIndex !== -1) {
                 routineStructure[dayIndex][timeIndex + 1] = courseInfo;
 
                 // If it's a lab, fill the next slot too
-                const courseType =
-                  data.temp_course_type || data.perm_course_type;
+                const courseType = data.perm_course_type;
                 if (courseType === "lab" && timeIndex + 2 <= timeSlots.length) {
                   routineStructure[dayIndex][timeIndex + 2] = courseInfo;
                 }
               }
-            }
+            
           });
 
           processedData[semester][section] = routineStructure;
@@ -176,7 +179,7 @@ const AdminGenerateRoutine = () => {
   const renderCourseCell = (course) => {
     if (!course) return null;
 
-    const [code, teacher, room] = course.split("\n");
+    const [code, teacher1,teacher2, room] = course.split("\n");
     const isLab = code.endsWith("2") || code.includes("LAB");
 
     return (
@@ -199,7 +202,8 @@ const AdminGenerateRoutine = () => {
         boxShadow={`inset 0 0 0 1px ${isLab ? "purple.200" : "blue.200"}`}
       >
         <Text fontWeight="bold">{code}</Text>
-        <Text fontSize="sm">{teacher}</Text>
+        <Text fontSize="sm">{teacher1}</Text>
+        <Text fontSize="sm">{teacher2}</Text>
         <Text fontSize="sm">Room: {room}</Text>
       </Tag>
     );
@@ -209,7 +213,7 @@ const AdminGenerateRoutine = () => {
     return (
       <Box overflowX="auto" mb={8}>
         <Table variant="striped" border="black" colorScheme="white" size="xl">
-          <Thead bg="rgb(179, 188, 201)" height ="60px">
+          <Thead bg="rgb(179, 188, 201)" height="60px">
             <Tr>
               <Th width="15%" textAlign="center" color="rgb(43, 41, 41)">
                 Day
@@ -242,11 +246,7 @@ const AdminGenerateRoutine = () => {
                   {timeSlots.map((_, timeIndex) => {
                     const course = dayData ? dayData[timeIndex + 1] : null;
                     return (
-                      <Td
-                        key={timeIndex}
-                        textAlign="center"
-                        p={2}
-                      >
+                      <Td key={timeIndex} textAlign="center" p={2}>
                         {course ? renderCourseCell(course) : "---"}
                       </Td>
                     );
@@ -285,7 +285,8 @@ const AdminGenerateRoutine = () => {
     );
   }
 
-  const semesters = currentSeason === "summer" ? ["2", "4", "6", "8"] : ["1", "3", "5", "7"];
+  const semesters =
+    currentSeason === "summer" ? ["2", "4", "6", "8"] : ["1", "3", "5", "7"];
 
   return (
     <Box p={6}>
@@ -314,7 +315,9 @@ const AdminGenerateRoutine = () => {
       {timetableData ? (
         <>
           <Text textAlign="center" mb={8} fontSize="lg" fontWeight="bold">
-            Last Generated Routine: {currentSeason === "summer" ? "Summer" : "Winter"} (Generated on: {lastGeneratedTimestamp})
+            Last Generated Routine:{" "}
+            {currentSeason === "summer" ? "Summer" : "Winter"} (Generated on:{" "}
+            {lastGeneratedTimestamp})
           </Text>
           <Tabs
             colorScheme="gray"
