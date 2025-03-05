@@ -1,539 +1,723 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
 import {
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  Input,
-  Textarea,
-  VStack,
-  SimpleGrid,
-  Flex,
-  Card,
-  Heading,
-  Text,
-  Image,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-  Tabs,
+    Box,
+    Button,
+    FormControl,
+    FormLabel,
+    Input,
+    Textarea,
+    VStack,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalCloseButton,
+    ModalBody,
+    ModalFooter,
+    useDisclosure,
+    SimpleGrid,
+    Card,
+    Heading,
+    Text,
+    Image,
+    useToast,
+    Badge,
+    Select,
+    Flex,
+    Tag,
+    Stack,
+    InputGroup,
+    InputLeftElement,
+    Icon,
 } from "@chakra-ui/react";
-import { db } from "../../firebase";
+import { AddIcon, SearchIcon } from "@chakra-ui/icons";
+import { FiMapPin, FiEye, FiFlag, FiUser, FiPhone } from "react-icons/fi";
 import {
-  collection,
-  addDoc,
-  getDocs,
-  updateDoc,
-  doc,
-  deleteDoc,
+    collection,
+    addDoc,
+    getDocs,
+    doc,
+    updateDoc,
+    deleteDoc,
+    arrayUnion,
+    serverTimestamp,
 } from "firebase/firestore";
+import { db } from "../../firebase";
+import { AuthContext } from "../../context/AuthContext";
+import { formatDistanceToNow } from "date-fns";
 
 const LostAndFound = () => {
-  const { currentUser } = useContext(AuthContext);
-  const [items, setItems] = useState([]);
-  const [filteredItems, setFilteredItems] = useState([]); // To store filtered items based on search
-  const [loading, setLoading] = useState(true);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [searchItemName, setSearchItemName] = useState(""); // State for search by name
-  const [searchDate, setSearchDate] = useState(""); // State for search by date
-  const [itemName, setItemName] = useState("");
-  const [userID, setUserID] = useState("");
-  const [description, setDescription] = useState("");
-  const [dateFound, setDateFound] = useState(new Date());
-  const [image, setImage] = useState(null);
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [claimerID, setClaimerID] = useState(""); // State for claim ID
-  const [claimerPhone, setClaimerPhone] = useState(""); // State for claim phone
-  const [claimerDescription, setClaimerDescription] = useState(""); // State for claim description
-  const { isOpen, onOpen, onClose } = useDisclosure(); // Modal for Adding Lost Item
-  const {
-    isOpen: isAddOpen,
-    onOpen: onAddOpen,
-    onClose: onAddClose,
-  } = useDisclosure(); // Modal for Adding Lost Item
+    const { currentUser } = useContext(AuthContext);
+    const toast = useToast();
+    const [posts, setPosts] = useState([]);
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [type, setType] = useState("lost");
+    const [location, setLocation] = useState("");
+    const [imageBase64, setImageBase64] = useState("");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filterType, setFilterType] = useState("all");
 
-  const {
-    isOpen: isClaimOpen,
-    onOpen: onClaimOpen,
-    onClose: onClaimClose,
-  } = useDisclosure(); // Modal for Claiming Item
-  const {
-    isOpen: isDeleteOpen,
-    onOpen: onDeleteOpen,
-    onClose: onDeleteClose,
-  } = useDisclosure(); // Modal for Deleting Post
+    // Claim states
+    const [claimDescription, setClaimDescription] = useState("");
+    const [claimImages, setClaimImages] = useState([]);
+    const [contactNumber, setContactNumber] = useState("");
+    const [selectedPost, setSelectedPost] = useState(null);
+    const [selectedClaim, setSelectedClaim] = useState(null);
 
-  // Fetch Lost and Found items from Firestore
-  const fetchItems = async () => {
-    setLoading(true);
-    try {
-      const itemCollection = collection(db, "lostAndFound");
-      const itemSnapshot = await getDocs(itemCollection);
-      const itemList = itemSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setItems(itemList);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching items: ", error);
-      setLoading(false);
-    }
-  };
+    // Modals
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen: isClaimOpen, onOpen: onClaimOpen, onClose: onClaimClose } = useDisclosure();
+    const { isOpen: isClaimsOpen, onOpen: onClaimsOpen, onClose: onClaimsClose } = useDisclosure();
+    const { isOpen: isClaimDetailOpen, onOpen: onClaimDetailOpen, onClose: onClaimDetailClose } = useDisclosure();
 
-  useEffect(() => {
-    fetchItems();
-  }, []);
+    useEffect(() => {
+        fetchPosts();
+    }, []);
 
-  useEffect(() => {
-    const filteredItems = items.filter((item) => {
-      // Check if the item name includes the search string
-      const nameMatch =
-        searchItemName === "" ||
-        item.itemName.toLowerCase().includes(searchItemName.toLowerCase());
+    const fetchPosts = async () => {
+        try {
+            const querySnapshot = await getDocs(collection(db, "lostFoundPosts"));
+            const postsData = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            setPosts(postsData);
+        } catch (error) {
+            console.error("Error fetching posts: ", error);
+        }
+    };
 
-      // Check if the item date is the same or later than the search date
-      const dateMatch =
-        searchDate === "" ||
-        new Date(item.dateFound).toLocaleDateString() >=
-          new Date(searchDate).toLocaleDateString();
+    const convertToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+    };
 
-      return nameMatch && dateMatch;
+    const handleImageChange = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        try {
+            const base64 = await convertToBase64(file);
+            setImageBase64(base64);
+        } catch (error) {
+            console.error("Error converting image: ", error);
+        }
+    };
+
+    const handleSubmitPost = async () => {
+        if (!title || !description) {
+            toast({
+                title: "Missing Information",
+                description: "Please fill in title and description",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+            return;
+        }
+
+        try {
+            await addDoc(collection(db, "lostFoundPosts"), {
+                title,
+                description,
+                type,
+                date: serverTimestamp(),
+                location,
+                imageBase64,
+                userId: currentUser?.uid,
+                status: "open",
+                claims: [],
+            });
+
+            toast({
+                title: "Post Created",
+                description: "Your post has been created successfully",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+            });
+            resetForm();
+            onClose();
+            fetchPosts();
+        } catch (error) {
+            console.error("Error creating post: ", error);
+        }
+    };
+
+    const handleClaim = async () => {
+        if (!claimDescription || !contactNumber) {
+            toast({
+                title: "Missing Information",
+                description: "Please provide a description and contact number",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+            return;
+        }
+
+        try {
+            const imageBase64s = await Promise.all(
+                claimImages.map(file => convertToBase64(file))
+            );
+
+            const claimData = {
+                userId: currentUser?.uid,
+                userName: currentUser?.displayName || "Anonymous",
+                description: claimDescription,
+                images: imageBase64s,
+                contactNumber,
+                createdAt: new Date().toISOString(),
+                status: "pending",
+            };
+
+            const postRef = doc(db, "lostFoundPosts", selectedPost.id);
+            await updateDoc(postRef, {
+                claims: arrayUnion(claimData),
+            });
+
+            toast({
+                title: "Claim Submitted",
+                description: "Your claim has been submitted successfully",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+            });
+            resetClaimForm();
+            onClaimClose();
+            fetchPosts();
+        } catch (error) {
+            console.error("Error submitting claim: ", error);
+        }
+    };
+
+    const handleDeletePost = async (postId) => {
+        try {
+            await deleteDoc(doc(db, "lostFoundPosts", postId));
+            toast({
+                title: "Post Deleted",
+                description: "The post has been successfully removed",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+            });
+            fetchPosts();
+        } catch (error) {
+            console.error("Error deleting post: ", error);
+        }
+    };
+
+    const resetForm = () => {
+        setTitle("");
+        setDescription("");
+        setType("lost");
+        setLocation("");
+        setImageBase64("");
+    };
+
+    const resetClaimForm = () => {
+        setClaimDescription("");
+        setClaimImages([]);
+        setContactNumber("");
+    };
+
+    const filteredPosts = posts.filter((post) => {
+        const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            post.description.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesType = filterType === "all" || post.type === filterType;
+        return matchesSearch && matchesType;
     });
 
-    setFilteredItems(filteredItems); // Update the filtered items
-  }, [searchItemName, searchDate, items]);
-
-  // Handle image upload for Lost Item
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // Submit new Lost and Found item to Firestore
-  const handleSubmit = async () => {
-    if (
-      !itemName ||
-      !userID ||
-      !description ||
-      !dateFound ||
-      !email ||
-      !phone
-    ) {
-      alert("Please fill in all required fields.");
-      return;
-    }
-
-    try {
-      const itemRef = collection(db, "lostAndFound");
-      const docRef = await addDoc(itemRef, {
-        itemName,
-        userID,
-        description,
-        dateFound: dateFound.toISOString(),
-        image,
-        email,
-        phone,
-        claimed: false,
-      });
-
-      console.log("Document written with ID: ", docRef.id);
-
-      fetchItems();
-      onClose();
-      alert("Lost and Found item added successfully!");
-      onAddClose();
-    } catch (error) {
-      console.error("Error adding item: ", error);
-    }
-  };
-
-  const handleCardClick = (item) => {
-    setSelectedItem(item);
-    onOpen();
-  };
-
-  // Handle claiming an item
-  const handleClaimItem = async (itemId, item) => {
-    // setcurrentitemInfo(item)
-    // item.claimed = true;
-    onClaimOpen(); // Open claim modal
-    setSelectedItem(itemId); // Set selected item for claiming
-  };
-
-  // Handle claim submission
-  const handleClaimSubmit = async (item) => {
-    const itemDoc = doc(db, "lostAndFound", selectedItem.id);
-    await updateDoc(itemDoc, {
-      claimed: true,
-      claimerID,
-      claimerPhone,
-      claimerDescription,
-    });
-
-    fetchItems();
-    onClaimClose();
-    // currentitemInfo.claimed = true;
-    alert("Claim submitted successfully!");
-  };
-
-  // Handle deletion of a post
-  const handleDeletePost = async (itemId) => {
-    const itemDoc = doc(db, "lostAndFound", itemId);
-    await deleteDoc(itemDoc);
-    fetchItems(); // Refresh the list after deletion
-  };
-
-  return (
-    <Box p={5}>
-      {/* Tabs for All Posts, My Posts, Lost a Post, Search */}
-      <Tabs variant="enclosed" mb={5}>
-        <TabList>
-          <Tab>All Posts</Tab>
-          <Tab>My Posts</Tab>
-          <Tab>Lost a Post</Tab>
-          <Tab>Search</Tab>
-        </TabList>
-        <TabPanels>
-          {/* All Posts Tab */}
-          <TabPanel>
-            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={5}>
-              {items.map((item) => (
-                <Card
-                  key={item.id}
-                  borderWidth="1px"
-                  borderRadius="lg"
-                  overflow="hidden"
-                  cursor="pointer"
-                  onClick={() => handleCardClick(item)}
-                >
-                  <Flex>
-                    <Box flex="1" p={4}>
-                      <Heading size="md" mb={2} isTruncated>
-                        {item.itemName}
-                      </Heading>
-                      <Text fontSize="sm" fontWeight="bold">
-                        User ID:
-                      </Text>
-                      <Text fontSize="sm" mb={2}>
-                        {item.userID}
-                      </Text>
-                      <Text fontSize="sm" noOfLines={2} mb={2}>
-                        {item.description}
-                      </Text>
-                      <Text fontSize="sm" fontWeight="bold">
-                        Date Found:
-                      </Text>
-                      <Text fontSize="sm" mb={2}>
-                        {new Date(item.dateFound).toDateString()}
-                      </Text>
-                      {item.claimed && (
-                        <Box mt={2}>
-                          <Text fontWeight="bold">Contact:</Text>
-                          <Text>Email: {item.email}</Text>
-                          <Text>Phone: {item.phone}</Text>
-                        </Box>
-                      )}
-                      {/* Show Claim button only if the email is not the current user's email and item is not claimed */}
-                      {item.email !== currentUser.email && !item.claimed && (
-                        <Button
-                          colorScheme="green"
-                          onClick={() => handleClaimItem(item.id, item)}
-                        >
-                          Claim Item
-                        </Button>
-                      )}
-                      {item.email == currentUser.email && (
-                        <Button colorScheme="blue">Claimers</Button>
-                      )}
-                    </Box>
-                    <Box
-                      flex="1"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      maxW="400px"
-                      maxH="350px"
-                      overflow="hidden"
-                      borderRadius="lg"
-                    >
-                      <Image
-                        src={item.image || "https://via.placeholder.com/400"} // Fallback to a placeholder if no image
-                        alt={item.itemName}
-                        width="400px"
-                        height="350px"
-                        objectFit="cover"
-                      />
-                    </Box>
-                  </Flex>
-                </Card>
-              ))}
-            </SimpleGrid>
-          </TabPanel>
-
-          {/* My Posts Tab */}
-          <TabPanel>
-            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={5}>
-              {items
-                .filter((item) => item.email === currentUser.email) // Show only posts by the current user
-                .map((item) => (
-                  <Card
-                    key={item.id}
-                    borderWidth="1px"
+    return (
+        <Box p={5} maxW="1400px" mx="auto">
+            <Flex justifyContent="space-between" alignItems="center" mb={8}>
+                <Button
+                    colorScheme="teal"
+                    onClick={onOpen}
+                    leftIcon={<AddIcon />}
+                    size="lg"
                     borderRadius="lg"
-                    overflow="hidden"
-                    cursor="pointer"
-                    onClick={() => handleCardClick(item)}
-                  >
-                    <Flex>
-                      <Box flex="1" p={4}>
-                        <Heading size="md" mb={2} isTruncated>
-                          {item.itemName}
-                        </Heading>
-                        <Text fontSize="sm" fontWeight="bold">
-                          User ID:
-                        </Text>
-                        <Text fontSize="sm" mb={2}>
-                          {item.userID}
-                        </Text>
-                        <Text fontSize="sm" noOfLines={2} mb={2}>
-                          {item.description}
-                        </Text>
-                        <Text fontSize="sm" fontWeight="bold">
-                          Date Found:
-                        </Text>
-                        <Text fontSize="sm" mb={2}>
-                          {new Date(item.dateFound).toDateString()}
-                        </Text>
-                        {/* Add a Delete button for posts by the current user */}
+                    boxShadow="md"
+                >
+                    New Post
+                </Button>
+                <Flex gap={4} align="center">
+                    <InputGroup maxW="400px">
+                        <InputLeftElement pointerEvents="none" color="gray.400">
+                            <SearchIcon />
+                        </InputLeftElement>
+                        <Input
+                            placeholder="Search posts by title or description..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            borderRadius="lg"
+                            focusBorderColor="teal.400"
+                            size="lg"
+                        />
+                    </InputGroup>
+                    <Select
+                        value={filterType}
+                        onChange={(e) => setFilterType(e.target.value)}
+                        width="200px"
+                        borderRadius="lg"
+                        focusBorderColor="teal.400"
+                        size="lg"
+                    >
+                        <option value="all">All Types</option>
+                        <option value="lost">Lost Items</option>
+                        <option value="found">Found Items</option>
+                    </Select>
+                </Flex>
+            </Flex>
+
+            {/* Create Post Modal */}
+            <Modal isOpen={isOpen} onClose={onClose} size="xl">
+                <ModalOverlay bg="blackAlpha.600" />
+                <ModalContent borderRadius="2xl">
+                    <ModalHeader bg="teal.500" color="white" borderTopRadius="2xl">
+                        <Heading fontSize="2xl">Create New Post</Heading>
+                    </ModalHeader>
+                    <ModalCloseButton color="white" />
+                    <ModalBody py={6}>
+                        <VStack spacing={5}>
+                            <FormControl isRequired>
+                                <FormLabel fontWeight="600">Title</FormLabel>
+                                <Input
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    size="lg"
+                                    borderRadius="lg"
+                                    focusBorderColor="teal.400"
+                                />
+                            </FormControl>
+
+                            <FormControl isRequired>
+                                <FormLabel fontWeight="600">Type</FormLabel>
+                                <Select
+                                    value={type}
+                                    onChange={(e) => setType(e.target.value)}
+                                    size="lg"
+                                    borderRadius="lg"
+                                    focusBorderColor="teal.400"
+                                >
+                                    <option value="lost">Lost Item</option>
+                                    <option value="found">Found Item</option>
+                                </Select>
+                            </FormControl>
+
+                            <FormControl>
+                                <FormLabel fontWeight="600">Description</FormLabel>
+                                <Textarea
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    size="lg"
+                                    borderRadius="lg"
+                                    focusBorderColor="teal.400"
+                                    rows={4}
+                                />
+                            </FormControl>
+
+                            <FormControl>
+                                <FormLabel fontWeight="600">Location</FormLabel>
+                                <Input
+                                    value={location}
+                                    onChange={(e) => setLocation(e.target.value)}
+                                    size="lg"
+                                    borderRadius="lg"
+                                    focusBorderColor="teal.400"
+                                    placeholder="Where was it lost/found?"
+                                />
+                            </FormControl>
+
+                            <FormControl>
+                                <FormLabel fontWeight="600">Upload Image</FormLabel>
+                                <Box
+                                    border="2px dashed"
+                                    borderColor="gray.200"
+                                    borderRadius="lg"
+                                    p={6}
+                                    textAlign="center"
+                                    _hover={{ borderColor: "teal.400" }}
+                                >
+                                    <Input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleImageChange}
+                                        opacity={0}
+                                        position="absolute"
+                                        zIndex={1}
+                                        width="100%"
+                                        height="100%"
+                                        cursor="pointer"
+                                    />
+                                    <Box>
+                                        <AddIcon boxSize={6} color="gray.400" mb={2} />
+                                        <Text fontSize="sm" color="gray.500">
+                                            Click to upload or drag and drop
+                                        </Text>
+                                        <Text fontSize="xs" color="gray.400" mt={1}>
+                                            PNG, JPG up to 2MB
+                                        </Text>
+                                    </Box>
+                                </Box>
+                                {imageBase64 && (
+                                    <Image
+                                        src={imageBase64}
+                                        alt="Preview"
+                                        mt={4}
+                                        borderRadius="lg"
+                                        maxH="200px"
+                                        objectFit="cover"
+                                    />
+                                )}
+                            </FormControl>
+                        </VStack>
+                    </ModalBody>
+                    <ModalFooter borderTopWidth={1}>
                         <Button
-                          colorScheme="red"
-                          onClick={() => handleDeletePost(item.id)}
-                          mt={3}
+                            colorScheme="teal"
+                            onClick={handleSubmitPost}
+                            size="lg"
+                            px={8}
+                            borderRadius="lg"
                         >
-                          Delete Post
+                            Publish Post
                         </Button>
-                      </Box>
-                    </Flex>
-                  </Card>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+            {/* Claim Modal */}
+            <Modal isOpen={isClaimOpen} onClose={onClaimClose} size="xl">
+                <ModalOverlay bg="blackAlpha.600" />
+                <ModalContent borderRadius="2xl">
+                    <ModalHeader bg="teal.500" color="white" borderTopRadius="2xl">
+                        <Heading fontSize="2xl">Submit</Heading>
+                    </ModalHeader>
+                    <ModalCloseButton color="white" />
+                    <ModalBody py={6}>
+                        <VStack spacing={5}>
+                            <FormControl isRequired>
+                                <FormLabel fontWeight="600">Contact Number</FormLabel>
+                                <Input
+                                    type="tel"
+                                    value={contactNumber}
+                                    onChange={(e) => setContactNumber(e.target.value)}
+                                    size="lg"
+                                    borderRadius="lg"
+                                    focusBorderColor="teal.400"
+                                    placeholder="Enter your contact number"
+                                    pattern="[0-9]{10}"
+                                />
+                            </FormControl>
+
+                            <FormControl>
+                                <FormLabel fontWeight="600">Proof Description</FormLabel>
+                                <Textarea
+                                    value={claimDescription}
+                                    onChange={(e) => setClaimDescription(e.target.value)}
+                                    size="lg"
+                                    borderRadius="lg"
+                                    focusBorderColor="teal.400"
+                                    rows={4}
+                                />
+                            </FormControl>
+
+                            <FormControl>
+                                <FormLabel fontWeight="600">Upload Proof Images</FormLabel>
+                                <Box
+                                    border="2px dashed"
+                                    borderColor="gray.200"
+                                    borderRadius="lg"
+                                    p={6}
+                                    textAlign="center"
+                                    _hover={{ borderColor: "teal.400" }}
+                                >
+                                    <Input
+                                        type="file"
+                                        multiple
+                                        accept="image/*"
+                                        onChange={(e) => setClaimImages([...e.target.files])}
+                                        opacity={0}
+                                        position="absolute"
+                                        zIndex={1}
+                                        width="100%"
+                                        height="100%"
+                                        cursor="pointer"
+                                    />
+                                    <Box>
+                                        <AddIcon boxSize={6} color="gray.400" mb={2} />
+                                        <Text fontSize="sm" color="gray.500">
+                                            Click to upload or drag and drop
+                                        </Text>
+                                        <Text fontSize="xs" color="gray.400" mt={1}>
+                                            PNG, JPG up to 2MB
+                                        </Text>
+                                    </Box>
+                                </Box>
+                                {claimImages.length > 0 && (
+                                    <Flex wrap="wrap" gap={2} mt={4}>
+                                        {claimImages.map((file, idx) => (
+                                            <Image
+                                                key={idx}
+                                                src={URL.createObjectURL(file)}
+                                                alt={`Proof ${idx + 1}`}
+                                                boxSize="100px"
+                                                objectFit="cover"
+                                                borderRadius="md"
+                                            />
+                                        ))}
+                                    </Flex>
+                                )}
+                            </FormControl>
+                        </VStack>
+                    </ModalBody>
+                    <ModalFooter borderTopWidth={1}>
+                        <Button
+                            colorScheme="teal"
+                            onClick={handleClaim}
+                            size="lg"
+                            px={8}
+                            borderRadius="lg"
+                        >
+                            Submit Claim
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+            {/* View Claims Modal */}
+            <Modal isOpen={isClaimsOpen} onClose={onClaimsClose} size="xl">
+                <ModalOverlay bg="blackAlpha.600" />
+                <ModalContent borderRadius="2xl">
+                    <ModalHeader bg="teal.500" color="white" borderTopRadius="2xl">
+                        <Heading fontSize="2xl">Claims for {selectedPost?.title}</Heading>
+                    </ModalHeader>
+                    <ModalCloseButton color="white" />
+                    <ModalBody py={6}>
+                        <VStack spacing={4}>
+                            {selectedPost?.claims?.map((claim, index) => (
+                                <Card
+                                    key={index}
+                                    p={4}
+                                    borderRadius="lg"
+                                    boxShadow="md"
+                                    _hover={{ boxShadow: "lg" }}
+                                    transition="all 0.2s"
+                                    w="100%"
+                                >
+                                    <Stack spacing={3}>
+                                        <Flex justify="space-between" align="center">
+                                            <Flex align="center">
+                                                <Icon as={FiUser} mr={2} />
+                                                <Text fontWeight="bold">{claim.userName}</Text>
+                                            </Flex>
+                                            <Badge
+                                                colorScheme={claim.status === "pending" ? "yellow" : "green"}
+                                                px={3}
+                                                py={1}
+                                                borderRadius="full"
+                                            >
+                                                {claim.status}
+                                            </Badge>
+                                        </Flex>
+
+                                        {claim.contactNumber && (
+                                            <Flex align="center" color="gray.600">
+                                                <Icon as={FiPhone} mr={2} />
+                                                <Text>{claim.contactNumber}</Text>
+                                            </Flex>
+                                        )}
+
+                                        <Text noOfLines={2} color="gray.600">
+                                            {claim.description}
+                                        </Text>
+
+                                        <Button
+                                            size="sm"
+                                            colorScheme="teal"
+                                            variant="outline"
+                                            onClick={() => {
+                                                setSelectedClaim(claim);
+                                                onClaimDetailOpen();
+                                            }}
+                                        >
+                                            View Full Details
+                                        </Button>
+                                    </Stack>
+                                </Card>
+                            ))}
+                        </VStack>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
+
+            {/* Claim Details Modal */}
+            <Modal isOpen={isClaimDetailOpen} onClose={onClaimDetailClose} size="xl">
+                <ModalOverlay bg="blackAlpha.600" />
+                <ModalContent borderRadius="2xl">
+                    <ModalHeader bg="teal.500" color="white" borderTopRadius="2xl">
+                        <Heading fontSize="2xl">Claim Details</Heading>
+                    </ModalHeader>
+                    <ModalCloseButton color="white" />
+                    <ModalBody py={6}>
+                        <VStack spacing={4} align="start">
+                            <Text fontWeight="bold">Claimer: {selectedClaim?.userName}</Text>
+                            <Text>{selectedClaim?.description}</Text>
+                            <Flex wrap="wrap" gap={2}>
+                                {selectedClaim?.images?.map((img, idx) => (
+                                    <Image
+                                        key={idx}
+                                        src={img}
+                                        alt={`Proof ${idx + 1}`}
+                                        boxSize="150px"
+                                        objectFit="cover"
+                                        borderRadius="md"
+                                    />
+                                ))}
+                            </Flex>
+                            <Tag
+                                colorScheme={selectedClaim?.status === "pending" ? "yellow" : "green"}
+                                px={3}
+                                py={1}
+                                borderRadius="full"
+                            >
+                                Status: {selectedClaim?.status}
+                            </Tag>
+                        </VStack>
+                    </ModalBody>
+                    <ModalFooter borderTopWidth={1}>
+                        <Button
+                            colorScheme="teal"
+                            onClick={onClaimDetailClose}
+                            size="lg"
+                            px={8}
+                            borderRadius="lg"
+                        >
+                            Close
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+            {/* Posts Grid */}
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+                {filteredPosts.map((post) => (
+                    <Card
+                        key={post.id}
+                        p={6}
+                        borderRadius="2xl"
+                        boxShadow="md"
+                        _hover={{
+                            transform: "translateY(-4px)",
+                            boxShadow: "xl",
+                            transition: "all 0.2s"
+                        }}
+                        transition="all 0.2s"
+                    >
+                        {post.imageBase64 && (
+                            <Image
+                                src={post.imageBase64}
+                                alt={post.title}
+                                height="250px"
+                                objectFit="cover"
+                                borderRadius="xl"
+                                mb={4}
+                            />
+                        )}
+                        <Stack spacing={3}>
+                            <Flex justify="space-between" align="center">
+                                <Badge
+                                    colorScheme={post.type === "lost" ? "red" : "green"}
+                                    px={3}
+                                    py={1}
+                                    borderRadius="full"
+                                    fontSize="sm"
+                                >
+                                    {post.type.toUpperCase()}
+                                </Badge>
+                                <Badge
+                                    colorScheme={post.status === "open" ? "green" : "gray"}
+                                    variant="subtle"
+                                    px={3}
+                                    py={1}
+                                    borderRadius="full"
+                                    fontSize="sm"
+                                >
+                                    {post.status.toUpperCase()}
+                                </Badge>
+                            </Flex>
+
+                            <Heading size="lg" noOfLines={1}>{post.title}</Heading>
+
+                            <Flex align="center" color="gray.600" fontSize="sm">
+                                <Icon as={FiMapPin} mr={2} />
+                                <Text>{post.location || "Unknown location"}</Text>
+                            </Flex>
+
+                            <Text
+                                color="gray.600"
+                                noOfLines={3}
+                                lineHeight="tall"
+                            >
+                                {post.description}
+                            </Text>
+
+                            <Flex justify="space-between" align="center" mt={4}>
+                                <Text fontSize="sm" color="gray.500">
+                                    Posted {formatDistanceToNow(new Date(post.date?.toDate()), { addSuffix: true })}
+                                </Text>
+                                {post.userId === currentUser?.uid ? (
+                                    <Button
+                                        size="sm"
+                                        colorScheme="teal"
+                                        variant="outline"
+                                        rightIcon={<Icon as={FiEye} />}
+                                        onClick={() => {
+                                            setSelectedPost(post);
+                                            onClaimsOpen();
+                                        }}
+                                    >
+                                        {post.claims.length}  {post.type === 'lost' ? 'Found' : 'Claim'}
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        size="sm"
+                                        colorScheme="teal"
+                                        rightIcon={<Icon as={FiFlag} />}
+                                        onClick={() => {
+                                            setSelectedPost(post);
+                                            onClaimOpen();
+                                        }}
+                                    >
+                                        {post.type === 'lost' ? 'I Found This' : 'This is Mine'}
+                                    </Button>
+                                )}
+                            </Flex>
+
+                            {/* Delete/Found Button */}
+                            {post.userId === currentUser?.uid && (
+                                <Button
+                                    size="sm"
+                                    colorScheme="red"
+                                    variant="solid"
+                                    mt={2}
+                                    onClick={() => handleDeletePost(post.id)}
+                                >
+                                    Mark as Found/Returned
+                                </Button>
+                            )}
+                        </Stack>
+                    </Card>
                 ))}
             </SimpleGrid>
-          </TabPanel>
-
-          {/* Lost a Post Tab */}
-          <TabPanel>
-            <Button colorScheme="blue" onClick={onAddOpen}>
-              Make a Post About Lost Item
-            </Button>
-          </TabPanel>
-
-          {/* Search Tab */}
-          <TabPanel>
-            <VStack spacing={4}>
-              <FormControl>
-                <FormLabel>Search by Item Name</FormLabel>
-                <Input
-                  value={searchItemName}
-                  onChange={(e) => setSearchItemName(e.target.value)}
-                  placeholder="Search by item name"
-                />
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>Search by Date of Loss</FormLabel>
-                <Input
-                  type="date"
-                  value={searchDate}
-                  onChange={(e) => setSearchDate(e.target.value)}
-                  placeholder="Select date"
-                />
-              </FormControl>
-            </VStack>
-
-            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={5} mt={5}>
-              {filteredItems.length === 0 ? (
-                <Text>No results found</Text>
-              ) : (
-                filteredItems.map((item) => (
-                  <Card
-                    key={item.id}
-                    borderWidth="1px"
-                    borderRadius="lg"
-                    overflow="hidden"
-                    cursor="pointer"
-                    onClick={() => handleCardClick(item)}
-                  >
-                    <Flex>
-                      <Box flex="1" p={4}>
-                        <Heading size="md" mb={2} isTruncated>
-                          {item.itemName}
-                        </Heading>
-                        <Text fontSize="sm" fontWeight="bold">
-                          User ID:
-                        </Text>
-                        <Text fontSize="sm" mb={2}>
-                          {item.userID}
-                        </Text>
-                        <Text fontSize="sm" noOfLines={2} mb={2}>
-                          {item.description}
-                        </Text>
-                        <Text fontSize="sm" fontWeight="bold">
-                          Date Found:
-                        </Text>
-                        <Text fontSize="sm" mb={2}>
-                          {new Date(item.dateFound).toDateString()}
-                        </Text>
-                      </Box>
-                    </Flex>
-                  </Card>
-                ))
-              )}
-            </SimpleGrid>
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
-
-      {/* Modal for Adding a Lost Item */}
-      <Modal isOpen={isAddOpen} onClose={onAddClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Create a new Lost Item</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <VStack spacing={4}>
-              <FormControl isRequired>
-                <FormLabel>Item Name</FormLabel>
-                <Input
-                  placeholder="Enter item name"
-                  value={itemName}
-                  onChange={(e) => setItemName(e.target.value)}
-                />
-              </FormControl>
-              <FormControl isRequired>
-                <FormLabel>User ID</FormLabel>
-                <Input
-                  placeholder="Enter your User ID"
-                  value={userID}
-                  onChange={(e) => setUserID(e.target.value)}
-                />
-              </FormControl>
-              <FormControl isRequired>
-                <FormLabel>Description</FormLabel>
-                <Textarea
-                  placeholder="Provide a description for the item"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </FormControl>
-              <FormControl isRequired>
-                <FormLabel>Date Found</FormLabel>
-                <Input
-                  type="date"
-                  value={dateFound.toISOString().split("T")[0]}
-                  onChange={(e) => setDateFound(new Date(e.target.value))}
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Email Address</FormLabel>
-                <Input
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Phone Number</FormLabel>
-                <Input
-                  placeholder="Enter your phone number"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Upload Item Image</FormLabel>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                />
-              </FormControl>
-            </VStack>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" onClick={handleSubmit}>
-              Submit Item
-            </Button>
-            <Button variant="ghost" onClick={onAddClose}>
-              Cancel
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-      {/* Claim Modal */}
-      <Modal isOpen={isClaimOpen} onClose={onClaimClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Claim This Item</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <VStack spacing={4}>
-              <FormControl>
-                <FormLabel>Your ID</FormLabel>
-                <Input
-                  value={claimerID}
-                  onChange={(e) => setClaimerID(e.target.value)}
-                  placeholder="Enter your ID"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Your Phone Number</FormLabel>
-                <Input
-                  value={claimerPhone}
-                  onChange={(e) => setClaimerPhone(e.target.value)}
-                  placeholder="Enter your phone number"
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Claim Description</FormLabel>
-                <Textarea
-                  value={claimerDescription}
-                  onChange={(e) => setClaimerDescription(e.target.value)}
-                  placeholder="Describe why you are claiming this item"
-                />
-              </FormControl>
-            </VStack>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" onClick={() => handleClaimSubmit()}>
-              Submit Claim
-            </Button>
-            <Button variant="ghost" onClick={onClaimClose}>
-              Cancel
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </Box>
-  );
+        </Box>
+    );
 };
 
 export default LostAndFound;
