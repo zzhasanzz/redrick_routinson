@@ -536,12 +536,6 @@
             "day": "Friday",
             "time": "3:45-5:00",
             "type": "theory_no_match"
-          },
-          {
-            "course": "CSE4511",
-            "day": "Friday",
-            "time": "3:45-5:00",
-            "type": "theory_no_match"
           }
         ]
       },
@@ -857,7 +851,7 @@
       }
     },
     "AKA": {
-      "total_courses": 5,
+      "total_courses": 4,
       "theory": {
         "total": 4,
         "full_matches": 1,
