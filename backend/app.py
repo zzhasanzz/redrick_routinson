@@ -945,40 +945,64 @@ def generate_seating_arrangement(
 
 def store_seating_plan_in_firebase(seating_plan, shift):
     """
-    Stores the generated seating arrangement in Firebase Firestore and updates student records with their room using batch operations.
-
-    :param seating_plan: Dictionary containing the seating arrangement per room.
-    :param shift: The shift identifier for the collection name.
+    Stores the generated seating arrangement in Firebase Firestore using efficient batch operations.
     """
     try:
-        db = firestore.client()  # Initialize Firestore client
+        db = firestore.client()
         seat_plan_collection = f"seat_plan_{shift}"
-        seat_plan_ref = db.collection(seat_plan_collection)  # Firestore Collection
-        users_ref = db.collection("seat_plan_USERS")  # Firestore Collection for users
-        batch = db.batch()
-
-        # Iterate over seating_plan dictionary
-        for room_seats in seating_plan.values():  # Now iterating over the list of student seat data
-            for seat in room_seats:
-                room = seat["room"]  # Get room from seat object
-
-                room_ref = seat_plan_ref.document(str(room))  # Room document reference
-                seat_ref = room_ref.collection("seats").document(str(seat["seat_no"]))  # Seat document reference
-                
-                batch.set(seat_ref, seat)  # Add seat data to batch
-
-                # Update student's document in seat_plan_USERS collection
-                student_id = seat["id"]
-                student_query = users_ref.where("id", "==", student_id).limit(1).stream()
-
-                for doc in student_query:
-                    doc_ref = users_ref.document(doc.id)
-                    batch.update(doc_ref, {"room": room})  # Batch update student's room
-                    print(f"✅ Queued update for student {student_id} with room {room} in seat_plan_USERS.")
+        users_ref = db.collection("seat_plan_USERS")
         
-        batch.commit()  # Commit all batched writes at once
-        print("✅ Seating Plan successfully stored in Firebase Firestore!")
-        return {"status": "success", "message": "Seating plan stored in Firebase and student records updated"}
+        # Create multiple batches since a single batch is limited to 500 operations
+        MAX_BATCH_SIZE = 450  # Leave some margin below the 500 limit
+        batches = []
+        current_batch = db.batch()
+        operation_count = 0
+
+        # First, collect all student IDs to fetch them in one query
+        student_ids = []
+        for room_seats in seating_plan.values():
+            for seat in room_seats:
+                student_ids.append(seat["id"])
+
+        # Fetch all relevant student documents in one query
+        student_docs = {}
+        for chunk in [student_ids[i:i + 10] for i in range(0, len(student_ids), 10)]:
+            query_snapshot = users_ref.where("id", "in", chunk).get()
+            for doc in query_snapshot:
+                student_docs[doc.to_dict()["id"]] = doc.reference
+
+        # Process seats and create batch operations
+        for room_seats in seating_plan.values():
+            for seat in room_seats:
+                room = str(seat["room"])
+                seat_no = str(seat["seat_no"])
+                
+                # Add seat data
+                seat_ref = db.collection(seat_plan_collection).document(room).collection("seats").document(seat_no)
+                current_batch.set(seat_ref, seat)
+                operation_count += 1
+
+                # Update student's room if found
+                if seat["id"] in student_docs:
+                    current_batch.update(student_docs[seat["id"]], {"room": room})
+                    operation_count += 1
+
+                # Create new batch if current one is near limit
+                if operation_count >= MAX_BATCH_SIZE:
+                    batches.append(current_batch)
+                    current_batch = db.batch()
+                    operation_count = 0
+
+        # Add the last batch if it has any operations
+        if operation_count > 0:
+            batches.append(current_batch)
+
+        # Commit all batches
+        for batch in batches:
+            batch.commit()
+
+        print(f"✅ Successfully stored seating plan in Firebase using {len(batches)} batches!")
+        return {"status": "success", "message": "Seating plan stored in Firebase"}
 
     except Exception as e:
         print(f"❌ Error storing seating plan in Firebase: {str(e)}")
