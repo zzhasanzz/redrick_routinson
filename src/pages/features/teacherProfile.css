@@ -1,0 +1,269 @@
+/* User Profile Container */
+.user-profile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f5f5;
+    width: 60%;
+    margin: auto;
+}
+
+/* Profile Image Container */
+.profile-image-container {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.profile-img-wrapper {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ddd;
+}
+
+.profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+
+.no-profile-pic {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    color: #888;
+}
+
+/* Hidden File Input */
+.file-input {
+    display: none;
+}
+
+/* Gallery Icon (Visible in Edit Mode) */
+.gallery-icon {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    padding: 5px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.gallery-icon:hover {
+    transform: scale(1.1);
+}
+
+/* User Information Grid */
+.user-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px 30px;
+    width: 100%;
+    text-align: left;
+}
+
+.info-group {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+}
+
+.highlighted-text {
+    color: #3b82f6; /* Blue color */
+    font-weight: bold;
+}
+
+.bold-text {
+    font-weight: 600;
+    color: #4a4a4a;
+}
+
+/* Skills Display */
+.skills-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.skill-block {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+/* Bio and Skills Container */
+.bio-skills-container {
+    margin-top: 15px;
+    text-align: left;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.bio-skills-container textarea,
+.bio-skills-container input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    background: white;
+    transition: border 0.3s ease-in-out;
+}
+
+
+
+.bio-skills-container textarea:focus,
+.bio-skills-container input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Floating Social Media Icons */
+.social-icons {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.social-icons a img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: transform 0.2s ease-in-out;
+}
+
+.social-icons a img:hover {
+    transform: scale(1.1);
+}
+
+/* Social Media Input Slider */
+.social-slider {
+    position: fixed;
+    top: 0;
+    right: 80px;
+    width: 220px;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.social-slider input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    width: 100%;
+}
+
+/* Button Group */
+.btn-group {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.save-btn,
+.edit-btn {
+    padding: 10px 16px;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.save-btn {
+    background: #28a745;
+}
+
+.save-btn:hover {
+    background: #218838;
+}
+
+.edit-btn {
+    background: #007bff;
+}
+
+.edit-btn:hover {
+    background: #0056b3;
+}
+
+.save-btn:disabled,
+.edit-btn:disabled {
+    background: #bbb;
+    cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .bio-skills-container {
+        padding: 8px;
+    }
+
+    .bio-skills-container textarea {
+        height: 60px;
+    }
+
+    .bio-skills-container input {
+        padding: 6px;
+    }
+}
+
+.bio-skills-container textarea {
+    width: 100%;
+    height: 150px; /* Increased height */
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    resize: vertical; /* Allows user to resize */
+    background: white;
+    transition: border 0.3s ease-in-out;
+}
+
+.bio-skills-container textarea:focus {
+    border-color: #007bff;
+    outline: none;
+}

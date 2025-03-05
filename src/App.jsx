@@ -33,6 +33,7 @@ import AdminGenerateSeatPlan from "./pages/features/AdminManageSeatPlan.jsx";
 import LostAndFound from "./pages/features/LostAndFound.jsx";
 import FoodScanner from "./pages/event/Scanner.jsx";
 import UsersProfile from "./pages/features/UsersProfile.jsx";
+import TeacherProfile from "./pages/features/teacherProfile.jsx";
 
 import Event from "./pages/event/Event.jsx";
 import Forum from './pages/forum/forum.jsx';
@@ -348,7 +349,7 @@ function App() {
             path="/teacher-home/user"
             element={
               <RequireAuth allowedRoles={["teacher"]}>
-                <Blank />
+                <TeacherProfile />
               </RequireAuth>
             }
           />
