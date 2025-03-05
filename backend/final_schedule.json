@@ -127,10 +127,7 @@
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
               "room": "1",
-              "teachers": [
-                "SRR",
-                "RHJ"
-              ]
+              "teachers": ["SRR", "RHJ"]
             },
             {
               "course": "CSE4104",
@@ -138,10 +135,7 @@
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
               "room": "1",
-              "teachers": [
-                "AA",
-                "MKS"
-              ]
+              "teachers": ["AA", "MKS"]
             },
             {
               "course": "Phy4142",
@@ -149,10 +143,7 @@
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
               "room": "6",
-              "teachers": [
-                "DFS",
-                "AZR"
-              ]
+              "teachers": ["DFS", "AZR"]
             }
           ]
         },
@@ -160,7 +151,7 @@
           "section": "B",
           "courses": [
             {
-              "course": "Hum4147",
+              "course": "Phy4141",
               "schedule": [
                 {
                   "day": "Tuesday",
@@ -262,7 +253,7 @@
               ]
             },
             {
-              "course": "HUM4142",
+              "course": "HUM4144",
               "schedule": [
                 {
                   "day": "Friday",
@@ -280,10 +271,7 @@
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
               "room": "2",
-              "teachers": [
-                "SRR",
-                "RHJ"
-              ]
+              "teachers": ["SRR", "RHJ"]
             },
             {
               "course": "CSE4104",
@@ -291,10 +279,7 @@
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
               "room": "5",
-              "teachers": [
-                "AA",
-                "MKS"
-              ]
+              "teachers": ["AA", "MKS"]
             },
             {
               "course": "Phy4142",
@@ -302,10 +287,7 @@
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
               "room": "5",
-              "teachers": [
-                "AZR",
-                "DFS"
-              ]
+              "teachers": ["AZR", "DFS"]
             }
           ]
         }
@@ -427,10 +409,7 @@
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
               "room": "4",
-              "teachers": [
-                "SHR",
-                "HJA"
-              ]
+              "teachers": ["SHR", "HJA"]
             },
             {
               "course": "CSE4302",
@@ -438,10 +417,7 @@
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
               "room": "1",
-              "teachers": [
-                "MAMR",
-                "FH"
-              ]
+              "teachers": ["MAMR", "FH"]
             },
             {
               "course": "CSE4304",
@@ -449,10 +425,7 @@
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
               "room": "7",
-              "teachers": [
-                "RH",
-                "AAR"
-              ]
+              "teachers": ["RH", "AAR"]
             },
             {
               "course": "CSE4308",
@@ -460,10 +433,7 @@
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
               "room": "6",
-              "teachers": [
-                "TZF",
-                "IT"
-              ]
+              "teachers": ["TZF", "IT"]
             }
           ]
         },
@@ -580,10 +550,7 @@
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
               "room": "6",
-              "teachers": [
-                "SHR",
-                "HJA"
-              ]
+              "teachers": ["SHR", "HJA"]
             },
             {
               "course": "CSE4302",
@@ -591,10 +558,7 @@
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
               "room": "8",
-              "teachers": [
-                "MAMR",
-                "FH"
-              ]
+              "teachers": ["MAMR", "FH"]
             },
             {
               "course": "CSE4304",
@@ -602,10 +566,7 @@
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
               "room": "2",
-              "teachers": [
-                "RH",
-                "AAR"
-              ]
+              "teachers": ["RH", "AAR"]
             },
             {
               "course": "CSE4308",
@@ -613,10 +574,7 @@
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
               "room": "3",
-              "teachers": [
-                "TZF",
-                "IT"
-              ]
+              "teachers": ["TZF", "IT"]
             }
           ]
         }
@@ -697,7 +655,7 @@
               ]
             },
             {
-              "course": "CSE4501",
+              "course": "CSE4511",
               "schedule": [
                 {
                   "day": "Thursday",
@@ -734,14 +692,11 @@
           "labs": [
             {
               "course": "CSE4502",
-              "day": "Tuesday",
+              "day": "Thursday",
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
               "room": "7",
-              "teachers": [
-                "RH",
-                "FI"
-              ]
+              "teachers": ["RH", "FI"]
             },
             {
               "course": "CSE4504",
@@ -749,10 +704,7 @@
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
               "room": "7",
-              "teachers": [
-                "ASH",
-                "OR"
-              ]
+              "teachers": ["ASH", "OR"]
             },
             {
               "course": "CSE4508",
@@ -760,10 +712,7 @@
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
               "room": "5",
-              "teachers": [
-                "FI",
-                "TZF"
-              ]
+              "teachers": ["FI", "TZF"]
             },
             {
               "course": "CSE4510",
@@ -771,10 +720,7 @@
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
               "room": "6",
-              "teachers": [
-                "AZM",
-                "TMC"
-              ]
+              "teachers": ["AZM", "TMC"]
             },
             {
               "course": "CSE4512",
@@ -782,10 +728,7 @@
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
               "room": "7",
-              "teachers": [
-                "SB",
-                "TAS"
-              ]
+              "teachers": ["SB", "TAS"]
             },
             {
               "course": "CSE4550",
@@ -793,10 +736,7 @@
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
               "room": "3",
-              "teachers": [
-                "FI",
-                "TAS"
-              ]
+              "teachers": ["FI", "TAS"]
             }
           ]
         },
@@ -804,10 +744,10 @@
           "section": "B",
           "courses": [
             {
-              "course": "CSE4511",
+              "course": "CSE4503",
               "schedule": [
                 {
-                  "day": "Thursday",
+                  "day": "Tuesday",
                   "time": "2:30-3:45",
                   "room": "7",
                   "teacher": "FH"
@@ -913,10 +853,7 @@
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
               "room": "1",
-              "teachers": [
-                "RH",
-                "FI"
-              ]
+              "teachers": ["RH", "FI"]
             },
             {
               "course": "CSE4504",
@@ -924,10 +861,7 @@
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
               "room": "1",
-              "teachers": [
-                "ASH",
-                "FH"
-              ]
+              "teachers": ["ASH", "FH"]
             },
             {
               "course": "CSE4508",
@@ -935,10 +869,7 @@
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
               "room": "3",
-              "teachers": [
-                "FI",
-                "TZF"
-              ]
+              "teachers": ["FI", "TZF"]
             },
             {
               "course": "CSE4510",
@@ -946,10 +877,7 @@
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
               "room": "8",
-              "teachers": [
-                "SAH",
-                "HM"
-              ]
+              "teachers": ["SAH", "HM"]
             },
             {
               "course": "CSE4512",
@@ -957,10 +885,7 @@
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
               "room": "6",
-              "teachers": [
-                "SB",
-                "TAS"
-              ]
+              "teachers": ["SB", "TAS"]
             },
             {
               "course": "CSE4540",
@@ -968,10 +893,7 @@
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
               "room": "4",
-              "teachers": [
-                "FI",
-                "TSA"
-              ]
+              "teachers": ["FI", "TSA"]
             },
             {
               "course": "CSE4550",
@@ -979,10 +901,7 @@
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
               "room": "2",
-              "teachers": [
-                "FI",
-                "TAS"
-              ]
+              "teachers": ["FI", "TAS"]
             }
           ]
         }
@@ -1029,7 +948,7 @@
               ]
             },
             {
-              "course": "Math4741",
+              "course": "CSE4733",
               "schedule": [
                 {
                   "day": "Thursday",
@@ -1104,10 +1023,7 @@
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
               "room": "7",
-              "teachers": [
-                "NY",
-                "NY"
-              ]
+              "teachers": ["NY", "NY"]
             },
             {
               "course": "CSE4734",
@@ -1115,10 +1031,7 @@
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
               "room": "3",
-              "teachers": [
-                "MBH",
-                "MAMR"
-              ]
+              "teachers": ["MBH", "MAMR"]
             },
             {
               "course": "CSE4700",
@@ -1126,10 +1039,7 @@
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
               "room": "7",
-              "teachers": [
-                "KH",
-                "HM"
-              ]
+              "teachers": ["KH", "HM"]
             }
           ]
         },
@@ -1171,7 +1081,7 @@
               ]
             },
             {
-              "course": "CSE4703",
+              "course": "CSE4739",
               "schedule": [
                 {
                   "day": "Tuesday",
@@ -1188,7 +1098,7 @@
               ]
             },
             {
-              "course": "Math4741",
+              "course": "CSE4733",
               "schedule": [
                 {
                   "day": "Monday",
@@ -1246,10 +1156,7 @@
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
               "room": "3",
-              "teachers": [
-                "NY",
-                "NY"
-              ]
+              "teachers": ["NY", "NY"]
             },
             {
               "course": "CSE4734",
@@ -1257,10 +1164,7 @@
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
               "room": "5",
-              "teachers": [
-                "MBH",
-                "MAMR"
-              ]
+              "teachers": ["MBH", "MAMR"]
             },
             {
               "course": "CSE4700",
@@ -1268,10 +1172,7 @@
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
               "room": "4",
-              "teachers": [
-                "KH",
-                "HM"
-              ]
+              "teachers": ["KH", "HM"]
             }
           ]
         }
