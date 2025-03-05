@@ -37,6 +37,68 @@ const GenerateSeatPlan = () => {
   const [addRoomNo, setAddRoomNo] = useState("");
   const [addTotalSeats, setAddTotalSeats] = useState("");
   const [showAddRoom, setShowAddRoom] = useState(false); // Toggle state for showing the input field
+  const [totalStudentDay, setTotalStudentDay] = useState(0);
+  const [totalStudentMorning, setTotalStudentMorning] = useState(0);
+  const [totalSeats, setTotalSeats] = useState(0);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [selectedShift, setSelectedShift] = useState(null);
+  const [showLessStudent, setShowLessStudent] = useState(null);
+
+  const handleGenerateClick = (shift) => {
+    if(totalStudentDay<= totalSeats && totalStudentMorning <= totalSeats)
+    {
+      setSelectedShift(shift);
+      setShowConfirmation(true);
+    }
+    else
+    {
+      setShowLessStudent(true);
+    }
+    
+  };
+  const handleConfirmGeneration = async () => {
+    setShowConfirmation(false);
+    if(selectedShift == "summer")
+    {
+      handleSeatPlanSummerClick();
+    }
+    if(selectedShift == "winter"){
+      handleSeatPlanWinterClick();
+    }
+  };
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch total students
+        const totalStudentDoc = await getDocs(collection(db, "totalStudent"));
+        if (!totalStudentDoc.empty) {
+          const studentData = totalStudentDoc.docs[0].data(); // Assuming one document
+          setTotalStudentDay(studentData.totalStudentDay || 0);
+          setTotalStudentMorning(studentData.totalStudentMorning || 0);
+        }
+  
+        // Fetch total seats
+        const querySnapshot = await getDocs(collection(db, "seat_plan_rooms"));
+        let seatsCount = 0;
+        const roomList = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          seatsCount += Number(data.total_seats) || 0; // Sum total seats
+          return { id: doc.id, ...data };
+        });
+  
+        setTotalSeats(seatsCount);
+        setRooms(roomList.sort((a, b) => a.room_no.localeCompare(b.room_no)));
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setRoomsLoading(false);
+      }
+    };
+  
+    fetchData();
+  }, [rooms]);
+  
 
   const handleSeatPlanSummerClick = async () => {
     setLoading(true);
@@ -216,6 +278,7 @@ const GenerateSeatPlan = () => {
     }
   };
   return (
+      
     <div className="container">
       <HStack className="header">
         <h1 className="title">Generate Seat Plan</h1>
@@ -225,7 +288,29 @@ const GenerateSeatPlan = () => {
           onClick={() => setShowAddRoom(!showAddRoom)}
         />
       </HStack>
-
+      {showConfirmation && (
+        <div className="confirmation-popup">
+          <Box className="popup-box">
+            <Text fontSize="lg" fontWeight="bold">Confirm Generation</Text>
+            <Text>Are you sure you want to generate the {selectedShift} semester seat plan?</Text>
+            <HStack spacing={4} marginTop={3}>
+              <Button colorScheme="red" onClick={() => setShowConfirmation(false)}>Cancel</Button>
+              <Button colorScheme="green" onClick={handleConfirmGeneration}>Proceed</Button>
+            </HStack>
+          </Box>
+        </div>
+      )}
+      {showLessStudent && (
+        <div className="confirmation-popup">
+          <Box className="popup-box">
+            <Text fontSize="lg" fontWeight="bold">Less Seats</Text>
+            <HStack spacing={4} marginTop={3}>
+              <Button colorScheme="red" onClick={() => setShowLessStudent(false)}>OK</Button>
+            </HStack>
+          </Box>
+        </div>
+      )}
+    
       {showAddRoom && (
         <HStack className="add-room-container">
           <Input
@@ -254,6 +339,14 @@ const GenerateSeatPlan = () => {
           <p>Generating Seat Plan, please wait...</p>
         </div>
       )}
+      <HStack justify="space-between" width="100%" className="title-row">
+        <Box className="summary-box">
+        <Text fontSize="lg" fontWeight="bold">Total Day Students: {totalStudentDay}</Text>
+        <Text fontSize="lg" fontWeight="bold">Total Morning Students: {totalStudentMorning}</Text>
+          <Text fontSize="lg" fontWeight="bold">Total Seats: {totalSeats}</Text>
+        </Box>
+      </HStack>
+
 
       <HStack justify="space-between" width="100%" className="title-row">
         <h2 className="subtitle">Available Rooms</h2>
@@ -312,14 +405,14 @@ const GenerateSeatPlan = () => {
 
       <div className="button-container">
         <Button
-          onClick={() => handleSeatPlanSummerClick()}
+          onClick={() => handleGenerateClick("summer")}
           colorScheme="blue"
           isLoading={loading}
         >
           Generate Summer Semester
         </Button>
         <Button
-          onClick={() => handleSeatPlanWinterClick()}
+          onClick={() => handleGenerateClick("winter")}
           colorScheme="green"
           isLoading={loading}
         >
@@ -329,6 +422,7 @@ const GenerateSeatPlan = () => {
 
       {message && <p className="status-message">{message}</p>}
     </div>
+    
   );
 };
 
