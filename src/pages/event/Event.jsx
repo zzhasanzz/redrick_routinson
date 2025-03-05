@@ -33,6 +33,9 @@ import {
     Th,
     Td,
     Select,
+    Tag,
+    TagLabel,
+    TagCloseButton,
     useToast,
 } from "@chakra-ui/react";
 import {
@@ -143,6 +146,8 @@ const Event = () => {
         image: null
     });
     const [selectedEventForVolunteer, setSelectedEventForVolunteer] = useState(null);
+
+    const [newFoodItem, setNewFoodItem] = useState("");
 
 
 
@@ -341,7 +346,7 @@ const Event = () => {
                     allowedDepartments,
                     image,
                     roadmap,
-                    foodOptions, // Save selected food options
+                    foodOptions, // Save the foodOptions array
                 });
             } else {
                 const eventRef = collection(db, "events");
@@ -357,11 +362,11 @@ const Event = () => {
                     image,
                     roadmap,
                     creatorEmail: currentUser.email,
-                    foodOptions, // Save selected food options
-                    breakfast: [],  // ✅ Initialize empty food arrays
+                    foodOptions, // Save the foodOptions array
+                    breakfast: [],  // Initialize empty food arrays
                     lunch: [],
                     dinner: [],
-                    snacks: []
+                    snacks: [],
                 });
             }
 
@@ -386,6 +391,7 @@ const Event = () => {
             setRoadmap([]);
             setAllowedDepartments([]);
             setFoodOptions([]);
+            setNewFoodItem(""); // Clear the new food item input
 
             fetchEvents();
             onClose();
@@ -808,42 +814,71 @@ const Event = () => {
                             </FormControl>
                             <FormControl>
                                 <FormLabel>Food Options</FormLabel>
-                                <SimpleGrid columns={2} spacing={2}>
-                                    {foodItems.map((food) => (
-                                        <Checkbox
-                                            key={food}
-                                            isChecked={foodOptions.includes(food)}
-                                            onChange={() =>
-                                                setFoodOptions((prev) =>
-                                                    prev.includes(food) ? prev.filter((f) => f !== food) : [...prev, food]
-                                                )
+                                <HStack>
+                                    <Input
+                                        placeholder="Enter food item"
+                                        value={newFoodItem}
+                                        onChange={(e) => setNewFoodItem(e.target.value)}
+                                        onKeyPress={(e) => {
+                                            if (e.key === "Enter" && newFoodItem.trim() !== "") {
+                                                setFoodOptions([...foodOptions, newFoodItem]);
+                                                setNewFoodItem(""); // Clear the input after adding
                                             }
+                                        }}
+                                    />
+                                    <Button
+                                        colorScheme="teal"
+                                        onClick={() => {
+                                            if (newFoodItem.trim() !== "") {
+                                                setFoodOptions([...foodOptions, newFoodItem]);
+                                                setNewFoodItem(""); // Clear the input after adding
+                                            }
+                                        }}
+                                    >
+                                        Add
+                                    </Button>
+                                </HStack>
+                                <Flex wrap="wrap" mt={2} gap={2}>
+                                    {foodOptions.map((food, index) => (
+                                        <Tag
+                                            key={index}
+                                            size="md"
+                                            borderRadius="full"
+                                            variant="solid"
+                                            colorScheme="orange"
+                                            px={3}
+                                            py={1}
                                         >
-                                            {food}
-                                        </Checkbox>
+                                            <TagLabel>{food}</TagLabel>
+                                            <TagCloseButton
+                                                onClick={() => {
+                                                    setFoodOptions(foodOptions.filter((_, i) => i !== index));
+                                                }}
+                                            />
+                                        </Tag>
                                     ))}
-                                </SimpleGrid>
+                                </Flex>
                             </FormControl>
                             <FormControl>
                                 <FormLabel>Upload Event Image</FormLabel>
                                 <Input type="file" accept="image/*" onChange={handleImageUpload} />
                             </FormControl>
-                            <FormControl>
-                                <FormLabel>Allowed Departments</FormLabel>
-                                <SimpleGrid columns={3} spacing={2}>
-                                    {departments.map((department) => (
-                                        <Checkbox
-                                            key={department}
-                                            isChecked={allowedDepartments.includes(department)}
-                                            onChange={() =>
-                                                handleAllowedDepartmentsChange(department)
-                                            }
-                                        >
-                                            {department}
-                                        </Checkbox>
-                                    ))}
-                                </SimpleGrid>
-                            </FormControl>
+                            {/*<FormControl>*/}
+                            {/*    <FormLabel>Allowed Departments</FormLabel>*/}
+                            {/*    <SimpleGrid columns={3} spacing={2}>*/}
+                            {/*        {departments.map((department) => (*/}
+                            {/*            <Checkbox*/}
+                            {/*                key={department}*/}
+                            {/*                isChecked={allowedDepartments.includes(department)}*/}
+                            {/*                onChange={() =>*/}
+                            {/*                    handleAllowedDepartmentsChange(department)*/}
+                            {/*                }*/}
+                            {/*            >*/}
+                            {/*                {department}*/}
+                            {/*            </Checkbox>*/}
+                            {/*        ))}*/}
+                            {/*    </SimpleGrid>*/}
+                            {/*</FormControl>*/}
                             <HStack>
                                 <Checkbox
                                     isChecked={enableVolunteer}
