@@ -29,7 +29,7 @@
               "credit": 1,
               "schedule": [
                 {
-                  "day": "Friday",
+                  "day": "Thursday",
                   "time": "8:00-9:15",
                   "room": "302",
                   "teacher": "AH"
@@ -587,9 +587,9 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Tuesday",
-                  "time": "11:45-1:00",
-                  "room": "302",
+                  "day": "Thursday",
+                  "time": "9:15-10:30",
+                  "room": "304",
                   "teacher": "FI"
                 },
                 {

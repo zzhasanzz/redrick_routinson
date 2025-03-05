@@ -1,5 +1,5 @@
 .sidebar {
-  background-image: url('../assets/sidebar2.png');
+  //background-image: url('../assets/sidebar_3.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -13,7 +13,7 @@
   background-color: #fff;
 
   &__logo {
-    background-image: url('../assets/sidebar2.png');
+    //background-image: url('../assets/sidebar_3.png');
     display: grid;
     place-items: center;
     height: 120px;
@@ -32,12 +32,15 @@
   }
 
   &__user-info__image {
-    width: 60px;
-    height: 60px;
+    width: 120px; // Increase width
+    height: 120px; // Increase height
     border-radius: 50%;
     object-fit: cover;
     margin-right: 15px;
-    margin-bottom: 17px;;
+    margin-bottom: 17px;
+    border: 3px solid #fff; // Optional: Add a border
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); // Optional: Add a shadow
+    transition: transform 0.3s ease-in-out; // Optional: Add hover effect
   }
 
   &__user-info__details {

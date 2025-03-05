@@ -23,6 +23,7 @@ def update_generation_status(status):
     """Update the routine generation status in Firestore"""
     try:
         db.collection('routine_status').document('generation').set({
+            'season': "winter",
             'status': status,
             'timestamp': firestore.SERVER_TIMESTAMP
         })
@@ -52,18 +53,21 @@ def write_routine_to_firestore(scheduled_classes):
             "Sunday": 6
         }
         # Create a set of semester-section combinations
-        add_dummy_fields()
+        # add_dummy_fields()
         semestersBySections = set()
-        for cls in scheduled_classes:
-            combination = f"{cls.semester}{cls.section}"  # This will create strings like "1A", "1B", "3A", etc.
-            semestersBySections.add(combination)
-            # print(semestersBySections)
+        for sem in range(1, 9):
+            for sect in ['A', 'B']:
+                combination = f"{sem}{sect}"
+                print(combination)
+                semestersBySections.add(combination)
+            print(semestersBySections)
         
         # Now you can iterate through the combinations
         for semester_section in semestersBySections:
            
             semester = semester_section[0]  # Gets the first character (the semester number)
             section = semester_section[1]  # Gets the second character (the section letter)
+            print(semester, section)
             semester_section_ref = db.collection(f'semester_{semester}_{section}')
             print("Deleting collection", semester_section_ref.id)
             delete_collection(semester_section_ref)
