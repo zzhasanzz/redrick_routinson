@@ -29,6 +29,7 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
     const [room, setRoom] = useState("");
     const [isPresident, setIsPresident] = useState(false);
     const toast = useToast();
+    const [id, setID] = useState("");
 
     const handleSubmit = () => {
         if (!email || !password || !role || !dept) {
@@ -53,6 +54,7 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
             section: role === "student" ? section : null,
             room,
             isPresident,
+            id
         };
     
         onAddUser(userData);
@@ -133,20 +135,27 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
                                 </FormControl>
                             </>
                         )}
-                        <FormControl>
+                        {!(role === "student") && <FormControl>
                             <FormLabel>Room</FormLabel>
                             <Input
                                 value={room}
                                 onChange={(e) => setRoom(e.target.value)}
                             />
-                        </FormControl>
-                        <FormControl display="flex" alignItems="center">
+                        </FormControl>}
+                        {(role === "student") && <FormControl>
+                            <FormLabel>ID</FormLabel>
+                            <Input
+                                value={id}
+                                onChange={(e) => setID(e.target.value)}
+                            />
+                        </FormControl>}
+                        {(role=="student") && <FormControl display="flex" alignItems="center">
                             <FormLabel mb="0">Is President</FormLabel>
                             <Switch
                                 isChecked={isPresident}
                                 onChange={(e) => setIsPresident(e.target.checked)}
                             />
-                        </FormControl>
+                        </FormControl>}
                     </VStack>
                 </ModalBody>
                 <ModalFooter>

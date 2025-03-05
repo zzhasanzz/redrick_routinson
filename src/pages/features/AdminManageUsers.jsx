@@ -45,7 +45,7 @@ const AdminManageUsers = () => {
 
     // Handle adding a new user
     const handleAddUser = async (userData) => {
-        const { email, password, role, name, dept, research, semester, section, room, isPresident } = userData;
+        const { email, password, role, name, dept, research, semester, section, room, isPresident, id } = userData;
     
         try {
             // Step 1: Check if the user already exists in Firestore
@@ -78,13 +78,14 @@ const AdminManageUsers = () => {
                 section: role === "student" ? section : null,
                 room,
                 isPresident: isPresident || false,
+                id: role === "student" ? id : null
             });
     
             // Update local state
             setUsers((prevUsers) => [
                 ...prevUsers,
                 {
-                    id: email,
+                    id: role === "student" ? id : null,
                     email,
                     role,
                     name: role === "teacher" ? name : null, // Include name for teachers
@@ -141,6 +142,7 @@ const AdminManageUsers = () => {
                 duration: 3000,
                 isClosable: true,
             });
+            await fetchUsers();
         } catch (error) {
             toast({
                 title: "Error deleting user",
