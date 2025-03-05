@@ -187,67 +187,7 @@ const Event = () => {
     // _____________________________________________________________________
 
 
-    // Add this function to fetch teachers
-//     const fetchTeachers = async () => {
-//         try {
-//             const usersCollection = collection(db, "users");
-//             const snapshot = await getDocs(usersCollection);
-//             const teacherList = [];
-//             snapshot.forEach(doc => {
-//                 const userData = doc.data();
-//                 if(userData.role === "teacher") {
-//                     teacherList.push({ id: doc.id, ...userData });
-//                 }
-//             });
-//             setTeachers(teacherList);
-//         } catch (error) {
-//             console.error("Error fetching teachers:", error);
-//         }
-//     };
-//
-// // Add this function to send invitation
-//     const sendInvitation = async () => {
-//         if(!selectedTeacher || !invitationMessage) {
-//             toast({
-//                 title: "Missing Information",
-//                 description: "Please select a teacher and write a message",
-//                 status: "error",
-//                 duration: 3000,
-//                 isClosable: true,
-//             });
-//             return;
-//         }
-//
-//         try {
-//             await addDoc(collection(db, "invitations"), {
-//                 eventId: selectedEvent.id,
-//                 eventName: selectedEvent.eventName,
-//                 senderEmail: currentUser.email,
-//                 teacherEmail: selectedTeacher.email,
-//                 message: invitationMessage,
-//                 status: "pending",
-//                 timestamp: new Date().toISOString()
-//             });
-//
-//             toast({
-//                 title: "Invitation Sent!",
-//                 description: "Your invitation has been successfully sent",
-//                 status: "success",
-//                 duration: 3000,
-//                 isClosable: true,
-//             });
-//             setInviteModalOpen(false);
-//         } catch (error) {
-//             console.error("Error sending invitation:", error);
-//             toast({
-//                 title: "Error",
-//                 description: "Failed to send invitation",
-//                 status: "error",
-//                 duration: 3000,
-//                 isClosable: true,
-//             });
-//         }
-//     };
+
 
     const fetchEvents = async () => {
         setLoading(true);
@@ -345,13 +285,7 @@ const Event = () => {
         setRoadmap(roadmap.filter((item) => item.id !== id));
     };
 
-    const handleAllowedDepartmentsChange = (department) => {
-        setAllowedDepartments((prev) =>
-            prev.includes(department)
-                ? prev.filter((dept) => dept !== department)
-                : [...prev, department]
-        );
-    };
+
 
     const handleSubmit = async () => {
         if (!eventName || !description || !startDate || !endDate) {
@@ -555,59 +489,79 @@ const Event = () => {
         onOpen();
     };
 
-    // const handleVolunteer = async (eventId) => {
-    //     try {
-    //         const eventDocRef = doc(db, "events", eventId);
-    //         const eventDoc = await getDoc(eventDocRef);
-    //
-    //         if (eventDoc.exists()) {
-    //             const eventData = eventDoc.data();
-    //             const volunteerList = eventData.volunteerList || [];
-    //             // const allowedDepartments = eventData.allowedDepartments || [];
-    //
-    //             if (volunteerList.includes(currentUser.email)) {
-    //                 toast({
-    //                     title: "Already Volunteered",
-    //                     description: "You are already registered as a volunteer for this event.",
-    //                     status: "info",
-    //                     duration: 3000,
-    //                     isClosable: true,
-    //                 });
-    //                 return;
-    //             }
-    //
-    //             await updateDoc(eventDocRef, {
-    //                 volunteerList: arrayUnion(currentUser.email),
-    //             });
-    //
-    //             toast({
-    //                 title: "Volunteered Successfully",
-    //                 description: "You have successfully registered as a volunteer.",
-    //                 status: "success",
-    //                 duration: 3000,
-    //                 isClosable: true,
-    //             });
-    //             fetchEvents();
-    //         } else {
-    //             toast({
-    //                 title: "Event Not Found",
-    //                 description: "The selected event does not exist.",
-    //                 status: "error",
-    //                 duration: 3000,
-    //                 isClosable: true,
-    //             });
-    //         }
-    //     } catch (error) {
-    //         console.error("Error volunteering for event: ", error);
-    //         toast({
-    //             title: "Error",
-    //             description: "Failed to register as a volunteer. Please try again.",
-    //             status: "error",
-    //             duration: 3000,
-    //             isClosable: true,
-    //         });
-    //     }
-    // };
+    const handleVolunteerRegister = async (eventId) => {
+        if (!userData) {
+            toast({
+                title: "User data not found.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+            return;
+        }
+
+        try {
+            const eventDocRef = doc(db, "events", eventId);
+            const eventDoc = await getDoc(eventDocRef);
+
+            if (eventDoc.exists()) {
+                const eventData = eventDoc.data();
+                const volunteerList = eventData.volunteerList || [];
+
+                // Check if already volunteered
+                const isAlreadyVolunteer = volunteerList.some(
+                    v => v.email === currentUser.email
+                );
+
+                if (isAlreadyVolunteer) {
+                    toast({
+                        title: "Already Volunteered",
+                        description: "You are already registered as a volunteer",
+                        status: "error",
+                        duration: 3000,
+                        isClosable: true,
+                    });
+                    return;
+                }
+
+                // Create volunteer data from userData
+                const volunteerData = {
+                    name: userData.displayName,
+                    studentId: userData.id,
+                    department: userData.department,
+                    image: userData.profilePic,
+                    email: currentUser.email,
+                    registrationDate: new Date().toISOString()
+                };
+
+                await updateDoc(eventDocRef, {
+                    volunteerList: arrayUnion(volunteerData)
+                });
+
+                toast({
+                    title: "Volunteer Registered",
+                    description: "Thank you for volunteering!",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                });
+
+                fetchEvents();
+            }
+        } catch (error) {
+            console.error("Error volunteering:", error);
+            toast({
+                title: "Error",
+                description: "Failed to register as volunteer",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+    };
+
+
+
 
     const handleViewVolunteers = (event) => {
         setVolunteerList(event.volunteerList || []);
@@ -1221,8 +1175,7 @@ const Event = () => {
                                                     size="sm"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        setSelectedEventForVolunteer(event);
-                                                        onVolunteerModalOpen();
+                                                        handleVolunteerRegister(event.id);
                                                     }}
                                                 >
                                                     Volunteer
