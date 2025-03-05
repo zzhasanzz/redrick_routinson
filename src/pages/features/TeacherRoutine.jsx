@@ -327,15 +327,13 @@ const TeacherRoutine = () => {
     );
 
     const newNotification = {
-      [`notification_${new Date().getTime()}`]: {
-        message: `Cancelled`,
-        Course: courseId,
-        Section: section,
-        Day: day,
-        Time: time,
-        ReadBy: [],
-        timestamp: new Date(),
-      },
+      message: `Cancelled`,
+      Course: courseId,
+      Section: section,
+      Day: day,
+      Time: time,
+      ReadBy: [],
+      timestamp: new Date(),
     };
     await setDoc(notificationDocRef, newNotification, { merge: true });
 
@@ -533,20 +531,18 @@ const TeacherRoutine = () => {
       );
 
       const newNotification = {
-        [`notification_${new Date().getTime()}`]: {
-          message: `Rescheduled`,
-          Course: selectedCourse,
-          Section: selectedSection,
-          Day: selectedDay,
-          Time: selectedTime,
-          Room: toBeRescheduledRoom,
+        message: `Rescheduled`,
+        Course: selectedCourse,
+        Section: selectedSection,
+        Day: selectedDay,
+        Time: selectedTime,
+        Room: toBeRescheduledRoom,
 
-          RescheduledDay: newDay,
-          RescheduledTime: newTime,
-          RescheduledRoom: selectedRoom,
-          timestamp: new Date(),
-          ReadBy: [],
-        },
+        RescheduledDay: newDay,
+        RescheduledTime: newTime,
+        RescheduledRoom: selectedRoom,
+        timestamp: new Date(),
+        ReadBy: [],
       };
 
       await setDoc(notificationDocRef, newNotification, { merge: true });
@@ -919,16 +915,14 @@ const TeacherRoutine = () => {
       );
 
       const newNotification = {
-        [`notification_${new Date().getTime()}`]: {
-          message: `Undone`,
-          Course: courseId,
-          Section: section,
-          Day: day,
-          Time: time,
-          Room: room,
-          timestamp: new Date(),
-          ReadBy: [],
-        },
+        message: `Undone`,
+        Course: courseId,
+        Section: section,
+        Day: day,
+        Time: time,
+        Room: room,
+        timestamp: new Date(),
+        ReadBy: [],
       };
 
       await setDoc(notificationDocRef, newNotification, { merge: true });
@@ -1082,16 +1076,14 @@ const TeacherRoutine = () => {
         );
 
         const newNotification = {
-          [`notification_${new Date().getTime()}`]: {
-            message: `Temporary Class of Cancelled`,
-            Course: courseId,
-            Section: section,
-            Day: day,
-            Time: time,
-            Room: room,
-            timestamp: new Date(),
-            ReadBy: [],
-          },
+          message: `Temporary Class of Cancelled`,
+          Course: courseId,
+          Section: section,
+          Day: day,
+          Time: time,
+          Room: room,
+          timestamp: new Date(),
+          ReadBy: [],
         };
 
         await setDoc(notificationDocRef, newNotification, { merge: true });
@@ -1697,21 +1689,19 @@ const TeacherRoutine = () => {
       const TD = dayMapping[targetDayIndex];
       const TT = `${targetStartTime} -${targetEndTime}`;
       const newNotification = {
-        [`notification_${new Date().getTime()}`]: {
-          message: `Swapped`,
-          reqCourse: reqCourse,
-          reqSection: reqSection,
-          reqDay: RD,
-          reqTime: RT,
-          reqRoom: reqRoom,
-          targetCourse: targetCourse,
-          targetSection: targetSection,
-          targetDay: TD,
-          targetTime: TT,
-          targetRoom: targetRoom,
-          timestamp: new Date(),
-          ReadBy: [],
-        },
+        message: `Swapped`,
+        reqCourse: reqCourse,
+        reqSection: reqSection,
+        reqDay: RD,
+        reqTime: RT,
+        reqRoom: reqRoom,
+        targetCourse: targetCourse,
+        targetSection: targetSection,
+        targetDay: TD,
+        targetTime: TT,
+        targetRoom: targetRoom,
+        timestamp: new Date(),
+        ReadBy: [],
       };
 
       await setDoc(notificationDocRef, newNotification, { merge: true });
