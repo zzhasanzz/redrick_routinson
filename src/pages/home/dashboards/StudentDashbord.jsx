@@ -1,4 +1,4 @@
-import { Box, SimpleGrid, Button, Text, Image} from '@chakra-ui/react';
+import { Box, SimpleGrid, Button, Text, Image } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { FaCalendarAlt, FaComments, FaChair, FaBoxOpen, FaClipboardList, FaBook } from 'react-icons/fa';
 
@@ -40,7 +40,7 @@ const StudentDashboard = () => {
                             boxSize="450px" // Adjust size as needed
                             alt="Class Routine"
                         /> */}
-                       {/* <Text fontSize="3xl" fontFamily="sans serif" color="#415c77">Class Routine</Text> */}
+                        {/* <Text fontSize="3xl" fontFamily="sans serif" color="#415c77">Class Routine</Text> */}
                     </Button>
                 </Link>
 
@@ -65,7 +65,7 @@ const StudentDashboard = () => {
                             backgroundColor: "rgba(255, 255, 255, 0.3)"
                         }}
                     >
-                       
+
                     </Button>
                 </Link>
 
@@ -90,7 +90,7 @@ const StudentDashboard = () => {
                             backgroundColor: "rgba(255, 255, 255, 0.3)"
                         }}
                     >
-                        
+
                     </Button>
                 </Link>
 
@@ -139,7 +139,7 @@ const StudentDashboard = () => {
                             backgroundColor: "rgba(255, 255, 255, 0.3)"
                         }}
                     >
-                       
+
                     </Button>
                 </Link>
 
@@ -151,6 +151,8 @@ const StudentDashboard = () => {
                         justifyContent="center"
                         borderRadius="30px"
                         backgroundColor="#edf8fb"
+                        backgroundImage="url('../assets/others.png')"
+                        backgroundSize="cover"
                         border="2px solid rgba(255, 255, 255, 0.7)"
                         color="black"
                         _hover={{
@@ -162,12 +164,7 @@ const StudentDashboard = () => {
                             backgroundColor: "rgba(255, 255, 255, 0.3)"
                         }}
                     >
-                         <Image 
-                            src="../assets/others.png" 
-                            boxSize="150px" // Adjust size as needed
-                            alt="Others"
-                        />
-                        <Text fontSize="3xl" fontFamily="sans serif" color="#415c77">Others</Text>
+
                     </Button>
                 </Link>
             </SimpleGrid>
