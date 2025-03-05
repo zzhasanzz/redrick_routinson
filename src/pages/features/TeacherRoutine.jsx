@@ -449,13 +449,57 @@ const TeacherRoutine = () => {
       const newTime = `${newStartTime}-${newEndTime}`;
 
       // First, cancel the original class
-      await handleCancelClass(
-        selectedCourse,
-        selectedDay,
-        selectedTime,
-        selectedSection
+      const currentCourseRef = doc(
+        db,
+        `teachers/${teacherName}/courses`,
+        `${selectedCourse}_${selectedSection}`
       );
-      console.log("Original class cancelled successfully");
+      const currentCourseSnapshot = await getDoc(currentCourseRef);
+      const currentCourseData = currentCourseSnapshot.data();
+      console.log("Current Course Data: ", currentCourseData);
+      const currentCourseTimeSlot =
+        revDayMapping[selectedDay] * 6 + revTimeMapping[selectedTime];
+
+      console.log("Current Course Time Slot: ", currentCourseTimeSlot);
+      console.log(
+        "Currnet Course Assigned Temp Time Slots:",
+        currentCourseData["assigned_temp_time_slots"]
+      );
+
+      if (
+        currentCourseData["assigned_temp_time_slots"].length > 0 &&
+        currentCourseData["assigned_temp_time_slots"].includes(
+          currentCourseTimeSlot.toString()
+        )
+      ) {
+        console.log("Cancelling temporary class");
+        const tempIndex = currentCourseData["assigned_temp_time_slots"].indexOf(
+          currentCourseTimeSlot.toString()
+        );
+        console.log("Time Slot Index: ", tempIndex);
+        const tempRoom = currentCourseData["assigned_temp_room"][tempIndex];
+        console.log("Temporary Room: ", tempRoom);
+        console.log("Selected Room: ", selectedRoom);
+        console.log("Selected COurse: ", selectedCourse);
+        console.log("Selected Section: ", selectedSection);
+        console.log("Selected Day: ", selectedDay);
+        console.log("Selected Time: ", selectedTime);
+        await handleCancelTemporaryClass(
+          selectedCourse,
+          selectedDay,
+          selectedTime,
+          tempRoom,
+          selectedSection
+        );
+      } else {
+        await handleCancelClass(
+          selectedCourse,
+          selectedDay,
+          selectedTime,
+          selectedSection
+        );
+      }
+      // console.log("Original class cancelled successfully");
 
       // Check if trying to reschedule on the same day
 
@@ -650,7 +694,7 @@ const TeacherRoutine = () => {
             class_cancelled: 1,
             rescheduled: 0,
             temp_course_code: selectedCourse,
-            course_type: "lab",
+            temp_course_type: "lab",
             temp_room: selectedRoom,
             temp_section: selectedSection,
             temp_time_1: newTime2,
@@ -672,7 +716,7 @@ const TeacherRoutine = () => {
           {
             class_cancelled: 1,
             rescheduled: 0,
-            course_type: "lab",
+            temp_course_type: "lab",
             temp_course_code: selectedCourse,
             temp_teacher_1: teacherName,
             temp_teacher_2: otherTeacherName,

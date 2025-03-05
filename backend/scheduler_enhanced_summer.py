@@ -58,7 +58,7 @@ def write_routine_to_firestore(scheduled_classes):
         
         for sem in range(1, 9):
             for sect in ['A', 'B']:
-                combination = f"semester_{sem}_{sect}"
+                combination = f"{sem}{sect}"
                 semestersBySections.add(combination)
             # print(semestersBySections)
         
