@@ -168,6 +168,7 @@ const Event = () => {
     const [selectedEventForVolunteer, setSelectedEventForVolunteer] = useState(null);
 
     const [newFoodItem, setNewFoodItem] = useState("");
+    const [userData, setUserData] = useState(null); // Add userData state
 
 
 
@@ -278,8 +279,7 @@ const Event = () => {
             if (userDoc.exists()) {
                 const userData = userDoc.data();
                 setIsPresident(userData.isPresident || false);
-            } else {
-                console.error("User document not found.");
+                setUserData(userData); // Store user data in state
             }
         } catch (error) {
             console.error("Error fetching user role: ", error);
@@ -658,19 +658,17 @@ const Event = () => {
     };
 
     const handleRegister = async (eventId, selectedFoodOptions) => {
-        try {
-            // Validate form data
-            if (!formData.name || !formData.studentId || !formData.department) {
-                toast({
-                    title: "Missing Information",
-                    description: "Please fill all required fields",
-                    status: "error",
-                    duration: 3000,
-                    isClosable: true,
-                });
-                return;
-            }
+        if (!userData) {
+            toast({
+                title: "User data not found.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+            return;
+        }
 
+        try {
             const eventDocRef = doc(db, "events", eventId);
             const eventDoc = await getDoc(eventDocRef);
 
@@ -680,7 +678,7 @@ const Event = () => {
 
                 // Check if already registered
                 const isRegistered = participantList.some(
-                    participant => participant.email === currentUser.email
+                    (participant) => participant.email === currentUser.email
                 );
 
                 if (isRegistered) {
@@ -694,12 +692,12 @@ const Event = () => {
                     return;
                 }
 
-                // Create participant object
+                // Create participant object from userData
                 const participantData = {
-                    name: formData.name,
-                    studentId: formData.studentId,
-                    department: formData.department,
-                    image: formData.image,
+                    name: userData.displayName,
+                    studentId: userData.id,
+                    department: userData.department,
+                    image: userData.profilePic,
                     email: currentUser.email,
                     registrationDate: new Date().toISOString()
                 };
@@ -726,14 +724,6 @@ const Event = () => {
                     isClosable: true,
                 });
 
-                // Reset form and close modal
-                setFormData({
-                    name: '',
-                    studentId: '',
-                    department: '',
-                    image: null
-                });
-                onRegisterModalClose();
                 fetchEvents();
             }
         } catch (error) {
@@ -1174,6 +1164,18 @@ const Event = () => {
                                                     Volunteers
                                                 </Button>
                                                 <Button
+                                                    leftIcon={<FaUsers />}
+                                                    colorScheme="teal"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleViewParticipants(event);
+                                                    }}
+                                                >
+                                                    Participants
+                                                </Button>
+                                                <Button
                                                     leftIcon={<FaEdit />}
                                                     colorScheme="blue"
                                                     variant="outline"
@@ -1248,8 +1250,7 @@ const Event = () => {
                                                     size="sm"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        setSelectedEventForRegistration(event);
-                                                        onRegisterModalOpen();
+                                                        handleRegister(event.id, event.foodOptions);
                                                     }}
                                                 >
                                                     Register Now
