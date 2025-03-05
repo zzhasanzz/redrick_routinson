@@ -25,6 +25,12 @@ const sidebarNavItems = [
         section: 'calendar'
     },
     {
+        display: 'Scanner',
+        icon: <i className='bx bx-calendar'></i>,
+        to: '/student-home/scanner', // Add full path
+        section: 'Scanner'
+    },
+    {
         display: 'User',
         icon: <i className='bx bx-user'></i>,
         to: '/student-home/user', // Add full path

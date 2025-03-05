@@ -233,10 +233,16 @@ const Event = () => {
         try {
             const eventCollection = collection(db, "events");
             const eventSnapshot = await getDocs(eventCollection);
-            const eventList = eventSnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
+            const currentDate = new Date(); // Get current date/time
+
+            const eventList = eventSnapshot.docs
+                .map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }))
+                // Filter out events with end date in the past
+                .filter((event) => new Date(event.endDate) >= currentDate);
+
             setEvents(eventList);
             setFilteredEvents(eventList);
         } catch (error) {
@@ -529,59 +535,59 @@ const Event = () => {
         onOpen();
     };
 
-    const handleVolunteer = async (eventId) => {
-        try {
-            const eventDocRef = doc(db, "events", eventId);
-            const eventDoc = await getDoc(eventDocRef);
-
-            if (eventDoc.exists()) {
-                const eventData = eventDoc.data();
-                const volunteerList = eventData.volunteerList || [];
-                // const allowedDepartments = eventData.allowedDepartments || [];
-
-                if (volunteerList.includes(currentUser.email)) {
-                    toast({
-                        title: "Already Volunteered",
-                        description: "You are already registered as a volunteer for this event.",
-                        status: "info",
-                        duration: 3000,
-                        isClosable: true,
-                    });
-                    return;
-                }
-
-                await updateDoc(eventDocRef, {
-                    volunteerList: arrayUnion(currentUser.email),
-                });
-
-                toast({
-                    title: "Volunteered Successfully",
-                    description: "You have successfully registered as a volunteer.",
-                    status: "success",
-                    duration: 3000,
-                    isClosable: true,
-                });
-                fetchEvents();
-            } else {
-                toast({
-                    title: "Event Not Found",
-                    description: "The selected event does not exist.",
-                    status: "error",
-                    duration: 3000,
-                    isClosable: true,
-                });
-            }
-        } catch (error) {
-            console.error("Error volunteering for event: ", error);
-            toast({
-                title: "Error",
-                description: "Failed to register as a volunteer. Please try again.",
-                status: "error",
-                duration: 3000,
-                isClosable: true,
-            });
-        }
-    };
+    // const handleVolunteer = async (eventId) => {
+    //     try {
+    //         const eventDocRef = doc(db, "events", eventId);
+    //         const eventDoc = await getDoc(eventDocRef);
+    //
+    //         if (eventDoc.exists()) {
+    //             const eventData = eventDoc.data();
+    //             const volunteerList = eventData.volunteerList || [];
+    //             // const allowedDepartments = eventData.allowedDepartments || [];
+    //
+    //             if (volunteerList.includes(currentUser.email)) {
+    //                 toast({
+    //                     title: "Already Volunteered",
+    //                     description: "You are already registered as a volunteer for this event.",
+    //                     status: "info",
+    //                     duration: 3000,
+    //                     isClosable: true,
+    //                 });
+    //                 return;
+    //             }
+    //
+    //             await updateDoc(eventDocRef, {
+    //                 volunteerList: arrayUnion(currentUser.email),
+    //             });
+    //
+    //             toast({
+    //                 title: "Volunteered Successfully",
+    //                 description: "You have successfully registered as a volunteer.",
+    //                 status: "success",
+    //                 duration: 3000,
+    //                 isClosable: true,
+    //             });
+    //             fetchEvents();
+    //         } else {
+    //             toast({
+    //                 title: "Event Not Found",
+    //                 description: "The selected event does not exist.",
+    //                 status: "error",
+    //                 duration: 3000,
+    //                 isClosable: true,
+    //             });
+    //         }
+    //     } catch (error) {
+    //         console.error("Error volunteering for event: ", error);
+    //         toast({
+    //             title: "Error",
+    //             description: "Failed to register as a volunteer. Please try again.",
+    //             status: "error",
+    //             duration: 3000,
+    //             isClosable: true,
+    //         });
+    //     }
+    // };
 
     const handleViewVolunteers = (event) => {
         setVolunteerList(event.volunteerList || []);
@@ -746,13 +752,13 @@ const Event = () => {
                         {isFilteringMyEvents ? "View All Events" : "Events Created by Me"}
                     </Button>
 
-                    <Button
-                        colorScheme="red"
-                        onClick={() => window.location.href = "/student-home/scanner"}
-                        mb={5}
-                    >
-                        Scanner
-                    </Button>
+                    {/*<Button*/}
+                    {/*    colorScheme="red"*/}
+                    {/*    onClick={() => window.location.href = "/student-home/scanner"}*/}
+                    {/*    mb={5}*/}
+                    {/*>*/}
+                    {/*    Scanner*/}
+                    {/*</Button>*/}
                 </>
             )}
 
