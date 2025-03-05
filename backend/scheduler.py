@@ -6,7 +6,7 @@ import numpy as np
 # Constants
 DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 TIME_SLOTS = ["8:00-9:15", "9:15-10:30", "10:30-11:45", "11:45-1:00", "2:30-3:45", "3:45-5:00"]
-CLASSROOMS = ["1", "2", "3", "4", "5", "6", "301", "302", "304", "204", "104", "105"]
+CLASSROOMS = ["103", "104", "105", "204", "205", "301", "302", "304", "508", "509", "510"]
 SECTIONS = ["A", "B"]
 
 # Load courses from JSON
