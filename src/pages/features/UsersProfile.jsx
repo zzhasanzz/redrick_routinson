@@ -153,14 +153,14 @@ const UsersProfile = () => {
             <div className="user-profile-container">
                 <label className="profile-label">
                     {isEditing && (
-                        <input 
-                            type="file" 
-                            accept="image/*" 
-                            onChange={handleProfilePicChange} 
-                            disabled={uploading} 
-                            className="file-input" 
-                            ref={fileInputRef} 
-                            onClick={(e) => e.stopPropagation()} 
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleProfilePicChange}
+                            disabled={uploading}
+                            className="file-input"
+                            ref={fileInputRef}
+                            onClick={(e) => e.stopPropagation()}
                         />
                     )}
 
@@ -173,16 +173,16 @@ const UsersProfile = () => {
                             <div className="no-profile-pic">No profile picture</div>
                         )}
 
-                        {isEditing  && (<img 
-                        src={galleryIcon} 
-                        alt="Select Image" 
-                        className="gallery-icon" 
-                        onClick={(e) => {
-                            e.preventDefault();  
-                            e.stopPropagation(); 
-                            fileInputRef.current?.click();
-                        }} 
-                    />)}
+                        {isEditing && (<img
+                            src={galleryIcon}
+                            alt="Select Image"
+                            className="gallery-icon"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                fileInputRef.current?.click();
+                            }}
+                        />)}
 
                     </div>
                 </label>
@@ -207,26 +207,27 @@ const UsersProfile = () => {
                 </div>
             </div>
             <div className="bio-skills-container">
-                        {isEditing ? (
-                            <>
-                                <textarea placeholder="Write a short bio..." value={profileDetails.bio} onChange={(e) => setProfileDetails({ ...profileDetails, bio: e.target.value })} />
-                                <input type="text" placeholder="Skills (comma-separated)" value={profileDetails.skills} onChange={(e) => setProfileDetails({ ...profileDetails, skills: e.target.value })} />
-                            </>
-                        ) : (
-                            <>
-                                <p><strong>Bio:</strong> {userData?.bio || "No bio available"}</p>
-                                <p><strong>Skills:</strong></p>
-                                <div className="skills-container">
-                                {userData?.skills 
+                {isEditing ? (
+                    <>
+                        <textarea placeholder="Write a short bio..." value={profileDetails.bio} onChange={(e) => setProfileDetails({ ...profileDetails, bio: e.target.value })} />
+                        <input type="text" placeholder="Skills (comma-separated)" value={profileDetails.skills} onChange={(e) => setProfileDetails({ ...profileDetails, skills: e.target.value })} />
+                    </>
+                ) : (
+                    <>
+                        <p><strong>Bio:</strong> {userData?.bio || "No bio available"}</p>
+                        <p className="skills-heading">
+                            <strong>Skills:</strong>
+                            <div className="skills-container">
+                                {userData?.skills
                                     ? userData.skills.split(",").map((skill, index) => (
                                         <span key={index} className="skill-block">{skill.trim()}</span>
-                                    )) 
+                                    ))
                                     : <span>No skills listed</span>
                                 }
-                                </div>
-
-                            </>
-                        )}
+                            </div>
+                        </p>
+                    </>
+                )}
             </div>
             <div className="btn-group">
                 {isEditing && <button onClick={handleSave} disabled={uploading} className="save-btn">Save</button>}

@@ -11,9 +11,9 @@ time_slots = {
 def generate_preferred_times(rank):
     """Generate preferred times based on rank with Wednesday restrictions"""
     if rank in ['Professor', 'Associate Professor', 'Assistant Professor']:
-        num_slots = random.randint(8, 20)
+        num_slots = random.randint(16, 24)
     elif rank in ['Part-Time']: 
-        num_slots = random.randint(8, 12)
+        num_slots = random.randint(12, 16)
     else:
         num_slots = 28
     

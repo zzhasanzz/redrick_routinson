@@ -33,6 +33,9 @@ import {
     Th,
     Td,
     Select,
+    Tag,
+    TagLabel,
+    TagCloseButton,
     useToast,
 } from "@chakra-ui/react";
 import {
@@ -131,6 +134,22 @@ const Event = () => {
     } = useDisclosure();
     const [selectedParticipant, setSelectedParticipant] = useState(null);
 
+    const {
+        isOpen: isVolunteerModalOpen,
+        onOpen: onVolunteerModalOpen,
+        onClose: onVolunteerModalClose,
+    } = useDisclosure();
+    const [volunteerFormData, setVolunteerFormData] = useState({
+        name: '',
+        studentId: '',
+        department: '',
+        image: null
+    });
+    const [selectedEventForVolunteer, setSelectedEventForVolunteer] = useState(null);
+
+    const [newFoodItem, setNewFoodItem] = useState("");
+
+
 
 
 
@@ -214,10 +233,16 @@ const Event = () => {
         try {
             const eventCollection = collection(db, "events");
             const eventSnapshot = await getDocs(eventCollection);
-            const eventList = eventSnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
+            const currentDate = new Date(); // Get current date/time
+
+            const eventList = eventSnapshot.docs
+                .map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }))
+                // Filter out events with end date in the past
+                .filter((event) => new Date(event.endDate) >= currentDate);
+
             setEvents(eventList);
             setFilteredEvents(eventList);
         } catch (error) {
@@ -327,7 +352,7 @@ const Event = () => {
                     allowedDepartments,
                     image,
                     roadmap,
-                    foodOptions, // Save selected food options
+                    foodOptions, // Save the foodOptions array
                 });
             } else {
                 const eventRef = collection(db, "events");
@@ -343,11 +368,11 @@ const Event = () => {
                     image,
                     roadmap,
                     creatorEmail: currentUser.email,
-                    foodOptions, // Save selected food options
-                    breakfast: [],  // ✅ Initialize empty food arrays
+                    foodOptions, // Save the foodOptions array
+                    breakfast: [],  // Initialize empty food arrays
                     lunch: [],
                     dinner: [],
-                    snacks: []
+                    snacks: [],
                 });
             }
 
@@ -372,6 +397,7 @@ const Event = () => {
             setRoadmap([]);
             setAllowedDepartments([]);
             setFoodOptions([]);
+            setNewFoodItem(""); // Clear the new food item input
 
             fetchEvents();
             onClose();
@@ -380,6 +406,112 @@ const Event = () => {
             toast({
                 title: "Error",
                 description: "Failed to save the event. Please try again.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+    };
+
+    const handleSubmitVolunteer = async (eventId) => {
+        try {
+            if (!volunteerFormData.name || !volunteerFormData.studentId || !volunteerFormData.department) {
+                toast({
+                    title: "Missing Information",
+                    description: "Please fill all required fields",
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                });
+                return;
+            }
+
+            const eventDocRef = doc(db, "events", eventId);
+            const eventDoc = await getDoc(eventDocRef);
+
+            if (eventDoc.exists()) {
+                const eventData = eventDoc.data();
+                const isAlreadyVolunteer = eventData.volunteerList?.some(v => v.email === currentUser.email);
+
+                if (isAlreadyVolunteer) {
+                    toast({
+                        title: "Already Volunteered",
+                        description: "You are already registered as a volunteer",
+                        status: "error",
+                        duration: 3000,
+                        isClosable: true,
+                    });
+                    return;
+                }
+
+                const volunteerData = {
+                    ...volunteerFormData,
+                    email: currentUser.email,
+                    registrationDate: new Date().toISOString()
+                };
+
+                await updateDoc(eventDocRef, {
+                    volunteerList: arrayUnion(volunteerData)
+                });
+
+                toast({
+                    title: "Volunteer Registered",
+                    description: "Thank you for volunteering!",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                });
+
+                setVolunteerFormData({
+                    name: '',
+                    studentId: '',
+                    department: '',
+                    image: null
+                });
+                onVolunteerModalClose();
+                fetchEvents();
+            }
+        } catch (error) {
+            console.error("Error volunteering:", error);
+            toast({
+                title: "Error",
+                description: "Failed to register as volunteer",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+    };
+
+    const handleCancelVolunteer = async (eventId) => {
+        try {
+            const eventDocRef = doc(db, "events", eventId);
+            const eventDoc = await getDoc(eventDocRef);
+
+            if (eventDoc.exists()) {
+                const eventData = eventDoc.data();
+                const updatedVolunteers = eventData.volunteerList.filter(
+                    v => v.email !== currentUser.email
+                );
+
+                await updateDoc(eventDocRef, {
+                    volunteerList: updatedVolunteers
+                });
+
+                toast({
+                    title: "Volunteer Cancelled",
+                    description: "Your volunteer registration has been cancelled",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                });
+                fetchEvents();
+            }
+        } catch (error) {
+            console.error("Error cancelling volunteer:", error);
+            toast({
+                title: "Error",
+                description: "Failed to cancel volunteer registration",
                 status: "error",
                 duration: 3000,
                 isClosable: true,
@@ -403,59 +535,59 @@ const Event = () => {
         onOpen();
     };
 
-    const handleVolunteer = async (eventId) => {
-        try {
-            const eventDocRef = doc(db, "events", eventId);
-            const eventDoc = await getDoc(eventDocRef);
-
-            if (eventDoc.exists()) {
-                const eventData = eventDoc.data();
-                const volunteerList = eventData.volunteerList || [];
-                // const allowedDepartments = eventData.allowedDepartments || [];
-
-                if (volunteerList.includes(currentUser.email)) {
-                    toast({
-                        title: "Already Volunteered",
-                        description: "You are already registered as a volunteer for this event.",
-                        status: "info",
-                        duration: 3000,
-                        isClosable: true,
-                    });
-                    return;
-                }
-
-                await updateDoc(eventDocRef, {
-                    volunteerList: arrayUnion(currentUser.email),
-                });
-
-                toast({
-                    title: "Volunteered Successfully",
-                    description: "You have successfully registered as a volunteer.",
-                    status: "success",
-                    duration: 3000,
-                    isClosable: true,
-                });
-                fetchEvents();
-            } else {
-                toast({
-                    title: "Event Not Found",
-                    description: "The selected event does not exist.",
-                    status: "error",
-                    duration: 3000,
-                    isClosable: true,
-                });
-            }
-        } catch (error) {
-            console.error("Error volunteering for event: ", error);
-            toast({
-                title: "Error",
-                description: "Failed to register as a volunteer. Please try again.",
-                status: "error",
-                duration: 3000,
-                isClosable: true,
-            });
-        }
-    };
+    // const handleVolunteer = async (eventId) => {
+    //     try {
+    //         const eventDocRef = doc(db, "events", eventId);
+    //         const eventDoc = await getDoc(eventDocRef);
+    //
+    //         if (eventDoc.exists()) {
+    //             const eventData = eventDoc.data();
+    //             const volunteerList = eventData.volunteerList || [];
+    //             // const allowedDepartments = eventData.allowedDepartments || [];
+    //
+    //             if (volunteerList.includes(currentUser.email)) {
+    //                 toast({
+    //                     title: "Already Volunteered",
+    //                     description: "You are already registered as a volunteer for this event.",
+    //                     status: "info",
+    //                     duration: 3000,
+    //                     isClosable: true,
+    //                 });
+    //                 return;
+    //             }
+    //
+    //             await updateDoc(eventDocRef, {
+    //                 volunteerList: arrayUnion(currentUser.email),
+    //             });
+    //
+    //             toast({
+    //                 title: "Volunteered Successfully",
+    //                 description: "You have successfully registered as a volunteer.",
+    //                 status: "success",
+    //                 duration: 3000,
+    //                 isClosable: true,
+    //             });
+    //             fetchEvents();
+    //         } else {
+    //             toast({
+    //                 title: "Event Not Found",
+    //                 description: "The selected event does not exist.",
+    //                 status: "error",
+    //                 duration: 3000,
+    //                 isClosable: true,
+    //             });
+    //         }
+    //     } catch (error) {
+    //         console.error("Error volunteering for event: ", error);
+    //         toast({
+    //             title: "Error",
+    //             description: "Failed to register as a volunteer. Please try again.",
+    //             status: "error",
+    //             duration: 3000,
+    //             isClosable: true,
+    //         });
+    //     }
+    // };
 
     const handleViewVolunteers = (event) => {
         setVolunteerList(event.volunteerList || []);
@@ -620,13 +752,13 @@ const Event = () => {
                         {isFilteringMyEvents ? "View All Events" : "Events Created by Me"}
                     </Button>
 
-                    <Button
-                        colorScheme="red"
-                        onClick={() => window.location.href = "/student-home/scanner"}
-                        mb={5}
-                    >
-                        Scanner
-                    </Button>
+                    {/*<Button*/}
+                    {/*    colorScheme="red"*/}
+                    {/*    onClick={() => window.location.href = "/student-home/scanner"}*/}
+                    {/*    mb={5}*/}
+                    {/*>*/}
+                    {/*    Scanner*/}
+                    {/*</Button>*/}
                 </>
             )}
 
@@ -688,42 +820,71 @@ const Event = () => {
                             </FormControl>
                             <FormControl>
                                 <FormLabel>Food Options</FormLabel>
-                                <SimpleGrid columns={2} spacing={2}>
-                                    {foodItems.map((food) => (
-                                        <Checkbox
-                                            key={food}
-                                            isChecked={foodOptions.includes(food)}
-                                            onChange={() =>
-                                                setFoodOptions((prev) =>
-                                                    prev.includes(food) ? prev.filter((f) => f !== food) : [...prev, food]
-                                                )
+                                <HStack>
+                                    <Input
+                                        placeholder="Enter food item"
+                                        value={newFoodItem}
+                                        onChange={(e) => setNewFoodItem(e.target.value)}
+                                        onKeyPress={(e) => {
+                                            if (e.key === "Enter" && newFoodItem.trim() !== "") {
+                                                setFoodOptions([...foodOptions, newFoodItem]);
+                                                setNewFoodItem(""); // Clear the input after adding
                                             }
+                                        }}
+                                    />
+                                    <Button
+                                        colorScheme="teal"
+                                        onClick={() => {
+                                            if (newFoodItem.trim() !== "") {
+                                                setFoodOptions([...foodOptions, newFoodItem]);
+                                                setNewFoodItem(""); // Clear the input after adding
+                                            }
+                                        }}
+                                    >
+                                        Add
+                                    </Button>
+                                </HStack>
+                                <Flex wrap="wrap" mt={2} gap={2}>
+                                    {foodOptions.map((food, index) => (
+                                        <Tag
+                                            key={index}
+                                            size="md"
+                                            borderRadius="full"
+                                            variant="solid"
+                                            colorScheme="orange"
+                                            px={3}
+                                            py={1}
                                         >
-                                            {food}
-                                        </Checkbox>
+                                            <TagLabel>{food}</TagLabel>
+                                            <TagCloseButton
+                                                onClick={() => {
+                                                    setFoodOptions(foodOptions.filter((_, i) => i !== index));
+                                                }}
+                                            />
+                                        </Tag>
                                     ))}
-                                </SimpleGrid>
+                                </Flex>
                             </FormControl>
                             <FormControl>
                                 <FormLabel>Upload Event Image</FormLabel>
                                 <Input type="file" accept="image/*" onChange={handleImageUpload} />
                             </FormControl>
-                            <FormControl>
-                                <FormLabel>Allowed Departments</FormLabel>
-                                <SimpleGrid columns={3} spacing={2}>
-                                    {departments.map((department) => (
-                                        <Checkbox
-                                            key={department}
-                                            isChecked={allowedDepartments.includes(department)}
-                                            onChange={() =>
-                                                handleAllowedDepartmentsChange(department)
-                                            }
-                                        >
-                                            {department}
-                                        </Checkbox>
-                                    ))}
-                                </SimpleGrid>
-                            </FormControl>
+                            {/*<FormControl>*/}
+                            {/*    <FormLabel>Allowed Departments</FormLabel>*/}
+                            {/*    <SimpleGrid columns={3} spacing={2}>*/}
+                            {/*        {departments.map((department) => (*/}
+                            {/*            <Checkbox*/}
+                            {/*                key={department}*/}
+                            {/*                isChecked={allowedDepartments.includes(department)}*/}
+                            {/*                onChange={() =>*/}
+                            {/*                    handleAllowedDepartmentsChange(department)*/}
+                            {/*                }*/}
+                            {/*            >*/}
+                            {/*                {department}*/}
+                            {/*            </Checkbox>*/}
+                            {/*        ))}*/}
+                            {/*    </SimpleGrid>*/}
+                            {/*</FormControl>*/}
                             <HStack>
                                 <Checkbox
                                     isChecked={enableVolunteer}
@@ -923,14 +1084,27 @@ const Event = () => {
                                         </Button>
                                     </>
                                 ) : event.enableVolunteer && (
-                                    <Button
-                                        size="sm"
-                                        colorScheme="green"
-                                        onClick={() => handleVolunteer(event.id)}
-                                    >
-                                        Volunteer
-                                    </Button>
-                                )}
+                                        event.volunteerList?.some(v => v.email === currentUser.email) ? (
+                                            <Button
+                                                size="sm"
+                                                colorScheme="red"
+                                                onClick={() => handleCancelVolunteer(event.id)}
+                                            >
+                                                Cancel Volunteer
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                size="sm"
+                                                colorScheme="green"
+                                                onClick={() => {
+                                                    setSelectedEventForVolunteer(event);
+                                                    onVolunteerModalOpen();
+                                                }}
+                                            >
+                                                Volunteer
+                                            </Button>
+                                        )
+                                    )}
                                 {event.creatorEmail === currentUser.email ? (
                                     <Button size="sm" colorScheme="purple" onClick={() => handleViewParticipants(event)}>
                                         View Participants
@@ -1051,13 +1225,26 @@ const Event = () => {
                             <Table size="sm">
                                 <Thead>
                                     <Tr>
-                                        <Th>Email</Th>
+                                        <Th>Name</Th>
+                                        <Th>Actions</Th>
                                     </Tr>
                                 </Thead>
                                 <Tbody>
-                                    {volunteerList.map((email, index) => (
+                                    {volunteerList.map((volunteer, index) => (
                                         <Tr key={index}>
-                                            <Td>{email}</Td>
+                                            <Td>{volunteer.name}</Td>
+                                            <Td>
+                                                <Button
+                                                    size="sm"
+                                                    colorScheme="blue"
+                                                    onClick={() => {
+                                                        setSelectedParticipant(volunteer);
+                                                        onProfileOpen();
+                                                    }}
+                                                >
+                                                    View Profile
+                                                </Button>
+                                            </Td>
                                         </Tr>
                                     ))}
                                 </Tbody>
@@ -1297,6 +1484,127 @@ const Event = () => {
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Participant Details</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        {selectedParticipant && (
+                            <VStack spacing={4} align="stretch">
+                                <Center>
+                                    {selectedParticipant.image && (
+                                        <Image
+                                            src={selectedParticipant.image}
+                                            boxSize="200px"
+                                            borderRadius="full"
+                                            objectFit="cover"
+                                            mb={4}
+                                        />
+                                    )}
+                                </Center>
+                                <Box>
+                                    <Text fontWeight="bold">Name:</Text>
+                                    <Text>{selectedParticipant.name}</Text>
+                                </Box>
+                                <Box>
+                                    <Text fontWeight="bold">Student ID:</Text>
+                                    <Text>{selectedParticipant.studentId}</Text>
+                                </Box>
+                                <Box>
+                                    <Text fontWeight="bold">Department:</Text>
+                                    <Text>{selectedParticipant.department}</Text>
+                                </Box>
+                                <Box>
+                                    <Text fontWeight="bold">Email:</Text>
+                                    <Text>{selectedParticipant.email}</Text>
+                                </Box>
+                                <Box>
+                                    <Text fontWeight="bold">Registration Date:</Text>
+                                    <Text>
+                                        {new Date(
+                                            selectedParticipant.registrationDate
+                                        ).toLocaleDateString()}
+                                    </Text>
+                                </Box>
+                            </VStack>
+                        )}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button colorScheme="blue" onClick={onProfileClose}>
+                            Close
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+
+            <Modal isOpen={isVolunteerModalOpen} onClose={onVolunteerModalClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Volunteer Registration</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <VStack spacing={4}>
+                            <FormControl isRequired>
+                                <FormLabel>Full Name</FormLabel>
+                                <Input
+                                    placeholder="Enter your full name"
+                                    value={volunteerFormData.name}
+                                    onChange={(e) => setVolunteerFormData({...volunteerFormData, name: e.target.value})}
+                                />
+                            </FormControl>
+                            <FormControl isRequired>
+                                <FormLabel>Student ID</FormLabel>
+                                <Input
+                                    placeholder="Enter your student ID"
+                                    value={volunteerFormData.studentId}
+                                    onChange={(e) => setVolunteerFormData({...volunteerFormData, studentId: e.target.value})}
+                                />
+                            </FormControl>
+                            <FormControl isRequired>
+                                <FormLabel>Department</FormLabel>
+                                <Select
+                                    placeholder="Select department"
+                                    value={volunteerFormData.department}
+                                    onChange={(e) => setVolunteerFormData({...volunteerFormData, department: e.target.value})}
+                                >
+                                    {departments.map(dept => (
+                                        <option key={dept} value={dept}>{dept}</option>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel>Upload Profile Image</FormLabel>
+                                <Input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        const file = e.target.files[0];
+                                        if (file) {
+                                            const reader = new FileReader();
+                                            reader.onloadend = () => {
+                                                setVolunteerFormData({...volunteerFormData, image: reader.result});
+                                            };
+                                            reader.readAsDataURL(file);
+                                        }
+                                    }}
+                                />
+                            </FormControl>
+                        </VStack>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button
+                            colorScheme="blue"
+                            onClick={() => handleSubmitVolunteer(selectedEventForVolunteer.id)}
+                        >
+                            Submit
+                        </Button>
+                        <Button variant="ghost" onClick={onVolunteerModalClose}>Cancel</Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+            <Modal isOpen={isProfileOpen} onClose={onProfileClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Volunteer Details</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         {selectedParticipant && (

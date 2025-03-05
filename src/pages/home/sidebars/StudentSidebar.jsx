@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { AuthContext } from "../../../context/AuthContext"; // Import the AuthContext
-import './studentSIdebar.scss';
+import './studentSidebar.scss';
 import { db } from "../../../firebase.js"; // Import Firestore
 import { doc, getDoc } from "firebase/firestore";
 
@@ -23,6 +23,12 @@ const sidebarNavItems = [
         icon: <i className='bx bx-calendar'></i>,
         to: '/student-home/calendar', // Add full path
         section: 'calendar'
+    },
+    {
+        display: 'Scanner',
+        icon: <i className='bx bx-calendar'></i>,
+        to: '/student-home/scanner', // Add full path
+        section: 'Scanner'
     },
     {
         display: 'User',
