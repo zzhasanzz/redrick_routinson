@@ -302,9 +302,8 @@ const TeacherRoutine = () => {
       console.error("Error canceling class:", error);
       alert("Failed to cancel class.");
     }
-
+    let sem = courseId.toString().charAt(courseId.toString().length - 3);
     try {
-      let sem = courseId.toString().charAt(courseId.toString().length - 3);
       const semester = "semester_" + sem + "_" + section;
       const timeSlotRef = doc(db, semester, timeSlot.toString());
       const timeSlotSnapshot = await getDoc(timeSlotRef);
@@ -319,6 +318,27 @@ const TeacherRoutine = () => {
       console.error("Error canceling class:", error);
       alert("Failed to cancel class.");
     }
+
+    const notificationDocRef = doc(
+      db,
+      "notifications",
+      `semester_${sem}_${selectedSection}/class_routine`,
+      `notification_${new Date().getTime()}`
+    );
+
+    const newNotification = {
+      [`notification_${new Date().getTime()}`]: {
+        message: `Cancelled`,
+        Course: courseId,
+        Section: section,
+        Day: day,
+        Time: time,
+        ReadBy: [],
+        timestamp: new Date(),
+      },
+    };
+    await setDoc(notificationDocRef, newNotification, { merge: true });
+
     console.log("Selected Course Type: ", selectedCourseType);
     if (selectedCourseType === "lab") {
       console.log("Lab course detected, updating second time slot");
@@ -504,6 +524,33 @@ const TeacherRoutine = () => {
       // Check if trying to reschedule on the same day
 
       // --- Update the semester collection ---
+
+      const notificationDocRef = doc(
+        db,
+        "notifications",
+        `semester_${sem}_${selectedSection}/class_routine`,
+        `notification_${new Date().getTime()}`
+      );
+
+      const newNotification = {
+        [`notification_${new Date().getTime()}`]: {
+          message: `Rescheduled`,
+          Course: selectedCourse,
+          Section: selectedSection,
+          Day: selectedDay,
+          Time: selectedTime,
+          Room: toBeRescheduledRoom,
+
+          RescheduledDay: newDay,
+          RescheduledTime: newTime,
+          RescheduledRoom: selectedRoom,
+          timestamp: new Date(),
+          ReadBy: [],
+        },
+      };
+
+      await setDoc(notificationDocRef, newNotification, { merge: true });
+
       const timeSlotDocRef = doc(
         db,
         semesterCollection,
@@ -785,6 +832,7 @@ const TeacherRoutine = () => {
   const handleUndoCancelledClass = async (courseId, day, time, section) => {
     setIsProcessing(true);
     setProcessingAction(`undo-${courseId}-${day}-${time}-${section}`);
+
     let selectedCourseType = "";
     let rooms = [];
     let room = "";
@@ -795,6 +843,7 @@ const TeacherRoutine = () => {
         `teachers/${teacherName}/courses`,
         courseId.toString() + "_" + section
       );
+
       const courseSnapshot = await getDoc(courseRef);
       const courseData = courseSnapshot.data();
       selectedCourseType = courseData["course_type"];
@@ -861,6 +910,28 @@ const TeacherRoutine = () => {
       await updateDoc(timeSlotRef, {
         class_cancelled: 0,
       });
+
+      const notificationDocRef = doc(
+        db,
+        "notifications",
+        `semester_${sem}_${section}/class_routine`,
+        `notification_${new Date().getTime()}`
+      );
+
+      const newNotification = {
+        [`notification_${new Date().getTime()}`]: {
+          message: `Undone`,
+          Course: courseId,
+          Section: section,
+          Day: day,
+          Time: time,
+          Room: room,
+          timestamp: new Date(),
+          ReadBy: [],
+        },
+      };
+
+      await setDoc(notificationDocRef, newNotification, { merge: true });
 
       console.log("Updated Semester Document");
 
@@ -939,6 +1010,7 @@ const TeacherRoutine = () => {
     console.log("Time: ", time);
     console.log("Room: ", room);
     console.log("Section: ", section);
+
     try {
       // Calculate timeslot
       const timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
@@ -1001,6 +1073,28 @@ const TeacherRoutine = () => {
           temp_teacher_2: "",
           temp_section: "",
         });
+
+        const notificationDocRef = doc(
+          db,
+          "notifications",
+          `semester_${sem}_${section}/class_routine`,
+          `notification_${new Date().getTime()}`
+        );
+
+        const newNotification = {
+          [`notification_${new Date().getTime()}`]: {
+            message: `Temporary Class of Cancelled`,
+            Course: courseId,
+            Section: section,
+            Day: day,
+            Time: time,
+            Room: room,
+            timestamp: new Date(),
+            ReadBy: [],
+          },
+        };
+
+        await setDoc(notificationDocRef, newNotification, { merge: true });
         console.log("Updated room document");
         if (courseData.course_type === "lab") {
           const nextTimeSlot = timeSlot + 1; // For lab courses, update the next time slot as well
@@ -1070,7 +1164,7 @@ const TeacherRoutine = () => {
             otherTempRooms = otherTempRooms.filter(
               (_, index) => index !== otherSlotIndex
             );
-            console.log("Other Temp Time Slots UPdated: ", otherTempTimeSlots);
+            console.log("Other Temp Time Slots Updated: ", otherTempTimeSlots);
             console.log("OTher Temp Rooms Updated: ", otherTempRooms);
             await updateDoc(otherCourseRef, {
               assigned_temp_time_slots: otherTempTimeSlots,
@@ -1591,6 +1685,36 @@ const TeacherRoutine = () => {
         temp_section: targetSection,
         class_cancelled: 1,
       });
+
+      const notificationDocRef = doc(
+        db,
+        "notifications",
+        `semester_${reqSemesterNum}_${reqSection}/class_routine`,
+        `notification_${new Date().getTime()}`
+      );
+      const RD = dayMapping[reqDayIndex];
+      const RT = `${reqStartTime} -${reqEndTime}`;
+      const TD = dayMapping[targetDayIndex];
+      const TT = `${targetStartTime} -${targetEndTime}`;
+      const newNotification = {
+        [`notification_${new Date().getTime()}`]: {
+          message: `Swapped`,
+          reqCourse: reqCourse,
+          reqSection: reqSection,
+          reqDay: RD,
+          reqTime: RT,
+          reqRoom: reqRoom,
+          targetCourse: targetCourse,
+          targetSection: targetSection,
+          targetDay: TD,
+          targetTime: TT,
+          targetRoom: targetRoom,
+          timestamp: new Date(),
+          ReadBy: [],
+        },
+      };
+
+      await setDoc(notificationDocRef, newNotification, { merge: true });
 
       const targetRoomRef = doc(
         db,

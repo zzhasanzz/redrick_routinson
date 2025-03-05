@@ -72,6 +72,7 @@ def write_routine_to_firestore(scheduled_classes):
             delete_collection(semester_section_ref)
         
         # Delete collections before writing new data
+        delete_collection(db.collection('courses'))
         delete_collection(db.collection('time_slots'))
 
         # Prepare data structures for batch processing
