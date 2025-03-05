@@ -183,7 +183,7 @@ function App() {
                 <StudentDashboard />
               </RequireAuth>
             }
-          >
+          />
             
             <Route
               path="/student-home/student-routine"
@@ -256,10 +256,6 @@ function App() {
                 </RequireAuth>
               }
             />
-          </Route>
-
-        
-
           <Route
             path="/student-home/lost-and-found"
             element={
@@ -268,9 +264,6 @@ function App() {
               </RequireAuth>
             }
           />
-
-        
-
           <Route
             path="/student-home/user"
             element={
