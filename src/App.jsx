@@ -35,6 +35,15 @@ import FoodScanner from "./pages/event/Scanner.jsx";
 import UsersProfile from "./pages/features/UsersProfile.jsx";
 
 import Event from "./pages/event/Event.jsx";
+import Forum from './pages/forum/forum.jsx';
+
+
+
+
+
+
+
+
 import AdminStats from "./pages/features/AdminStats.jsx";
 import AdminGenerateSeatPlanForAll from "./pages/features/adminGenerateSeatPlan.jsx"
 import TeacherEvents from "./pages/event/TeacherEvents.jsx";
@@ -131,11 +140,11 @@ function App() {
                 </RequireAuth>
               }
             />
-             <Route
+            <Route
               path="/admin-home/admin-generate-seat-plan"
               element={
                 <RequireAuth allowedRoles={["admin"]}>
-                  <AdminGenerateSeatPlanForAll/>
+                  <AdminGenerateSeatPlanForAll />
                 </RequireAuth>
               }
             />
@@ -153,26 +162,29 @@ function App() {
                 <RequireAuth allowedRoles={["admin"]}>
                   <Blank />
                 </RequireAuth>
-              }
-            />
+
+              } />
+
+
           </Route>
+
+
+        <Route path="/student-home" element={
+            <RequireAuth allowedRoles={["student"]}>
+              <StudentHome />
+            </RequireAuth>
+          }
+          >
+          <Route index element={<Blank />} />
           <Route
-            path="/student-home"
+            path="/student-home/student-dashboard"
             element={
               <RequireAuth allowedRoles={["student"]}>
-                <StudentHome />
+                <StudentDashboard />
               </RequireAuth>
             }
-          >
-            <Route index element={<Blank />} />
-            <Route
-              path="/student-home/student-dashboard"
-              element={
-                <RequireAuth allowedRoles={["student"]}>
-                  <StudentDashboard />
-                </RequireAuth>
-              }
-            />
+          />
+            
             <Route
               path="/student-home/student-routine"
               element={
@@ -207,14 +219,7 @@ function App() {
               }
             />
 
-            <Route
-              path="/student-home/lost-and-found"
-              element={
-                <RequireAuth allowedRoles={["student"]}>
-                  <LostAndFound />
-                </RequireAuth>
-              }
-            />
+          
 
             <Route
               path="/student-home/calendar"
@@ -225,14 +230,7 @@ function App() {
               }
             />
 
-            <Route
-              path="/student-home/user"
-              element={
-                <RequireAuth allowedRoles={["student"]}>
-                  <UsersProfile />
-                </RequireAuth>
-              }
-            />
+          
             <Route
               path="/student-home/event"
               element={
@@ -258,90 +256,114 @@ function App() {
                 </RequireAuth>
               }
             />
-          </Route>
-
           <Route
-            path="/teacher-home"
+            path="/student-home/lost-and-found"
             element={
-              <RequireAuth allowedRoles={["teacher"]}>
-                <TeacherHome />
+              <RequireAuth allowedRoles={["student"]}>
+                <LostAndFound />
               </RequireAuth>
             }
-          >
-            <Route index element={<Blank />} />
-            <Route
-              path="/teacher-home/teacher-dashboard"
-              element={
-                <RequireAuth allowedRoles={["teacher"]}>
-                  <TeacherDashboard />
-                </RequireAuth>
-              }
-            />
+          />
+          <Route
+            path="/student-home/user"
+            element={
+              <RequireAuth allowedRoles={["student"]}>
+                <UsersProfile />
+              </RequireAuth>
+            }
+          />
 
-            <Route
-              path="/teacher-home/teacher-routine"
-              element={
-                <RequireAuth allowedRoles={["teacher"]}>
-                  <TeacherRoutine />
-                </RequireAuth>
-              }
-            />
+          <Route
+            path="/student-home/logout"
+            element={
+              <RequireAuth allowedRoles={["student"]}>
+                <Blank />
+              </RequireAuth>
+            }
+          />
+          <Route path="/student-home/forum" element={
+            <RequireAuth allowedRoles={["student"]}>
+              <Forum />
+            </RequireAuth>
+          } />
 
-            <Route
-              path="/teacher-home/teacher-preference"
-              element={
-                <RequireAuth allowedRoles={["teacher"]}>
-                  <TeacherPreference />
-                </RequireAuth>
-              }
-            />
+        </Route>
 
-            <Route
-              path="/teacher-home/event"
-              element={
-                // <RequireAuth allowedRoles={["teacher"]}>
-                <TeacherEvents />
-                // </RequireAuth>
-              }
-            />
-            <Route
-              path="/teacher-home/teacher-routine"
-              element={
-                <RequireAuth allowedRoles={["teacher"]}>
-                  <TeacherRoutine />
-                </RequireAuth>
-              }
-            />
+        <Route
+          path="/teacher-home"
+          element={
+            <RequireAuth allowedRoles={["teacher"]}>
+              <TeacherHome />
+            </RequireAuth>
+          }
+        >
+          <Route index element={<Blank />} />
+          <Route
+            path="/teacher-home/teacher-dashboard"
+            element={
+              <RequireAuth allowedRoles={["teacher"]}>
+                <TeacherDashboard />
+              </RequireAuth>
+            }
+          />
 
-            <Route
-              path="/teacher-home/calendar"
-              element={
-                <RequireAuth allowedRoles={["teacher"]}>
-                  <Blank />
-                </RequireAuth>
-              }
-            />
+          <Route
+            path="/teacher-home/teacher-routine"
+            element={
+              <RequireAuth allowedRoles={["teacher"]}>
+                <TeacherRoutine />
+              </RequireAuth>
+            }
+          />
 
-            <Route
-              path="/teacher-home/user"
-              element={
-                <RequireAuth allowedRoles={["teacher"]}>
-                  <Blank />
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/teacher-home/logout"
-              element={
-                <RequireAuth allowedRoles={["teacher"]}>
-                  <Blank />
-                </RequireAuth>
-              }
-            />
-          </Route>
-        </Routes>
-      </Router>
-    </ChakraProvider>
+          <Route
+            path="/teacher-home/teacher-preference"
+            element={
+              <RequireAuth allowedRoles={["teacher"]}>
+                <TeacherPreference />
+              </RequireAuth>
+            }
+          />
+
+          <Route
+            path="/teacher-home/event"
+            element={
+              // <RequireAuth allowedRoles={["teacher"]}>
+              <TeacherEvents />
+              // </RequireAuth>
+            }
+          />
+    
+
+          <Route
+            path="/teacher-home/calendar"
+            element={
+              <RequireAuth allowedRoles={["teacher"]}>
+                <Blank />
+              </RequireAuth>
+            }
+          />
+
+          <Route
+            path="/teacher-home/user"
+            element={
+              <RequireAuth allowedRoles={["teacher"]}>
+                <Blank />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/teacher-home/logout"
+            element={
+              <RequireAuth allowedRoles={["teacher"]}>
+                <Blank />
+              </RequireAuth>
+            }
+          />
+        </Route>
+      </Routes>
+    </Router>
+    </ChakraProvider >
   );
 }
 

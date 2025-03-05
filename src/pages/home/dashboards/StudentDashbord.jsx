@@ -42,7 +42,7 @@ const StudentDashboard = () => {
                     </Button>
                 </Link>
 
-                <Link to="/forum">
+                <Link to="/student-home/forum">
                     <Button
                         height="250px"
                         width="450px"
