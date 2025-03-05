@@ -66,7 +66,8 @@ import {
     FaTimes,
     FaHandsHelping,
     FaTicketAlt,
-    FaRegCheckCircle
+    FaRegCheckCircle,
+    FaChalkboardTeacher
 } from "react-icons/fa";
 
 
@@ -1142,6 +1143,19 @@ const Event = () => {
                                                     }}
                                                 >
                                                     Participants
+                                                </Button>
+                                                {/* New Invite Teachers button */}
+                                                <Button
+                                                    leftIcon={<FaChalkboardTeacher />}// Consider using FaUserPlus if available
+                                                    colorScheme="teal"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        navigate(`/student-home/event/invite/${event.id}`);
+                                                    }}
+                                                >
+                                                    Invite Teachers
                                                 </Button>
                                                 <Button
                                                     leftIcon={<FaEdit />}
