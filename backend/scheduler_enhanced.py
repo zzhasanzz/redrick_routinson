@@ -23,6 +23,7 @@ def update_generation_status(status):
     """Update the routine generation status in Firestore"""
     try:
         db.collection('routine_status').document('generation').set({
+            'season': "winter",
             'status': status,
             'timestamp': firestore.SERVER_TIMESTAMP
         })
