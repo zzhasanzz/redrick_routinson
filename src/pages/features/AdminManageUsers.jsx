@@ -119,11 +119,22 @@ const AdminManageUsers = () => {
     // Handle deleting a user
     const handleDeleteUser = async (userId) => {
         try {
-            await deleteDoc(doc(db, "users", userId));
-
+            // Call the backend endpoint to delete the user
+            const response = await fetch("http://localhost:5000/deleteUser", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ userId }),
+            });
+    
+            if (!response.ok) {
+                throw new Error("Failed to delete user");
+            }
+    
             // Remove user from local state
             setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
-
+    
             toast({
                 title: "User deleted successfully",
                 status: "success",
