@@ -201,6 +201,15 @@ const GenerateSeatPlan = () => {
   // Handle updating a room number in Firebase
   const handleEditRoom = async () => {
     if (!selectedRoom || !newRoomNo.trim() || !newTotalSeats.trim()) return;
+    if (parseInt(newTotalSeats) % 2 !== 0) {
+      toast({
+        title: "Only even number of seats are permissible.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
     try {
       const roomRef = doc(db, "seat_plan_rooms", selectedRoom.id);
       await updateDoc(roomRef, {
@@ -247,6 +256,15 @@ const GenerateSeatPlan = () => {
   // };
   const handleAddRoom = async () => {
     if (!addRoomNo.trim() || !addTotalSeats.trim()) return;
+    if (parseInt(addTotalSeats) % 2 !== 0) {
+      toast({
+        title: "Only even number of seats are permissible.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
     try {
       const newRoomRef = doc(collection(db, "seat_plan_rooms"));
       await setDoc(newRoomRef, {
