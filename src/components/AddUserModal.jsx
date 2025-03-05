@@ -28,8 +28,17 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
     const [section, setSection] = useState("");
     const [room, setRoom] = useState("");
     const [isPresident, setIsPresident] = useState(false);
-    const toast = useToast();
     const [id, setID] = useState("");
+    const toast = useToast();
+
+    // Department options
+    const departments = ["CSE", "EEE", "SWE", "IPE", "MPE", "CEE", "BTM", "TVE"];
+
+    // Semester options (1-8)
+    const semesters = Array.from({ length: 8 }, (_, i) => (i + 1).toString());
+
+    // Section options (1-3)
+    const sections = ["A", "B", "C"]
 
     const handleSubmit = () => {
         if (!email || !password || !role || !dept) {
@@ -42,7 +51,7 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
             });
             return;
         }
-    
+
         const userData = {
             email,
             password,
@@ -54,9 +63,9 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
             section: role === "student" ? section : null,
             room,
             isPresident,
-            id
+            id,
         };
-    
+
         onAddUser(userData);
     };
 
@@ -112,50 +121,77 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
                         )}
                         <FormControl isRequired>
                             <FormLabel>Department</FormLabel>
-                            <Input
+                            <Select
+                                placeholder="Select Department"
                                 value={dept}
                                 onChange={(e) => setDept(e.target.value)}
-                            />
+                            >
+                                {departments.map((dept) => (
+                                    <option key={dept} value={dept}>
+                                        {dept}
+                                    </option>
+                                ))}
+                            </Select>
                         </FormControl>
                         {role === "student" && (
                             <>
                                 <FormControl>
                                     <FormLabel>Semester</FormLabel>
-                                    <Input
+                                    <Select
+                                        placeholder="Select Semester"
                                         value={semester}
                                         onChange={(e) => setSemester(e.target.value)}
-                                    />
+                                    >
+                                        {semesters.map((sem) => (
+                                            <option key={sem} value={sem}>
+                                                {sem}
+                                            </option>
+                                        ))}
+                                    </Select>
                                 </FormControl>
                                 <FormControl>
                                     <FormLabel>Section</FormLabel>
-                                    <Input
+                                    <Select
+                                        placeholder="Select Section"
                                         value={section}
                                         onChange={(e) => setSection(e.target.value)}
-                                    />
+                                    >
+                                        {sections.map((sec) => (
+                                            <option key={sec} value={sec}>
+                                                {sec}
+                                            </option>
+                                        ))}
+                                    </Select>
                                 </FormControl>
                             </>
                         )}
-                        {!(role === "student") && <FormControl>
-                            <FormLabel>Room</FormLabel>
-                            <Input
-                                value={room}
-                                onChange={(e) => setRoom(e.target.value)}
-                            />
-                        </FormControl>}
-                        {(role === "student") && <FormControl>
-                            <FormLabel>ID</FormLabel>
-                            <Input
-                                value={id}
-                                onChange={(e) => setID(e.target.value)}
-                            />
-                        </FormControl>}
-                        {(role=="student") && <FormControl display="flex" alignItems="center">
-                            <FormLabel mb="0">Is President</FormLabel>
-                            <Switch
-                                isChecked={isPresident}
-                                onChange={(e) => setIsPresident(e.target.checked)}
-                            />
-                        </FormControl>}
+                        {!(role === "student") && (
+                            <FormControl>
+                                <FormLabel>Room</FormLabel>
+                                <Input
+                                    value={room}
+                                    onChange={(e) => setRoom(e.target.value)}
+                                />
+                            </FormControl>
+                        )}
+                        {role === "student" && (
+                            <FormControl>
+                                <FormLabel>ID</FormLabel>
+                                <Input
+                                    value={id}
+                                    onChange={(e) => setID(e.target.value)}
+                                />
+                            </FormControl>
+                        )}
+                        {role === "student" && (
+                            <FormControl display="flex" alignItems="center">
+                                <FormLabel mb="0">Is President</FormLabel>
+                                <Switch
+                                    isChecked={isPresident}
+                                    onChange={(e) => setIsPresident(e.target.checked)}
+                                />
+                            </FormControl>
+                        )}
                     </VStack>
                 </ModalBody>
                 <ModalFooter>
