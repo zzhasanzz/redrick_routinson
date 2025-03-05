@@ -31,13 +31,14 @@ import {
     Icon,
 } from "@chakra-ui/react";
 import { AddIcon, SearchIcon } from "@chakra-ui/icons";
-import { FiMapPin, FiEye, FiFlag } from "react-icons/fi";
+import { FiMapPin, FiEye, FiFlag, FiUser, FiPhone } from "react-icons/fi";
 import {
     collection,
     addDoc,
     getDocs,
     doc,
     updateDoc,
+    deleteDoc,
     arrayUnion,
     serverTimestamp,
 } from "firebase/firestore";
@@ -60,6 +61,7 @@ const LostAndFound = () => {
     // Claim states
     const [claimDescription, setClaimDescription] = useState("");
     const [claimImages, setClaimImages] = useState([]);
+    const [contactNumber, setContactNumber] = useState("");
     const [selectedPost, setSelectedPost] = useState(null);
     const [selectedClaim, setSelectedClaim] = useState(null);
 
@@ -148,10 +150,10 @@ const LostAndFound = () => {
     };
 
     const handleClaim = async () => {
-        if (!claimDescription) {
+        if (!claimDescription || !contactNumber) {
             toast({
                 title: "Missing Information",
-                description: "Please provide a description for your claim",
+                description: "Please provide a description and contact number",
                 status: "error",
                 duration: 3000,
                 isClosable: true,
@@ -169,6 +171,7 @@ const LostAndFound = () => {
                 userName: currentUser?.displayName || "Anonymous",
                 description: claimDescription,
                 images: imageBase64s,
+                contactNumber,
                 createdAt: new Date().toISOString(),
                 status: "pending",
             };
@@ -193,6 +196,22 @@ const LostAndFound = () => {
         }
     };
 
+    const handleDeletePost = async (postId) => {
+        try {
+            await deleteDoc(doc(db, "lostFoundPosts", postId));
+            toast({
+                title: "Post Deleted",
+                description: "The post has been successfully removed",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+            });
+            fetchPosts();
+        } catch (error) {
+            console.error("Error deleting post: ", error);
+        }
+    };
+
     const resetForm = () => {
         setTitle("");
         setDescription("");
@@ -204,6 +223,7 @@ const LostAndFound = () => {
     const resetClaimForm = () => {
         setClaimDescription("");
         setClaimImages([]);
+        setContactNumber("");
     };
 
     const filteredPosts = posts.filter((post) => {
@@ -377,11 +397,25 @@ const LostAndFound = () => {
                 <ModalOverlay bg="blackAlpha.600" />
                 <ModalContent borderRadius="2xl">
                     <ModalHeader bg="teal.500" color="white" borderTopRadius="2xl">
-                        <Heading fontSize="2xl">Submit Claim</Heading>
+                        <Heading fontSize="2xl">Submit</Heading>
                     </ModalHeader>
                     <ModalCloseButton color="white" />
                     <ModalBody py={6}>
                         <VStack spacing={5}>
+                            <FormControl isRequired>
+                                <FormLabel fontWeight="600">Contact Number</FormLabel>
+                                <Input
+                                    type="tel"
+                                    value={contactNumber}
+                                    onChange={(e) => setContactNumber(e.target.value)}
+                                    size="lg"
+                                    borderRadius="lg"
+                                    focusBorderColor="teal.400"
+                                    placeholder="Enter your contact number"
+                                    pattern="[0-9]{10}"
+                                />
+                            </FormControl>
+
                             <FormControl>
                                 <FormLabel fontWeight="600">Proof Description</FormLabel>
                                 <Textarea
@@ -475,9 +509,35 @@ const LostAndFound = () => {
                                     boxShadow="md"
                                     _hover={{ boxShadow: "lg" }}
                                     transition="all 0.2s"
+                                    w="100%"
                                 >
-                                    <Flex justify="space-between" align="center">
-                                        <Text fontWeight="bold">{claim.userName}</Text>
+                                    <Stack spacing={3}>
+                                        <Flex justify="space-between" align="center">
+                                            <Flex align="center">
+                                                <Icon as={FiUser} mr={2} />
+                                                <Text fontWeight="bold">{claim.userName}</Text>
+                                            </Flex>
+                                            <Badge
+                                                colorScheme={claim.status === "pending" ? "yellow" : "green"}
+                                                px={3}
+                                                py={1}
+                                                borderRadius="full"
+                                            >
+                                                {claim.status}
+                                            </Badge>
+                                        </Flex>
+
+                                        {claim.contactNumber && (
+                                            <Flex align="center" color="gray.600">
+                                                <Icon as={FiPhone} mr={2} />
+                                                <Text>{claim.contactNumber}</Text>
+                                            </Flex>
+                                        )}
+
+                                        <Text noOfLines={2} color="gray.600">
+                                            {claim.description}
+                                        </Text>
+
                                         <Button
                                             size="sm"
                                             colorScheme="teal"
@@ -487,9 +547,9 @@ const LostAndFound = () => {
                                                 onClaimDetailOpen();
                                             }}
                                         >
-                                            View Details
+                                            View Full Details
                                         </Button>
-                                    </Flex>
+                                    </Stack>
                                 </Card>
                             ))}
                         </VStack>
@@ -623,7 +683,7 @@ const LostAndFound = () => {
                                             onClaimsOpen();
                                         }}
                                     >
-                                        {post.claims.length} Claims
+                                        {post.claims.length}  {post.type === 'lost' ? 'Found' : 'Claim'}
                                     </Button>
                                 ) : (
                                     <Button
@@ -639,6 +699,19 @@ const LostAndFound = () => {
                                     </Button>
                                 )}
                             </Flex>
+
+                            {/* Delete/Found Button */}
+                            {post.userId === currentUser?.uid && (
+                                <Button
+                                    size="sm"
+                                    colorScheme="red"
+                                    variant="solid"
+                                    mt={2}
+                                    onClick={() => handleDeletePost(post.id)}
+                                >
+                                    Mark as Found/Returned
+                                </Button>
+                            )}
                         </Stack>
                     </Card>
                 ))}
