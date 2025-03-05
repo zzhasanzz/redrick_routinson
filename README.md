@@ -55,3 +55,5 @@ then open another terminal at the backend folder and to run the app.py by runnin
 python app.py
 ```
 
+
+npm install html2canvas --legacy-peer-deps

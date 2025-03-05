@@ -1,29 +1,45 @@
 {
-  "MMH": {
-    "rank": "Part-Time",
+  "BS": {
+    "rank": "Assistant Professor",
     "preferred_times": [
       {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
+        "day": "Thursday",
         "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "8:00-9:15"
+        "day": "Tuesday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "9:15-10:30"
       },
       {
         "day": "Wednesday",
         "time": "10:30-11:45"
       },
       {
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
         "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
         "time": "8:00-9:15"
       },
       {
@@ -36,124 +52,196 @@
       },
       {
         "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
-        "course": "Hum4144",
+        "course": "Hum4147",
         "type": "theory",
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "course": "Hum4147",
+        "type": "theory",
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "Hum4147",
+        "type": "theory",
+        "day": "Tuesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "course": "Hum4147",
+        "type": "theory",
+        "day": "Friday",
+        "time": "9:15-10:30"
+      }
+    ]
+  },
+  "MM": {
+    "rank": "Assistant Professor",
+    "preferred_times": [
+      {
+        "day": "Tuesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
         "day": "Wednesday",
         "time": "8:00-9:15"
       },
       {
-        "course": "Hum4144",
-        "type": "theory",
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Monday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
         "day": "Thursday",
         "time": "3:45-5:00"
       },
       {
-        "course": "HUM4144",
-        "type": "theory",
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "HUM4144",
-        "type": "theory",
-        "day": "Thursday",
-        "time": "2:30-3:45"
-      },
-      {
-        "course": "Hum4144",
-        "type": "theory",
-        "day": "Friday",
-        "time": "9:15-10:30"
-      },
-      {
-        "course": "Hum4144",
-        "type": "theory",
         "day": "Monday",
-        "time": "9:15-10:30"
-      },
-      {
-        "course": "HUM4144",
-        "type": "theory",
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "HUM4144",
-        "type": "theory",
-        "day": "Friday",
         "time": "2:30-3:45"
-      }
-    ]
-  },
-  "MUA": {
-    "rank": "Part-Time",
-    "preferred_times": [
-      {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
       },
       {
         "day": "Tuesday",
-        "time": "9:15-10:30"
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
       },
       {
         "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
         "time": "2:30-3:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Monday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Thursday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Monday",
-        "time": "8:00-9:15"
       }
     ],
     "courses": [
       {
-        "course": "Math4141",
+        "course": "CSE4107",
         "type": "theory",
         "day": "Tuesday",
-        "time": "8:00-9:15"
+        "time": "10:30-11:45"
       },
       {
-        "course": "Math4141",
-        "type": "theory",
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "course": "Math4141",
-        "type": "theory",
-        "day": "Friday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "Math4141",
+        "course": "CSE4107",
         "type": "theory",
         "day": "Monday",
-        "time": "8:00-9:15"
+        "time": "2:30-3:45"
+      },
+      {
+        "course": "CSE4107",
+        "type": "theory",
+        "day": "Wednesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "course": "CSE4107",
+        "type": "theory",
+        "day": "Thursday",
+        "time": "10:30-11:45"
       }
     ]
   },
@@ -161,48 +249,80 @@
     "rank": "Professor",
     "preferred_times": [
       {
-        "day": "Friday",
+        "day": "Tuesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
         "time": "2:30-3:45"
       },
       {
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Friday",
-        "time": "8:00-9:15"
+        "day": "Wednesday",
+        "time": "9:15-10:30"
       },
       {
         "day": "Wednesday",
         "time": "10:30-11:45"
       },
       {
-        "day": "Friday",
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Wednesday",
         "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
       },
       {
         "day": "Monday",
         "time": "11:45-1:00"
       },
       {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
         "day": "Thursday",
-        "time": "9:15-10:30"
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
@@ -210,106 +330,90 @@
         "course": "CSE4105",
         "type": "theory",
         "day": "Friday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4105",
-        "type": "theory",
-        "day": "Monday",
-        "time": "11:45-1:00"
-      },
-      {
-        "course": "CSE4105",
-        "type": "theory",
-        "day": "Thursday",
-        "time": "8:00-9:15"
+        "time": "2:30-3:45"
       },
       {
         "course": "CSE4105",
         "type": "theory",
         "day": "Tuesday",
-        "time": "11:45-1:00"
+        "time": "3:45-5:00"
+      },
+      {
+        "course": "CSE4105",
+        "type": "theory",
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "course": "CSE4105",
+        "type": "theory",
+        "day": "Thursday",
+        "time": "2:30-3:45"
       },
       {
         "course": "CSE4700",
         "type": "lab",
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4700",
-        "type": "lab",
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "course": "CSE4700",
-        "type": "lab",
-        "day": "Wednesday",
+        "day": "Thursday",
         "time": "10:30-11:45"
       },
       {
         "course": "CSE4700",
         "type": "lab",
-        "day": "Wednesday",
+        "day": "Thursday",
         "time": "11:45-1:00"
+      },
+      {
+        "course": "CSE4700",
+        "type": "lab",
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4700",
+        "type": "lab",
+        "day": "Friday",
+        "time": "9:15-10:30"
       }
     ]
   },
-  "BS": {
-    "rank": "Assistant Professor",
+  "MUA": {
+    "rank": "Part-Time",
     "preferred_times": [
       {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
         "day": "Friday",
-        "time": "2:30-3:45"
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
       },
       {
         "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Tuesday",
         "time": "2:30-3:45"
       },
       {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
         "day": "Friday",
         "time": "11:45-1:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "3:45-5:00"
       },
       {
         "day": "Thursday",
@@ -318,31 +422,35 @@
       {
         "day": "Thursday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
       }
     ],
     "courses": [
       {
-        "course": "Hum4147",
-        "type": "theory",
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "Hum4147",
-        "type": "theory",
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
-        "course": "Hum4147",
-        "type": "theory",
-        "day": "Thursday",
-        "time": "9:15-10:30"
-      },
-      {
-        "course": "Hum4147",
+        "course": "Math4141",
         "type": "theory",
         "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "Math4141",
+        "type": "theory",
+        "day": "Monday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "Math4141",
+        "type": "theory",
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "Math4141",
+        "type": "theory",
+        "day": "Tuesday",
         "time": "10:30-11:45"
       }
     ]
@@ -351,40 +459,8 @@
     "rank": "Professor",
     "preferred_times": [
       {
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
         "day": "Tuesday",
         "time": "11:45-1:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "10:30-11:45"
       },
       {
         "day": "Thursday",
@@ -392,15 +468,31 @@
       },
       {
         "day": "Wednesday",
-        "time": "11:45-1:00"
+        "time": "9:15-10:30"
       },
       {
         "day": "Wednesday",
         "time": "10:30-11:45"
       },
       {
-        "day": "Friday",
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Wednesday",
         "time": "11:45-1:00"
+      },
+      {
+        "day": "Monday",
+        "time": "8:00-9:15"
       },
       {
         "day": "Friday",
@@ -408,128 +500,69 @@
       },
       {
         "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Monday",
         "time": "11:45-1:00"
       },
       {
         "day": "Thursday",
-        "time": "9:15-10:30"
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
       },
       {
         "day": "Thursday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
         "course": "Phy4141",
         "type": "theory",
-        "day": "Tuesday",
-        "time": "2:30-3:45"
-      },
-      {
-        "course": "Phy4141",
-        "type": "theory",
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "Phy4141",
-        "type": "theory",
-        "day": "Thursday",
-        "time": "2:30-3:45"
-      },
-      {
-        "course": "Phy4141",
-        "type": "theory",
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      }
-    ]
-  },
-  "MM": {
-    "rank": "Assistant Professor",
-    "preferred_times": [
-      {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
         "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Friday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Friday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Monday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Monday",
         "time": "11:45-1:00"
       },
       {
-        "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      }
-    ],
-    "courses": [
-      {
-        "course": "CSE4107",
+        "course": "Phy4141",
         "type": "theory",
-        "day": "Monday",
-        "time": "9:15-10:30"
+        "day": "Thursday",
+        "time": "11:45-1:00"
       },
       {
-        "course": "CSE4107",
+        "course": "Phy4141",
         "type": "theory",
         "day": "Wednesday",
         "time": "11:45-1:00"
       },
       {
-        "course": "CSE4107",
+        "course": "Phy4141",
         "type": "theory",
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "course": "CSE4107",
-        "type": "theory",
-        "day": "Thursday",
-        "time": "3:45-5:00"
+        "day": "Monday",
+        "time": "10:30-11:45"
       }
     ]
   },
@@ -537,48 +570,20 @@
     "rank": "Assistant Professor",
     "preferred_times": [
       {
-        "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
         "day": "Tuesday",
         "time": "11:45-1:00"
       },
       {
-        "day": "Monday",
+        "day": "Thursday",
         "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Thursday",
+        "day": "Tuesday",
         "time": "2:30-3:45"
       },
       {
         "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Friday",
-        "time": "11:45-1:00"
+        "time": "9:15-10:30"
       },
       {
         "day": "Wednesday",
@@ -590,14 +595,14 @@
       },
       {
         "day": "Monday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Thursday",
         "time": "3:45-5:00"
       },
       {
-        "day": "Thursday",
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
         "time": "9:15-10:30"
       },
       {
@@ -606,29 +611,77 @@
       },
       {
         "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
         "course": "HUM4142",
         "type": "theory",
-        "day": "Monday",
-        "time": "8:00-9:15"
+        "day": "Thursday",
+        "time": "10:30-11:45"
       },
       {
         "course": "HUM4142",
         "type": "theory",
-        "day": "Wednesday",
-        "time": "9:15-10:30"
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ]
   },
-  "AZR": {
+  "MMH": {
     "rank": "Part-Time",
     "preferred_times": [
       {
-        "day": "Monday",
+        "day": "Thursday",
         "time": "10:30-11:45"
       },
       {
@@ -636,98 +689,102 @@
         "time": "3:45-5:00"
       },
       {
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
         "day": "Thursday",
-        "time": "2:30-3:45"
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
       },
       {
         "day": "Friday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Monday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
       },
       {
         "day": "Monday",
         "time": "9:15-10:30"
       },
       {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
         "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Monday",
-        "time": "8:00-9:15"
+        "time": "10:30-11:45"
       },
       {
         "day": "Thursday",
-        "time": "8:00-9:15"
+        "time": "11:45-1:00"
       }
     ],
     "courses": [
       {
-        "course": "Phy4142",
-        "type": "lab",
-        "day": "Thursday",
-        "time": "10:30-11:45"
+        "course": "HUM4144",
+        "type": "theory",
+        "day": "Friday",
+        "time": "8:00-9:15"
       },
       {
-        "course": "Phy4142",
-        "type": "lab",
-        "day": "Thursday",
+        "course": "HUM4144",
+        "type": "theory",
+        "day": "Tuesday",
         "time": "11:45-1:00"
       },
       {
-        "course": "Phy4142",
-        "type": "lab",
-        "day": "Friday",
-        "time": "10:30-11:45"
+        "course": "HUM4144",
+        "type": "theory",
+        "day": "Monday",
+        "time": "8:00-9:15"
       },
       {
-        "course": "Phy4142",
-        "type": "lab",
-        "day": "Friday",
+        "course": "HUM4144",
+        "type": "theory",
+        "day": "Thursday",
         "time": "11:45-1:00"
       }
     ]
   },
-  "DFS": {
-    "rank": "Professor",
+  "SRR": {
+    "rank": "Lecturer",
     "preferred_times": [
       {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
         "day": "Tuesday",
-        "time": "9:15-10:30"
+        "time": "11:45-1:00"
       },
       {
-        "day": "Monday",
+        "day": "Thursday",
         "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "9:15-10:30"
-      },
-      {
         "day": "Tuesday",
-        "time": "10:30-11:45"
+        "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Monday",
+        "day": "Wednesday",
         "time": "9:15-10:30"
       },
       {
@@ -735,15 +792,27 @@
         "time": "10:30-11:45"
       },
       {
-        "day": "Friday",
-        "time": "11:45-1:00"
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
       },
       {
         "day": "Monday",
         "time": "3:45-5:00"
       },
       {
-        "day": "Thursday",
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
         "time": "9:15-10:30"
       },
       {
@@ -751,34 +820,380 @@
         "time": "8:00-9:15"
       },
       {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
         "day": "Thursday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
-        "course": "Phy4142",
+        "course": "CSE4108",
         "type": "lab",
-        "day": "Thursday",
-        "time": "10:30-11:45"
+        "day": "Tuesday",
+        "time": "8:00-9:15"
       },
       {
-        "course": "Phy4142",
+        "course": "CSE4108",
+        "type": "lab",
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "CSE4108",
         "type": "lab",
         "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4108",
+        "type": "lab",
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      }
+    ]
+  },
+  "RHJ": {
+    "rank": "Junior Lecturer",
+    "preferred_times": [
+      {
+        "day": "Tuesday",
         "time": "11:45-1:00"
       },
       {
-        "course": "Phy4142",
-        "type": "lab",
+        "day": "Thursday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "8:00-9:15"
+      },
+      {
         "day": "Friday",
         "time": "10:30-11:45"
       },
       {
-        "course": "Phy4142",
-        "type": "lab",
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
         "day": "Friday",
         "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
+      }
+    ],
+    "courses": [
+      {
+        "course": "CSE4108",
+        "type": "lab",
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4108",
+        "type": "lab",
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "CSE4108",
+        "type": "lab",
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4108",
+        "type": "lab",
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      }
+    ]
+  },
+  "AA": {
+    "rank": "Junior Lecturer",
+    "preferred_times": [
+      {
+        "day": "Tuesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
+      }
+    ],
+    "courses": [
+      {
+        "course": "CSE4104",
+        "type": "lab",
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4104",
+        "type": "lab",
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "CSE4104",
+        "type": "lab",
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4104",
+        "type": "lab",
+        "day": "Wednesday",
+        "time": "9:15-10:30"
       }
     ]
   },
@@ -787,35 +1202,43 @@
     "preferred_times": [
       {
         "day": "Thursday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
         "time": "10:30-11:45"
       },
       {
         "day": "Friday",
-        "time": "8:00-9:15"
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
+        "time": "11:45-1:00"
       },
       {
         "day": "Wednesday",
         "time": "10:30-11:45"
       },
       {
-        "day": "Monday",
-        "time": "3:45-5:00"
+        "day": "Friday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
       },
       {
         "day": "Thursday",
@@ -824,219 +1247,211 @@
       {
         "day": "Thursday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
         "course": "CSE4104",
         "type": "lab",
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "CSE4104",
-        "type": "lab",
-        "day": "Friday",
-        "time": "11:45-1:00"
-      },
-      {
-        "course": "CSE4104",
-        "type": "lab",
-        "day": "Tuesday",
+        "day": "Thursday",
         "time": "8:00-9:15"
       },
       {
         "course": "CSE4104",
         "type": "lab",
-        "day": "Tuesday",
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "CSE4104",
+        "type": "lab",
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4104",
+        "type": "lab",
+        "day": "Wednesday",
         "time": "9:15-10:30"
       },
       {
         "course": "Math4341",
         "type": "theory",
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "course": "Math4341",
+        "type": "theory",
         "day": "Wednesday",
-        "time": "9:15-10:30"
+        "time": "10:30-11:45"
       },
       {
         "course": "Math4341",
         "type": "theory",
         "day": "Friday",
-        "time": "2:30-3:45"
+        "time": "8:00-9:15"
       },
       {
         "course": "Math4341",
         "type": "theory",
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "course": "Math4341",
-        "type": "theory",
-        "day": "Tuesday",
+        "day": "Thursday",
         "time": "2:30-3:45"
       }
     ]
   },
-  "AA": {
-    "rank": "Junior Lecturer",
+  "DFS": {
+    "rank": "Professor",
     "preferred_times": [
       {
-        "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
         "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Monday",
-        "time": "3:45-5:00"
+        "time": "2:30-3:45"
       },
       {
         "day": "Tuesday",
         "time": "2:30-3:45"
       },
       {
-        "day": "Thursday",
+        "day": "Wednesday",
         "time": "9:15-10:30"
       },
       {
-        "day": "Thursday",
-        "time": "8:00-9:15"
+        "day": "Wednesday",
+        "time": "10:30-11:45"
       },
       {
-        "day": "Thursday",
-        "time": "11:45-1:00"
+        "day": "Monday",
+        "time": "9:15-10:30"
       },
       {
         "day": "Monday",
         "time": "10:30-11:45"
       },
       {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
         "day": "Friday",
         "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
       },
       {
         "day": "Thursday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Friday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Monday",
         "time": "9:15-10:30"
       },
       {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
         "day": "Friday",
         "time": "11:45-1:00"
       },
       {
-        "day": "Monday",
-        "time": "11:45-1:00"
+        "day": "Thursday",
+        "time": "8:00-9:15"
       },
       {
-        "day": "Monday",
+        "day": "Tuesday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
       }
     ],
     "courses": [
       {
-        "course": "CSE4104",
+        "course": "Phy4142",
         "type": "lab",
-        "day": "Friday",
+        "day": "Wednesday",
         "time": "10:30-11:45"
       },
       {
-        "course": "CSE4104",
+        "course": "Phy4142",
         "type": "lab",
-        "day": "Friday",
+        "day": "Wednesday",
         "time": "11:45-1:00"
       },
       {
-        "course": "CSE4104",
+        "course": "Phy4142",
         "type": "lab",
         "day": "Tuesday",
         "time": "8:00-9:15"
       },
       {
-        "course": "CSE4104",
+        "course": "Phy4142",
         "type": "lab",
         "day": "Tuesday",
         "time": "9:15-10:30"
       }
     ]
   },
-  "SRR": {
-    "rank": "Lecturer",
+  "AZR": {
+    "rank": "Part-Time",
     "preferred_times": [
       {
-        "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
         "day": "Tuesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
         "time": "3:45-5:00"
       },
       {
@@ -1049,75 +1464,31 @@
       },
       {
         "day": "Wednesday",
-        "time": "11:45-1:00"
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
       },
       {
         "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Tuesday",
         "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Friday",
-        "time": "9:15-10:30"
       },
       {
         "day": "Thursday",
         "time": "2:30-3:45"
       },
       {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
+      },
+      {
         "day": "Friday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "2:30-3:45"
       },
       {
         "day": "Friday",
@@ -1125,437 +1496,44 @@
       },
       {
         "day": "Monday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Monday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
-        "course": "CSE4108",
+        "course": "Phy4142",
         "type": "lab",
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4108",
-        "type": "lab",
-        "day": "Thursday",
-        "time": "9:15-10:30"
-      },
-      {
-        "course": "CSE4108",
-        "type": "lab",
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "CSE4108",
-        "type": "lab",
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      }
-    ]
-  },
-  "RHJ": {
-    "rank": "Junior Lecturer",
-    "preferred_times": [
-      {
-        "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
         "day": "Wednesday",
         "time": "10:30-11:45"
       },
       {
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Friday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Thursday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Friday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Friday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Monday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "8:00-9:15"
-      }
-    ],
-    "courses": [
-      {
-        "course": "CSE4108",
+        "course": "Phy4142",
         "type": "lab",
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4108",
-        "type": "lab",
-        "day": "Thursday",
-        "time": "9:15-10:30"
-      },
-      {
-        "course": "CSE4108",
-        "type": "lab",
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "CSE4108",
-        "type": "lab",
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      }
-    ]
-  },
-  "SHR": {
-    "rank": "Lecturer",
-    "preferred_times": [
-      {
-        "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
         "day": "Wednesday",
         "time": "11:45-1:00"
       },
       {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Tuesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Friday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Thursday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Friday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Friday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Monday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "8:00-9:15"
-      }
-    ],
-    "courses": [
-      {
-        "course": "EEE4383",
-        "type": "theory",
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "EEE4383",
-        "type": "theory",
-        "day": "Friday",
-        "time": "9:15-10:30"
-      },
-      {
-        "course": "EEE4384",
-        "type": "lab",
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "EEE4384",
-        "type": "lab",
-        "day": "Friday",
-        "time": "11:45-1:00"
-      },
-      {
-        "course": "EEE4383",
-        "type": "theory",
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "EEE4383",
-        "type": "theory",
-        "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "course": "EEE4384",
+        "course": "Phy4142",
         "type": "lab",
         "day": "Tuesday",
-        "time": "10:30-11:45"
+        "time": "8:00-9:15"
       },
       {
-        "course": "EEE4384",
+        "course": "Phy4142",
         "type": "lab",
         "day": "Tuesday",
-        "time": "11:45-1:00"
-      }
-    ]
-  },
-  "MHA": {
-    "rank": "Assistant Professor",
-    "preferred_times": [
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Tuesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Friday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Monday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Monday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Monday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      }
-    ],
-    "courses": [
-      {
-        "course": "CSE4305",
-        "type": "theory",
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
-        "course": "CSE4305",
-        "type": "theory",
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "course": "CSE4305",
-        "type": "theory",
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "CSE4305",
-        "type": "theory",
-        "day": "Thursday",
         "time": "9:15-10:30"
       }
     ]
@@ -1564,15 +1542,11 @@
     "rank": "Assistant Professor",
     "preferred_times": [
       {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
         "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
         "time": "3:45-5:00"
       },
       {
@@ -1581,6 +1555,105 @@
       },
       {
         "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Monday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "10:30-11:45"
+      }
+    ],
+    "courses": [
+      {
+        "course": "CSE4303",
+        "type": "theory",
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "course": "CSE4303",
+        "type": "theory",
+        "day": "Thursday",
+        "time": "2:30-3:45"
+      },
+      {
+        "course": "CSE4303",
+        "type": "theory",
+        "day": "Friday",
+        "time": "2:30-3:45"
+      },
+      {
+        "course": "CSE4303",
+        "type": "theory",
+        "day": "Monday",
+        "time": "9:15-10:30"
+      }
+    ]
+  },
+  "ARMK": {
+    "rank": "Professor",
+    "preferred_times": [
+      {
+        "day": "Tuesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Monday",
         "time": "10:30-11:45"
       },
       {
@@ -1588,47 +1661,27 @@
         "time": "8:00-9:15"
       },
       {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Friday",
+        "day": "Monday",
         "time": "3:45-5:00"
       },
       {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Monday",
-        "time": "10:30-11:45"
+        "day": "Wednesday",
+        "time": "11:45-1:00"
       },
       {
         "day": "Friday",
         "time": "9:15-10:30"
       },
       {
-        "day": "Thursday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Friday",
+        "day": "Monday",
         "time": "8:00-9:15"
       },
       {
-        "day": "Monday",
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
         "time": "9:15-10:30"
       },
       {
@@ -1636,33 +1689,73 @@
         "time": "11:45-1:00"
       },
       {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
         "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
-        "course": "CSE4303",
+        "course": "CSE4307",
         "type": "theory",
         "day": "Monday",
-        "time": "10:30-11:45"
+        "time": "9:15-10:30"
       },
       {
-        "course": "CSE4303",
+        "course": "CSE4307",
         "type": "theory",
-        "day": "Tuesday",
+        "day": "Friday",
         "time": "2:30-3:45"
       },
       {
-        "course": "CSE4303",
+        "course": "CSE4307",
         "type": "theory",
         "day": "Wednesday",
-        "time": "8:00-9:15"
+        "time": "9:15-10:30"
       },
       {
-        "course": "CSE4303",
+        "course": "CSE4307",
         "type": "theory",
-        "day": "Thursday",
+        "day": "Tuesday",
         "time": "3:45-5:00"
       }
     ]
@@ -1671,75 +1764,95 @@
     "rank": "Assistant Professor",
     "preferred_times": [
       {
-        "day": "Thursday",
+        "day": "Tuesday",
         "time": "11:45-1:00"
       },
       {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Friday",
+        "day": "Thursday",
         "time": "2:30-3:45"
       },
       {
         "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Monday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
+        "time": "2:30-3:45"
       },
       {
         "day": "Wednesday",
         "time": "9:15-10:30"
       },
       {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
+      },
+      {
         "day": "Monday",
-        "time": "2:30-3:45"
+        "time": "9:15-10:30"
       },
       {
-        "day": "Thursday",
-        "time": "2:30-3:45"
+        "day": "Monday",
+        "time": "10:30-11:45"
       },
       {
         "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
         "time": "8:00-9:15"
-      },
-      {
-        "day": "Friday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
       },
       {
         "day": "Monday",
         "time": "3:45-5:00"
       },
       {
-        "day": "Tuesday",
-        "time": "2:30-3:45"
+        "day": "Wednesday",
+        "time": "11:45-1:00"
       },
       {
-        "day": "Monday",
-        "time": "8:00-9:15"
+        "day": "Friday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
       },
       {
         "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
         "time": "8:00-9:15"
       }
     ],
@@ -1747,56 +1860,62 @@
       {
         "course": "CSE4301",
         "type": "theory",
-        "day": "Friday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4301",
-        "type": "theory",
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4302",
-        "type": "lab",
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4302",
-        "type": "lab",
-        "day": "Thursday",
-        "time": "9:15-10:30"
-      },
-      {
-        "course": "CSE4301",
-        "type": "theory",
-        "day": "Monday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4301",
-        "type": "theory",
         "day": "Wednesday",
         "time": "11:45-1:00"
       },
       {
-        "course": "CSE4302",
-        "type": "lab",
-        "day": "Friday",
-        "time": "10:30-11:45"
+        "course": "CSE4301",
+        "type": "theory",
+        "day": "Tuesday",
+        "time": "8:00-9:15"
       },
       {
         "course": "CSE4302",
         "type": "lab",
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4302",
+        "type": "lab",
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "CSE4301",
+        "type": "theory",
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "course": "CSE4301",
+        "type": "theory",
         "day": "Friday",
         "time": "11:45-1:00"
       },
       {
+        "course": "CSE4302",
+        "type": "lab",
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4302",
+        "type": "lab",
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
         "course": "CSE4511",
         "type": "theory",
-        "day": "Monday",
-        "time": "9:15-10:30"
+        "day": "Friday",
+        "time": "2:30-3:45"
+      },
+      {
+        "course": "CSE4511",
+        "type": "theory",
+        "day": "Tuesday",
+        "time": "2:30-3:45"
       },
       {
         "course": "CSE4511",
@@ -1807,113 +1926,302 @@
       {
         "course": "CSE4511",
         "type": "theory",
-        "day": "Friday",
+        "day": "Monday",
         "time": "3:45-5:00"
       },
       {
-        "course": "CSE4511",
-        "type": "theory",
+        "course": "CSE4504",
+        "type": "lab",
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4504",
+        "type": "lab",
+        "day": "Friday",
+        "time": "9:15-10:30"
+      }
+    ]
+  },
+  "SHR": {
+    "rank": "Lecturer",
+    "preferred_times": [
+      {
+        "day": "Tuesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "2:30-3:45"
+      },
+      {
         "day": "Tuesday",
         "time": "2:30-3:45"
       },
       {
-        "course": "CSE4504",
-        "type": "lab",
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
         "day": "Tuesday",
         "time": "10:30-11:45"
       },
       {
-        "course": "CSE4504",
-        "type": "lab",
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
         "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
+      }
+    ],
+    "courses": [
+      {
+        "course": "EEE4383",
+        "type": "theory",
+        "day": "Monday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "EEE4383",
+        "type": "theory",
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "course": "EEE4384",
+        "type": "lab",
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "EEE4384",
+        "type": "lab",
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "EEE4383",
+        "type": "theory",
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "course": "EEE4383",
+        "type": "theory",
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "EEE4384",
+        "type": "lab",
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "course": "EEE4384",
+        "type": "lab",
+        "day": "Thursday",
         "time": "11:45-1:00"
       }
     ]
   },
-  "ARMK": {
-    "rank": "Professor",
+  "MHA": {
+    "rank": "Assistant Professor",
     "preferred_times": [
       {
-        "day": "Friday",
+        "day": "Tuesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
         "time": "2:30-3:45"
       },
       {
-        "day": "Monday",
+        "day": "Tuesday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
         "time": "10:30-11:45"
+      },
+      {
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
       },
       {
         "day": "Tuesday",
         "time": "3:45-5:00"
       },
       {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
         "day": "Tuesday",
         "time": "8:00-9:15"
       },
       {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "11:45-1:00"
-      },
-      {
         "day": "Thursday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
+        "time": "11:45-1:00"
       },
       {
         "day": "Friday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Monday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Tuesday",
         "time": "2:30-3:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "8:00-9:15"
       }
     ],
     "courses": [
       {
-        "course": "CSE4307",
+        "course": "CSE4305",
         "type": "theory",
-        "day": "Wednesday",
-        "time": "11:45-1:00"
+        "day": "Thursday",
+        "time": "10:30-11:45"
       },
       {
-        "course": "CSE4307",
+        "course": "CSE4305",
         "type": "theory",
         "day": "Tuesday",
         "time": "9:15-10:30"
       },
       {
-        "course": "CSE4307",
+        "course": "CSE4305",
         "type": "theory",
         "day": "Monday",
-        "time": "9:15-10:30"
+        "time": "2:30-3:45"
       },
       {
-        "course": "CSE4307",
+        "course": "CSE4305",
         "type": "theory",
         "day": "Friday",
-        "time": "3:45-5:00"
+        "time": "9:15-10:30"
       }
     ]
   },
@@ -1921,104 +2229,24 @@
     "rank": "Lecturer",
     "preferred_times": [
       {
-        "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
         "day": "Tuesday",
         "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Friday",
-        "time": "9:15-10:30"
       },
       {
         "day": "Thursday",
         "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "8:00-9:15"
+        "day": "Tuesday",
+        "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "11:45-1:00"
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
       },
       {
         "day": "Monday",
@@ -2026,36 +2254,116 @@
       },
       {
         "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
         "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
       },
       {
         "day": "Monday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
         "course": "EEE4384",
         "type": "lab",
-        "day": "Friday",
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "EEE4384",
+        "type": "lab",
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "EEE4384",
+        "type": "lab",
+        "day": "Thursday",
         "time": "10:30-11:45"
       },
       {
         "course": "EEE4384",
         "type": "lab",
-        "day": "Friday",
-        "time": "11:45-1:00"
-      },
-      {
-        "course": "EEE4384",
-        "type": "lab",
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "EEE4384",
-        "type": "lab",
-        "day": "Tuesday",
+        "day": "Thursday",
         "time": "11:45-1:00"
       }
     ]
@@ -2064,104 +2372,24 @@
     "rank": "Lecturer",
     "preferred_times": [
       {
-        "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
         "day": "Tuesday",
         "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Friday",
-        "time": "9:15-10:30"
       },
       {
         "day": "Thursday",
         "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "8:00-9:15"
+        "day": "Tuesday",
+        "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "11:45-1:00"
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
       },
       {
         "day": "Monday",
@@ -2169,17 +2397,109 @@
       },
       {
         "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
         "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
       },
       {
         "day": "Monday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
         "course": "CSE4302",
         "type": "lab",
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4302",
+        "type": "lab",
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "CSE4302",
+        "type": "lab",
         "day": "Thursday",
         "time": "8:00-9:15"
       },
@@ -2190,38 +2510,32 @@
         "time": "9:15-10:30"
       },
       {
-        "course": "CSE4302",
-        "type": "lab",
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "CSE4302",
-        "type": "lab",
-        "day": "Friday",
-        "time": "11:45-1:00"
+        "course": "CSE4709",
+        "type": "theory",
+        "day": "Thursday",
+        "time": "3:45-5:00"
       },
       {
         "course": "CSE4709",
         "type": "theory",
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4734",
+        "type": "lab",
+        "day": "Wednesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "course": "CSE4734",
+        "type": "lab",
         "day": "Wednesday",
         "time": "11:45-1:00"
       },
       {
         "course": "CSE4709",
         "type": "theory",
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "CSE4734",
-        "type": "lab",
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "CSE4734",
-        "type": "lab",
         "day": "Monday",
         "time": "11:45-1:00"
       },
@@ -2232,22 +2546,16 @@
         "time": "10:30-11:45"
       },
       {
-        "course": "CSE4709",
-        "type": "theory",
+        "course": "CSE4734",
+        "type": "lab",
         "day": "Friday",
-        "time": "8:00-9:15"
+        "time": "10:30-11:45"
       },
       {
         "course": "CSE4734",
         "type": "lab",
-        "day": "Monday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4734",
-        "type": "lab",
-        "day": "Monday",
-        "time": "9:15-10:30"
+        "day": "Friday",
+        "time": "11:45-1:00"
       }
     ]
   },
@@ -2255,141 +2563,141 @@
     "rank": "Lecturer",
     "preferred_times": [
       {
-        "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
         "day": "Tuesday",
         "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Friday",
-        "time": "9:15-10:30"
       },
       {
         "day": "Thursday",
         "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "8:00-9:15"
+        "day": "Tuesday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
       },
       {
         "day": "Monday",
         "time": "9:15-10:30"
       },
       {
-        "day": "Friday",
-        "time": "11:45-1:00"
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
       },
       {
         "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
         "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
       },
       {
         "day": "Monday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
         "course": "CSE4304",
         "type": "lab",
-        "day": "Monday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4304",
-        "type": "lab",
-        "day": "Monday",
-        "time": "9:15-10:30"
-      },
-      {
-        "course": "CSE4304",
-        "type": "lab",
-        "day": "Monday",
+        "day": "Tuesday",
         "time": "10:30-11:45"
       },
       {
         "course": "CSE4304",
         "type": "lab",
-        "day": "Monday",
+        "day": "Tuesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "course": "CSE4304",
+        "type": "lab",
+        "day": "Wednesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "course": "CSE4304",
+        "type": "lab",
+        "day": "Wednesday",
         "time": "11:45-1:00"
       },
       {
@@ -2407,13 +2715,13 @@
       {
         "course": "CSE4502",
         "type": "lab",
-        "day": "Wednesday",
+        "day": "Monday",
         "time": "10:30-11:45"
       },
       {
         "course": "CSE4502",
         "type": "lab",
-        "day": "Wednesday",
+        "day": "Monday",
         "time": "11:45-1:00"
       }
     ]
@@ -2422,104 +2730,24 @@
     "rank": "Junior Lecturer",
     "preferred_times": [
       {
-        "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
         "day": "Tuesday",
         "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Friday",
-        "time": "9:15-10:30"
       },
       {
         "day": "Thursday",
         "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "8:00-9:15"
+        "day": "Tuesday",
+        "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "11:45-1:00"
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
       },
       {
         "day": "Monday",
@@ -2527,36 +2755,116 @@
       },
       {
         "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
         "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
       },
       {
         "day": "Monday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
         "course": "CSE4304",
         "type": "lab",
-        "day": "Monday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4304",
-        "type": "lab",
-        "day": "Monday",
-        "time": "9:15-10:30"
-      },
-      {
-        "course": "CSE4304",
-        "type": "lab",
-        "day": "Monday",
+        "day": "Tuesday",
         "time": "10:30-11:45"
       },
       {
         "course": "CSE4304",
         "type": "lab",
-        "day": "Monday",
+        "day": "Tuesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "course": "CSE4304",
+        "type": "lab",
+        "day": "Wednesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "course": "CSE4304",
+        "type": "lab",
+        "day": "Wednesday",
         "time": "11:45-1:00"
       }
     ]
@@ -2565,104 +2873,24 @@
     "rank": "Junior Lecturer",
     "preferred_times": [
       {
-        "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
         "day": "Tuesday",
         "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Friday",
-        "time": "9:15-10:30"
       },
       {
         "day": "Thursday",
         "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "8:00-9:15"
+        "day": "Tuesday",
+        "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "11:45-1:00"
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
       },
       {
         "day": "Monday",
@@ -2670,61 +2898,141 @@
       },
       {
         "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
         "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
       },
       {
         "day": "Monday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
         "course": "CSE4308",
         "type": "lab",
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4308",
+        "type": "lab",
+        "day": "Friday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "CSE4308",
+        "type": "lab",
         "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4308",
+        "type": "lab",
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "CSE4508",
+        "type": "lab",
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4508",
+        "type": "lab",
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "CSE4508",
+        "type": "lab",
+        "day": "Friday",
         "time": "10:30-11:45"
       },
       {
-        "course": "CSE4308",
+        "course": "CSE4508",
         "type": "lab",
-        "day": "Tuesday",
+        "day": "Friday",
         "time": "11:45-1:00"
-      },
-      {
-        "course": "CSE4308",
-        "type": "lab",
-        "day": "Friday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4308",
-        "type": "lab",
-        "day": "Friday",
-        "time": "9:15-10:30"
-      },
-      {
-        "course": "CSE4508",
-        "type": "lab",
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4508",
-        "type": "lab",
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "course": "CSE4508",
-        "type": "lab",
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4508",
-        "type": "lab",
-        "day": "Thursday",
-        "time": "9:15-10:30"
       }
     ]
   },
@@ -2732,104 +3040,24 @@
     "rank": "Lecturer",
     "preferred_times": [
       {
-        "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
         "day": "Tuesday",
         "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Friday",
-        "time": "9:15-10:30"
       },
       {
         "day": "Thursday",
         "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "8:00-9:15"
+        "day": "Tuesday",
+        "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "11:45-1:00"
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
       },
       {
         "day": "Monday",
@@ -2837,29 +3065,97 @@
       },
       {
         "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
         "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
       },
       {
         "day": "Monday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
         "course": "CSE4308",
         "type": "lab",
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "CSE4308",
-        "type": "lab",
-        "day": "Tuesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "course": "CSE4308",
-        "type": "lab",
         "day": "Friday",
         "time": "8:00-9:15"
       },
@@ -2867,6 +3163,117 @@
         "course": "CSE4308",
         "type": "lab",
         "day": "Friday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "CSE4308",
+        "type": "lab",
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4308",
+        "type": "lab",
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      }
+    ]
+  },
+  "OR": {
+    "rank": "Part-Time",
+    "preferred_times": [
+      {
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
+      }
+    ],
+    "courses": [
+      {
+        "course": "CSE4503",
+        "type": "theory",
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4503",
+        "type": "theory",
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "course": "CSE4504",
+        "type": "lab",
+        "day": "Wednesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "course": "CSE4504",
+        "type": "lab",
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "course": "CSE4503",
+        "type": "theory",
+        "day": "Friday",
+        "time": "2:30-3:45"
+      },
+      {
+        "course": "CSE4503",
+        "type": "theory",
+        "day": "Thursday",
         "time": "9:15-10:30"
       }
     ]
@@ -2875,202 +3282,226 @@
     "rank": "Lecturer",
     "preferred_times": [
       {
-        "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
         "day": "Tuesday",
         "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Friday",
-        "time": "9:15-10:30"
       },
       {
         "day": "Thursday",
         "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "8:00-9:15"
+        "day": "Tuesday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
       },
       {
         "day": "Monday",
         "time": "9:15-10:30"
       },
       {
-        "day": "Friday",
-        "time": "11:45-1:00"
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
       },
       {
         "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
         "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
       },
       {
         "day": "Monday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
-        "course": "4549",
+        "course": "CSE4549",
         "type": "theory",
-        "day": "Tuesday",
-        "time": "10:30-11:45"
+        "day": "Friday",
+        "time": "3:45-5:00"
       },
       {
-        "course": "4549",
+        "course": "CSE4549",
         "type": "theory",
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "CSE4502",
+        "type": "lab",
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4502",
+        "type": "lab",
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "CSE4508",
+        "type": "lab",
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4508",
+        "type": "lab",
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "CSE4550",
+        "type": "lab",
         "day": "Friday",
         "time": "8:00-9:15"
       },
       {
-        "course": "CSE4502",
+        "course": "CSE4550",
         "type": "lab",
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4502",
-        "type": "lab",
-        "day": "Tuesday",
+        "day": "Friday",
         "time": "9:15-10:30"
       },
       {
-        "course": "CSE4508",
-        "type": "lab",
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4508",
-        "type": "lab",
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "course": "4549",
+        "course": "CSE4549",
         "type": "theory",
         "day": "Thursday",
-        "time": "2:30-3:45"
+        "time": "3:45-5:00"
       },
       {
-        "course": "4549",
+        "course": "CSE4549",
         "type": "theory",
-        "day": "Monday",
-        "time": "8:00-9:15"
+        "day": "Tuesday",
+        "time": "11:45-1:00"
       },
       {
         "course": "CSE4502",
         "type": "lab",
-        "day": "Wednesday",
+        "day": "Monday",
         "time": "10:30-11:45"
       },
       {
         "course": "CSE4502",
         "type": "lab",
-        "day": "Wednesday",
+        "day": "Monday",
         "time": "11:45-1:00"
       },
       {
         "course": "CSE4508",
         "type": "lab",
-        "day": "Thursday",
-        "time": "8:00-9:15"
+        "day": "Friday",
+        "time": "10:30-11:45"
       },
       {
         "course": "CSE4508",
         "type": "lab",
-        "day": "Thursday",
-        "time": "9:15-10:30"
+        "day": "Friday",
+        "time": "11:45-1:00"
       },
       {
         "course": "CSE4540",
         "type": "lab",
-        "day": "Monday",
+        "day": "Thursday",
         "time": "10:30-11:45"
       },
       {
         "course": "CSE4540",
         "type": "lab",
-        "day": "Monday",
+        "day": "Thursday",
         "time": "11:45-1:00"
+      },
+      {
+        "course": "CSE4550",
+        "type": "lab",
+        "day": "Monday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4550",
+        "type": "lab",
+        "day": "Monday",
+        "time": "9:15-10:30"
       }
     ]
   },
@@ -3078,48 +3509,68 @@
     "rank": "Assistant Professor",
     "preferred_times": [
       {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
         "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Wednesday",
         "time": "11:45-1:00"
       },
       {
         "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Monday",
-        "time": "11:45-1:00"
+        "time": "9:15-10:30"
       },
       {
         "day": "Tuesday",
-        "time": "2:30-3:45"
+        "time": "10:30-11:45"
       },
       {
-        "day": "Monday",
+        "day": "Wednesday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
@@ -3132,115 +3583,32 @@
       {
         "course": "CSE4513",
         "type": "theory",
-        "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "course": "CSE4513",
-        "type": "theory",
-        "day": "Friday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4513",
-        "type": "theory",
         "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "course": "CSE4510",
-        "type": "lab",
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "CSE4510",
-        "type": "lab",
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      }
-    ]
-  },
-  "OR": {
-    "rank": "Part-Time",
-    "preferred_times": [
-      {
-        "day": "Friday",
         "time": "2:30-3:45"
       },
       {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Friday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "3:45-5:00"
-      }
-    ],
-    "courses": [
-      {
-        "course": "CSE4503",
+        "course": "CSE4513",
         "type": "theory",
-        "day": "Monday",
+        "day": "Wednesday",
         "time": "8:00-9:15"
       },
       {
-        "course": "CSE4503",
+        "course": "CSE4513",
         "type": "theory",
         "day": "Thursday",
         "time": "8:00-9:15"
       },
       {
-        "course": "CSE4504",
+        "course": "CSE4510",
         "type": "lab",
-        "day": "Monday",
+        "day": "Wednesday",
         "time": "10:30-11:45"
       },
       {
-        "course": "CSE4504",
+        "course": "CSE4510",
         "type": "lab",
-        "day": "Monday",
+        "day": "Wednesday",
         "time": "11:45-1:00"
-      },
-      {
-        "course": "CSE4503",
-        "type": "theory",
-        "day": "Friday",
-        "time": "9:15-10:30"
-      },
-      {
-        "course": "CSE4503",
-        "type": "theory",
-        "day": "Tuesday",
-        "time": "8:00-9:15"
       }
     ]
   },
@@ -3248,68 +3616,112 @@
     "rank": "Assistant Professor",
     "preferred_times": [
       {
-        "day": "Thursday",
+        "day": "Tuesday",
         "time": "11:45-1:00"
       },
       {
         "day": "Thursday",
-        "time": "10:30-11:45"
+        "time": "2:30-3:45"
       },
       {
         "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
+        "time": "2:30-3:45"
       },
       {
         "day": "Wednesday",
         "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
       },
       {
         "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
         "time": "9:15-10:30"
       },
       {
-        "day": "Monday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Wednesday",
+        "day": "Tuesday",
         "time": "10:30-11:45"
       },
       {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
+        "day": "Thursday",
+        "time": "3:45-5:00"
       },
       {
         "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
         "time": "11:45-1:00"
       },
       {
         "day": "Thursday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
         "course": "CSE4501",
         "type": "theory",
-        "day": "Tuesday",
-        "time": "2:30-3:45"
+        "day": "Thursday",
+        "time": "11:45-1:00"
       },
       {
         "course": "CSE4501",
         "type": "theory",
         "day": "Friday",
-        "time": "2:30-3:45"
+        "time": "10:30-11:45"
       },
       {
         "course": "CSE4501",
         "type": "theory",
-        "day": "Thursday",
-        "time": "3:45-5:00"
+        "day": "Tuesday",
+        "time": "10:30-11:45"
       },
       {
         "course": "CSE4501",
@@ -3327,16 +3739,36 @@
         "time": "10:30-11:45"
       },
       {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
         "day": "Friday",
         "time": "3:45-5:00"
       },
       {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
         "day": "Monday",
         "time": "2:30-3:45"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
       },
       {
         "day": "Thursday",
@@ -3344,49 +3776,61 @@
       },
       {
         "day": "Tuesday",
-        "time": "10:30-11:45"
+        "time": "2:30-3:45"
       },
       {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Monday",
-        "time": "3:45-5:00"
+        "day": "Thursday",
+        "time": "9:15-10:30"
       },
       {
         "day": "Thursday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
         "course": "Math4541",
         "type": "theory",
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
-        "course": "Math4541",
-        "type": "theory",
         "day": "Tuesday",
-        "time": "11:45-1:00"
+        "time": "10:30-11:45"
       },
       {
         "course": "Math4541",
         "type": "theory",
         "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "course": "Math4541",
+        "type": "theory",
+        "day": "Wednesday",
         "time": "9:15-10:30"
       },
       {
         "course": "Math4541",
         "type": "theory",
-        "day": "Monday",
-        "time": "9:15-10:30"
+        "day": "Friday",
+        "time": "3:45-5:00"
       }
     ]
   },
@@ -3394,104 +3838,24 @@
     "rank": "Lecturer",
     "preferred_times": [
       {
-        "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
         "day": "Tuesday",
         "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Friday",
-        "time": "9:15-10:30"
       },
       {
         "day": "Thursday",
         "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "8:00-9:15"
+        "day": "Tuesday",
+        "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "11:45-1:00"
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
       },
       {
         "day": "Monday",
@@ -3499,37 +3863,117 @@
       },
       {
         "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
         "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
       },
       {
         "day": "Monday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
         "course": "CSE4504",
         "type": "lab",
-        "day": "Monday",
+        "day": "Wednesday",
         "time": "10:30-11:45"
       },
       {
         "course": "CSE4504",
         "type": "lab",
-        "day": "Monday",
+        "day": "Wednesday",
         "time": "11:45-1:00"
       },
       {
         "course": "CSE4504",
         "type": "lab",
-        "day": "Tuesday",
-        "time": "10:30-11:45"
+        "day": "Friday",
+        "time": "8:00-9:15"
       },
       {
         "course": "CSE4504",
         "type": "lab",
-        "day": "Tuesday",
-        "time": "11:45-1:00"
+        "day": "Friday",
+        "time": "9:15-10:30"
       }
     ]
   },
@@ -3537,61 +3981,107 @@
     "rank": "Associate Professor",
     "preferred_times": [
       {
-        "day": "Friday",
+        "day": "Thursday",
         "time": "2:30-3:45"
       },
       {
-        "day": "Thursday",
+        "day": "Tuesday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
         "time": "11:45-1:00"
+      },
+      {
+        "day": "Monday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
       },
       {
         "day": "Tuesday",
         "time": "3:45-5:00"
       },
       {
-        "day": "Tuesday",
+        "day": "Friday",
         "time": "8:00-9:15"
       },
       {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Wednesday",
+        "day": "Friday",
         "time": "11:45-1:00"
       },
       {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Monday",
-        "time": "9:15-10:30"
+        "day": "Thursday",
+        "time": "8:00-9:15"
       },
       {
         "day": "Tuesday",
-        "time": "2:30-3:45"
+        "time": "8:00-9:15"
       },
       {
         "day": "Thursday",
-        "time": "9:15-10:30"
+        "time": "11:45-1:00"
       },
       {
-        "day": "Monday",
-        "time": "8:00-9:15"
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
         "course": "CSE4510",
         "type": "lab",
-        "day": "Wednesday",
-        "time": "10:30-11:45"
+        "day": "Monday",
+        "time": "8:00-9:15"
       },
       {
         "course": "CSE4510",
         "type": "lab",
-        "day": "Wednesday",
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "CSE4703",
+        "type": "theory",
+        "day": "Monday",
         "time": "11:45-1:00"
       },
       {
@@ -3604,18 +4094,12 @@
         "course": "CSE4703",
         "type": "theory",
         "day": "Tuesday",
-        "time": "8:00-9:15"
+        "time": "9:15-10:30"
       },
       {
         "course": "CSE4703",
         "type": "theory",
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "course": "CSE4703",
-        "type": "theory",
-        "day": "Friday",
+        "day": "Wednesday",
         "time": "9:15-10:30"
       }
     ]
@@ -3624,23 +4108,7 @@
     "rank": "Assistant Professor",
     "preferred_times": [
       {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Friday",
-        "time": "9:15-10:30"
-      },
-      {
         "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
         "time": "11:45-1:00"
       },
       {
@@ -3648,26 +4116,106 @@
         "time": "2:30-3:45"
       },
       {
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
         "day": "Thursday",
         "time": "9:15-10:30"
       },
       {
         "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
         "course": "CSE4510",
         "type": "lab",
-        "day": "Wednesday",
-        "time": "10:30-11:45"
+        "day": "Monday",
+        "time": "8:00-9:15"
       },
       {
         "course": "CSE4510",
         "type": "lab",
-        "day": "Wednesday",
-        "time": "11:45-1:00"
+        "day": "Monday",
+        "time": "9:15-10:30"
       }
     ]
   },
@@ -3675,141 +4223,439 @@
     "rank": "Lecturer",
     "preferred_times": [
       {
-        "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
         "day": "Tuesday",
         "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Friday",
-        "time": "9:15-10:30"
       },
       {
         "day": "Thursday",
         "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "8:00-9:15"
+        "day": "Tuesday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
       },
       {
         "day": "Monday",
         "time": "9:15-10:30"
       },
       {
-        "day": "Friday",
-        "time": "11:45-1:00"
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
       },
       {
         "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
         "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
       },
       {
         "day": "Monday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
         "course": "CSE4512",
         "type": "lab",
-        "day": "Thursday",
+        "day": "Monday",
         "time": "10:30-11:45"
       },
       {
         "course": "CSE4512",
         "type": "lab",
-        "day": "Thursday",
+        "day": "Monday",
         "time": "11:45-1:00"
       },
       {
         "course": "CSE4512",
         "type": "lab",
-        "day": "Wednesday",
+        "day": "Tuesday",
         "time": "8:00-9:15"
       },
       {
         "course": "CSE4512",
         "type": "lab",
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      }
+    ]
+  },
+  "TAS": {
+    "rank": "Junior Lecturer",
+    "preferred_times": [
+      {
+        "day": "Tuesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "2:30-3:45"
+      },
+      {
         "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
+      }
+    ],
+    "courses": [
+      {
+        "course": "CSE4512",
+        "type": "lab",
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "course": "CSE4512",
+        "type": "lab",
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "course": "CSE4550",
+        "type": "lab",
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4550",
+        "type": "lab",
+        "day": "Friday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "CSE4512",
+        "type": "lab",
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4512",
+        "type": "lab",
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "CSE4550",
+        "type": "lab",
+        "day": "Monday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4550",
+        "type": "lab",
+        "day": "Monday",
+        "time": "9:15-10:30"
+      }
+    ]
+  },
+  "HM": {
+    "rank": "Professor",
+    "preferred_times": [
+      {
+        "day": "Tuesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
+      }
+    ],
+    "courses": [
+      {
+        "course": "CSE4510",
+        "type": "lab",
+        "day": "Wednesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "course": "CSE4510",
+        "type": "lab",
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "course": "CSE4700",
+        "type": "lab",
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "course": "CSE4700",
+        "type": "lab",
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "course": "CSE4700",
+        "type": "lab",
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4700",
+        "type": "lab",
+        "day": "Friday",
         "time": "9:15-10:30"
       }
     ]
@@ -3818,455 +4664,130 @@
     "rank": "Junior Lecturer",
     "preferred_times": [
       {
-        "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
         "day": "Tuesday",
         "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Friday",
-        "time": "9:15-10:30"
       },
       {
         "day": "Thursday",
         "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "8:00-9:15"
+        "day": "Tuesday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
       },
       {
         "day": "Monday",
         "time": "9:15-10:30"
       },
       {
-        "day": "Friday",
-        "time": "11:45-1:00"
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
       },
       {
         "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
         "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
       },
       {
         "day": "Monday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
       {
-        "course": "CSE4512",
-        "type": "lab",
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "CSE4512",
-        "type": "lab",
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      },
-      {
-        "course": "CSE4512",
-        "type": "lab",
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4512",
-        "type": "lab",
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
         "course": "CSE4540",
         "type": "lab",
-        "day": "Monday",
+        "day": "Thursday",
         "time": "10:30-11:45"
       },
       {
         "course": "CSE4540",
         "type": "lab",
-        "day": "Monday",
-        "time": "11:45-1:00"
-      }
-    ]
-  },
-  "HM": {
-    "rank": "Professor",
-    "preferred_times": [
-      {
         "day": "Thursday",
         "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Tuesday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Monday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Monday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Thursday",
-        "time": "9:15-10:30"
-      }
-    ],
-    "courses": [
-      {
-        "course": "CSE4510",
-        "type": "lab",
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "CSE4510",
-        "type": "lab",
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      },
-      {
-        "course": "CSE4700",
-        "type": "lab",
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4700",
-        "type": "lab",
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "course": "CSE4700",
-        "type": "lab",
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "CSE4700",
-        "type": "lab",
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      }
-    ]
-  },
-  "MMA": {
-    "rank": "Professor",
-    "preferred_times": [
-      {
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Monday",
-        "time": "8:00-9:15"
-      }
-    ],
-    "courses": [
-      {
-        "course": "Math4741",
-        "type": "theory",
-        "day": "Tuesday",
-        "time": "2:30-3:45"
-      },
-      {
-        "course": "Math4741",
-        "type": "theory",
-        "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "course": "Math4741",
-        "type": "theory",
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "Math4741",
-        "type": "theory",
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      }
-    ]
-  },
-  "MBH": {
-    "rank": "Assistant Professor",
-    "preferred_times": [
-      {
-        "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Friday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Monday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      }
-    ],
-    "courses": [
-      {
-        "course": "CSE4733",
-        "type": "theory",
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "CSE4733",
-        "type": "theory",
-        "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "course": "CSE4734",
-        "type": "lab",
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "CSE4734",
-        "type": "lab",
-        "day": "Monday",
-        "time": "11:45-1:00"
-      },
-      {
-        "course": "CSE4733",
-        "type": "theory",
-        "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "course": "CSE4733",
-        "type": "theory",
-        "day": "Tuesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "course": "CSE4734",
-        "type": "lab",
-        "day": "Monday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4734",
-        "type": "lab",
-        "day": "Monday",
-        "time": "9:15-10:30"
       }
     ]
   },
@@ -4275,14 +4796,6 @@
     "preferred_times": [
       {
         "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Wednesday",
         "time": "9:15-10:30"
       },
       {
@@ -4290,24 +4803,32 @@
         "time": "3:45-5:00"
       },
       {
-        "day": "Tuesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Wednesday",
+        "day": "Thursday",
         "time": "10:30-11:45"
       },
       {
-        "day": "Monday",
+        "day": "Tuesday",
         "time": "11:45-1:00"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "2:30-3:45"
       },
       {
         "day": "Tuesday",
@@ -4315,24 +4836,40 @@
       },
       {
         "day": "Monday",
-        "time": "8:00-9:15"
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
       },
       {
         "day": "Thursday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
       }
     ],
     "courses": [
       {
         "course": "Hum4743",
         "type": "theory",
-        "day": "Thursday",
-        "time": "9:15-10:30"
+        "day": "Monday",
+        "time": "8:00-9:15"
       },
       {
         "course": "Hum4743",
         "type": "theory",
-        "day": "Friday",
+        "day": "Wednesday",
         "time": "8:00-9:15"
       },
       {
@@ -4344,8 +4881,8 @@
       {
         "course": "Hum4743",
         "type": "theory",
-        "day": "Wednesday",
-        "time": "9:15-10:30"
+        "day": "Thursday",
+        "time": "8:00-9:15"
       }
     ]
   },
@@ -4353,116 +4890,116 @@
     "rank": "Lecturer",
     "preferred_times": [
       {
-        "day": "Friday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Monday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Wednesday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Wednesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Thursday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Tuesday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Tuesday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Friday",
-        "time": "3:45-5:00"
-      },
-      {
         "day": "Tuesday",
         "time": "11:45-1:00"
-      },
-      {
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Monday",
-        "time": "3:45-5:00"
-      },
-      {
-        "day": "Tuesday",
-        "time": "2:30-3:45"
-      },
-      {
-        "day": "Thursday",
-        "time": "9:15-10:30"
-      },
-      {
-        "day": "Thursday",
-        "time": "8:00-9:15"
-      },
-      {
-        "day": "Thursday",
-        "time": "11:45-1:00"
-      },
-      {
-        "day": "Monday",
-        "time": "10:30-11:45"
-      },
-      {
-        "day": "Friday",
-        "time": "9:15-10:30"
       },
       {
         "day": "Thursday",
         "time": "2:30-3:45"
       },
       {
-        "day": "Friday",
-        "time": "8:00-9:15"
+        "day": "Tuesday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
       },
       {
         "day": "Monday",
         "time": "9:15-10:30"
       },
       {
-        "day": "Friday",
-        "time": "11:45-1:00"
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
       },
       {
         "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
         "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
       },
       {
         "day": "Monday",
         "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Thursday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
       }
     ],
     "courses": [
@@ -4470,72 +5007,330 @@
         "course": "CSE4739",
         "type": "theory",
         "day": "Monday",
-        "time": "8:00-9:15"
-      },
-      {
-        "course": "CSE4739",
-        "type": "theory",
-        "day": "Friday",
-        "time": "9:15-10:30"
-      },
-      {
-        "course": "CSE4710",
-        "type": "lab",
-        "day": "Friday",
         "time": "10:30-11:45"
-      },
-      {
-        "course": "CSE4710",
-        "type": "lab",
-        "day": "Friday",
-        "time": "11:45-1:00"
-      },
-      {
-        "course": "CSE4710",
-        "type": "lab",
-        "day": "Friday",
-        "time": "10:30-11:45"
-      },
-      {
-        "course": "CSE4710",
-        "type": "lab",
-        "day": "Friday",
-        "time": "11:45-1:00"
       },
       {
         "course": "CSE4739",
         "type": "theory",
         "day": "Tuesday",
-        "time": "9:15-10:30"
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4710",
+        "type": "lab",
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "course": "CSE4710",
+        "type": "lab",
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "course": "CSE4710",
+        "type": "lab",
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "course": "CSE4710",
+        "type": "lab",
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "course": "CSE4739",
+        "type": "theory",
+        "day": "Wednesday",
+        "time": "8:00-9:15"
       },
       {
         "course": "CSE4739",
         "type": "theory",
         "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "CSE4710",
+        "type": "lab",
+        "day": "Monday",
         "time": "8:00-9:15"
       },
       {
         "course": "CSE4710",
         "type": "lab",
         "day": "Monday",
-        "time": "10:30-11:45"
+        "time": "9:15-10:30"
       },
       {
         "course": "CSE4710",
         "type": "lab",
+        "day": "Monday",
+        "time": "8:00-9:15"
+      },
+      {
+        "course": "CSE4710",
+        "type": "lab",
+        "day": "Monday",
+        "time": "9:15-10:30"
+      }
+    ]
+  },
+  "MMA": {
+    "rank": "Professor",
+    "preferred_times": [
+      {
+        "day": "Thursday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Monday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Monday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
         "day": "Monday",
         "time": "11:45-1:00"
       },
       {
-        "course": "CSE4710",
-        "type": "lab",
+        "day": "Thursday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Tuesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Tuesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
+      }
+    ],
+    "courses": [
+      {
+        "course": "Math4741",
+        "type": "theory",
+        "day": "Thursday",
+        "time": "2:30-3:45"
+      },
+      {
+        "course": "Math4741",
+        "type": "theory",
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "course": "Math4741",
+        "type": "theory",
         "day": "Monday",
         "time": "10:30-11:45"
       },
       {
-        "course": "CSE4710",
-        "type": "lab",
+        "course": "Math4741",
+        "type": "theory",
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      }
+    ]
+  },
+  "MBH": {
+    "rank": "Assistant Professor",
+    "preferred_times": [
+      {
+        "day": "Tuesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "10:30-11:45"
+      },
+      {
         "day": "Monday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Wednesday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Friday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "day": "Thursday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Monday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Tuesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "day": "Friday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "day": "Friday",
+        "time": "11:45-1:00"
+      },
+      {
+        "day": "Thursday",
+        "time": "8:00-9:15"
+      },
+      {
+        "day": "Friday",
+        "time": "2:30-3:45"
+      }
+    ],
+    "courses": [
+      {
+        "course": "CSE4733",
+        "type": "theory",
+        "day": "Tuesday",
+        "time": "3:45-5:00"
+      },
+      {
+        "course": "CSE4733",
+        "type": "theory",
+        "day": "Wednesday",
+        "time": "9:15-10:30"
+      },
+      {
+        "course": "CSE4734",
+        "type": "lab",
+        "day": "Wednesday",
+        "time": "10:30-11:45"
+      },
+      {
+        "course": "CSE4734",
+        "type": "lab",
+        "day": "Wednesday",
+        "time": "11:45-1:00"
+      },
+      {
+        "course": "CSE4733",
+        "type": "theory",
+        "day": "Friday",
+        "time": "2:30-3:45"
+      },
+      {
+        "course": "CSE4733",
+        "type": "theory",
+        "day": "Monday",
+        "time": "2:30-3:45"
+      },
+      {
+        "course": "CSE4734",
+        "type": "lab",
+        "day": "Friday",
+        "time": "10:30-11:45"
+      },
+      {
+        "course": "CSE4734",
+        "type": "lab",
+        "day": "Friday",
         "time": "11:45-1:00"
       }
     ]
