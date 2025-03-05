@@ -21,8 +21,14 @@ const sidebarNavItems = [
     {
         display: 'Courses',
         icon: <i className='bx bx-calendar'></i>,
-        to: '/admin-home/admin-manage-routine', // Add full path
-        section: 'calendar'
+        to: '/admin-home/admin-manage-courses', // Add full path
+        section: 'courses'
+    },
+    {
+        display: 'Labs',
+        icon: <i className='bx bx-calendar'></i>,
+        to: '/admin-home/admin-manage-labs', // Add full path
+        section: 'courses'
     },
     {
         display: 'Seat Plan',

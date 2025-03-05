@@ -14,19 +14,19 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { db, collection, doc, setDoc } from "../../../firebase.js";
 
-const handleGenerateRoutine = async () => {
-  try {
-    const response = await axios.post(
-      "http://localhost:5000/admin-home/admin-dashboard"
-    );
+// const handleGenerateRoutine = async () => {
+//   try {
+//     const response = await axios.post(
+//       "http://localhost:5000/admin-home/admin-dashboard"
+//     );
 
-    console.log(response.data.message); // Log the success message
-    // Navigate to the new window (you can specify your target URL)
-    window.open("/admin-home/admin-generate-routine"); // Adjust the URL as needed
-  } catch (error) {
-    console.error("Error generating routine:", error.response.data.error);
-  }
-};
+//     console.log(response.data.message); // Log the success message
+//     // Navigate to the new window (you can specify your target URL)
+//     window.open("/admin-home/admin-generate-routine"); // Adjust the URL as needed
+//   } catch (error) {
+//     console.error("Error generating routine:", error.response.data.error);
+//   }
+// };
 
 // const handleSeatPlanClick = async () => {
 //   try {
@@ -266,7 +266,7 @@ const AdminDashboard = () => {
               bg="gray.100"
               _hover={{ transform: "translateY(-5px)", boxShadow: "lg" }}
               boxShadow="md"
-              onClick={handleGenerateRoutine}
+              //onClick={handleGenerateRoutine}
             >
               <Icon as={FaBook} boxSize={20} color="gray.700" />
               <Text fontSize="2xl" fontWeight="600" color="gray.700">

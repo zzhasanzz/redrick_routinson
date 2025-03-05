@@ -24,7 +24,8 @@ import TeacherPreference from "./pages/features/TeacherPreference.jsx";
 
 import AdminHome from "./pages/home/AdminHome.jsx";
 import AdminDashboard from "./pages/home/dashboards/AdminDashboard.jsx";
-import AdminManageRoutine from "./pages/features/AdminManageRoutine.jsx";
+import AdminManageCourses from "./pages/features/AdminManageCourses.jsx";
+import AdminManageLabs from "./pages/features/AdminManageLabs.jsx";
 import AdminGenerateRoutine from "./pages/features/AdminGenerateRoutine.jsx";
 import AdminViewRoutine from "./pages/features/AdminViewRoutine.jsx";
 import AdminManageUsers from "./pages/features/AdminManageUsers.jsx";
@@ -47,6 +48,7 @@ import AdminStats from "./pages/features/AdminStats.jsx";
 import AdminGenerateSeatPlanForAll from "./pages/features/adminGenerateSeatPlan.jsx"
 import TeacherEvents from "./pages/event/TeacherEvents.jsx";
 import InviteTeacher from "./pages/event/InviteTeacher.jsx";
+import SeatPlanUser from "./pages/features/SeatPlanUser.jsx"
 
 function App() {
   const { currentUser, role } = useContext(AuthContext);
@@ -98,10 +100,18 @@ function App() {
             />
 
             <Route
-              path="/admin-home/admin-manage-routine"
+              path="/admin-home/admin-manage-courses"
               element={
                 <RequireAuth allowedRoles={["admin"]}>
-                  <AdminManageRoutine />
+                  <AdminManageCourses />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/admin-home/admin-manage-labs"
+              element={
+                <RequireAuth allowedRoles={["admin"]}>
+                  <AdminManageLabs />
                 </RequireAuth>
               }
             />
@@ -173,32 +183,82 @@ function App() {
                 <StudentDashboard />
               </RequireAuth>
             }
-          />
-          <Route
-            path="/student-home/student-routine"
-            element={
-              <RequireAuth allowedRoles={["student"]}>
-                <StudentRoutine />
-              </RequireAuth>
-            }
-          />
+          >
+            
+            <Route
+              path="/student-home/student-routine"
+              element={
+                <RequireAuth allowedRoles={["student"]}>
+                  <StudentRoutine />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/student-home/student-seat-plan"
+              element={
+                <RequireAuth allowedRoles={["student"]}>
+                  <SeatPlanUser />
+                </RequireAuth>
+              }
+            />
 
-          <Route
-            path="/student-home/myevents"
-            element={
-              <RequireAuth allowedRoles={["student"]}>
-                <Blank />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/student-home/scanner"
-            element={
-              <RequireAuth allowedRoles={["student"]}>
-                <FoodScanner />
-              </RequireAuth>
-            }
-          />
+            <Route
+              path="/student-home/myevents"
+              element={
+                <RequireAuth allowedRoles={["student"]}>
+                  <Blank />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/student-home/scanner"
+              element={
+                <RequireAuth allowedRoles={["student"]}>
+                  <FoodScanner />
+                </RequireAuth>
+              }
+            />
+
+          
+
+            <Route
+              path="/student-home/calendar"
+              element={
+                <RequireAuth allowedRoles={["student"]}>
+                  <Blank />
+                </RequireAuth>
+              }
+            />
+
+          
+            <Route
+              path="/student-home/event"
+              element={
+                <RequireAuth allowedRoles={["student"]}>
+                  <Event />
+                </RequireAuth>
+              }
+            />
+
+            <Route
+              path="/student-home/event/invite/:eventId"
+              element={
+                <RequireAuth allowedRoles={["student"]}>
+                  <InviteTeacher />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/student-home/logout"
+              element={
+                <RequireAuth allowedRoles={["student"]}>
+                  <Blank />
+                </RequireAuth>
+              }
+            />
+          </Route>
+
+        
 
           <Route
             path="/student-home/lost-and-found"
@@ -209,14 +269,7 @@ function App() {
             }
           />
 
-          <Route
-            path="/student-home/calendar"
-            element={
-              <RequireAuth allowedRoles={["student"]}>
-                <Blank />
-              </RequireAuth>
-            }
-          />
+        
 
           <Route
             path="/student-home/user"
@@ -226,23 +279,7 @@ function App() {
               </RequireAuth>
             }
           />
-          <Route
-            path="/student-home/event"
-            element={
-              <RequireAuth allowedRoles={["student"]}>
-                <Event />
-              </RequireAuth>
-            }
-          />
 
-          <Route
-            path="/student-home/event/invite/:eventId"
-            element={
-              <RequireAuth allowedRoles={["student"]}>
-                <InviteTeacher />
-              </RequireAuth>
-            }
-          />
           <Route
             path="/student-home/logout"
             element={
@@ -303,14 +340,7 @@ function App() {
               // </RequireAuth>
             }
           />
-          <Route
-            path="/teacher-home/teacher-routine"
-            element={
-              <RequireAuth allowedRoles={["teacher"]}>
-                <TeacherRoutine />
-              </RequireAuth>
-            }
-          />
+    
 
           <Route
             path="/teacher-home/calendar"
