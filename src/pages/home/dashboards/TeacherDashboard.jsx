@@ -17,7 +17,7 @@ const TeacherDashboard = () => {
                     </Button>
                 </Link>
 
-                <Link to="/forum">
+                <Link to="/teacher-home/forum">
                     <Button height="250px" width="450px" flexDirection="column" justifyContent="center" borderRadius="30px">
                         <Icon as={FaComments} boxSize={20} />
                         <Text fontSize="2xl">Forum</Text>

@@ -183,7 +183,7 @@ const AdminDashboard = () => {
             </Button>
           </Link>
 
-          <Link to="/forum">
+          <Link to="/admin-home/forum">
             <Button
               height="250px"
               width={["100%", "450px"]}

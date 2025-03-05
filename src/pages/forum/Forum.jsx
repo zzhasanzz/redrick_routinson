@@ -28,6 +28,12 @@ import {
   DrawerHeader,
   DrawerBody,
   Badge,
+  Image,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalCloseButton,
+  ModalBody
 } from "@chakra-ui/react";
 import { AuthContext } from "../../context/AuthContext";
 import { db } from "../../firebase";
@@ -66,6 +72,10 @@ const Forum = () => {
   const [posts, setPosts] = useState([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [image, setImage] = useState(null);
+  const [isImageOpen, setIsImageOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+
   const { isOpen: isPostFormOpen, onToggle: onTogglePostForm } = useDisclosure();
   const {
     isOpen: isNotificationDrawerOpen,
@@ -114,26 +124,72 @@ const Forum = () => {
     return () => unsubscribePosts();
   }, [currentUser]);
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result); // Stores base64-encoded image data
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleImageClick = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setIsImageOpen(true);
+  };
+
+  const handleTogglePostForm = () => {
+    setTitle("");  // ✅ Reset title
+    setContent("");  // ✅ Reset content
+    setImage(null);  // ✅ Clear image preview
+
+    // ✅ Reset file input manually
+    const fileInput = document.getElementById("image-upload-input");
+    if (fileInput) {
+      fileInput.value = "";
+    }
+
+    onTogglePostForm();  // ✅ Toggle the form visibility
+  };
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title || !content) return;
+
     try {
       await addDoc(collection(db, "forumPosts"), {
         title,
         content,
+        image,  // ✅ Store the base64 image directly in Firestore
         createdAt: serverTimestamp(),
         authorId: currentUser.uid,
         authorName: currentUser.displayName || currentUser.email,
         authorPhotoURL: currentUser.photoURL || null,
         reports: [],
       });
+
+      // ✅ Reset fields after submission
       setTitle("");
       setContent("");
-      onTogglePostForm();
+      setImage(null);
+
+      // ✅ Reset file input manually
+      const fileInput = document.getElementById("image-upload-input");
+      if (fileInput) {
+        fileInput.value = "";
+      }
+
+      onTogglePostForm();  // ✅ Close the form
     } catch (error) {
       console.error("Error adding post: ", error);
     }
   };
+
+
 
   const handleMarkAsRead = async (notificationId) => {
     try {
@@ -174,7 +230,7 @@ const Forum = () => {
           </Heading>
           <HStack spacing={65}>
             <Button
-              onClick={onTogglePostForm}
+              onClick={handleTogglePostForm}
               colorScheme="teal"
               variant="ghost"
               textColor="teal"
@@ -282,6 +338,38 @@ const Forum = () => {
                   required
                   rows={4}
                 />
+                <Input
+                  id="image-upload-input"  // ✅ Add this ID to reset input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  height = "50px"
+                />
+
+                {image && (
+                  <Box
+                    mt={4}
+                    width="250px"   // ✅ Set a fixed width
+                    height="250px"  // ✅ Set a fixed height
+                    borderRadius="8px"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    backgroundColor="white"  // ✅ Ensure background is white
+                    border="1px solid gray"  // ✅ Add a light border
+                    overflow="hidden"
+                  >
+                    <Image
+                      src={image}
+                      alt="Image Preview"
+                      maxWidth="100%"  // ✅ Prevent overflow
+                      maxHeight="100%" // ✅ Prevent overflow
+                      objectFit="contain" // ✅ Keep aspect ratio, white space if needed
+                    />
+                  </Box>
+                )}
+
+
                 <Button type="submit" colorScheme="teal" size="medium">
                   Post
                 </Button>
@@ -291,16 +379,33 @@ const Forum = () => {
         </Collapse>
 
         <VStack spacing={6} align="stretch">
-          {posts.map((post) =>
-            post ? <Post key={post.id} post={post} /> : null
-          )}
+          {posts.map((post) => (
+            <Post key={post.id} post={post} handleImageClick={handleImageClick} />
+          ))}
         </VStack>
+
+        <Modal isOpen={isImageOpen} onClose={() => setIsImageOpen(false)} size="4xl">
+          <ModalOverlay />
+          <ModalContent>
+            <ModalCloseButton />
+            <ModalBody display="flex" justifyContent="center">
+              <Image
+                src={selectedImage}
+                alt="Enlarged Image"
+                maxWidth="90vw"
+                maxHeight="90vh"
+                objectFit="contain"
+              />
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+
       </Box>
     </Box>
   );
 };
 
-const Post = ({ post }) => {
+const Post = ({ post, handleImageClick }) => {
   const { currentUser } = useContext(AuthContext);
   const [comments, setComments] = useState([]);
   const [commentInput, setCommentInput] = useState("");
@@ -563,6 +668,32 @@ const Post = ({ post }) => {
       </Flex>
       <Heading size="md" mb={2}>{post.title}</Heading>
       <Text mb={4}>{post.content}</Text>
+      {post.image && (
+        <Box
+          mt={2}
+          width="400px"
+          height="400px"
+          borderRadius="8px"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          backgroundColor="white"
+          border="transparent"
+          overflow="hidden"
+          mx="auto"
+          cursor="pointer" // ✅ Make the image clickable
+          onClick={() => handleImageClick(post.image)} // ✅ Open modal when clicked
+        >
+          <Image
+            src={post.image}
+            alt="Uploaded Post"
+            maxWidth="100%"
+            maxHeight="100%"
+            objectFit="contain"
+          />
+        </Box>
+      )}
+
 
       <HStack spacing={4} mb={4}>
         <HStack spacing={1}>
@@ -694,6 +825,7 @@ const Comment = ({ postId, comment, post }) => {
         authorName: currentUser.displayName || currentUser.email,
         authorPhotoURL: currentUser.photoURL || null,
         parentCommentId: comment.id,
+        
       });
 
       // Send notification to the comment writer
@@ -794,7 +926,7 @@ const Comment = ({ postId, comment, post }) => {
       </HStack>
 
       {showReplyForm && (
-        <HStack mt={2} ml={10}>
+        <HStack mt={2} align="baseline">
           <Input
             placeholder="Write a reply..."
             value={replyInput}

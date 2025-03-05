@@ -156,6 +156,11 @@ function App() {
                 </RequireAuth>
               }
             />
+            <Route path="/admin-home/forum" element={
+            <RequireAuth allowedRoles={["admin"]}>
+              <Forum />
+            </RequireAuth>
+          } />
             <Route
               path="/admin-home/logout"
               element={
@@ -343,6 +348,11 @@ function App() {
               </RequireAuth>
             }
           />
+          <Route path="/teacher-home/forum" element={
+            <RequireAuth allowedRoles={["teacher"]}>
+              <Forum />
+            </RequireAuth>
+          } />
 
           <Route
             path="/teacher-home/user"
