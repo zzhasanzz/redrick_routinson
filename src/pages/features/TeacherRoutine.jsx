@@ -43,6 +43,7 @@ const TeacherRoutine = () => {
   const [swapProcessing, setSwapProcessing] = useState(false);
   const [confirmRescheduleProcessing, setConfirmRescheduleProcessing] =
     useState(false);
+  const [sentSwapRequests, setSentSwapRequests] = useState([]);
 
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
   const times = {
@@ -63,7 +64,6 @@ const TeacherRoutine = () => {
   for (let i = 1; i <= 30; i++) {
     allTimeSlots.add(i);
   }
-  
 
   let allRooms = new Set([
     "1",
@@ -303,9 +303,8 @@ const TeacherRoutine = () => {
       console.error("Error canceling class:", error);
       alert("Failed to cancel class.");
     }
-
+    let sem = courseId.toString().charAt(courseId.toString().length - 3);
     try {
-      let sem = courseId.toString().charAt(courseId.toString().length - 3);
       const semester = "semester_" + sem + "_" + section;
       const timeSlotRef = doc(db, semester, timeSlot.toString());
       const timeSlotSnapshot = await getDoc(timeSlotRef);
@@ -320,6 +319,26 @@ const TeacherRoutine = () => {
       console.error("Error canceling class:", error);
       alert("Failed to cancel class.");
     }
+
+    const notificationDocRef = doc(
+      db,
+      "notifications",
+      `semester_${sem}_${section}/class_routine`,
+      `notification_${new Date().getTime()}`
+    );
+
+    const newNotification = {
+      type: `Cancelled`,
+      message: `${courseId} of ${day} ${time} has been cancelled`,
+      Course: courseId,
+      Section: section,
+      Day: day,
+      Time: time,
+      ReadBy: [],
+      timestamp: new Date(),
+    };
+    await setDoc(notificationDocRef, newNotification, { merge: true });
+
     console.log("Selected Course Type: ", selectedCourseType);
     if (selectedCourseType === "lab") {
       console.log("Lab course detected, updating second time slot");
@@ -450,17 +469,87 @@ const TeacherRoutine = () => {
       const newTime = `${newStartTime}-${newEndTime}`;
 
       // First, cancel the original class
-      await handleCancelClass(
-        selectedCourse,
-        selectedDay,
-        selectedTime,
-        selectedSection
+      const currentCourseRef = doc(
+        db,
+        `teachers/${teacherName}/courses`,
+        `${selectedCourse}_${selectedSection}`
       );
-      console.log("Original class cancelled successfully");
+      const currentCourseSnapshot = await getDoc(currentCourseRef);
+      const currentCourseData = currentCourseSnapshot.data();
+      console.log("Current Course Data: ", currentCourseData);
+      const currentCourseTimeSlot =
+        revDayMapping[selectedDay] * 6 + revTimeMapping[selectedTime];
+
+      console.log("Current Course Time Slot: ", currentCourseTimeSlot);
+      console.log(
+        "Currnet Course Assigned Temp Time Slots:",
+        currentCourseData["assigned_temp_time_slots"]
+      );
+
+      if (
+        currentCourseData["assigned_temp_time_slots"].length > 0 &&
+        currentCourseData["assigned_temp_time_slots"].includes(
+          currentCourseTimeSlot.toString()
+        )
+      ) {
+        console.log("Cancelling temporary class");
+        const tempIndex = currentCourseData["assigned_temp_time_slots"].indexOf(
+          currentCourseTimeSlot.toString()
+        );
+        console.log("Time Slot Index: ", tempIndex);
+        const tempRoom = currentCourseData["assigned_temp_room"][tempIndex];
+        console.log("Temporary Room: ", tempRoom);
+        console.log("Selected Room: ", selectedRoom);
+        console.log("Selected COurse: ", selectedCourse);
+        console.log("Selected Section: ", selectedSection);
+        console.log("Selected Day: ", selectedDay);
+        console.log("Selected Time: ", selectedTime);
+        await handleCancelTemporaryClass(
+          selectedCourse,
+          selectedDay,
+          selectedTime,
+          tempRoom,
+          selectedSection
+        );
+      } else {
+        await handleCancelClass(
+          selectedCourse,
+          selectedDay,
+          selectedTime,
+          selectedSection
+        );
+      }
+      // console.log("Original class cancelled successfully");
 
       // Check if trying to reschedule on the same day
 
       // --- Update the semester collection ---
+
+      const notificationDocRef = doc(
+        db,
+        "notifications",
+        `semester_${sem}_${selectedSection}/class_routine`,
+        `notification_${new Date().getTime()}`
+      );
+
+      const newNotification = {
+        type: `Rescheduled`,
+        message: `${selectedCourse} of ${selectedDay}  ${selectedTime}class of has been rescheduled to ${newDay} ${newTime} in room ${toBeRescheduledRoom}`,
+        Course: selectedCourse,
+        Section: selectedSection,
+        Day: selectedDay,
+        Time: selectedTime,
+        Room: selectedRoom,
+
+        RescheduledDay: newDay,
+        RescheduledTime: newTime,
+        RescheduledRoom: toBeRescheduledRoom,
+        timestamp: new Date(),
+        ReadBy: [],
+      };
+
+      await setDoc(notificationDocRef, newNotification, { merge: true });
+
       const timeSlotDocRef = doc(
         db,
         semesterCollection,
@@ -651,7 +740,7 @@ const TeacherRoutine = () => {
             class_cancelled: 1,
             rescheduled: 0,
             temp_course_code: selectedCourse,
-            course_type: "lab",
+            temp_course_type: "lab",
             temp_room: selectedRoom,
             temp_section: selectedSection,
             temp_time_1: newTime2,
@@ -673,7 +762,7 @@ const TeacherRoutine = () => {
           {
             class_cancelled: 1,
             rescheduled: 0,
-            course_type: "lab",
+            temp_course_type: "lab",
             temp_course_code: selectedCourse,
             temp_teacher_1: teacherName,
             temp_teacher_2: otherTeacherName,
@@ -742,6 +831,7 @@ const TeacherRoutine = () => {
   const handleUndoCancelledClass = async (courseId, day, time, section) => {
     setIsProcessing(true);
     setProcessingAction(`undo-${courseId}-${day}-${time}-${section}`);
+
     let selectedCourseType = "";
     let rooms = [];
     let room = "";
@@ -752,6 +842,7 @@ const TeacherRoutine = () => {
         `teachers/${teacherName}/courses`,
         courseId.toString() + "_" + section
       );
+
       const courseSnapshot = await getDoc(courseRef);
       const courseData = courseSnapshot.data();
       selectedCourseType = courseData["course_type"];
@@ -818,6 +909,27 @@ const TeacherRoutine = () => {
       await updateDoc(timeSlotRef, {
         class_cancelled: 0,
       });
+
+      const notificationDocRef = doc(
+        db,
+        "notifications",
+        `semester_${sem}_${section}/class_routine`,
+        `notification_${new Date().getTime()}`
+      );
+
+      const newNotification = {
+        type: "UndoCancelled",
+        message: `${courseId} class has been rescheduled to ${day} ${time} in room ${room}`,
+        Course: courseId,
+        Section: section,
+        Day: day,
+        Time: time,
+        Room: room,
+        timestamp: new Date(),
+        ReadBy: [],
+      };
+
+      await setDoc(notificationDocRef, newNotification, { merge: true });
 
       console.log("Updated Semester Document");
 
@@ -896,6 +1008,7 @@ const TeacherRoutine = () => {
     console.log("Time: ", time);
     console.log("Room: ", room);
     console.log("Section: ", section);
+
     try {
       // Calculate timeslot
       const timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
@@ -958,6 +1071,27 @@ const TeacherRoutine = () => {
           temp_teacher_2: "",
           temp_section: "",
         });
+
+        const notificationDocRef = doc(
+          db,
+          "notifications",
+          `semester_${sem}_${section}/class_routine`,
+          `notification_${new Date().getTime()}`
+        );
+
+        const newNotification = {
+          type: "CancelTemporary",
+          message: `Temporary class of ${courseId} at ${day} ${time}  has been cancelled`,
+          Course: courseId,
+          Section: section,
+          Day: day,
+          Time: time,
+          Room: room,
+          timestamp: new Date(),
+          ReadBy: [],
+        };
+
+        await setDoc(notificationDocRef, newNotification, { merge: true });
         console.log("Updated room document");
         if (courseData.course_type === "lab") {
           const nextTimeSlot = timeSlot + 1; // For lab courses, update the next time slot as well
@@ -1027,7 +1161,7 @@ const TeacherRoutine = () => {
             otherTempRooms = otherTempRooms.filter(
               (_, index) => index !== otherSlotIndex
             );
-            console.log("Other Temp Time Slots UPdated: ", otherTempTimeSlots);
+            console.log("Other Temp Time Slots Updated: ", otherTempTimeSlots);
             console.log("OTher Temp Rooms Updated: ", otherTempRooms);
             await updateDoc(otherCourseRef, {
               assigned_temp_time_slots: otherTempTimeSlots,
@@ -1157,7 +1291,7 @@ const TeacherRoutine = () => {
           );
         })}
       </tbody>
-      
+
       <style>
         {`
           table {
@@ -1223,7 +1357,6 @@ const TeacherRoutine = () => {
         `}
       </style>
     </table>
-    
   );
 
   // Listen for incoming swap requests
@@ -1615,6 +1748,35 @@ const TeacherRoutine = () => {
         class_cancelled: 1,
       });
 
+      const notificationDocRef = doc(
+        db,
+        "notifications",
+        `semester_${reqSemesterNum}_${reqSection}/class_routine`,
+        `notification_${new Date().getTime()}`
+      );
+      const RD = dayMapping[reqDayIndex];
+      const RT = `${reqStartTime} -${reqEndTime}`;
+      const TD = dayMapping[targetDayIndex];
+      const TT = `${targetStartTime} -${targetEndTime}`;
+      const newNotification = {
+        type: "Swapped",
+        message: `${reqCourse} class of day ${RD} Time ${RT} has been swapped with ${targetCourse} class of day ${TD} Time ${TT}`,
+        reqCourse: reqCourse,
+        reqSection: reqSection,
+        reqDay: RD,
+        reqTime: RT,
+        reqRoom: reqRoom,
+        targetCourse: targetCourse,
+        targetSection: targetSection,
+        targetDay: TD,
+        targetTime: TT,
+        targetRoom: targetRoom,
+        timestamp: new Date(),
+        ReadBy: [],
+      };
+
+      await setDoc(notificationDocRef, newNotification, { merge: true });
+
       const targetRoomRef = doc(
         db,
         `time_slots/${targetTimeSlot}/rooms/${targetRoom}`
@@ -1629,6 +1791,42 @@ const TeacherRoutine = () => {
     } catch (error) {
       console.error("Error updating temp schedule:", error);
       throw error;
+    }
+  };
+
+  // Add new useEffect to fetch sent swap requests
+  useEffect(() => {
+    if (!teacherName) return;
+    const q = query(
+      collection(db, "swap_requests"),
+      where("requestingTeacher", "==", teacherName),
+      where("status", "==", "pending")
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const requests = [];
+      snapshot.forEach((doc) => {
+        requests.push({ id: doc.id, ...doc.data() });
+      });
+      setSentSwapRequests(requests);
+    });
+
+    return () => unsubscribe();
+  }, [teacherName]);
+
+  // Add new function to cancel swap request
+  const handleCancelSwapRequest = async (requestId) => {
+    setIsProcessing(true);
+    setProcessingAction(`cancel-swap-${requestId}`);
+    try {
+      await deleteDoc(doc(db, "swap_requests", requestId));
+      alert("Swap request cancelled successfully!");
+    } catch (error) {
+      console.error("Error cancelling swap request:", error);
+      alert(`Failed to cancel swap request: ${error.message}`);
+    } finally {
+      setIsProcessing(false);
+      setProcessingAction("");
     }
   };
 
@@ -1698,7 +1896,7 @@ const TeacherRoutine = () => {
                         </option>
                       ))}
                     </select>
-                    {selectedRoom && ( // Only render button if room is selected
+                    {selectedRoom && (
                       <button
                         onClick={confirmReschedule}
                         disabled={confirmRescheduleProcessing}
@@ -1725,35 +1923,186 @@ const TeacherRoutine = () => {
           </div>
         )}
 
+        {/* Sent Swap Requests Section */}
+        {sentSwapRequests.length > 0 && (
+          <div className="swap-requests">
+            <h3>Sent Swap Requests</h3>
+            {sentSwapRequests.map((request) => {
+              const reqDayIndex = Math.floor(
+                (request.requestingTimeSlot - 1) / 6
+              );
+              const reqTimeIndex = ((request.requestingTimeSlot - 1) % 6) + 1;
+              const reqDay = dayMapping[reqDayIndex];
+              const reqTime = timeMapping[reqTimeIndex];
+
+              const targetDayIndex = Math.floor(
+                (request.targetTimeSlot - 1) / 6
+              );
+              const targetTimeIndex = ((request.targetTimeSlot - 1) % 6) + 1;
+              const targetDay = dayMapping[targetDayIndex];
+              const targetTime = timeMapping[targetTimeIndex];
+
+              return (
+                <div
+                  key={request.id}
+                  className="swap-request"
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "15px",
+                    margin: "10px 0",
+                    borderRadius: "5px",
+                    backgroundColor: "#f9f9f9",
+                  }}
+                >
+                  <p style={{ marginBottom: "10px" }}>
+                    <strong>Swap Request Details:</strong>
+                  </p>
+                  <p>
+                    Requested to swap with teacher{" "}
+                    <strong>{request.targetTeacher}</strong>:
+                  </p>
+                  <ul style={{ listStyle: "none", padding: "10px" }}>
+                    <li>
+                      Your class: <strong>{request.requestingCourse}</strong>
+                    </li>
+                    <li>
+                      Your Room: <strong>{request.requestingRoom}</strong>
+                    </li>
+                    <li>
+                      Your Schedule: <strong>{reqDay}</strong> at{" "}
+                      <strong>{reqTime}</strong>
+                    </li>
+                  </ul>
+                  <p>With their:</p>
+                  <ul style={{ listStyle: "none", padding: "10px" }}>
+                    <li>
+                      Their class: <strong>{request.targetCourse}</strong>
+                    </li>
+                    <li>
+                      Their Room: <strong>{request.targetRoom}</strong>
+                    </li>
+                    <li>
+                      Their Schedule: <strong>{targetDay}</strong> at{" "}
+                      <strong>{targetTime}</strong>
+                    </li>
+                  </ul>
+                  <div style={{ marginTop: "15px" }}>
+                    <button
+                      onClick={() => handleCancelSwapRequest(request.id)}
+                      disabled={isProcessing}
+                      style={{
+                        backgroundColor: "#f44336",
+                        color: "white",
+                        padding: "8px 15px",
+                      }}
+                    >
+                      {processingAction === `cancel-swap-${request.id}`
+                        ? "Processing..."
+                        : "Cancel Request"}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
         {/* Swap Requests Section */}
         {swapRequests.length > 0 && (
           <div className="swap-requests">
             <h3>Pending Swap Requests</h3>
-            {swapRequests.map((request) => (
-              <div key={request.id} className="swap-request">
-                <p>
-                  Teacher {request.requestingTeacher} wants to swap their{" "}
-                  {request.requestingCourse} class with your{" "}
-                  {request.targetCourse} class
-                </p>
-                <button
-                  onClick={() => handleSwapResponse(request.id, true)}
-                  disabled={isProcessing}
+            {swapRequests.map((request) => {
+              // Calculate days and times for both classes
+              const reqDayIndex = Math.floor(
+                (request.requestingTimeSlot - 1) / 6
+              );
+              const reqTimeIndex = ((request.requestingTimeSlot - 1) % 6) + 1;
+              const reqDay = dayMapping[reqDayIndex];
+              const reqTime = timeMapping[reqTimeIndex];
+
+              const targetDayIndex = Math.floor(
+                (request.targetTimeSlot - 1) / 6
+              );
+              const targetTimeIndex = ((request.targetTimeSlot - 1) % 6) + 1;
+              const targetDay = dayMapping[targetDayIndex];
+              const targetTime = timeMapping[targetTimeIndex];
+
+              return (
+                <div
+                  key={request.id}
+                  className="swap-request"
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "15px",
+                    margin: "10px 0",
+                    borderRadius: "5px",
+                    backgroundColor: "#f9f9f9",
+                  }}
                 >
-                  {processingAction === `swap-${request.id}`
-                    ? "Processing..."
-                    : "Accept"}
-                </button>
-                <button
-                  onClick={() => handleSwapResponse(request.id, false)}
-                  disabled={isProcessing}
-                >
-                  {processingAction === `swap-${request.id}`
-                    ? "Processing..."
-                    : "Reject"}
-                </button>
-              </div>
-            ))}
+                  <p style={{ marginBottom: "10px" }}>
+                    <strong>Swap Request Details:</strong>
+                  </p>
+                  <p>
+                    Teacher <strong>{request.requestingTeacher}</strong> wants
+                    to swap:
+                  </p>
+                  <ul style={{ listStyle: "none", padding: "10px" }}>
+                    <li>
+                      Their class: <strong>{request.requestingCourse}</strong>
+                    </li>
+                    <li>
+                      Current Room: <strong>{request.requestingRoom}</strong>
+                    </li>
+                    <li>
+                      Current Schedule: <strong>{reqDay}</strong> at{" "}
+                      <strong>{reqTime}</strong>
+                    </li>
+                  </ul>
+                  <p>With your:</p>
+                  <ul style={{ listStyle: "none", padding: "10px" }}>
+                    <li>
+                      Your class: <strong>{request.targetCourse}</strong>
+                    </li>
+                    <li>
+                      Current Room: <strong>{request.targetRoom}</strong>
+                    </li>
+                    <li>
+                      Current Schedule: <strong>{targetDay}</strong> at{" "}
+                      <strong>{targetTime}</strong>
+                    </li>
+                  </ul>
+                  <div style={{ marginTop: "15px" }}>
+                    <button
+                      onClick={() => handleSwapResponse(request.id, true)}
+                      disabled={isProcessing}
+                      style={{
+                        marginRight: "10px",
+                        backgroundColor: "#4CAF50",
+                        color: "white",
+                        padding: "8px 15px",
+                      }}
+                    >
+                      {processingAction === `swap-${request.id}`
+                        ? "Processing..."
+                        : "Accept"}
+                    </button>
+                    <button
+                      onClick={() => handleSwapResponse(request.id, false)}
+                      disabled={isProcessing}
+                      style={{
+                        backgroundColor: "#f44336",
+                        color: "white",
+                        padding: "8px 15px",
+                      }}
+                    >
+                      {processingAction === `swap-${request.id}`
+                        ? "Processing..."
+                        : "Reject"}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

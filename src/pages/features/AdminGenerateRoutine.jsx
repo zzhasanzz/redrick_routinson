@@ -53,8 +53,11 @@ const AdminGenerateRoutine = () => {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
+          console.log("Document data:", docSnap.data());
           const data = docSnap.data();
-          setCurrentSeason(data.season); 
+
+          setCurrentSeason(data.season.toLocaleString()); // Set the current season
+          console.log("Current Season: ", data["season"]);
           setLastGeneratedTimestamp(data.timestamp.toDate().toLocaleString()); // Convert Firestore timestamp to readable format
         }
       } catch (error) {
@@ -76,7 +79,10 @@ const AdminGenerateRoutine = () => {
     try {
       setLoading(true);
       const processedData = {};
-      const semesters = currentSeason === "summer" ? ["2", "4", "6", "8"] : ["1", "3", "5", "7"];
+      const semesters =
+        currentSeason === "summer"
+          ? ["2", "4", "6", "8"]
+          : ["1", "3", "5", "7"];
       const sections = ["A", "B"];
 
       for (const semester of semesters) {
@@ -209,7 +215,7 @@ const AdminGenerateRoutine = () => {
     return (
       <Box overflowX="auto" mb={8}>
         <Table variant="striped" border="black" colorScheme="white" size="xl">
-          <Thead bg="rgb(179, 188, 201)" height ="60px">
+          <Thead bg="rgb(179, 188, 201)" height="60px">
             <Tr>
               <Th width="15%" textAlign="center" color="rgb(43, 41, 41)">
                 Day
@@ -242,11 +248,7 @@ const AdminGenerateRoutine = () => {
                   {timeSlots.map((_, timeIndex) => {
                     const course = dayData ? dayData[timeIndex + 1] : null;
                     return (
-                      <Td
-                        key={timeIndex}
-                        textAlign="center"
-                        p={2}
-                      >
+                      <Td key={timeIndex} textAlign="center" p={2}>
                         {course ? renderCourseCell(course) : "---"}
                       </Td>
                     );
@@ -285,7 +287,8 @@ const AdminGenerateRoutine = () => {
     );
   }
 
-  const semesters = currentSeason === "summer" ? ["2", "4", "6", "8"] : ["1", "3", "5", "7"];
+  const semesters =
+    currentSeason === "summer" ? ["2", "4", "6", "8"] : ["1", "3", "5", "7"];
 
   return (
     <Box p={6}>
@@ -314,7 +317,9 @@ const AdminGenerateRoutine = () => {
       {timetableData ? (
         <>
           <Text textAlign="center" mb={8} fontSize="lg" fontWeight="bold">
-            Last Generated Routine: {currentSeason === "summer" ? "Summer" : "Winter"} (Generated on: {lastGeneratedTimestamp})
+            Last Generated Routine:{" "}
+            {currentSeason === "summer" ? "Summer" : "Winter"} (Generated on:{" "}
+            {lastGeneratedTimestamp})
           </Text>
           <Tabs
             colorScheme="gray"
