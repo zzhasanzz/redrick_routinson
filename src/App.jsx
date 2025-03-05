@@ -131,11 +131,11 @@ function App() {
                 </RequireAuth>
               }
             />
-             <Route
+            <Route
               path="/admin-home/admin-generate-seat-plan"
               element={
                 <RequireAuth allowedRoles={["admin"]}>
-                  <AdminGenerateSeatPlanForAll/>
+                  <AdminGenerateSeatPlanForAll />
                 </RequireAuth>
               }
             />
@@ -169,7 +169,7 @@ function App() {
               path="/student-home/student-dashboard"
               element={
                 <RequireAuth allowedRoles={["student"]}>
-                  <StudentDashboard />
+                    <StudentDashboard />
                 </RequireAuth>
               }
             />

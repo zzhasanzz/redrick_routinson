@@ -63,6 +63,7 @@ const TeacherRoutine = () => {
   for (let i = 1; i <= 30; i++) {
     allTimeSlots.add(i);
   }
+  
 
   let allRooms = new Set([
     "1",
@@ -1059,7 +1060,7 @@ const TeacherRoutine = () => {
   };
 
   const renderTable = () => (
-    <table border="1" style={{ borderCollapse: "collapse", width: "100%" }}>
+    <table border="2px" style={{ borderCollapse: "collapse", width: "100%" }}>
       <thead>
         <tr>
           <th>Course</th>
@@ -1156,7 +1157,73 @@ const TeacherRoutine = () => {
           );
         })}
       </tbody>
+      
+      <style>
+        {`
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+            margin: 20px 0;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+          }
+
+          th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #dddddd;
+          }
+
+          th {
+            background-color:rgb(127, 163, 190);
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-align: center;
+            font-size: 16px;
+          }
+
+          tr:nth-child(even) {
+            background-color:rgb(255, 255, 255);
+          }
+
+          tr:hover {
+            background-color:rgb(255, 255, 255);
+          }
+
+          button {
+            padding: 5px 10px;
+            margin: 2px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            background-color:rgb(170, 179, 210);
+            transition: background-color 0.3s ease;
+          }
+
+          button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+          }
+
+          button:hover:not(:disabled) {
+            opacity: 0.8;
+          }
+
+          button:nth-child(1) {
+            background-color:rgba(107, 71, 71, 0.59);
+            color: white;
+          }
+
+          button:nth-child(2) {
+            background-color:rgba(136, 127, 173, 0.75);
+            color: white;
+          }
+        `}
+      </style>
     </table>
+    
   );
 
   // Listen for incoming swap requests
