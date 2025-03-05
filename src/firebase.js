@@ -16,6 +16,17 @@ const firebaseConfig = {
 
 // // 2nd Demo Project
 // const firebaseConfig = {
+//   apiKey: "AIzaSyBCd9S0rvxs8i2hKZ3iNj_ILHeCIMk5ARc",
+//   authDomain: "demo2-f1c97.firebaseapp.com",
+//   projectId: "demo2-f1c97",
+//   storageBucket: "demo2-f1c97.firebasestorage.app",
+//   messagingSenderId: "561462620151",
+//   appId: "1:561462620151:web:be1c0090915bbc9fc108f2",
+//   measurementId: "G-BWJ3DYHWJB"
+// };
+
+// 2nd Demo Project
+// const firebaseConfig = {
 //   apiKey: "AIzaSyDVAZFRD3LdV3ZBFWJQozlVOWaRkEoEDxM",
 //   authDomain: "fir-6561e.firebaseapp.com",
 //   projectId: "fir-6561e",
