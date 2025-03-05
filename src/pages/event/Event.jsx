@@ -66,7 +66,8 @@ import {
     FaTimes,
     FaHandsHelping,
     FaTicketAlt,
-    FaRegCheckCircle
+    FaRegCheckCircle,
+    FaChalkboardTeacher
 } from "react-icons/fa";
 
 
@@ -86,8 +87,6 @@ const Event = () => {
     const [loading, setLoading] = useState(true);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [eventName, setEventName] = useState("");
-    const [startDate, setStartDate] = useState(new Date());
-    const [endDate, setEndDate] = useState(new Date());
     const [description, setDescription] = useState("");
     const [subscriptionFee, setSubscriptionFee] = useState("");
     const [enableVolunteer, setEnableVolunteer] = useState(false);
@@ -169,6 +168,17 @@ const Event = () => {
 
     const [newFoodItem, setNewFoodItem] = useState("");
     const [userData, setUserData] = useState(null); // Add userData state
+
+    const [startDate, setStartDate] = useState(() => {
+        const date = new Date();
+        date.setHours(0, 0, 0, 0);
+        return date;
+    });
+    const [endDate, setEndDate] = useState(() => {
+        const date = new Date();
+        date.setHours(0, 0, 0, 0);
+        return date;
+    });
 
 
 
@@ -777,9 +787,13 @@ const Event = () => {
                                     <DatePicker
                                         selected={startDate}
                                         onChange={date => {
-                                            setStartDate(date);
-                                            if (endDate < date) setEndDate(date);
+                                            const cleanDate = new Date(date);
+                                            cleanDate.setHours(0, 0, 0, 0);
+                                            setStartDate(cleanDate);
+                                            if (endDate < cleanDate) setEndDate(cleanDate);
                                         }}
+                                        minDate={new Date()}
+                                        dateFormat="MMMM d, yyyy"
                                         customInput={
                                             <Input
                                                 variant="outline"
@@ -788,8 +802,6 @@ const Event = () => {
                                                 _hover={{ borderColor: 'gray.300' }}
                                             />
                                         }
-                                        dateFormat="MMMM d, yyyy h:mm aa"
-                                        showTimeSelect
                                     />
                                 </FormControl>
 
@@ -797,8 +809,13 @@ const Event = () => {
                                     <FormLabel fontWeight="600" color="gray.600">End Date</FormLabel>
                                     <DatePicker
                                         selected={endDate}
-                                        onChange={date => setEndDate(date)}
+                                        onChange={date => {
+                                            const cleanDate = new Date(date);
+                                            cleanDate.setHours(0, 0, 0, 0);
+                                            setEndDate(cleanDate);
+                                        }}
                                         minDate={startDate}
+                                        dateFormat="MMMM d, yyyy"
                                         customInput={
                                             <Input
                                                 variant="outline"
@@ -807,8 +824,6 @@ const Event = () => {
                                                 _hover={{ borderColor: 'gray.300' }}
                                             />
                                         }
-                                        dateFormat="MMMM d, yyyy h:mm aa"
-                                        showTimeSelect
                                     />
                                 </FormControl>
                             </SimpleGrid>
@@ -1128,6 +1143,19 @@ const Event = () => {
                                                     }}
                                                 >
                                                     Participants
+                                                </Button>
+                                                {/* New Invite Teachers button */}
+                                                <Button
+                                                    leftIcon={<FaChalkboardTeacher />}// Consider using FaUserPlus if available
+                                                    colorScheme="teal"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        navigate(`/student-home/event/invite/${event.id}`);
+                                                    }}
+                                                >
+                                                    Invite Teachers
                                                 </Button>
                                                 <Button
                                                     leftIcon={<FaEdit />}
