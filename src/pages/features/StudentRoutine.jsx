@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import { db } from "../../firebase";
 import {
   doc,
@@ -7,6 +7,9 @@ import {
   getDocs,
   query,
   orderBy,
+  updateDoc,
+  arrayUnion,
+  onSnapshot,
 } from "firebase/firestore";
 import { AuthContext } from "../../context/AuthContext";
 import {
@@ -29,6 +32,7 @@ import {
   PopoverContent,
   PopoverBody,
   Badge,
+  useToast,
 } from "@chakra-ui/react";
 import { BellIcon } from "@chakra-ui/icons";
 
@@ -47,39 +51,66 @@ const StudentRoutine = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [notifications, setNotifications] = useState([]);
+
+  const toast = useToast();
   const { currentUser } = useContext(AuthContext);
+
+  const unreadCount = useMemo(() => {
+    if (!currentUser || !notifications) return 0;
+    return notifications.filter(
+      (notification) => !notification.ReadBy?.includes(currentUser.email)
+    ).length;
+  }, [notifications, currentUser]);
+
+  const markAsRead = async (notificationId) => {
+    if (!currentUser?.email) return;
+    const currentUserDoc = await getDoc(doc(db, "users", currentUser.email));
+    const { semester: sem, section: sect } = currentUserDoc.data();
+    try {
+      const notificationPath = `notifications/semester_${sem}_${sect}/class_routine/${notificationId}`;
+      await updateDoc(doc(db, notificationPath), {
+        ReadBy: arrayUnion(currentUser.email),
+      });
+    } catch (error) {
+      toast({
+        title: "Error marking notification as read",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+      });
+    }
+  };
 
   const fetchNotifications = async (sem, section) => {
     try {
       const notificationsRef = collection(
         db,
-        "notifications",
-        `semester_${sem}_${section}`,
-        "class_routine"
+        `notifications/semester_${sem}_${section}/class_routine`
       );
       const q = query(notificationsRef, orderBy("timestamp", "desc"));
-      const querySnapshot = await getDocs(q);
-      const notificationsList = [];
 
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        notificationsList.push({
-          id: doc.id,
-          message: data.message || "No message content",
-          timestamp: data.timestamp?.toDate() || new Date(),
-          type: data.type || "info",
-          title: data.title || "Notification",
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const notificationsList = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          notificationsList.push({
+            id: doc.id,
+            ...data,
+            timestamp: data.timestamp?.toDate() || new Date(),
+          });
         });
+        setNotifications(notificationsList);
       });
 
-      setNotifications(notificationsList);
+      return unsubscribe;
     } catch (error) {
       console.error("Error fetching notifications:", error);
     }
   };
 
   useEffect(() => {
-    const fetchRoutine = async () => {
+    let unsubscribe;
+    const fetchData = async () => {
       if (currentUser) {
         try {
           const userDoc = await getDoc(doc(db, "users", currentUser.email));
@@ -87,6 +118,8 @@ const StudentRoutine = () => {
             const userData = userDoc.data();
             const sem = userData.semester;
             const sect = userData.section;
+
+            unsubscribe = await fetchNotifications(sem, sect);
 
             // Fetch notifications
             await fetchNotifications(sem, sect);
@@ -203,7 +236,10 @@ const StudentRoutine = () => {
       }
     };
 
-    fetchRoutine();
+    fetchData();
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [currentUser]);
 
   const renderCourseCell = (course) => {
@@ -247,7 +283,7 @@ const StudentRoutine = () => {
             variant="ghost"
             position="relative"
           >
-            {notifications.length > 0 && (
+            {unreadCount > 0 && (
               <Badge
                 position="absolute"
                 top="-1"
@@ -255,7 +291,7 @@ const StudentRoutine = () => {
                 colorScheme="red"
                 borderRadius="full"
               >
-                {notifications.length}
+                {unreadCount}
               </Badge>
             )}
           </IconButton>
@@ -264,29 +300,46 @@ const StudentRoutine = () => {
           <PopoverBody>
             <VStack align="stretch" spacing={2}>
               {notifications && notifications.length > 0 ? (
-                notifications.map((notification) => (
-                  <Box
-                    key={notification.id}
-                    p={3}
-                    bg="gray.50"
-                    borderRadius="md"
-                    borderLeft="4px"
-                    borderLeftColor="blue.500"
-                    _hover={{ bg: "gray.100" }}
-                  >
-                    <Text fontWeight="bold" fontSize="sm">
-                      {notification.title}
-                    </Text>
-                    <Text fontSize="sm" my={1}>
-                      {notification.message}
-                    </Text>
-                    <Text fontSize="xs" color="gray.500">
-                      {notification.timestamp instanceof Date
-                        ? notification.timestamp.toLocaleString()
-                        : new Date().toLocaleString()}
-                    </Text>
-                  </Box>
-                ))
+                notifications.map((notification) => {
+                  const isRead = notification.ReadBy?.includes(
+                    currentUser?.email
+                  );
+                  return (
+                    <Box
+                      key={notification.id}
+                      p={3}
+                      bg="gray.50"
+                      borderRadius="md"
+                      borderLeft="4px"
+                      borderLeftColor={isRead ? "gray.400" : "blue.500"}
+                      opacity={isRead ? 0.7 : 1}
+                      cursor="pointer"
+                      _hover={{ bg: "gray.100" }}
+                      onClick={() => !isRead && markAsRead(notification.id)}
+                      transition="all 0.2s"
+                    >
+                      <Text fontWeight="bold" fontSize="sm">
+                        {notification.title}
+                      </Text>
+                      <Text fontSize="sm" my={1}>
+                        {notification.message}
+                      </Text>
+                      <Text fontSize="xs" color="gray.500">
+                        {notification.timestamp.toLocaleString()}
+                      </Text>
+                      {!isRead && (
+                        <Badge
+                          colorScheme="blue"
+                          fontSize="xx-small"
+                          variant="solid"
+                          mt={1}
+                        >
+                          New
+                        </Badge>
+                      )}
+                    </Box>
+                  );
+                })
               ) : (
                 <Text p={2} textAlign="center" color="gray.500">
                   No notifications
@@ -298,7 +351,6 @@ const StudentRoutine = () => {
       </Popover>
     </Box>
   );
-
   if (loading) {
     return (
       <Box textAlign="center" p={8}>

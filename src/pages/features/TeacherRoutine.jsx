@@ -327,7 +327,8 @@ const TeacherRoutine = () => {
     );
 
     const newNotification = {
-      message: `Cancelled`,
+      type: `Cancelled`,
+      message: `${courseId} of ${day} ${time} has been cancelled`,
       Course: courseId,
       Section: section,
       Day: day,
@@ -531,16 +532,17 @@ const TeacherRoutine = () => {
       );
 
       const newNotification = {
-        message: `Rescheduled`,
+        type: `Rescheduled`,
+        message: `${selectedCourse} of ${selectedDay}  ${selectedTime}class of has been rescheduled to ${newDay} ${newTime} in room ${toBeRescheduledRoom}`,
         Course: selectedCourse,
         Section: selectedSection,
         Day: selectedDay,
         Time: selectedTime,
-        Room: toBeRescheduledRoom,
+        Room: selectedRoom,
 
         RescheduledDay: newDay,
         RescheduledTime: newTime,
-        RescheduledRoom: selectedRoom,
+        RescheduledRoom: toBeRescheduledRoom,
         timestamp: new Date(),
         ReadBy: [],
       };
@@ -915,7 +917,8 @@ const TeacherRoutine = () => {
       );
 
       const newNotification = {
-        message: `Undone`,
+        type: "UndoCancelled",
+        message: `${courseId} class has been rescheduled to ${day} ${time} in room ${room}`,
         Course: courseId,
         Section: section,
         Day: day,
@@ -1076,7 +1079,8 @@ const TeacherRoutine = () => {
         );
 
         const newNotification = {
-          message: `Temporary Class of Cancelled`,
+          type: "CancelTemporary",
+          message: `Temporary class of ${courseId} at ${day} ${time}  has been cancelled`,
           Course: courseId,
           Section: section,
           Day: day,
@@ -1689,7 +1693,8 @@ const TeacherRoutine = () => {
       const TD = dayMapping[targetDayIndex];
       const TT = `${targetStartTime} -${targetEndTime}`;
       const newNotification = {
-        message: `Swapped`,
+        type: "Swapped",
+        message: `${reqCourse} class of day ${RD} Time ${RT} has been swapped with ${targetCourse} class of day ${TD} Time ${TT}`,
         reqCourse: reqCourse,
         reqSection: reqSection,
         reqDay: RD,
