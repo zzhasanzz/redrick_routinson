@@ -81,7 +81,11 @@ const SemesterRoutineTable = ({
           justifyContent="center"
           alignItems="center"
           textAlign="center"
-          minH="60px"
+          height="85px"
+          _hover={{
+            bg: "rgb(215, 227, 246)", // Light gray on hover
+            transition: "background 0.4s ease-in-out",
+          }}
         >
           Free Slot
         </Tag>
@@ -105,6 +109,10 @@ const SemesterRoutineTable = ({
         alignItems="center"
         textAlign="center"
         minH="60px"
+        _hover={{
+            bg: "rgb(215, 227, 246)", // Light gray on hover
+            transition: "background 0.4s ease-in-out",
+        }}
       >
         <div>
           <div>{slot.course}</div>
@@ -121,7 +129,7 @@ const SemesterRoutineTable = ({
   return (
     <Box overflowX="auto" mb={8}>
       <Table variant="striped" border="black" colorScheme="white" size="xl">
-        <Thead bg="rgb(43, 65, 98)">
+        <Thead bg="rgb(215, 227, 246)" height="60px">
           <Tr>
             <Th width="15%" textAlign="center" color="rgb(43, 41, 41)">
               Day / Time

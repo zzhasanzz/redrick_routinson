@@ -22,6 +22,8 @@ const StudentDashboard = () => {
                         justifyContent="center"
                         borderRadius="30px"
                         backgroundColor="#edf8fb"
+                        backgroundImage="url('../assets/class_routine_button_student.png')"
+                        backgroundSize="cover"
                         border="2px solid rgba(255, 255, 255, 0.7)"
                         color="black"
                         _hover={{
@@ -33,16 +35,16 @@ const StudentDashboard = () => {
                             backgroundColor: "rgba(255, 255, 255, 0.3)"
                         }}
                     >
-                        <Image 
-                            src="../assets/routine.png" 
-                            boxSize="150px" // Adjust size as needed
+                        {/* <Image 
+                            src="../assets/class_routine_button.png" 
+                            boxSize="450px" // Adjust size as needed
                             alt="Class Routine"
-                        />
-                        <Text fontSize="3xl" fontFamily="sans serif" color="#415c77">Class Routine</Text>
+                        /> */}
+                       {/* <Text fontSize="3xl" fontFamily="sans serif" color="#415c77">Class Routine</Text> */}
                     </Button>
                 </Link>
 
-                <Link to="/forum">
+                <Link to="/student-home/forum">
                     <Button
                         height="250px"
                         width="450px"
@@ -50,6 +52,8 @@ const StudentDashboard = () => {
                         justifyContent="center"
                         borderRadius="30px"
                         backgroundColor="#edf8fb"
+                        backgroundImage="url('../assets/discussion_forum.png')"
+                        backgroundSize="cover"
                         border="2px solid rgba(255, 255, 255, 0.7)"
                         color="black"
                         _hover={{
@@ -61,12 +65,7 @@ const StudentDashboard = () => {
                             backgroundColor: "rgba(255, 255, 255, 0.3)"
                         }}
                     >
-                       <Image 
-                            src="../assets/forum.png" 
-                            boxSize="150px" // Adjust size as needed
-                            alt="Forum"
-                        />
-                        <Text fontSize="3xl" fontFamily="sans serif" color="#415c77">Forum</Text>
+                       
                     </Button>
                 </Link>
 
@@ -78,6 +77,8 @@ const StudentDashboard = () => {
                         justifyContent="center"
                         borderRadius="30px"
                         backgroundColor="#edf8fb"
+                        backgroundImage="url('../assets/event_button.png')"
+                        backgroundSize="cover"
                         border="2px solid rgba(255, 255, 255, 0.7)"
                         color="black"
                         _hover={{
@@ -89,12 +90,7 @@ const StudentDashboard = () => {
                             backgroundColor: "rgba(255, 255, 255, 0.3)"
                         }}
                     >
-                        <Image 
-                            src="../assets/event.png" 
-                            boxSize="150px" // Adjust size as needed
-                            alt="Event"
-                        />
-                        <Text fontSize="3xl" fontFamily="sans serif" color="#415c77">Event</Text>
+                        
                     </Button>
                 </Link>
 
@@ -107,6 +103,8 @@ const StudentDashboard = () => {
                         borderRadius="30px"
                         backgroundColor="#edf8fb"
                         border="2px solid rgba(255, 255, 255, 0.7)"
+                        backgroundImage="url('../assets/lost_and_found.png')"
+                        backgroundSize="cover"
                         color="black"
                         _hover={{
                             backgroundColor: "#bedee9",
@@ -117,12 +115,6 @@ const StudentDashboard = () => {
                             backgroundColor: "rgba(255, 255, 255, 0.3)"
                         }}
                     >
-                        <Image 
-                            src="../assets/lostAndFound.png" 
-                            boxSize="150px" // Adjust size as needed
-                            alt="Lost and Found"
-                        />
-                        <Text fontSize="3xl" fontFamily="sans serif" color="#415c77">Lost and Found</Text>
                     </Button>
                 </Link>
 
@@ -135,6 +127,8 @@ const StudentDashboard = () => {
                         borderRadius="30px"
                         backgroundColor="#edf8fb"
                         border="2px solid rgba(255, 255, 255, 0.7)"
+                        backgroundImage="url('../assets/seat_plan_button.png')"
+                        backgroundSize="cover"
                         color="black"
                         _hover={{
                             backgroundColor: "#bedee9",
@@ -145,12 +139,7 @@ const StudentDashboard = () => {
                             backgroundColor: "rgba(255, 255, 255, 0.3)"
                         }}
                     >
-                       <Image 
-                            src="../assets/seatplan.png" 
-                            boxSize="150px" // Adjust size as needed
-                            alt="Seat Plan"
-                        />
-                        <Text fontSize="3xl" fontFamily="sans serif" color="#415c77">Seat Plan</Text>
+                       
                     </Button>
                 </Link>
 
