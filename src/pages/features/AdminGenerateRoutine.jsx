@@ -105,27 +105,24 @@ const AdminGenerateRoutine = () => {
           // Fill in the routine with actual data
           snapshot.forEach((doc) => {
             const data = doc.data();
-            if (!data.class_cancelled || data.temp_course_code) {
-              const courseInfo = data.temp_course_code
-                ? `${data.temp_course_code}\n${data.temp_teacher_1}\n${data.temp_room}`
-                : `${data.perm_course_code}\n${data.perm_teacher_1}\n${data.perm_room}`;
+            
+              const courseInfo =  `${data.perm_course_code}\n${data.perm_teacher_1}\n${data.perm_teacher_2}\n${data.perm_room}`;
 
-              const dayIndex = days.indexOf(data.temp_day || data.perm_day);
+              const dayIndex = days.indexOf( data.perm_day);
               const timeIndex = timeSlots.indexOf(
-                data.temp_time_1 || data.perm_time_1
+              data.perm_time_1
               );
 
               if (dayIndex !== -1 && timeIndex !== -1) {
                 routineStructure[dayIndex][timeIndex + 1] = courseInfo;
 
                 // If it's a lab, fill the next slot too
-                const courseType =
-                  data.temp_course_type || data.perm_course_type;
+                const courseType = data.perm_course_type;
                 if (courseType === "lab" && timeIndex + 2 <= timeSlots.length) {
                   routineStructure[dayIndex][timeIndex + 2] = courseInfo;
                 }
               }
-            }
+            
           });
 
           processedData[semester][section] = routineStructure;
@@ -182,7 +179,7 @@ const AdminGenerateRoutine = () => {
   const renderCourseCell = (course) => {
     if (!course) return null;
 
-    const [code, teacher, room] = course.split("\n");
+    const [code, teacher1,teacher2, room] = course.split("\n");
     const isLab = code.endsWith("2") || code.includes("LAB");
 
     return (
@@ -205,7 +202,8 @@ const AdminGenerateRoutine = () => {
         boxShadow={`inset 0 0 0 1px ${isLab ? "purple.200" : "blue.200"}`}
       >
         <Text fontWeight="bold">{code}</Text>
-        <Text fontSize="sm">{teacher}</Text>
+        <Text fontSize="sm">{teacher1}</Text>
+        <Text fontSize="sm">{teacher2}</Text>
         <Text fontSize="sm">Room: {room}</Text>
       </Tag>
     );

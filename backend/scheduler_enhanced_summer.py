@@ -74,6 +74,7 @@ def write_routine_to_firestore(scheduled_classes):
         # Delete collections before writing new data
         delete_collection(db.collection('courses'))
         delete_collection(db.collection('time_slots'))
+        delete_collection(db.collection('teachers'))
 
         # Prepare data structures for batch processing
         semester_data = defaultdict(list)
@@ -684,8 +685,6 @@ def main():
         # Schedule remaining classes with faculty preferences
         unscheduled = schedule_remaining_classes(regular_classes, scheduled, faculty_details)
         
-        # Store course information in Firestore
-        update_courses_collection(scheduled)
         
         # Write final schedule to JSON
         write_schedule_to_json(scheduled)
@@ -694,6 +693,9 @@ def main():
         write_schedule_to_csv(scheduled)
         
         write_routine_to_firestore(scheduled)
+
+        # Store course information in Firestore
+        update_courses_collection(scheduled)
         
         print(f"Scheduled {len(scheduled)} classes.")
         if unscheduled:

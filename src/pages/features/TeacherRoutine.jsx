@@ -43,6 +43,7 @@ const TeacherRoutine = () => {
   const [swapProcessing, setSwapProcessing] = useState(false);
   const [confirmRescheduleProcessing, setConfirmRescheduleProcessing] =
     useState(false);
+  const [sentSwapRequests, setSentSwapRequests] = useState([]);
 
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
   const times = {
@@ -63,7 +64,6 @@ const TeacherRoutine = () => {
   for (let i = 1; i <= 30; i++) {
     allTimeSlots.add(i);
   }
-  
 
   let allRooms = new Set([
     "1",
@@ -323,7 +323,7 @@ const TeacherRoutine = () => {
     const notificationDocRef = doc(
       db,
       "notifications",
-      `semester_${sem}_${selectedSection}/class_routine`,
+      `semester_${sem}_${section}/class_routine`,
       `notification_${new Date().getTime()}`
     );
 
@@ -1291,7 +1291,7 @@ const TeacherRoutine = () => {
           );
         })}
       </tbody>
-      
+
       <style>
         {`
           table {
@@ -1309,25 +1309,25 @@ const TeacherRoutine = () => {
           }
 
           th {
-            background-color:rgb(127, 163, 190);
+            background-color:rgba(174, 197, 199, 0.86);
+            border:  solid 1px;
             color: white;
-            font-weight: bold;
-            text-transform: uppercase;
+            color: rgb(59, 58, 58);
             text-align: center;
             font-size: 16px;
           }
 
           tr:nth-child(even) {
-            background-color:rgb(255, 255, 255);
+            background-color:rgb(228, 236, 240);
           }
 
           tr:hover {
-            background-color:rgb(255, 255, 255);
+            opacity: 0.8;
           }
 
           button {
             padding: 5px 10px;
-            margin: 2px;
+            margin: 3px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
@@ -1342,22 +1342,21 @@ const TeacherRoutine = () => {
           }
 
           button:hover:not(:disabled) {
-            opacity: 0.8;
+            opacity: 0.9;
           }
 
           button:nth-child(1) {
-            background-color:rgba(107, 71, 71, 0.59);
-            color: white;
+            background-color:rgba(152, 191, 208, 0.59);
+            color: rgb(48, 55, 60);
           }
 
           button:nth-child(2) {
-            background-color:rgba(136, 127, 173, 0.75);
+            background-color:rgba(128, 165, 213, 0.75);
             color: white;
           }
         `}
       </style>
     </table>
-    
   );
 
   // Listen for incoming swap requests
@@ -1795,6 +1794,42 @@ const TeacherRoutine = () => {
     }
   };
 
+  // Add new useEffect to fetch sent swap requests
+  useEffect(() => {
+    if (!teacherName) return;
+    const q = query(
+      collection(db, "swap_requests"),
+      where("requestingTeacher", "==", teacherName),
+      where("status", "==", "pending")
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const requests = [];
+      snapshot.forEach((doc) => {
+        requests.push({ id: doc.id, ...doc.data() });
+      });
+      setSentSwapRequests(requests);
+    });
+
+    return () => unsubscribe();
+  }, [teacherName]);
+
+  // Add new function to cancel swap request
+  const handleCancelSwapRequest = async (requestId) => {
+    setIsProcessing(true);
+    setProcessingAction(`cancel-swap-${requestId}`);
+    try {
+      await deleteDoc(doc(db, "swap_requests", requestId));
+      alert("Swap request cancelled successfully!");
+    } catch (error) {
+      console.error("Error cancelling swap request:", error);
+      alert(`Failed to cancel swap request: ${error.message}`);
+    } finally {
+      setIsProcessing(false);
+      setProcessingAction("");
+    }
+  };
+
   return (
     <div style={{ padding: "10px 100px 0px 50px" }}>
       <TeacherSidebar />
@@ -1861,7 +1896,7 @@ const TeacherRoutine = () => {
                         </option>
                       ))}
                     </select>
-                    {selectedRoom && ( // Only render button if room is selected
+                    {selectedRoom && (
                       <button
                         onClick={confirmReschedule}
                         disabled={confirmRescheduleProcessing}
@@ -1888,35 +1923,186 @@ const TeacherRoutine = () => {
           </div>
         )}
 
+        {/* Sent Swap Requests Section */}
+        {sentSwapRequests.length > 0 && (
+          <div className="swap-requests">
+            <h3>Sent Swap Requests</h3>
+            {sentSwapRequests.map((request) => {
+              const reqDayIndex = Math.floor(
+                (request.requestingTimeSlot - 1) / 6
+              );
+              const reqTimeIndex = ((request.requestingTimeSlot - 1) % 6) + 1;
+              const reqDay = dayMapping[reqDayIndex];
+              const reqTime = timeMapping[reqTimeIndex];
+
+              const targetDayIndex = Math.floor(
+                (request.targetTimeSlot - 1) / 6
+              );
+              const targetTimeIndex = ((request.targetTimeSlot - 1) % 6) + 1;
+              const targetDay = dayMapping[targetDayIndex];
+              const targetTime = timeMapping[targetTimeIndex];
+
+              return (
+                <div
+                  key={request.id}
+                  className="swap-request"
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "15px",
+                    margin: "10px 0",
+                    borderRadius: "5px",
+                    backgroundColor: "#f9f9f9",
+                  }}
+                >
+                  <p style={{ marginBottom: "10px" }}>
+                    <strong>Swap Request Details:</strong>
+                  </p>
+                  <p>
+                    Requested to swap with teacher{" "}
+                    <strong>{request.targetTeacher}</strong>:
+                  </p>
+                  <ul style={{ listStyle: "none", padding: "10px" }}>
+                    <li>
+                      Your class: <strong>{request.requestingCourse}</strong>
+                    </li>
+                    <li>
+                      Your Room: <strong>{request.requestingRoom}</strong>
+                    </li>
+                    <li>
+                      Your Schedule: <strong>{reqDay}</strong> at{" "}
+                      <strong>{reqTime}</strong>
+                    </li>
+                  </ul>
+                  <p>With their:</p>
+                  <ul style={{ listStyle: "none", padding: "10px" }}>
+                    <li>
+                      Their class: <strong>{request.targetCourse}</strong>
+                    </li>
+                    <li>
+                      Their Room: <strong>{request.targetRoom}</strong>
+                    </li>
+                    <li>
+                      Their Schedule: <strong>{targetDay}</strong> at{" "}
+                      <strong>{targetTime}</strong>
+                    </li>
+                  </ul>
+                  <div style={{ marginTop: "15px" }}>
+                    <button
+                      onClick={() => handleCancelSwapRequest(request.id)}
+                      disabled={isProcessing}
+                      style={{
+                        backgroundColor: "#f44336",
+                        color: "white",
+                        padding: "8px 15px",
+                      }}
+                    >
+                      {processingAction === `cancel-swap-${request.id}`
+                        ? "Processing..."
+                        : "Cancel Request"}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
         {/* Swap Requests Section */}
         {swapRequests.length > 0 && (
           <div className="swap-requests">
             <h3>Pending Swap Requests</h3>
-            {swapRequests.map((request) => (
-              <div key={request.id} className="swap-request">
-                <p>
-                  Teacher {request.requestingTeacher} wants to swap their{" "}
-                  {request.requestingCourse} class with your{" "}
-                  {request.targetCourse} class
-                </p>
-                <button
-                  onClick={() => handleSwapResponse(request.id, true)}
-                  disabled={isProcessing}
+            {swapRequests.map((request) => {
+              // Calculate days and times for both classes
+              const reqDayIndex = Math.floor(
+                (request.requestingTimeSlot - 1) / 6
+              );
+              const reqTimeIndex = ((request.requestingTimeSlot - 1) % 6) + 1;
+              const reqDay = dayMapping[reqDayIndex];
+              const reqTime = timeMapping[reqTimeIndex];
+
+              const targetDayIndex = Math.floor(
+                (request.targetTimeSlot - 1) / 6
+              );
+              const targetTimeIndex = ((request.targetTimeSlot - 1) % 6) + 1;
+              const targetDay = dayMapping[targetDayIndex];
+              const targetTime = timeMapping[targetTimeIndex];
+
+              return (
+                <div
+                  key={request.id}
+                  className="swap-request"
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "15px",
+                    margin: "10px 0",
+                    borderRadius: "5px",
+                    backgroundColor: "#f9f9f9",
+                  }}
                 >
-                  {processingAction === `swap-${request.id}`
-                    ? "Processing..."
-                    : "Accept"}
-                </button>
-                <button
-                  onClick={() => handleSwapResponse(request.id, false)}
-                  disabled={isProcessing}
-                >
-                  {processingAction === `swap-${request.id}`
-                    ? "Processing..."
-                    : "Reject"}
-                </button>
-              </div>
-            ))}
+                  <p style={{ marginBottom: "10px" }}>
+                    <strong>Swap Request Details:</strong>
+                  </p>
+                  <p>
+                    Teacher <strong>{request.requestingTeacher}</strong> wants
+                    to swap:
+                  </p>
+                  <ul style={{ listStyle: "none", padding: "10px" }}>
+                    <li>
+                      Their class: <strong>{request.requestingCourse}</strong>
+                    </li>
+                    <li>
+                      Current Room: <strong>{request.requestingRoom}</strong>
+                    </li>
+                    <li>
+                      Current Schedule: <strong>{reqDay}</strong> at{" "}
+                      <strong>{reqTime}</strong>
+                    </li>
+                  </ul>
+                  <p>With your:</p>
+                  <ul style={{ listStyle: "none", padding: "10px" }}>
+                    <li>
+                      Your class: <strong>{request.targetCourse}</strong>
+                    </li>
+                    <li>
+                      Current Room: <strong>{request.targetRoom}</strong>
+                    </li>
+                    <li>
+                      Current Schedule: <strong>{targetDay}</strong> at{" "}
+                      <strong>{targetTime}</strong>
+                    </li>
+                  </ul>
+                  <div style={{ marginTop: "15px" }}>
+                    <button
+                      onClick={() => handleSwapResponse(request.id, true)}
+                      disabled={isProcessing}
+                      style={{
+                        marginRight: "10px",
+                        backgroundColor: "#4CAF50",
+                        color: "white",
+                        padding: "8px 15px",
+                      }}
+                    >
+                      {processingAction === `swap-${request.id}`
+                        ? "Processing..."
+                        : "Accept"}
+                    </button>
+                    <button
+                      onClick={() => handleSwapResponse(request.id, false)}
+                      disabled={isProcessing}
+                      style={{
+                        backgroundColor: "#f44336",
+                        color: "white",
+                        padding: "8px 15px",
+                      }}
+                    >
+                      {processingAction === `swap-${request.id}`
+                        ? "Processing..."
+                        : "Reject"}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

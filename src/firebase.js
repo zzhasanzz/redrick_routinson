@@ -4,6 +4,16 @@ import { getFirestore } from "firebase/firestore";
 
 import { collection, doc, setDoc } from "firebase/firestore";
 
+// const firebaseConfig = {
+//   apiKey: "AIzaSyBux2VuIY0lo3GBbUGZKBcIFx42-vLK_Vs",
+//   authDomain: "redbrick-18b6b.firebaseapp.com",
+//   projectId: "redbrick-18b6b",
+//   storageBucket: "redbrick-18b6b.firebasestorage.app",
+//   messagingSenderId: "564418787802",
+//   appId: "1:564418787802:web:9e8bf4c67b7318c9b7a8e3",
+//   measurementId: "G-Z3WX37SD0C",
+// };
+
 // // 2nd Demo Project
 // const firebaseConfig = {
 //   apiKey: "AIzaSyBCd9S0rvxs8i2hKZ3iNj_ILHeCIMk5ARc",
