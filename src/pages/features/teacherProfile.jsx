@@ -104,7 +104,10 @@ const UsersProfile = () => {
         };
 
         await updateDoc(doc(db, "users", currentUser.email), updatedData);
-        setUserData(updatedData);
+        setUserData((prevData) => ({
+            ...prevData, // Retain existing data
+            ...updatedData, // Override with updated data
+        }));
         setPreviewPic(null);
         setUploading(false);
         setIsEditing(false);

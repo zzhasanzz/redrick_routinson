@@ -1,9 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-
 import { collection, doc, setDoc } from "firebase/firestore";
-
+//
 // const firebaseConfig = {
 //   apiKey: "AIzaSyBux2VuIY0lo3GBbUGZKBcIFx42-vLK_Vs",
 //   authDomain: "redbrick-18b6b.firebaseapp.com",
@@ -66,6 +65,16 @@ import { collection, doc, setDoc } from "firebase/firestore";
 //   messagingSenderId: "22132766859",
 //   appId: "1:22132766859:web:f13a268ecd5dac634cfc8e"
 // };
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDVAZFRD3LdV3ZBFWJQozlVOWaRkEoEDxM",
+  authDomain: "fir-6561e.firebaseapp.com",
+  projectId: "fir-6561e",
+  storageBucket: "fir-6561e.firebasestorage.app",
+  messagingSenderId: "982148730376",
+  appId: "1:982148730376:web:3476ef0855d3259ad2cbbd",
+  measurementId: "G-X4JS0HCEH5",
+};
 // Initialize Firebase
 
 const firebaseConfig = {
