@@ -85,6 +85,15 @@ function App() {
               }
             />
 
+              <Route
+                  path="/admin-home/event"
+                  element={
+                         <RequireAuth allowedRoles={["admin"]}>
+                      <TeacherEvents />
+                        </RequireAuth>
+                  }
+              />
+
             <Route
               path="/admin-home/admin-manage-users"
               element={
@@ -326,25 +335,20 @@ function App() {
             <Route
               path="/teacher-home/event"
               element={
-                // <RequireAuth allowedRoles={["teacher"]}>
+                <RequireAuth allowedRoles={["teacher"]}>
                 <TeacherEvents />
-                // </RequireAuth>
+                </RequireAuth>
               }
             />
 
-          <Route
-            path="/teacher-home/calendar"
-            element={
-              <RequireAuth allowedRoles={["teacher"]}>
-                <Blank />
-              </RequireAuth>
-            }
-          />
-          <Route path="/teacher-home/forum" element={
-            <RequireAuth allowedRoles={["teacher"]}>
-              <Forum />
-            </RequireAuth>
-          } />
+            <Route
+              path="/teacher-home/lost-and-found"
+              element={
+                <RequireAuth allowedRoles={["teacher"]}>
+                    <LostAndFound />
+                </RequireAuth>
+              }
+            />
 
           <Route
             path="/teacher-home/user"
