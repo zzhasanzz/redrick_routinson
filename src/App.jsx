@@ -83,6 +83,14 @@ function App() {
                 </RequireAuth>
               }
             />
+            <Route
+              path="/admin-home/admin-lost-andfound"
+              element={
+                <RequireAuth allowedRoles={["admin"]}>
+                  <LostAndFound />
+                </RequireAuth>
+              }
+            />
 
             <Route
               path="/admin-home/admin-manage-users"
