@@ -205,12 +205,12 @@ const AdminManageUsers = () => {
                 )
             );
 
-            toast({
-                title: "Field updated successfully",
-                status: "success",
-                duration: 3000,
-                isClosable: true,
-            });
+            // toast({
+            //     title: "Field updated successfully",
+            //     status: "success",
+            //     duration: 3000,
+            //     isClosable: true,
+            // });
         } catch (error) {
             toast({
                 title: "Error updating field",
