@@ -8,7 +8,7 @@
           "labs": [
             {
               "course": "Phy4242",
-              "day": "Wednesday",
+              "day": "Tuesday",
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
               "room": "2",
@@ -18,27 +18,27 @@
             {
               "course": "Chem4242",
               "day": "Friday",
-              "time1": "10:30-11:45",
-              "time2": "11:45-1:00",
-              "room": "3",
+              "time1": "8:00-9:15",
+              "time2": "9:15-10:30",
+              "room": "6",
               "teacher1": "BS",
               "teacher2": "MM"
             },
             {
               "course": "CSE4202",
               "day": "Monday",
-              "time1": "8:00-9:15",
-              "time2": "9:15-10:30",
-              "room": "8",
+              "time1": "10:30-11:45",
+              "time2": "11:45-1:00",
+              "room": "2",
               "teacher1": "FAK",
               "teacher2": "AH"
             },
             {
               "course": "CSE4206",
-              "day": "Friday",
+              "day": "Thursday",
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
-              "room": "2",
+              "room": "4",
               "teacher1": "MMH",
               "teacher2": "KH"
             }
@@ -49,36 +49,36 @@
           "labs": [
             {
               "course": "Phy4242",
-              "day": "Friday",
-              "time1": "8:00-9:15",
-              "time2": "9:15-10:30",
-              "room": "4",
+              "day": "Monday",
+              "time1": "10:30-11:45",
+              "time2": "11:45-1:00",
+              "room": "6",
               "teacher1": "MKS",
               "teacher2": "AA"
             },
             {
               "course": "Chem4242",
-              "day": "Wednesday",
-              "time1": "10:30-11:45",
-              "time2": "11:45-1:00",
+              "day": "Tuesday",
+              "time1": "8:00-9:15",
+              "time2": "9:15-10:30",
               "room": "3",
               "teacher1": "MUA",
               "teacher2": "SRR"
             },
             {
               "course": "CSE4202",
-              "day": "Wednesday",
-              "time1": "8:00-9:15",
-              "time2": "9:15-10:30",
+              "day": "Friday",
+              "time1": "10:30-11:45",
+              "time2": "11:45-1:00",
               "room": "4",
               "teacher1": "RHJ",
               "teacher2": "MAMR"
             },
             {
               "course": "CSE4206",
-              "day": "Friday",
-              "time1": "10:30-11:45",
-              "time2": "11:45-1:00",
+              "day": "Wednesday",
+              "time1": "8:00-9:15",
+              "time2": "9:15-10:30",
               "room": "6",
               "teacher1": "FH",
               "teacher2": "SHR"
@@ -95,37 +95,37 @@
           "labs": [
             {
               "course": "EEE4484",
-              "day": "Tuesday",
+              "day": "Thursday",
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
-              "room": "2",
+              "room": "5",
               "teacher1": "HJA",
               "teacher2": "ARMK"
             },
             {
               "course": "CSE4402",
-              "day": "Tuesday",
+              "day": "Friday",
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
-              "room": "4",
+              "room": "2",
               "teacher1": "SA",
               "teacher2": "MHA"
             },
             {
               "course": "CSE4404",
-              "day": "Thursday",
-              "time1": "10:30-11:45",
-              "time2": "11:45-1:00",
+              "day": "Tuesday",
+              "time1": "8:00-9:15",
+              "time2": "9:15-10:30",
               "room": "5",
               "teacher1": "TZF",
               "teacher2": "IT"
             },
             {
               "course": "CSE4408",
-              "day": "Monday",
-              "time1": "8:00-9:15",
-              "time2": "9:15-10:30",
-              "room": "5",
+              "day": "Tuesday",
+              "time1": "10:30-11:45",
+              "time2": "11:45-1:00",
+              "room": "7",
               "teacher1": "RH",
               "teacher2": "AAR"
             }
@@ -136,37 +136,37 @@
           "labs": [
             {
               "course": "EEE4484",
-              "day": "Monday",
-              "time1": "8:00-9:15",
-              "time2": "9:15-10:30",
-              "room": "1",
+              "day": "Friday",
+              "time1": "10:30-11:45",
+              "time2": "11:45-1:00",
+              "room": "3",
               "teacher1": "SAH",
               "teacher2": "SB"
             },
             {
               "course": "CSE4402",
-              "day": "Friday",
-              "time1": "8:00-9:15",
-              "time2": "9:15-10:30",
-              "room": "6",
+              "day": "Thursday",
+              "time1": "10:30-11:45",
+              "time2": "11:45-1:00",
+              "room": "4",
               "teacher1": "TSA",
               "teacher2": "FI"
             },
             {
               "course": "CSE4404",
-              "day": "Wednesday",
-              "time1": "10:30-11:45",
-              "time2": "11:45-1:00",
-              "room": "1",
+              "day": "Friday",
+              "time1": "8:00-9:15",
+              "time2": "9:15-10:30",
+              "room": "2",
               "teacher1": "AKA",
               "teacher2": "MRK"
             },
             {
               "course": "CSE4408",
-              "day": "Tuesday",
+              "day": "Monday",
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
-              "room": "6",
+              "room": "8",
               "teacher1": "OR",
               "teacher2": "SH"
             }
@@ -182,16 +182,16 @@
           "labs": [
             {
               "course": "CSE4616",
-              "day": "Tuesday",
+              "day": "Thursday",
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
-              "room": "6",
+              "room": "5",
               "teacher1": "HM",
               "teacher2": "AZM"
             },
             {
               "course": "CSE4618",
-              "day": "Friday",
+              "day": "Tuesday",
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
               "room": "8",
@@ -200,19 +200,19 @@
             },
             {
               "course": "CSE4620",
-              "day": "Thursday",
+              "day": "Tuesday",
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
-              "room": "4",
+              "room": "8",
               "teacher1": "ASH",
               "teacher2": "MBH"
             },
             {
               "course": "Math4642",
-              "day": "Wednesday",
+              "day": "Thursday",
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
-              "room": "2",
+              "room": "7",
               "teacher1": "ZR",
               "teacher2": "MMA"
             }
@@ -223,37 +223,37 @@
           "labs": [
             {
               "course": "CSE4616",
-              "day": "Thursday",
+              "day": "Friday",
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
-              "room": "2",
+              "room": "8",
               "teacher1": "NY",
               "teacher2": "MEA"
             },
             {
               "course": "CSE4618",
-              "day": "Thursday",
+              "day": "Tuesday",
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
-              "room": "2",
+              "room": "7",
               "teacher1": "FF",
               "teacher2": "MSFI"
             },
             {
               "course": "CSE4620",
-              "day": "Friday",
+              "day": "Wednesday",
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
-              "room": "1",
+              "room": "4",
               "teacher1": "MIA",
               "teacher2": "NFS"
             },
             {
               "course": "Math4642",
-              "day": "Wednesday",
+              "day": "Friday",
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
-              "room": "3",
+              "room": "8",
               "teacher1": "SMA",
               "teacher2": "MSS"
             }
@@ -269,37 +269,37 @@
           "labs": [
             {
               "course": "CSE4802",
-              "day": "Friday",
-              "time1": "8:00-9:15",
-              "time2": "9:15-10:30",
-              "room": "5",
+              "day": "Thursday",
+              "time1": "10:30-11:45",
+              "time2": "11:45-1:00",
+              "room": "7",
               "teacher1": "SI",
               "teacher2": "RK"
             },
             {
               "course": "CSE4810",
-              "day": "Wednesday",
+              "day": "Tuesday",
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
-              "room": "5",
+              "room": "6",
               "teacher1": "AAK",
               "teacher2": "MRH"
             },
             {
               "course": "CSE4836",
-              "day": "Thursday",
+              "day": "Tuesday",
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
-              "room": "8",
+              "room": "6",
               "teacher1": "HK",
               "teacher2": "FI"
             },
             {
               "course": "CSE4800",
-              "day": "Tuesday",
-              "time1": "8:00-9:15",
-              "time2": "9:15-10:30",
-              "room": "7",
+              "day": "Wednesday",
+              "time1": "10:30-11:45",
+              "time2": "11:45-1:00",
+              "room": "2",
               "teacher1": "TZF",
               "teacher2": "IT"
             }
@@ -310,37 +310,37 @@
           "labs": [
             {
               "course": "CSE4802",
-              "day": "Thursday",
+              "day": "Monday",
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
-              "room": "1",
+              "room": "6",
               "teacher1": "RH",
               "teacher2": "AAR"
             },
             {
               "course": "CSE4810",
-              "day": "Thursday",
+              "day": "Wednesday",
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
-              "room": "3",
+              "room": "5",
               "teacher1": "SAH",
               "teacher2": "FH"
             },
             {
               "course": "CSE4836",
-              "day": "Monday",
+              "day": "Wednesday",
               "time1": "8:00-9:15",
               "time2": "9:15-10:30",
-              "room": "4",
+              "room": "3",
               "teacher1": "MMA",
               "teacher2": "MRK"
             },
             {
               "course": "CSE4800",
-              "day": "Wednesday",
+              "day": "Tuesday",
               "time1": "10:30-11:45",
               "time2": "11:45-1:00",
-              "room": "4",
+              "room": "3",
               "teacher1": "AZM",
               "teacher2": "RK"
             }

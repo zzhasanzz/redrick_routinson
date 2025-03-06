@@ -1309,25 +1309,25 @@ const TeacherRoutine = () => {
           }
 
           th {
-            background-color:rgba(174, 197, 199, 0.86);
-            border:  solid 1px;
+            background-color:rgb(127, 163, 190);
             color: white;
-            color: rgb(59, 58, 58);
+            font-weight: bold;
+            text-transform: uppercase;
             text-align: center;
             font-size: 16px;
           }
 
           tr:nth-child(even) {
-            background-color:rgb(228, 236, 240);
+            background-color:rgb(255, 255, 255);
           }
 
           tr:hover {
-            opacity: 0.8;
+            background-color:rgb(255, 255, 255);
           }
 
           button {
             padding: 5px 10px;
-            margin: 3px;
+            margin: 2px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
@@ -1342,16 +1342,16 @@ const TeacherRoutine = () => {
           }
 
           button:hover:not(:disabled) {
-            opacity: 0.9;
+            opacity: 0.8;
           }
 
           button:nth-child(1) {
-            background-color:rgba(152, 191, 208, 0.59);
-            color: rgb(48, 55, 60);
+            background-color:rgba(107, 71, 71, 0.59);
+            color: white;
           }
 
           button:nth-child(2) {
-            background-color:rgba(128, 165, 213, 0.75);
+            background-color:rgba(136, 127, 173, 0.75);
             color: white;
           }
         `}

@@ -29,6 +29,7 @@ import AdminManageLabs from "./pages/features/AdminManageLabs.jsx";
 import AdminGenerateRoutine from "./pages/features/AdminGenerateRoutine.jsx";
 import AdminViewRoutine from "./pages/features/AdminViewRoutine.jsx";
 import AdminManageUsers from "./pages/features/AdminManageUsers.jsx";
+import AdminManageRooms from "./pages/features/AdminManageRooms.jsx";
 import AdminGenerateSeatPlan from "./pages/features/AdminManageSeatPlan.jsx";
 import LostAndFound from "./pages/features/LostAndFound.jsx";
 import FoodScanner from "./pages/event/Scanner.jsx";
@@ -99,6 +100,15 @@ function App() {
               element={
                 <RequireAuth allowedRoles={["admin"]}>
                   <AdminManageUsers />
+                </RequireAuth>
+              }
+            />
+
+            <Route
+              path="/admin-home/admin-manage-rooms"
+              element={
+                <RequireAuth allowedRoles={["admin"]}>
+                  <AdminManageRooms />
                 </RequireAuth>
               }
             />
