@@ -234,8 +234,9 @@ const LostAndFound = () => {
     });
 
     return (
-        <Box p={5} maxW="1400px" mx="auto">
-            <Flex justifyContent="space-between" alignItems="center" mb={8}>
+        <Box p={5} maxW="1600px" mx="auto">
+            <Flex justifyContent="space-between" gap={5} alignItems="center" mb={6}>
+                {/* New Post Button */}
                 <Button
                     colorScheme="teal"
                     onClick={onOpen}
@@ -243,36 +244,43 @@ const LostAndFound = () => {
                     size="lg"
                     borderRadius="lg"
                     boxShadow="md"
+                    backgroundColor="rgb(110, 170, 183)"
+                    flex={1} // Equal space
                 >
                     New Post
                 </Button>
-                <Flex gap={4} align="center">
-                    <InputGroup maxW="400px">
-                        <InputLeftElement pointerEvents="none" color="gray.400">
-                            <SearchIcon />
-                        </InputLeftElement>
-                        <Input
-                            placeholder="Search posts by title or description..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            borderRadius="lg"
-                            focusBorderColor="teal.400"
-                            size="lg"
-                        />
-                    </InputGroup>
-                    <Select
-                        value={filterType}
-                        onChange={(e) => setFilterType(e.target.value)}
-                        width="200px"
+
+                {/* Search Box */}
+                <InputGroup flex={2} maxW="none" marginTop="25px" borderColor="rgb(92, 177, 172)" borderRadius="lg"> {/* More space for search box */}
+                    <InputLeftElement pointerEvents="none" color="gray.400">
+                        <SearchIcon />
+                    </InputLeftElement>
+                    <Input
+                        placeholder="Search posts by title or description..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                         borderRadius="lg"
+
                         focusBorderColor="teal.400"
                         size="lg"
-                    >
-                        <option value="all">All Types</option>
-                        <option value="lost">Lost Items</option>
-                        <option value="found">Found Items</option>
-                    </Select>
-                </Flex>
+                    />
+                </InputGroup>
+
+                {/* Dropdown */}
+                <Select
+                    value={filterType}
+                    onChange={(e) => setFilterType(e.target.value)}
+                    flex={1} // Equal space
+                    borderRadius="lg"
+                    borderColor="rgb(92, 177, 172)"
+                    focusBorderColor="teal.400"
+                    size="lg"
+                    marginTop="10px"
+                >
+                    <option value="all">All Types</option>
+                    <option value="lost">Lost Items</option>
+                    <option value="found">Found Items</option>
+                </Select>
             </Flex>
 
             {/* Create Post Modal */}
@@ -610,7 +618,7 @@ const LostAndFound = () => {
                 {filteredPosts.map((post) => (
                     <Card
                         key={post.id}
-                        p={6}
+                        p={3} // Reduced padding
                         borderRadius="2xl"
                         boxShadow="md"
                         _hover={{
@@ -619,62 +627,65 @@ const LostAndFound = () => {
                             transition: "all 0.2s"
                         }}
                         transition="all 0.2s"
+                        backgroundColor="rgb(193, 230, 235)"
                     >
                         {post.imageBase64 && (
                             <Image
                                 src={post.imageBase64}
                                 alt={post.title}
-                                height="250px"
+                                height="350px" // Reduced height
                                 objectFit="cover"
                                 borderRadius="xl"
-                                mb={4}
+                                mb={3} // Reduced margin bottom
                             />
                         )}
-                        <Stack spacing={3}>
+                        <Stack spacing={3}> {/* Reduced spacing */}
                             <Flex justify="space-between" align="center">
                                 <Badge
                                     colorScheme={post.type === "lost" ? "red" : "green"}
-                                    px={3}
+                                    px={2} // Reduced padding
                                     py={1}
                                     borderRadius="full"
-                                    fontSize="sm"
+                                    fontSize="xs" // Smaller font size
                                 >
                                     {post.type.toUpperCase()}
                                 </Badge>
                                 <Badge
                                     colorScheme={post.status === "open" ? "green" : "gray"}
                                     variant="subtle"
-                                    px={3}
+                                    px={2} // Reduced padding
                                     py={1}
                                     borderRadius="full"
-                                    fontSize="sm"
+                                    fontSize="xs" // Smaller font size
                                 >
                                     {post.status.toUpperCase()}
                                 </Badge>
                             </Flex>
 
-                            <Heading size="lg" noOfLines={1}>{post.title}</Heading>
-
-                            <Flex align="center" color="gray.600" fontSize="sm">
-                                <Icon as={FiMapPin} mr={2} />
-                                <Text>{post.location || "Unknown location"}</Text>
-                            </Flex>
+                            <Box borderBottom="1px solid" borderColor="gray.200" pb={2}> {/* Add a subtle border */}
+                                <Heading size="sm" noOfLines={1} mb={1}>{post.title}</Heading> {/* Smaller heading size */}
+                                <Flex align="center" color="gray.600" fontSize="sm">
+                                    <Icon as={FiMapPin} mr={1} /> {/* Icon with reduced margin */}
+                                    <Text fontSize="sm" marginTop="13px">{post.location || "Unknown location"}</Text> {/* Consistent font size */}
+                                </Flex>
+                            </Box>
 
                             <Text
                                 color="gray.600"
                                 noOfLines={3}
                                 lineHeight="tall"
+                                fontSize="sm"
                             >
                                 {post.description}
                             </Text>
 
-                            <Flex justify="space-between" align="center" mt={4}>
-                                <Text fontSize="sm" color="gray.500">
+                            <Flex justify="space-between" align="center" mt={2}> {/* Reduced margin top */}
+                                <Text fontSize="xs" color="gray.500" > {/* Smaller font size */}
                                     Posted {formatDistanceToNow(new Date(post.date?.toDate()), { addSuffix: true })}
                                 </Text>
                                 {post.userId === currentUser?.uid ? (
                                     <Button
-                                        size="sm"
+                                        size="sm" // Smaller button size
                                         colorScheme="teal"
                                         variant="outline"
                                         rightIcon={<Icon as={FiEye} />}
@@ -682,12 +693,13 @@ const LostAndFound = () => {
                                             setSelectedPost(post);
                                             onClaimsOpen();
                                         }}
+                                        marginBottom="20px"
                                     >
                                         {post.claims.length}  {post.type === 'lost' ? 'Found' : 'Claim'}
                                     </Button>
                                 ) : (
                                     <Button
-                                        size="sm"
+                                        size="xs" // Smaller button size
                                         colorScheme="teal"
                                         rightIcon={<Icon as={FiFlag} />}
                                         onClick={() => {
@@ -703,10 +715,10 @@ const LostAndFound = () => {
                             {/* Delete/Found Button */}
                             {post.userId === currentUser?.uid && (
                                 <Button
-                                    size="sm"
-                                    colorScheme="red"
+                                    size="sm" // Smaller button size
+                                    backgroundColor="rgb(183, 209, 214)"
                                     variant="solid"
-                                    mt={2}
+                                    mt={1} // Reduced margin top
                                     onClick={() => handleDeletePost(post.id)}
                                 >
                                     Mark as Found/Returned
