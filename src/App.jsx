@@ -34,22 +34,16 @@ import LostAndFound from "./pages/features/LostAndFound.jsx";
 import FoodScanner from "./pages/event/Scanner.jsx";
 import UsersProfile from "./pages/features/UsersProfile.jsx";
 import UserProfileForum from "./pages/features/UserProfileForum.jsx";
+import TeacherProfile from "./pages/features/teacherProfile.jsx";
 
 import Event from "./pages/event/Event.jsx";
-import Forum from './pages/forum/forum.jsx';
-
-
-
-
-
-
-
+import Forum from "./pages/forum/Forum.jsx";
 
 import AdminStats from "./pages/features/AdminStats.jsx";
-import AdminGenerateSeatPlanForAll from "./pages/features/adminGenerateSeatPlan.jsx"
+import AdminGenerateSeatPlanForAll from "./pages/features/adminGenerateSeatPlan.jsx";
 import TeacherEvents from "./pages/event/TeacherEvents.jsx";
 import InviteTeacher from "./pages/event/InviteTeacher.jsx";
-import SeatPlanUser from "./pages/features/SeatPlanUser.jsx"
+import SeatPlanUser from "./pages/features/SeatPlanUser.jsx";
 
 function App() {
   const { currentUser, role } = useContext(AuthContext);
@@ -168,29 +162,28 @@ function App() {
                 <RequireAuth allowedRoles={["admin"]}>
                   <Blank />
                 </RequireAuth>
-
-              } />
-
-
+              }
+            />
           </Route>
 
-
-        <Route path="/student-home" element={
-            <RequireAuth allowedRoles={["student"]}>
-              <StudentHome />
-            </RequireAuth>
-          }
-          >
-          <Route index element={<Blank />} />
           <Route
-            path="/student-home/student-dashboard"
+            path="/student-home"
             element={
               <RequireAuth allowedRoles={["student"]}>
-                <StudentDashboard />
+                <StudentHome />
               </RequireAuth>
             }
-          />
-            
+          >
+            <Route index element={<Blank />} />
+            <Route
+              path="/student-home/student-dashboard"
+              element={
+                <RequireAuth allowedRoles={["student"]}>
+                  <StudentDashboard />
+                </RequireAuth>
+              }
+            />
+
             <Route
               path="/student-home/student-routine"
               element={
@@ -225,8 +218,6 @@ function App() {
               }
             />
 
-          
-
             <Route
               path="/student-home/calendar"
               element={
@@ -236,7 +227,6 @@ function App() {
               }
             />
 
-          
             <Route
               path="/student-home/event"
               element={
@@ -262,84 +252,85 @@ function App() {
                 </RequireAuth>
               }
             />
-          <Route
-            path="/student-home/lost-and-found"
-            element={
-              <RequireAuth allowedRoles={["student"]}>
-                <LostAndFound />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/student-home/user"
-            element={
-              <RequireAuth allowedRoles={["student"]}>
-                <UsersProfile />
-              </RequireAuth>
-            }
-          />
+            <Route
+              path="/student-home/lost-and-found"
+              element={
+                <RequireAuth allowedRoles={["student"]}>
+                  <LostAndFound />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/student-home/user"
+              element={
+                <RequireAuth allowedRoles={["student"]}>
+                  <UsersProfile />
+                </RequireAuth>
+              }
+            />
+
+            <Route
+              path="/student-home/logout"
+              element={
+                <RequireAuth allowedRoles={["student"]}>
+                  <Blank />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/student-home/forum"
+              element={
+                <RequireAuth allowedRoles={["student"]}>
+                  <Forum />
+                </RequireAuth>
+              }
+            />
+          </Route>
 
           <Route
-            path="/student-home/logout"
-            element={
-              <RequireAuth allowedRoles={["student"]}>
-                <Blank />
-              </RequireAuth>
-            }
-          />
-          <Route path="/student-home/forum" element={
-            <RequireAuth allowedRoles={["student"]}>
-              <Forum />
-            </RequireAuth>
-          } />
-
-        </Route>
-
-        <Route
-          path="/teacher-home"
-          element={
-            <RequireAuth allowedRoles={["teacher"]}>
-              <TeacherHome />
-            </RequireAuth>
-          }
-        >
-          <Route index element={<Blank />} />
-          <Route
-            path="/teacher-home/teacher-dashboard"
+            path="/teacher-home"
             element={
               <RequireAuth allowedRoles={["teacher"]}>
-                <TeacherDashboard />
+                <TeacherHome />
               </RequireAuth>
             }
-          />
+          >
+            <Route index element={<Blank />} />
+            <Route
+              path="/teacher-home/teacher-dashboard"
+              element={
+                <RequireAuth allowedRoles={["teacher"]}>
+                  <TeacherDashboard />
+                </RequireAuth>
+              }
+            />
 
-          <Route
-            path="/teacher-home/teacher-routine"
-            element={
-              <RequireAuth allowedRoles={["teacher"]}>
-                <TeacherRoutine />
-              </RequireAuth>
-            }
-          />
+            <Route
+              path="/teacher-home/teacher-routine"
+              element={
+                <RequireAuth allowedRoles={["teacher"]}>
+                  <TeacherRoutine />
+                </RequireAuth>
+              }
+            />
 
-          <Route
-            path="/teacher-home/teacher-preference"
-            element={
-              <RequireAuth allowedRoles={["teacher"]}>
-                <TeacherPreference />
-              </RequireAuth>
-            }
-          />
+            <Route
+              path="/teacher-home/teacher-preference"
+              element={
+                <RequireAuth allowedRoles={["teacher"]}>
+                  <TeacherPreference />
+                </RequireAuth>
+              }
+            />
 
-          <Route
-            path="/teacher-home/event"
-            element={
-              // <RequireAuth allowedRoles={["teacher"]}>
-              <TeacherEvents />
-              // </RequireAuth>
-            }
-          />
-    
+            <Route
+              path="/teacher-home/event"
+              element={
+                // <RequireAuth allowedRoles={["teacher"]}>
+                <TeacherEvents />
+                // </RequireAuth>
+              }
+            />
 
           <Route
             path="/teacher-home/calendar"
@@ -359,7 +350,7 @@ function App() {
             path="/teacher-home/user"
             element={
               <RequireAuth allowedRoles={["teacher"]}>
-                <Blank />
+                <TeacherProfile />
               </RequireAuth>
             }
           />

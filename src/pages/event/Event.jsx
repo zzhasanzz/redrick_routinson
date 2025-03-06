@@ -2,45 +2,49 @@ import React, { useState, useEffect, useContext } from "react";
 import {
     Box,
     Button,
+    ButtonGroup,
+    Card,
+    Center,
     FormControl,
     FormLabel,
+    HStack,
+    Icon,
+    IconButton,
+    Image,
     Input,
+    InputGroup,
+    InputRightElement,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    SimpleGrid,
+    Tag,
+    TagCloseButton,
+    TagLabel,
+    Text,
     Textarea,
     VStack,
-    HStack,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalCloseButton,
-    ModalBody,
-    ModalFooter,
+    Wrap,
     useDisclosure,
-    Checkbox,
-    SimpleGrid,
-    Flex,
-    Card,
-    Heading,
-    Text,
-    Badge,
+    useToast,
     Spinner,
-    Center,
-    Image,
     Table,
     Thead,
-    Tbody,
     Tr,
-    Th,
+    Tbody,
     Td,
     Select,
-    Tag,
-    TagLabel,
-    TagCloseButton,
-    useToast,
+    Badge,
+    Flex,
+    Th,
+    Heading,
+    Checkbox
 } from "@chakra-ui/react";
-import {
-    IconButton,
-} from "@chakra-ui/react";
+
 
 import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import DatePicker from "react-datepicker";
@@ -50,6 +54,23 @@ import { collection, addDoc, getDocs, getDoc, doc, deleteDoc, updateDoc, arrayUn
 import { AuthContext } from "../../context/AuthContext";
 import { QRCodeSVG, QRCodeCanvas } from "qrcode.react";
 import {useNavigate} from "react-router-dom";
+
+import {
+    FaCalendarPlus,
+    FaCloudUploadAlt,
+    FaCheck,
+    FaArrowRight,
+    FaUsers,
+    FaEdit,
+    FaTrash,
+    FaTimes,
+    FaHandsHelping,
+    FaTicketAlt,
+    FaRegCheckCircle,
+    FaChalkboardTeacher
+} from "react-icons/fa";
+
+
 
 
 
@@ -66,8 +87,6 @@ const Event = () => {
     const [loading, setLoading] = useState(true);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [eventName, setEventName] = useState("");
-    const [startDate, setStartDate] = useState(new Date());
-    const [endDate, setEndDate] = useState(new Date());
     const [description, setDescription] = useState("");
     const [subscriptionFee, setSubscriptionFee] = useState("");
     const [enableVolunteer, setEnableVolunteer] = useState(false);
@@ -148,6 +167,18 @@ const Event = () => {
     const [selectedEventForVolunteer, setSelectedEventForVolunteer] = useState(null);
 
     const [newFoodItem, setNewFoodItem] = useState("");
+    const [userData, setUserData] = useState(null); // Add userData state
+
+    const [startDate, setStartDate] = useState(() => {
+        const date = new Date();
+        date.setHours(0, 0, 0, 0);
+        return date;
+    });
+    const [endDate, setEndDate] = useState(() => {
+        const date = new Date();
+        date.setHours(0, 0, 0, 0);
+        return date;
+    });
 
 
 
@@ -166,67 +197,7 @@ const Event = () => {
     // _____________________________________________________________________
 
 
-    // Add this function to fetch teachers
-//     const fetchTeachers = async () => {
-//         try {
-//             const usersCollection = collection(db, "users");
-//             const snapshot = await getDocs(usersCollection);
-//             const teacherList = [];
-//             snapshot.forEach(doc => {
-//                 const userData = doc.data();
-//                 if(userData.role === "teacher") {
-//                     teacherList.push({ id: doc.id, ...userData });
-//                 }
-//             });
-//             setTeachers(teacherList);
-//         } catch (error) {
-//             console.error("Error fetching teachers:", error);
-//         }
-//     };
-//
-// // Add this function to send invitation
-//     const sendInvitation = async () => {
-//         if(!selectedTeacher || !invitationMessage) {
-//             toast({
-//                 title: "Missing Information",
-//                 description: "Please select a teacher and write a message",
-//                 status: "error",
-//                 duration: 3000,
-//                 isClosable: true,
-//             });
-//             return;
-//         }
-//
-//         try {
-//             await addDoc(collection(db, "invitations"), {
-//                 eventId: selectedEvent.id,
-//                 eventName: selectedEvent.eventName,
-//                 senderEmail: currentUser.email,
-//                 teacherEmail: selectedTeacher.email,
-//                 message: invitationMessage,
-//                 status: "pending",
-//                 timestamp: new Date().toISOString()
-//             });
-//
-//             toast({
-//                 title: "Invitation Sent!",
-//                 description: "Your invitation has been successfully sent",
-//                 status: "success",
-//                 duration: 3000,
-//                 isClosable: true,
-//             });
-//             setInviteModalOpen(false);
-//         } catch (error) {
-//             console.error("Error sending invitation:", error);
-//             toast({
-//                 title: "Error",
-//                 description: "Failed to send invitation",
-//                 status: "error",
-//                 duration: 3000,
-//                 isClosable: true,
-//             });
-//         }
-//     };
+
 
     const fetchEvents = async () => {
         setLoading(true);
@@ -258,8 +229,7 @@ const Event = () => {
             if (userDoc.exists()) {
                 const userData = userDoc.data();
                 setIsPresident(userData.isPresident || false);
-            } else {
-                console.error("User document not found.");
+                setUserData(userData); // Store user data in state
             }
         } catch (error) {
             console.error("Error fetching user role: ", error);
@@ -325,13 +295,7 @@ const Event = () => {
         setRoadmap(roadmap.filter((item) => item.id !== id));
     };
 
-    const handleAllowedDepartmentsChange = (department) => {
-        setAllowedDepartments((prev) =>
-            prev.includes(department)
-                ? prev.filter((dept) => dept !== department)
-                : [...prev, department]
-        );
-    };
+
 
     const handleSubmit = async () => {
         if (!eventName || !description || !startDate || !endDate) {
@@ -535,59 +499,79 @@ const Event = () => {
         onOpen();
     };
 
-    // const handleVolunteer = async (eventId) => {
-    //     try {
-    //         const eventDocRef = doc(db, "events", eventId);
-    //         const eventDoc = await getDoc(eventDocRef);
-    //
-    //         if (eventDoc.exists()) {
-    //             const eventData = eventDoc.data();
-    //             const volunteerList = eventData.volunteerList || [];
-    //             // const allowedDepartments = eventData.allowedDepartments || [];
-    //
-    //             if (volunteerList.includes(currentUser.email)) {
-    //                 toast({
-    //                     title: "Already Volunteered",
-    //                     description: "You are already registered as a volunteer for this event.",
-    //                     status: "info",
-    //                     duration: 3000,
-    //                     isClosable: true,
-    //                 });
-    //                 return;
-    //             }
-    //
-    //             await updateDoc(eventDocRef, {
-    //                 volunteerList: arrayUnion(currentUser.email),
-    //             });
-    //
-    //             toast({
-    //                 title: "Volunteered Successfully",
-    //                 description: "You have successfully registered as a volunteer.",
-    //                 status: "success",
-    //                 duration: 3000,
-    //                 isClosable: true,
-    //             });
-    //             fetchEvents();
-    //         } else {
-    //             toast({
-    //                 title: "Event Not Found",
-    //                 description: "The selected event does not exist.",
-    //                 status: "error",
-    //                 duration: 3000,
-    //                 isClosable: true,
-    //             });
-    //         }
-    //     } catch (error) {
-    //         console.error("Error volunteering for event: ", error);
-    //         toast({
-    //             title: "Error",
-    //             description: "Failed to register as a volunteer. Please try again.",
-    //             status: "error",
-    //             duration: 3000,
-    //             isClosable: true,
-    //         });
-    //     }
-    // };
+    const handleVolunteerRegister = async (eventId) => {
+        if (!userData) {
+            toast({
+                title: "User data not found.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+            return;
+        }
+
+        try {
+            const eventDocRef = doc(db, "events", eventId);
+            const eventDoc = await getDoc(eventDocRef);
+
+            if (eventDoc.exists()) {
+                const eventData = eventDoc.data();
+                const volunteerList = eventData.volunteerList || [];
+
+                // Check if already volunteered
+                const isAlreadyVolunteer = volunteerList.some(
+                    v => v.email === currentUser.email
+                );
+
+                if (isAlreadyVolunteer) {
+                    toast({
+                        title: "Already Volunteered",
+                        description: "You are already registered as a volunteer",
+                        status: "error",
+                        duration: 3000,
+                        isClosable: true,
+                    });
+                    return;
+                }
+
+                // Create volunteer data from userData
+                const volunteerData = {
+                    name: userData.displayName,
+                    studentId: userData.id,
+                    department: userData.department,
+                    image: userData.profilePic,
+                    email: currentUser.email,
+                    registrationDate: new Date().toISOString()
+                };
+
+                await updateDoc(eventDocRef, {
+                    volunteerList: arrayUnion(volunteerData)
+                });
+
+                toast({
+                    title: "Volunteer Registered",
+                    description: "Thank you for volunteering!",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                });
+
+                fetchEvents();
+            }
+        } catch (error) {
+            console.error("Error volunteering:", error);
+            toast({
+                title: "Error",
+                description: "Failed to register as volunteer",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+    };
+
+
+
 
     const handleViewVolunteers = (event) => {
         setVolunteerList(event.volunteerList || []);
@@ -638,19 +622,17 @@ const Event = () => {
     };
 
     const handleRegister = async (eventId, selectedFoodOptions) => {
-        try {
-            // Validate form data
-            if (!formData.name || !formData.studentId || !formData.department) {
-                toast({
-                    title: "Missing Information",
-                    description: "Please fill all required fields",
-                    status: "error",
-                    duration: 3000,
-                    isClosable: true,
-                });
-                return;
-            }
+        if (!userData) {
+            toast({
+                title: "User data not found.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+            return;
+        }
 
+        try {
             const eventDocRef = doc(db, "events", eventId);
             const eventDoc = await getDoc(eventDocRef);
 
@@ -660,7 +642,7 @@ const Event = () => {
 
                 // Check if already registered
                 const isRegistered = participantList.some(
-                    participant => participant.email === currentUser.email
+                    (participant) => participant.email === currentUser.email
                 );
 
                 if (isRegistered) {
@@ -674,12 +656,12 @@ const Event = () => {
                     return;
                 }
 
-                // Create participant object
+                // Create participant object from userData
                 const participantData = {
-                    name: formData.name,
-                    studentId: formData.studentId,
-                    department: formData.department,
-                    image: formData.image,
+                    name: userData.displayName,
+                    studentId: userData.id,
+                    department: userData.department,
+                    image: userData.profilePic,
                     email: currentUser.email,
                     registrationDate: new Date().toISOString()
                 };
@@ -706,14 +688,6 @@ const Event = () => {
                     isClosable: true,
                 });
 
-                // Reset form and close modal
-                setFormData({
-                    name: '',
-                    studentId: '',
-                    department: '',
-                    image: null
-                });
-                onRegisterModalClose();
                 fetchEvents();
             }
         } catch (error) {
@@ -741,13 +715,24 @@ const Event = () => {
         <Box p={5}>
             {isPresident && (
                 <>
-                    <Button colorScheme="blue" onClick={onOpen} mb={5}>
+                    <Button
+                        colorScheme="teal"
+                        onClick={onOpen}
+                        leftIcon={<AddIcon />}
+                        size="md"
+                        borderRadius="md"
+                        boxShadow="md"
+                        _hover={{ transform: "translateY(-2px)" }}
+                    >
                         Add Event
                     </Button>
                     <Button
-                        colorScheme={isFilteringMyEvents ? "green" : "green"}
                         onClick={handleFilterMyEvents}
-                        mb={5}
+                        colorScheme="teal"
+                        size="md"
+                        borderRadius="md"
+                        boxShadow="md"
+                        _hover={{ transform: "translateY(-2px)" }}
                     >
                         {isFilteringMyEvents ? "View All Events" : "Events Created by Me"}
                     </Button>
@@ -762,382 +747,499 @@ const Event = () => {
                 </>
             )}
 
-            <Modal isOpen={isOpen} onClose={onClose}>
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>{isEditing ? "Edit Event" : "Create a New Event"}</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                        <VStack spacing={4}>
-                            <FormControl isRequired>
-                                <FormLabel>Event Name</FormLabel>
+            <Modal isOpen={isOpen} onClose={onClose} size="xl">
+                <ModalOverlay backdropFilter="blur(10px)" />
+                <ModalContent borderRadius="2xl" overflow="hidden">
+                    <Box
+                        bgGradient="linear(to-r, blue.600, purple.500)"
+                        px={6}
+                        py={4}
+                    >
+                        <ModalHeader color="white" fontSize="2xl">
+                            <HStack>
+                                <Icon as={FaCalendarPlus} />
+                                <Text>{isEditing ? "Edit Event" : "Create New Event"}</Text>
+                            </HStack>
+                        </ModalHeader>
+                        <ModalCloseButton color="white" _hover={{ bg: 'rgba(255,255,255,0.2)' }} />
+                    </Box>
+
+                    <ModalBody py={6}>
+                        <VStack spacing={6}>
+                            {/* Event Name */}
+                            <FormControl>
                                 <Input
-                                    placeholder="Enter event name"
+                                    variant="flushed"
+                                    placeholder="Event Name"
+                                    fontSize="lg"
                                     value={eventName}
                                     onChange={(e) => setEventName(e.target.value)}
+                                    focusBorderColor="blue.500"
+                                    px={2}
+                                    py={4}
                                 />
                             </FormControl>
-                            <FormControl isRequired>
-                                <FormLabel>Event Start Date</FormLabel>
-                                <DatePicker
-                                    selected={startDate}
-                                    onChange={(date) => {
-                                        setStartDate(date);
-                                        // If the current end date is before the new start date, update the end date
-                                        if (endDate < date) {
-                                            setEndDate(date);
+
+                            {/* Date Pickers */}
+                            <SimpleGrid columns={[1, 2]} spacing={6} w="full">
+                                <FormControl>
+                                    <FormLabel fontWeight="600" color="gray.600">Start Date</FormLabel>
+                                    <DatePicker
+                                        selected={startDate}
+                                        onChange={date => {
+                                            const cleanDate = new Date(date);
+                                            cleanDate.setHours(0, 0, 0, 0);
+                                            setStartDate(cleanDate);
+                                            if (endDate < cleanDate) setEndDate(cleanDate);
+                                        }}
+                                        minDate={new Date()}
+                                        dateFormat="MMMM d, yyyy"
+                                        customInput={
+                                            <Input
+                                                variant="outline"
+                                                borderRadius="md"
+                                                borderColor="gray.200"
+                                                _hover={{ borderColor: 'gray.300' }}
+                                            />
                                         }
-                                    }}
-                                    dateFormat="MMMM d, yyyy"
-                                    minDate={new Date()}
-                                />
-                            </FormControl>
-                            <FormControl isRequired>
-                                <FormLabel>Event End Date</FormLabel>
-                                <DatePicker
-                                    selected={endDate}
-                                    onChange={(date) => setEndDate(date)}
-                                    dateFormat="MMMM d, yyyy"
-                                    minDate={startDate} // Set the minimum date to the start date
-                                />
-                            </FormControl>
-                            <FormControl isRequired>
-                                <FormLabel>Description</FormLabel>
+                                    />
+                                </FormControl>
+
+                                <FormControl>
+                                    <FormLabel fontWeight="600" color="gray.600">End Date</FormLabel>
+                                    <DatePicker
+                                        selected={endDate}
+                                        onChange={date => {
+                                            const cleanDate = new Date(date);
+                                            cleanDate.setHours(0, 0, 0, 0);
+                                            setEndDate(cleanDate);
+                                        }}
+                                        minDate={startDate}
+                                        dateFormat="MMMM d, yyyy"
+                                        customInput={
+                                            <Input
+                                                variant="outline"
+                                                borderRadius="md"
+                                                borderColor="gray.200"
+                                                _hover={{ borderColor: 'gray.300' }}
+                                            />
+                                        }
+                                    />
+                                </FormControl>
+                            </SimpleGrid>
+
+                            {/* Description */}
+                            <FormControl>
                                 <Textarea
-                                    placeholder="Provide a description for the event"
+                                    placeholder="Event Description"
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
+                                    borderRadius="lg"
+                                    borderColor="gray.200"
+                                    _hover={{ borderColor: 'gray.300' }}
+                                    focusBorderColor="blue.500"
+                                    rows={4}
                                 />
                             </FormControl>
+
+                            {/* Image Upload */}
                             <FormControl>
-                                <FormLabel>Subscription Fee (optional)</FormLabel>
+                                <FormLabel fontWeight="600" color="gray.600">Event Cover Image</FormLabel>
+                                <Box
+                                    border="2px dashed"
+                                    borderColor={image ? 'green.200' : 'gray.200'}
+                                    borderRadius="xl"
+                                    p={6}
+                                    textAlign="center"
+                                    cursor="pointer"
+                                    _hover={{ borderColor: 'blue.200' }}
+                                    onClick={() => document.getElementById('fileInput').click()}
+                                >
+                                    {image ? (
+                                        <Image
+                                            src={image}
+                                            alt="Preview"
+                                            maxH="200px"
+                                            mx="auto"
+                                            borderRadius="lg"
+                                        />
+                                    ) : (
+                                        <VStack spacing={3}>
+                                            <Icon as={FaCloudUploadAlt} boxSize={8} color="gray.400" />
+                                            <Text color="gray.500">
+                                                Drag and drop or click to upload
+                                            </Text>
+                                            <Text fontSize="sm" color="gray.400">
+                                                Recommended size: 1200x600px
+                                            </Text>
+                                        </VStack>
+                                    )}
+                                </Box>
                                 <Input
-                                    type="number"
-                                    placeholder="Enter subscription fee"
-                                    value={subscriptionFee}
-                                    onChange={(e) => setSubscriptionFee(e.target.value)}
+                                    type="file"
+                                    id="fileInput"
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
+                                    display="none"
                                 />
                             </FormControl>
+
+                            {/* Food Options */}
                             <FormControl>
-                                <FormLabel>Food Options</FormLabel>
-                                <HStack>
+                                <FormLabel fontWeight="600" color="gray.600">Food Options</FormLabel>
+                                <InputGroup>
                                     <Input
-                                        placeholder="Enter food item"
+                                        placeholder="Add food item (press Enter)"
                                         value={newFoodItem}
                                         onChange={(e) => setNewFoodItem(e.target.value)}
                                         onKeyPress={(e) => {
-                                            if (e.key === "Enter" && newFoodItem.trim() !== "") {
+                                            if (e.key === 'Enter' && newFoodItem.trim()) {
                                                 setFoodOptions([...foodOptions, newFoodItem]);
-                                                setNewFoodItem(""); // Clear the input after adding
+                                                setNewFoodItem('');
                                             }
                                         }}
+                                        borderRadius="md"
                                     />
-                                    <Button
-                                        colorScheme="teal"
-                                        onClick={() => {
-                                            if (newFoodItem.trim() !== "") {
-                                                setFoodOptions([...foodOptions, newFoodItem]);
-                                                setNewFoodItem(""); // Clear the input after adding
-                                            }
-                                        }}
-                                    >
-                                        Add
-                                    </Button>
-                                </HStack>
-                                <Flex wrap="wrap" mt={2} gap={2}>
+                                    <InputRightElement>
+                                        <IconButton
+                                            icon={<AddIcon />}
+                                            size="sm"
+                                            aria-label="Add food"
+                                            onClick={() => {
+                                                if (newFoodItem.trim()) {
+                                                    setFoodOptions([...foodOptions, newFoodItem]);
+                                                    setNewFoodItem('');
+                                                }
+                                            }}
+                                        />
+                                    </InputRightElement>
+                                </InputGroup>
+                                <Wrap mt={3} spacing={2}>
                                     {foodOptions.map((food, index) => (
                                         <Tag
                                             key={index}
-                                            size="md"
                                             borderRadius="full"
-                                            variant="solid"
                                             colorScheme="orange"
-                                            px={3}
-                                            py={1}
+                                            px={4}
+                                            py={1.5}
                                         >
                                             <TagLabel>{food}</TagLabel>
                                             <TagCloseButton
-                                                onClick={() => {
-                                                    setFoodOptions(foodOptions.filter((_, i) => i !== index));
-                                                }}
+                                                onClick={() => setFoodOptions(foodOptions.filter((_, i) => i !== index))}
                                             />
                                         </Tag>
                                     ))}
-                                </Flex>
+                                </Wrap>
                             </FormControl>
+
+                            {/* Roadmap */}
                             <FormControl>
-                                <FormLabel>Upload Event Image</FormLabel>
-                                <Input type="file" accept="image/*" onChange={handleImageUpload} />
+                                <FormLabel fontWeight="600" color="gray.600">Event Schedule</FormLabel>
+                                <VStack spacing={4} align="stretch">
+                                    {roadmap.map((item) => (
+                                        <Card key={item.id} p={4} borderRadius="lg" variant="outline">
+                                            <HStack spacing={3}>
+                                                <Input
+                                                    placeholder="Day (e.g., Day 1)"
+                                                    value={item.day}
+                                                    onChange={(e) => updateRoadmapItem(item.id, 'day', e.target.value)}
+                                                />
+                                                <Input
+                                                    placeholder="Time (e.g., 9:00 AM)"
+                                                    value={item.time}
+                                                    onChange={(e) => updateRoadmapItem(item.id, 'time', e.target.value)}
+                                                />
+                                                <Input
+                                                    placeholder="Activity"
+                                                    value={item.activity}
+                                                    onChange={(e) => updateRoadmapItem(item.id, 'activity', e.target.value)}
+                                                />
+                                                <IconButton
+                                                    icon={<DeleteIcon />}
+                                                    colorScheme="red"
+                                                    variant="ghost"
+                                                    aria-label="Delete item"
+                                                    onClick={() => deleteRoadmapItem(item.id)}
+                                                />
+                                            </HStack>
+                                        </Card>
+                                    ))}
+                                    <Button
+                                        leftIcon={<AddIcon />}
+                                        variant="outline"
+                                        colorScheme="blue"
+                                        onClick={addRoadmapItem}
+                                    >
+                                        Add Schedule Item
+                                    </Button>
+                                </VStack>
                             </FormControl>
-                            {/*<FormControl>*/}
-                            {/*    <FormLabel>Allowed Departments</FormLabel>*/}
-                            {/*    <SimpleGrid columns={3} spacing={2}>*/}
-                            {/*        {departments.map((department) => (*/}
-                            {/*            <Checkbox*/}
-                            {/*                key={department}*/}
-                            {/*                isChecked={allowedDepartments.includes(department)}*/}
-                            {/*                onChange={() =>*/}
-                            {/*                    handleAllowedDepartmentsChange(department)*/}
-                            {/*                }*/}
-                            {/*            >*/}
-                            {/*                {department}*/}
-                            {/*            </Checkbox>*/}
-                            {/*        ))}*/}
-                            {/*    </SimpleGrid>*/}
-                            {/*</FormControl>*/}
-                            <HStack>
-                                <Checkbox
-                                    isChecked={enableVolunteer}
-                                    onChange={() => setEnableVolunteer(!enableVolunteer)}
-                                >
-                                    Enable Volunteer Registration
-                                </Checkbox>
-                            </HStack>
-                            <FormControl>
-                                <FormLabel>Roadmap</FormLabel>
-                                <Button
-                                    size="sm"
-                                    colorScheme="teal"
-                                    onClick={addRoadmapItem}
-                                    mb={2}
-                                >
-                                    Add Roadmap Item
-                                </Button>
-                                <Table size="sm">
-                                    <Thead>
-                                        <Tr>
-                                            <Th>Day</Th>
-                                            <Th>Time</Th>
-                                            <Th>Activity</Th>
-                                            <Th>Action</Th>
-                                        </Tr>
-                                    </Thead>
-                                    <Tbody>
-                                        {roadmap.map((item) => (
-                                            <Tr key={item.id}>
-                                                <Td>
-                                                    <Input
-                                                        size="sm"
-                                                        placeholder="Day"
-                                                        value={item.day}
-                                                        onChange={(e) =>
-                                                            updateRoadmapItem(
-                                                                item.id,
-                                                                "day",
-                                                                e.target.value
-                                                            )
-                                                        }
-                                                    />
-                                                </Td>
-                                                <Td>
-                                                    <Input
-                                                        size="sm"
-                                                        placeholder="Time"
-                                                        value={item.time}
-                                                        onChange={(e) =>
-                                                            updateRoadmapItem(
-                                                                item.id,
-                                                                "time",
-                                                                e.target.value
-                                                            )
-                                                        }
-                                                    />
-                                                </Td>
-                                                <Td>
-                                                    <Input
-                                                        size="sm"
-                                                        placeholder="Activity"
-                                                        value={item.activity}
-                                                        onChange={(e) =>
-                                                            updateRoadmapItem(
-                                                                item.id,
-                                                                "activity",
-                                                                e.target.value
-                                                            )
-                                                        }
-                                                    />
-                                                </Td>
-                                                <Td>
-                                                    <IconButton
-                                                        size="sm"
-                                                        colorScheme="red"
-                                                        icon={<DeleteIcon />}
-                                                        onClick={() =>
-                                                            deleteRoadmapItem(item.id)
-                                                        }
-                                                    />
-                                                </Td>
-                                            </Tr>
-                                        ))}
-                                    </Tbody>
-                                </Table>
-                            </FormControl>
+
+                            <Checkbox
+                                isChecked={enableVolunteer}
+                                onChange={() => setEnableVolunteer(!enableVolunteer)}
+                            >
+                                Enable Volunteer Registration
+                            </Checkbox>
+
                         </VStack>
                     </ModalBody>
-                    <ModalFooter>
-                        <Button colorScheme="blue" onClick={handleSubmit}>
-                            {isEditing ? "Update Event" : "Submit Event"}
-                        </Button>
-                        <Button variant="ghost" onClick={onClose}>
-                            Cancel
-                        </Button>
+
+                    <ModalFooter borderTopWidth={1} borderColor="gray.100">
+                        <ButtonGroup spacing={3}>
+                            <Button
+                                colorScheme="blue"
+                                px={8}
+                                onClick={handleSubmit}
+                                isLoading={loading}
+                                rightIcon={<FaArrowRight />}
+                            >
+                                {isEditing ? 'Update Event' : 'Create Event'}
+                            </Button>
+                            <Button variant="outline" onClick={onClose}>Cancel</Button>
+                        </ButtonGroup>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-
             {loading ? (
                 <Center p={10}>
                     <Spinner size="xl" />
                 </Center>
             ) : (
-                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={5}>
+                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
                     {filteredEvents.map((event) => (
                         <Card
                             key={event.id}
-                            borderWidth="1px"
-                            borderRadius="lg"
+                            borderRadius="xl"
                             overflow="hidden"
+                            boxShadow="lg"
+                            transition="all 0.3s"
+                            _hover={{
+                                transform: "translateY(-5px)",
+                                boxShadow: "xl",
+                            }}
                             cursor="pointer"
+                            onClick={() => handleCardClick(event)}
                         >
-                            <Flex>
-                                <Box flex="1" p={4}>
-                                    <Heading size="md" mb={2} isTruncated>
-                                        {event.eventName}
-                                    </Heading>
-                                    <Text fontSize="sm" fontWeight="bold">
-                                        Start Date:
-                                    </Text>
-                                    <Text fontSize="sm" mb={2}>
-                                        {new Date(event.startDate).toDateString()}
-                                    </Text>
-                                    <Text fontSize="sm" fontWeight="bold">
-                                        End Date:
-                                    </Text>
-                                    <Text fontSize="sm" mb={2}>
-                                        {new Date(event.endDate).toDateString()}
-                                    </Text>
-                                    <Text fontSize="sm" noOfLines={2} mb={2}>
-                                        {event.description}
-                                    </Text>
-                                    <Flex alignItems="center" gap={2} mb={2}>
-                                        <Badge colorScheme="blue">
-                                            {event.subscriptionFee ? `TAKA${event.subscriptionFee}` : "Free"}
-                                        </Badge>
-                                        {event.enableVolunteer && (
-                                            <Badge colorScheme="green">Volunteers Needed</Badge>
-                                        )}
-                                    </Flex>
-                                </Box>
-
+                            <Flex direction={{ base: "column", md: "row" }} h="full">
+                                {/* Image Section with Hover Overlay */}
                                 <Box
-                                    flex="1"
-                                    display="flex"
-                                    alignItems="center"
-                                    justifyContent="center"
-                                    maxW="400px"
-                                    maxH="350px"
+                                    position="relative"
+                                    flexShrink={0}
+                                    w={{ base: "100%", md: "40%" }}
+                                    h={{ base: "200px", md: "auto" }}
                                     overflow="hidden"
-                                    borderRadius="lg"
+                                    _after={{
+                                        content: '""',
+                                        position: "absolute",
+                                        inset: 0,
+                                        bgGradient: "linear(to-b, transparent 60%, blackAlpha.600)",
+                                    }}
                                 >
                                     <Image
                                         src={event.image}
                                         alt={event.eventName}
-                                        width="400px"
-                                        height="350px"
+                                        w="full"
+                                        h="full"
                                         objectFit="cover"
+                                        transition="transform 0.3s"
+                                        _hover={{ transform: "scale(1.05)" }}
                                     />
                                 </Box>
-                            </Flex>
-                            <HStack spacing={2} mt={3} justify="center">
-                                {event.creatorEmail === currentUser.email ? (
-                                    <>
-                                        <Button
-                                            size="sm"
-                                            colorScheme="green"
-                                            onClick={() => handleViewVolunteers(event)}
-                                        >
-                                            View Volunteers
-                                        </Button>
-                                        <Button
-                                            size="sm"
-                                            colorScheme="blue"
-                                            onClick={() => handleEditEvent(event)}
-                                        >
-                                            Edit Event
-                                        </Button>
 
-                                        <Button
-                                            colorScheme="teal"
-                                            onClick={() => navigate(`/student-home/event/invite/${event.id}`)}
-                                            ml={2}
-                                        >
-                                            Invite Teachers
-                                        </Button>
+                                {/* Content Section */}
+                                <Box flex={1} p={5} bg="white">
+                                    {/* Event Header */}
+                                    <Heading
+                                        size="lg"
+                                        mb={3}
+                                        bgGradient="linear(to-r, blue.600, purple.500)"
+                                        bgClip="text"
+                                    >
+                                        {event.eventName}
+                                    </Heading>
 
+                                    {/* Date Section */}
+                                    <Flex gap={4} mb={4}>
+                                        <Box>
+                                            <Text fontSize="sm" fontWeight="semibold" color="gray.500">
+                                                Starts
+                                            </Text>
+                                            <Text fontSize="md" fontWeight="bold">
+                                                {new Date(event.startDate).toLocaleDateString("en-US", {
+                                                    dateStyle: "medium",
+                                                })}
+                                            </Text>
+                                        </Box>
+                                        <Box>
+                                            <Text fontSize="sm" fontWeight="semibold" color="gray.500">
+                                                Ends
+                                            </Text>
+                                            <Text fontSize="md" fontWeight="bold">
+                                                {new Date(event.endDate).toLocaleDateString("en-US", {
+                                                    dateStyle: "medium",
+                                                })}
+                                            </Text>
+                                        </Box>
+                                    </Flex>
 
-                                        <Button
-                                            size="sm"
-                                            colorScheme="red"
-                                            onClick={() => handleDeleteEvent(event.id)}
+                                    {/* Description */}
+                                    <Text
+                                        fontSize="sm"
+                                        color="gray.600"
+                                        mb={4}
+                                        noOfLines={3}
+                                        lineHeight="tall"
+                                    >
+                                        {event.description}
+                                    </Text>
+
+                                    {/* Badges */}
+                                    <Flex gap={2} mb={4} flexWrap="wrap">
+                                        <Badge
+                                            px={3}
+                                            py={1}
+                                            borderRadius="full"
+                                            colorScheme={event.subscriptionFee ? "purple" : "green"}
                                         >
-                                            Delete Event
-                                        </Button>
-                                    </>
-                                ) : event.enableVolunteer && (
-                                        event.volunteerList?.some(v => v.email === currentUser.email) ? (
+                                            {event.subscriptionFee ? `৳${event.subscriptionFee}` : "Free Entry"}
+                                        </Badge>
+                                        {event.enableVolunteer && (
+                                            <Badge px={3} py={1} borderRadius="full" colorScheme="orange">
+                                                👐 Volunteers Needed
+                                            </Badge>
+                                        )}
+                                    </Flex>
+
+                                    {/* Action Buttons */}
+                                    <Flex
+                                        gap={3}
+                                        mt="auto"
+                                        flexWrap="wrap"
+                                        justify={{ base: "center", md: "flex-start" }}
+                                    >
+                                        {event.creatorEmail === currentUser.email ? (
+                                            <>
+                                                <Button
+                                                    leftIcon={<FaUsers />}
+                                                    colorScheme="teal"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleViewVolunteers(event);
+                                                    }}
+                                                >
+                                                    Volunteers
+                                                </Button>
+                                                <Button
+                                                    leftIcon={<FaUsers />}
+                                                    colorScheme="teal"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleViewParticipants(event);
+                                                    }}
+                                                >
+                                                    Participants
+                                                </Button>
+                                                {/* New Invite Teachers button */}
+                                                <Button
+                                                    leftIcon={<FaChalkboardTeacher />}// Consider using FaUserPlus if available
+                                                    colorScheme="teal"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        navigate(`/student-home/event/invite/${event.id}`);
+                                                    }}
+                                                >
+                                                    Invite Teachers
+                                                </Button>
+                                                <Button
+                                                    leftIcon={<FaEdit />}
+                                                    colorScheme="blue"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleEditEvent(event);
+                                                    }}
+                                                >
+                                                    Edit
+                                                </Button>
+                                                <Button
+                                                    leftIcon={<FaTrash />}
+                                                    colorScheme="red"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDeleteEvent(event.id);
+                                                    }}
+                                                >
+                                                    Delete
+                                                </Button>
+                                            </>
+                                        ) : event.enableVolunteer &&
+                                        event.volunteerList?.some((v) => v.email === currentUser.email) ? (
                                             <Button
-                                                size="sm"
+                                                leftIcon={<FaTimes />}
                                                 colorScheme="red"
-                                                onClick={() => handleCancelVolunteer(event.id)}
+                                                size="sm"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleCancelVolunteer(event.id);
+                                                }}
                                             >
                                                 Cancel Volunteer
                                             </Button>
                                         ) : (
-                                            <Button
-                                                size="sm"
-                                                colorScheme="green"
-                                                onClick={() => {
-                                                    setSelectedEventForVolunteer(event);
-                                                    onVolunteerModalOpen();
-                                                }}
-                                            >
-                                                Volunteer
-                                            </Button>
-                                        )
-                                    )}
-                                {event.creatorEmail === currentUser.email ? (
-                                    <Button size="sm" colorScheme="purple" onClick={() => handleViewParticipants(event)}>
-                                        View Participants
-                                    </Button>
-                                ) :  event.participantList?.some(p => p.email === currentUser.email) ? (
-                                    <Button
-                                        size="sm"
-                                        colorScheme="purple"
-                                        onClick={() => handleViewTokens(event)}
-                                    >
-                                        Token
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        size="sm"
-                                        colorScheme="blue"
-                                        onClick={() => {
-                                            setSelectedEventForRegistration(event);
-                                            onRegisterModalOpen();
-                                        }}
-                                    >
-                                        Register
-                                    </Button>
-                                )}
+                                            event.enableVolunteer && (
+                                                <Button
+                                                    leftIcon={<FaHandsHelping />}
+                                                    colorScheme="green"
+                                                    size="sm"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleVolunteerRegister(event.id);
+                                                    }}
+                                                >
+                                                    Volunteer
+                                                </Button>
+                                            )
+                                        )}
 
-                                <Button
-                                    size="sm"
-                                    colorScheme="blue"
-                                    onClick={() => handleCardClick(event)}
-                                >
-                                    View Details
-                                </Button>
-                            </HStack>
+                                        {event.creatorEmail !== currentUser.email &&
+                                            (event.participantList?.some((p) => p.email === currentUser.email) ? (
+                                                <Button
+                                                    leftIcon={<FaTicketAlt />}
+                                                    colorScheme="purple"
+                                                    size="sm"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleViewTokens(event);
+                                                    }}
+                                                >
+                                                    View Token
+                                                </Button>
+                                            ) : (
+                                                <Button
+                                                    leftIcon={<FaRegCheckCircle />}
+                                                    colorScheme="blue"
+                                                    size="sm"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleRegister(event.id, event.foodOptions);
+                                                    }}
+                                                >
+                                                    Register Now
+                                                </Button>
+                                            ))}
+                                    </Flex>
+                                </Box>
+                            </Flex>
                         </Card>
                     ))}
                 </SimpleGrid>
@@ -1663,3 +1765,4 @@ const Event = () => {
 };
 
 export default Event;
+

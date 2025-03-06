@@ -161,117 +161,154 @@ const AdminDashboard = () => {
   return (
     <>
       <Box p={8}>
-        <Text fontSize="4xl" mb={10} textAlign="left" fontWeight="bold">
-          Admin
-        </Text>
         <SimpleGrid columns={[1, 2, 3]} spacing={8} justifyItems="center">
           <Link to="/admin-home/admin-view-routine">
             <Button
               height="250px"
-              width={["100%", "450px"]}
+              width="450px"
               flexDirection="column"
               justifyContent="center"
               borderRadius="30px"
-              bg="gray.100"
-              _hover={{ transform: "translateY(-5px)", boxShadow: "lg" }}
-              boxShadow="md"
+              backgroundColor="#edf8fb"
+              backgroundImage="url('../assets/view_routine_admin.png')"
+              backgroundSize="cover"
+              border="2px solid rgba(255, 255, 255, 0.7)"
+              color="black"
+              _hover={{
+                backgroundColor: "#bedee9",
+                transform: "scale(1.05)",
+                transition: "all 0.3s ease"
+              }}
+              _active={{
+                backgroundColor: "rgba(255, 255, 255, 0.3)"
+              }}
             >
-              <Icon as={FaCalendarAlt} boxSize={20} color="gray.700" />
-              <Text fontSize="2xl" fontWeight="600" color="gray.700">
-                Class Routine
-              </Text>
+
             </Button>
           </Link>
 
-          <Link to="/admin-home/forum">
+          <Link to="/admin-home/admin-statistics">
             <Button
               height="250px"
-              width={["100%", "450px"]}
+              width="450px"
               flexDirection="column"
               justifyContent="center"
               borderRadius="30px"
-              bg="gray.100"
-              _hover={{ transform: "translateY(-5px)", boxShadow: "lg" }}
-              boxShadow="md"
+              backgroundColor="#edf8fb"
+              backgroundImage="url('../assets/admin_stats.png')"
+              backgroundSize="cover"
+              border="2px solid rgba(255, 255, 255, 0.7)"
+              color="black"
+              _hover={{
+                backgroundColor: "#bedee9",
+                transform: "scale(1.05)",
+                transition: "all 0.3s ease"
+              }}
+              _active={{
+                backgroundColor: "rgba(255, 255, 255, 0.3)"
+              }}
             >
-              <Icon as={FaComments} boxSize={20} color="gray.700" />
-              <Text fontSize="2xl" fontWeight="600" color="gray.700">
-                Forum
-              </Text>
+
             </Button>
           </Link>
 
           <Link to="/event">
             <Button
               height="250px"
-              width={["100%", "450px"]}
+              width="450px"
               flexDirection="column"
               justifyContent="center"
               borderRadius="30px"
-              bg="gray.100"
-              _hover={{ transform: "translateY(-5px)", boxShadow: "lg" }}
-              boxShadow="md"
+              backgroundColor="#edf8fb"
+              backgroundImage="url('../assets/event_button.png')"
+              backgroundSize="cover"
+              border="2px solid rgba(255, 255, 255, 0.7)"
+              color="black"
+              _hover={{
+                backgroundColor: "#bedee9",
+                transform: "scale(1.05)",
+                transition: "all 0.3s ease"
+              }}
+              _active={{
+                backgroundColor: "rgba(255, 255, 255, 0.3)"
+              }}
             >
-              <Icon as={FaClipboardList} boxSize={20} color="gray.700" />
-              <Text fontSize="2xl" fontWeight="600" color="gray.700">
-                Event
-              </Text>
+
             </Button>
           </Link>
 
           <Link to="/lost-and-found">
-            <Button
+          <Button
               height="250px"
-              width={["100%", "450px"]}
+              width="450px"
               flexDirection="column"
               justifyContent="center"
               borderRadius="30px"
-              bg="gray.100"
-              _hover={{ transform: "translateY(-5px)", boxShadow: "lg" }}
-              boxShadow="md"
+              backgroundColor="#edf8fb"
+              backgroundImage="url('../assets/lost_and_found.png')"
+              backgroundSize="cover"
+              border="2px solid rgba(255, 255, 255, 0.7)"
+              color="black"
+              _hover={{
+                backgroundColor: "#bedee9",
+                transform: "scale(1.05)",
+                transition: "all 0.3s ease"
+              }}
+              _active={{
+                backgroundColor: "rgba(255, 255, 255, 0.3)"
+              }}
             >
-              <Icon as={FaBoxOpen} boxSize={20} color="gray.700" />
-              <Text fontSize="2xl" fontWeight="600" color="gray.700">
-                Lost and Found
-              </Text>
+
             </Button>
           </Link>
 
           <Link to="/admin-home/admin-generate-seat-plan">
-            <Button
+          <Button
               height="250px"
-              width={["100%", "450px"]}
+              width="450px"
               flexDirection="column"
               justifyContent="center"
               borderRadius="30px"
-              bg="gray.100"
-              _hover={{ transform: "translateY(-5px)", boxShadow: "lg" }}
-              boxShadow="md"
-              // onClick={handleSeatPlanClick}
+              backgroundColor="#edf8fb"
+              backgroundImage="url('../assets/seat_plan_button.png')"
+              backgroundSize="cover"
+              border="2px solid rgba(255, 255, 255, 0.7)"
+              color="black"
+              _hover={{
+                backgroundColor: "#bedee9",
+                transform: "scale(1.05)",
+                transition: "all 0.3s ease"
+              }}
+              _active={{
+                backgroundColor: "rgba(255, 255, 255, 0.3)"
+              }}
             >
-              <Icon as={FaChair} boxSize={20} color="gray.700" />
-              <Text fontSize="2xl" fontWeight="600" color="gray.700">
-                Seat Plan
-              </Text>
+
             </Button>
           </Link>
 
           <Link to="/admin-home/admin-generate-routine">
-            <Button
+          <Button
               height="250px"
-              width={["100%", "450px"]}
+              width="450px"
               flexDirection="column"
               justifyContent="center"
               borderRadius="30px"
-              bg="gray.100"
-              _hover={{ transform: "translateY(-5px)", boxShadow: "lg" }}
-              boxShadow="md"
-              //onClick={handleGenerateRoutine}
+              backgroundColor="#edf8fb"
+              backgroundImage="url('../assets/generate_routine.png')"
+              backgroundSize="cover"
+              border="2px solid rgba(255, 255, 255, 0.7)"
+              color="black"
+              _hover={{
+                backgroundColor: "#bedee9",
+                transform: "scale(1.05)",
+                transition: "all 0.3s ease"
+              }}
+              _active={{
+                backgroundColor: "rgba(255, 255, 255, 0.3)"
+              }}
             >
-              <Icon as={FaBook} boxSize={20} color="gray.700" />
-              <Text fontSize="2xl" fontWeight="600" color="gray.700">
-                Generate Routine
-              </Text>
+
             </Button>
           </Link>
         </SimpleGrid>

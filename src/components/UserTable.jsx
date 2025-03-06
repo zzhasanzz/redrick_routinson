@@ -34,7 +34,7 @@ const UserTable = ({ users, onDeleteUser, onUpdateField, role }) => {
             <Table variant="striped" bgColor="rgb(181, 227, 228)">
                 <Thead backgroundColor = "rgb(181, 227, 228)" height="60px">
                     <Tr>
-                        <Th>User ID</Th>
+                        <Th>User ID/Email</Th>
                         <Th>Role</Th>
                         {role === "teacher" && (
                             <>
@@ -58,7 +58,9 @@ const UserTable = ({ users, onDeleteUser, onUpdateField, role }) => {
                 <Tbody>
                     {users.map((user) => (
                         <Tr key={user.id}>
-                            <Td>{user.id}</Td>
+                            {role=="student" && <Td>{user.id}</Td>}
+                            {role=="teacher" && <Td>{user.email}</Td>}
+                            {role=="admin" && <Td>{user.email}</Td>}
                             <Td>
                                 <Badge
                                     colorScheme={
@@ -112,7 +114,7 @@ const UserTable = ({ users, onDeleteUser, onUpdateField, role }) => {
                                     icon={<DeleteIcon />}
                                     size="sm"
                                     colorScheme="red"
-                                    onClick={() => onDeleteUser(user.id)}
+                                    onClick={() => onDeleteUser(user.email)}
                                 />
                             </Td>
                         </Tr>
