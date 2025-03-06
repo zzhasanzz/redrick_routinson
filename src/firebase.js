@@ -48,15 +48,15 @@ import { collection, doc, setDoc } from "firebase/firestore";
 // };
 
 // // 2nd Demo Project
-const firebaseConfig = {
-  apiKey: "AIzaSyDVAZFRD3LdV3ZBFWJQozlVOWaRkEoEDxM",
-  authDomain: "fir-6561e.firebaseapp.com",
-  projectId: "fir-6561e",
-  storageBucket: "fir-6561e.firebasestorage.app",
-  messagingSenderId: "982148730376",
-  appId: "1:982148730376:web:3476ef0855d3259ad2cbbd",
-  measurementId: "G-X4JS0HCEH5"
-};
+// const firebaseConfig = {
+//   apiKey: "AIzaSyDVAZFRD3LdV3ZBFWJQozlVOWaRkEoEDxM",
+//   authDomain: "fir-6561e.firebaseapp.com",
+//   projectId: "fir-6561e",
+//   storageBucket: "fir-6561e.firebasestorage.app",
+//   messagingSenderId: "982148730376",
+//   appId: "1:982148730376:web:3476ef0855d3259ad2cbbd",
+//   measurementId: "G-X4JS0HCEH5"
+// };
 
 // const firebaseConfig = {
 //   apiKey: "AIzaSyDCosrkaHw0gNZAVO4XBiAPP94_XPN3BME",
@@ -67,6 +67,17 @@ const firebaseConfig = {
 //   appId: "1:22132766859:web:f13a268ecd5dac634cfc8e"
 // };
 // Initialize Firebase
+
+const firebaseConfig = {
+  apiKey: "AIzaSyClNkr9hhmE1bR7F29j_FK4l8pFILAxsMI",
+  authDomain: "ultimateredrickroutineson.firebaseapp.com",
+  projectId: "ultimateredrickroutineson",
+  storageBucket: "ultimateredrickroutineson.firebasestorage.app",
+  messagingSenderId: "367705034515",
+  appId: "1:367705034515:web:3d12a469867fb8785ad4e6"
+};
+
+
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth();
 export const provider = new GoogleAuthProvider();
