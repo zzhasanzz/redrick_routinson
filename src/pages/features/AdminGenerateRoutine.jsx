@@ -49,7 +49,10 @@ const AdminGenerateRoutine = () => {
   const [newTimeSlot, setNewTimeSlot] = useState();
   const [selectedNewRoom, setSelectedNewRoom] = useState("");
   const [activeSection, setActiveSection] = useState("A");
+  const [rescheduleSource, setRescheduleSource] = useState(null);
+  const [rescheduleTarget, setRescheduleTarget] = useState(null);
   const [selectedAction, setSelectedAction] = useState(null); // Add this state
+  const [rescheduleTargetRoom, setRescheduleTargetRoom] = useState(""); // Add this state
   const toast = useToast();
 
   const timeSlots = [
@@ -257,6 +260,12 @@ const AdminGenerateRoutine = () => {
   };
 
   const handleCellClick = async (day, time, course) => {
+    // If in reschedule mode and source is already selected
+    if (selectedAction === "reschedule" && rescheduleSource) {
+      // Set target cell for rescheduling
+      setRescheduleTarget({ day, time });
+      return;
+    }
     const timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
 
     let courseCode = "";
@@ -337,6 +346,7 @@ const AdminGenerateRoutine = () => {
       newRoomRef,
       {
         perm_course_code: courseCode,
+        temp_course_code: "",
         perm_course_type: courseType,
         perm_teacher_1: teacher1,
         perm_teacher_2: teacher2,
@@ -365,6 +375,163 @@ const AdminGenerateRoutine = () => {
           assigned_room: assignedRooms,
         });
       }
+    }
+  };
+
+  const handleReschedule = async () => {
+    if (!rescheduleSource || !rescheduleTarget || !rescheduleTargetRoom) return;
+
+    try {
+      const {
+        day: sourceDay,
+        time: sourceTime,
+        courseCode,
+        teacher1,
+        teacher2,
+        currentRoom,
+        courseType,
+        semester,
+        section,
+      } = rescheduleSource;
+
+      console.log("Reschedule Source: ", rescheduleSource);
+      console.log("Reschedule Target: ", rescheduleTarget);
+      console.log("Course Code: ", courseCode);
+      console.log("Teacher 1: ", teacher1);
+      console.log("Teacher 2: ", teacher2);
+      console.log("Current Room: ", currentRoom);
+      console.log("Course Type: ", courseType);
+      console.log("Semester: ", semester);
+      console.log("Section: ", section);
+
+      const { day: targetDay, time: targetTime } = rescheduleTarget;
+      console.log("Target Day: ", targetDay);
+      console.log("Target Time: ", targetTime);
+
+      // Calculate time slots
+      const sourceTimeSlot =
+        revDayMapping[sourceDay] * 6 + revTimeMapping[sourceTime];
+      const targetTimeSlot =
+        revDayMapping[targetDay] * 6 + revTimeMapping[targetTime];
+
+      // Check if target slot is available
+      const targetRoomRef = doc(
+        db,
+        `time_slots/${targetTimeSlot}/rooms`,
+        rescheduleTargetRoom
+      );
+      const targetRoomSnap = await getDoc(targetRoomRef);
+
+      if (targetRoomSnap.exists()) {
+        throw new Error("Selected room is already occupied in target slot");
+      }
+
+      // Fetch available rooms for target slot
+      // await fetchAvailableRooms(targetTimeSlot);
+
+      // if (!availableRooms.includes(currentRoom)) {
+      //   throw new Error("Room not available in target slot");
+      // }
+
+      // Update source slot (remove class)
+      const sourceSemesterRef = doc(
+        db,
+        `semester_${semester}_${section}`,
+        sourceTimeSlot.toString()
+      );
+      await deleteDoc(sourceSemesterRef);
+
+      // Update target slot (add class)
+      const targetSemesterRef = doc(
+        db,
+        `semester_${semester}_${section}`,
+        targetTimeSlot.toString()
+      );
+      await setDoc(targetSemesterRef, {
+        class_cancelled: 0,
+        rescheduled: 0,
+        temp_course_code: "",
+        perm_course_code: courseCode,
+        perm_day: targetDay,
+        perm_time_1: targetTime,
+        perm_teacher_1: teacher1,
+        perm_teacher_2: teacher2,
+        perm_room: rescheduleTargetRoom, // Use the new selected room
+        perm_course_type: courseType,
+      });
+
+      // Update time_slots collection
+      // Remove from source
+      const sourceRoomRef = doc(
+        db,
+        `time_slots/${sourceTimeSlot}/rooms`,
+        currentRoom
+      );
+      await deleteDoc(sourceRoomRef);
+
+      // Add to target
+      const newRoomRef = doc(
+        db,
+        `time_slots/${targetTimeSlot}/rooms`,
+        rescheduleTargetRoom
+      );
+      await setDoc(newRoomRef, {
+        perm_course_code: courseCode,
+        perm_course_type: courseType,
+        perm_teacher_1: teacher1,
+        perm_teacher_2: teacher2,
+        section: section,
+        temp_course_code: "",
+        class_cancelled: 0,
+        rescheduled: 0,
+      });
+
+      const courseRef = doc(
+        db,
+        `teachers/${teacher1}/courses`,
+        `${courseCode}_${section}`
+      );
+      const courseDoc = await getDoc(courseRef);
+      const courseDocData = courseDoc.data();
+
+      if (courseDocData && courseDocData.assigned_room) {
+        const assignedRooms = [...courseDocData.assigned_room];
+        const assignedTimeSlots = [...courseDocData.assigned_time_slots];
+        const roomIndex = assignedRooms.indexOf(currentRoom);
+        if (roomIndex !== -1) {
+          assignedRooms[roomIndex] = rescheduleTargetRoom;
+          assignedTimeSlots[roomIndex] = targetTimeSlot;
+          await updateDoc(courseRef, {
+            assigned_room: assignedRooms,
+            assigned_time_slots: assignedTimeSlots,
+          });
+        }
+      }
+
+      toast({
+        title: "Success",
+        description: "Class rescheduled successfully",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      // Refresh data and reset states
+      await fetchAllRoutines();
+      setSelectedAction(null);
+      setRescheduleSource(null);
+      setRescheduleTarget(null);
+      setRescheduleTargetRoom("");
+      setSelectedCell(null);
+      setAvailableRooms([]);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -441,6 +608,68 @@ const AdminGenerateRoutine = () => {
   };
 
   const renderCourseCell = (course, day, time) => {
+    if (selectedAction === "reschedule") {
+      if (
+        rescheduleSource &&
+        rescheduleTarget?.day === day &&
+        rescheduleTarget?.time === time
+      ) {
+        return (
+          <Box bg="yellow.100" p={2} textAlign="center">
+            <Text mb={2}>Select room to reschedule:</Text>
+            <Select
+              placeholder="Select room"
+              value={rescheduleTargetRoom}
+              onChange={(e) => setRescheduleTargetRoom(e.target.value)}
+              size="sm"
+              mb={2}
+            >
+              {availableRooms.map((room) => (
+                <option key={room} value={room}>
+                  Room {room}
+                </option>
+              ))}
+            </Select>
+            <Button
+              size="xs"
+              colorScheme="green"
+              onClick={handleReschedule}
+              isDisabled={!rescheduleTargetRoom}
+              mr={2}
+            >
+              Confirm
+            </Button>
+            <Button
+              size="xs"
+              onClick={() => {
+                setRescheduleTarget(null);
+                setRescheduleTargetRoom("");
+                setAvailableRooms([]);
+              }}
+            >
+              Cancel
+            </Button>
+          </Box>
+        );
+      }
+
+      if (!course) {
+        return (
+          <Box
+            bg="green.50"
+            cursor="pointer"
+            onClick={async () => {
+              const timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
+              await fetchAvailableRooms(timeSlot);
+              setRescheduleTarget({ day, time });
+            }}
+          >
+            Select to reschedule here
+          </Box>
+        );
+      }
+    }
+
     if (selectedCell?.day === day && selectedCell?.time === time) {
       if (selectedAction === "changeRoom") {
         return (
@@ -499,16 +728,25 @@ const AdminGenerateRoutine = () => {
         >
           {selectedCell.courseCode ? (
             <>
-              <Button
-                size="sm"
-                colorScheme="teal"
-                onClick={() => setSelectedAction("changeRoom")}
-              >
-                Change Room
-              </Button>
-              <Button size="sm" colorScheme="blue">
-                Reschedule
-              </Button>
+              <>
+                <Button
+                  size="sm"
+                  colorScheme="teal"
+                  onClick={() => setSelectedAction("changeRoom")}
+                >
+                  Change Room
+                </Button>
+                <Button
+                  size="sm"
+                  colorScheme="orange"
+                  onClick={() => {
+                    setSelectedAction("reschedule");
+                    setRescheduleSource(selectedCell);
+                  }}
+                >
+                  Reschedule
+                </Button>
+              </>
             </>
           ) : (
             <Text fontSize="sm">No course in this slot</Text>
