@@ -64,8 +64,14 @@ import {
   FaFlag,
   FaBell,
   FaPaperPlane,
+  FaSearch,
+  FaHome,
+  FaUser,
+  FaEdit
 } from "react-icons/fa";
 import forumBG from "../../assets/forumBG.png";
+import { Link } from "react-router-dom";
+
 
 const Forum = () => {
   const { currentUser } = useContext(AuthContext);
@@ -75,6 +81,13 @@ const Forum = () => {
   const [image, setImage] = useState(null);
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredPosts, setFilteredPosts] = useState([]);
+  const [isSearchActive, setIsSearchActive] = useState(false);
+  const [isMyPostsFilterActive, setIsMyPostsFilterActive] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingPostId, setEditingPostId] = useState(null);
+
 
   const { isOpen: isPostFormOpen, onToggle: onTogglePostForm } = useDisclosure();
   const {
@@ -140,54 +153,114 @@ const Forum = () => {
     setIsImageOpen(true);
   };
 
-  const handleTogglePostForm = () => {
-    setTitle("");  // ✅ Reset title
-    setContent("");  // ✅ Reset content
-    setImage(null);  // ✅ Clear image preview
+  const handleSearch = () => {
+    if (searchQuery.trim() === "") {
+      setIsSearchActive(false); // Reset search if the query is empty
+      return;
+    }
 
-    // ✅ Reset file input manually
+    const query = searchQuery.trim().toLowerCase();
+
+    // Remove the '#' symbol from the query if it exists
+    const cleanedQuery = query.startsWith("#") ? query.slice(1) : query;
+
+    // Create a regex pattern to match the hashtag
+    const hashtagRegex = new RegExp(`#${cleanedQuery}\\b`, "i"); // Case-insensitive regex for hashtags
+
+    const filtered = posts.filter((post) => {
+      return (
+        hashtagRegex.test(post.content) || // Check post content for hashtag
+        hashtagRegex.test(post.title) // Check post title for hashtag
+      );
+    });
+
+    setFilteredPosts(filtered);
+    setIsSearchActive(true);
+  };
+
+  const handleTogglePostForm = () => {
+    setTitle("");  //  Reset title
+    setContent("");  //  Reset content
+    setImage(null);  //  Clear image preview
+
+    //  Reset file input manually
     const fileInput = document.getElementById("image-upload-input");
     if (fileInput) {
       fileInput.value = "";
     }
 
-    onTogglePostForm();  // ✅ Toggle the form visibility
+    onTogglePostForm();  //  Toggle the form visibility
   };
 
-
+  const handleEditPost = (post) => {
+    setTitle(post.title);
+    setContent(post.content);
+    setImage(post.image || null);
+    setIsEditing(true);
+    setEditingPostId(post.id);
+    onTogglePostForm();  // Open the form for editing
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title || !content) return;
 
     try {
-      await addDoc(collection(db, "forumPosts"), {
-        title,
-        content,
-        image,  // ✅ Store the base64 image directly in Firestore
-        createdAt: serverTimestamp(),
-        authorId: currentUser.uid,
-        authorName: currentUser.displayName || currentUser.email,
-        authorPhotoURL: currentUser.photoURL || null,
-        reports: [],
-      });
+      if (isEditing) {
+        const postRef = doc(db, "forumPosts", editingPostId);
+        await updateDoc(postRef, {
+          title,
+          content,
+          image,
+          updatedAt: serverTimestamp(),
+        });
 
-      // ✅ Reset fields after submission
+        toast({
+          title: "Post updated successfully.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+
+        setIsEditing(false);
+        setEditingPostId(null);
+      } else {
+        await addDoc(collection(db, "forumPosts"), {
+          title,
+          content,
+          image,
+          createdAt: serverTimestamp(),
+          updatedAt: null,  // New posts should not have updatedAt initially
+          authorId: currentUser.uid,
+          authorName: currentUser.displayName || currentUser.email,
+          authorPhotoURL: currentUser.photoURL || null,
+          authorEmail: currentUser.email,
+          reports: [],
+        });
+
+        toast({
+          title: "Post created successfully.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+
       setTitle("");
       setContent("");
       setImage(null);
 
-      // ✅ Reset file input manually
       const fileInput = document.getElementById("image-upload-input");
       if (fileInput) {
         fileInput.value = "";
       }
 
-      onTogglePostForm();  // ✅ Close the form
+      onTogglePostForm();
     } catch (error) {
-      console.error("Error adding post: ", error);
+      console.error("Error saving post: ", error);
     }
   };
+
 
 
 
@@ -210,12 +283,15 @@ const Forum = () => {
         position: "absolute",
         top: 0,
         left: 0,
+        padding: 0,
+        margin: 0,
         width: "100%",
         height: "100%",
-        backgroundImage: `url(${forumBG})`,
+        //backgroundImage: `url(${forumBG})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
+        backgroundColor: "white",
         zIndex: -1,
       }}
     >
@@ -224,11 +300,60 @@ const Forum = () => {
         maxW="1000px"
         mx="auto"
       >
-        <Flex justify="space-between" align="center" mb={3}>
-          <Heading fontSize="2xl" fontWeight="bold" color="teal.500" paddingBottom="60px">
+        <Flex justify="space-between" align="baseline" mb={3}>
+          {/* <Heading fontSize="2xl" fontWeight="bold" color="teal.500" paddingBottom="60px">
             Welcome {currentUser?.displayName || currentUser?.email || "User"}!
-          </Heading>
-          <HStack spacing={65}>
+          </Heading> */}
+          <HStack spacing={68}>
+            <HStack mt={4} align="baseline">
+              <Input
+                placeholder="Search by hashtag (e.g., #react)"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                size="md"
+                width="300px"
+              />
+              <IconButton
+                onClick={handleSearch}
+                colorScheme="teal"
+                variant="solid"
+                leftIcon={<FaSearch />}
+                flex="1"
+              >
+
+              </IconButton>
+            </HStack>
+            <Button
+              onClick={() => {
+                setIsMyPostsFilterActive(true);
+                setIsSearchActive(false); // Reset search if active
+              }}
+              colorScheme="teal"
+              variant="ghost"
+              textColor="teal"
+              size="lg"
+              leftIcon={<FaUser />} // You can use any icon you prefer
+              border="transparent"
+            >
+              My Posts
+            </Button>
+            {isMyPostsFilterActive && (
+              <Button
+                onClick={() => {
+                  setIsMyPostsFilterActive(false);
+                  setIsSearchActive(false); // Reset search if active
+                }}
+                colorScheme="teal"
+                variant="ghost"
+                textColor="teal"
+                size="lg"
+                leftIcon={<FaHome />}
+                border="transparent"
+              >
+                Go to Home Page
+              </Button>
+            )}
+
             <Button
               onClick={handleTogglePostForm}
               colorScheme="teal"
@@ -319,6 +444,10 @@ const Forum = () => {
 
         <Collapse in={isPostFormOpen} animateOpacity>
           <Box mb={6} borderWidth="1px" borderRadius="lg" p={4} bg="white" boxShadow="md">
+            {/* Dynamic Heading based on Editing Mode */}
+            <Heading fontSize="xl" mb={2}>
+              {isEditing ? "Edit Your Post" : "Create a New Post"}
+            </Heading>
             <form onSubmit={handleSubmit}>
               <VStack spacing={4} align="stretch">
                 <Input
@@ -339,39 +468,39 @@ const Forum = () => {
                   rows={4}
                 />
                 <Input
-                  id="image-upload-input"  // ✅ Add this ID to reset input
+                  id="image-upload-input"  //  Add this ID to reset input
                   type="file"
                   accept="image/*"
                   onChange={handleImageUpload}
-                  height = "50px"
+                  height="50px"
                 />
 
                 {image && (
                   <Box
                     mt={4}
-                    width="250px"   // ✅ Set a fixed width
-                    height="250px"  // ✅ Set a fixed height
+                    width="250px"   //  Set a fixed width
+                    height="250px"  //  Set a fixed height
                     borderRadius="8px"
                     display="flex"
                     alignItems="center"
                     justifyContent="center"
-                    backgroundColor="white"  // ✅ Ensure background is white
-                    border="1px solid gray"  // ✅ Add a light border
+                    backgroundColor="white"  //  Ensure background is white
+                    border="1px solid gray"  //  Add a light border
                     overflow="hidden"
                   >
                     <Image
                       src={image}
                       alt="Image Preview"
-                      maxWidth="100%"  // ✅ Prevent overflow
-                      maxHeight="100%" // ✅ Prevent overflow
-                      objectFit="contain" // ✅ Keep aspect ratio, white space if needed
+                      maxWidth="100%"  //  Prevent overflow
+                      maxHeight="100%" //  Prevent overflow
+                      objectFit="contain" //  Keep aspect ratio, white space if needed
                     />
                   </Box>
                 )}
 
-
+                {/* Dynamic Submit Button */}
                 <Button type="submit" colorScheme="teal" size="medium">
-                  Post
+                  {isEditing ? "Update Post" : "Post"}
                 </Button>
               </VStack>
             </form>
@@ -379,9 +508,49 @@ const Forum = () => {
         </Collapse>
 
         <VStack spacing={6} align="stretch">
-          {posts.map((post) => (
-            <Post key={post.id} post={post} handleImageClick={handleImageClick} />
-          ))}
+          {/* "Return to Home Page" Button */}
+          {isSearchActive && (
+            <Button
+              onClick={() => {
+                setSearchQuery("");
+                setIsSearchActive(false);
+                setIsMyPostsFilterActive(false); // Reset "My Posts" filter
+              }}
+              colorScheme="teal"
+              mt={4}
+              leftIcon={<FaHome />}
+            >
+              Return to Home Page
+            </Button>
+          )}
+
+          {isSearchActive ? (
+            filteredPosts.length > 0 ? (
+              filteredPosts.map((post) => (
+                <Post key={post.id} post={post} handleImageClick={handleImageClick} />
+              ))
+            ) : (
+              <Text textAlign="center" color="gray.500">
+                No posts found with the hashtag "{searchQuery}".
+              </Text>
+            )
+          ) : isMyPostsFilterActive ? (
+            posts.filter((post) => post.authorId === currentUser.uid).length > 0 ? (
+              posts
+                .filter((post) => post.authorId === currentUser.uid)
+                .map((post) => (
+                  <Post key={post.id} post={post} handleImageClick={handleImageClick} />
+                ))
+            ) : (
+              <Text textAlign="center" color="gray.500">
+                You have not created any posts yet.
+              </Text>
+            )
+          ) : (
+            posts.map((post) => (
+              <Post key={post.id} post={post} handleImageClick={handleImageClick} handleEditPost={handleEditPost} />
+            ))
+          )}
         </VStack>
 
         <Modal isOpen={isImageOpen} onClose={() => setIsImageOpen(false)} size="4xl">
@@ -405,8 +574,10 @@ const Forum = () => {
   );
 };
 
-const Post = ({ post, handleImageClick }) => {
+const Post = ({ post, handleImageClick, handleEditPost }) => {
   const { currentUser } = useContext(AuthContext);
+  //const navigate = useNavigate(); // Initialize navigate
+
   const [comments, setComments] = useState([]);
   const [commentInput, setCommentInput] = useState("");
   const { isOpen: isCommentSectionOpen, onToggle: onToggleCommentSection } = useDisclosure();
@@ -542,31 +713,74 @@ const Post = ({ post, handleImageClick }) => {
     try {
       const postRef = doc(db, "forumPosts", post.id);
       const postDoc = await getDoc(postRef);
+
       if (!postDoc.exists()) return;
 
-      const reports = postDoc.data().reports || [];
-      if (!reports.includes(currentUser.uid)) {
-        await updateDoc(postRef, {
-          reports: [...reports, currentUser.uid],
+      // Get the current report count and reportedBy array
+      const currentReportCount = postDoc.data().reportCount || 0;
+      const reportedBy = postDoc.data().reportedBy || [];
+
+      // Check if the current user has already reported the post
+      if (reportedBy.includes(currentUser.uid)) {
+        toast({
+          title: "You have already reported this post.",
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
+      }
+
+      // Add the current user's ID to the reportedBy array
+      reportedBy.push(currentUser.uid);
+
+      // Increment the report count
+      const newReportCount = currentReportCount + 1;
+
+      // Update the post document
+      await updateDoc(postRef, {
+        reportCount: newReportCount,
+        reportedBy: reportedBy,
+      });
+
+      // If the report count exceeds 2, delete the post and notify the author
+      if (newReportCount > 2) {
+        await deleteDoc(postRef);
+
+        // Notify the post author
+        await addDoc(collection(db, "users", post.authorId, "notifications"), {
+          type: "post_deleted",
+          message: `Your post "${post.title}" has been deleted due to multiple reports.`,
+          timestamp: serverTimestamp(),
+          read: false,
+          postId: post.id,
+          postTitle: post.title,
         });
 
-        // Check if 50% of viewers have reported the post
-        const viewersCount = postDoc.data().viewers || 1; // Assuming view count is tracked
-        if (reports.length + 1 >= viewersCount / 2) {
-          await deleteDoc(postRef);
-          // Notify the post creator
-          await addDoc(collection(db, "users", post.authorId, "notifications"), {
-            type: "post_deleted",
-            message: `Your post "${post.title}" has been deleted due to mass reports.`,
-            timestamp: serverTimestamp(),
-            read: false,
-            postId: post.id,
-            postTitle: post.title,
-          });
-        }
+        // Show a success toast
+        toast({
+          title: "Post deleted due to multiple reports.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        // Show a success toast for reporting
+        toast({
+          title: "Post reported successfully.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
       }
     } catch (error) {
       console.error("Error reporting post: ", error);
+      toast({
+        title: "Error reporting post.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -620,14 +834,22 @@ const Post = ({ post, handleImageClick }) => {
   );
 
   return (
-    <Box p={4} borderWidth="1px" borderRadius="lg" bg="white" boxShadow="md">
+    <Box p={4} borderWidth="2px" borderRadius="lg" bg="rgb(232, 248, 247)" boxShadow="md">
       <Flex align="center" mb={4}>
-        <Avatar size="md" src={post.authorPhotoURL} name={post.authorName} mr={2} />
+        <Link to={`/profile/${post.authorEmail}`}> {/* Add this Link */}
+          <Avatar size="md" src={post.authorPhotoURL} name={post.authorName} mr={2} />
+        </Link>
         <Box>
           <Text fontWeight="bold">{post.authorName}</Text>
           <Text fontSize="sm" color="gray.500">
             {post.createdAt?.toDate().toLocaleString() || "Just now"}
+            {post.updatedAt && (
+              <Text as="span" fontSize="sm" color="gray.500" fontStyle="italic" ml={2}>
+                (Edited)
+              </Text>
+            )}
           </Text>
+
         </Box>
         <Menu>
           <MenuButton
@@ -643,15 +865,26 @@ const Post = ({ post, handleImageClick }) => {
           />
           <MenuList>
             {post.authorId === currentUser.uid ? (
-              <MenuItem
-                icon={<FaTrash />}
-                onClick={handleDeletePost}
-                size="small"
-                _hover={{ bg: "teal.100" }}
-                border="transparent"
-              >
-                Delete Post
-              </MenuItem>
+              <>
+                <MenuItem
+                  icon={<FaEdit />}  // Add an edit option
+                  onClick={() => handleEditPost(post)}
+                  size="small"
+                  _hover={{ bg: "teal.100" }}
+                  border="transparent"
+                >
+                  Edit Post
+                </MenuItem>
+                <MenuItem
+                  icon={<FaTrash />}
+                  onClick={handleDeletePost}
+                  size="small"
+                  _hover={{ bg: "teal.100" }}
+                  border="transparent"
+                >
+                  Delete Post
+                </MenuItem>
+              </>
             ) : (
               <MenuItem
                 icon={<FaFlag />}
@@ -664,10 +897,11 @@ const Post = ({ post, handleImageClick }) => {
               </MenuItem>
             )}
           </MenuList>
+
         </Menu>
       </Flex>
       <Heading size="md" mb={2}>{post.title}</Heading>
-      <Text mb={4}>{post.content}</Text>
+      <Text mb={4} textAlign="centre">{post.content}</Text>
       {post.image && (
         <Box
           mt={2}
@@ -681,8 +915,8 @@ const Post = ({ post, handleImageClick }) => {
           border="transparent"
           overflow="hidden"
           mx="auto"
-          cursor="pointer" // ✅ Make the image clickable
-          onClick={() => handleImageClick(post.image)} // ✅ Open modal when clicked
+          cursor="pointer" //  Make the image clickable
+          onClick={() => handleImageClick(post.image)} //  Open modal when clicked
         >
           <Image
             src={post.image}
@@ -824,8 +1058,9 @@ const Comment = ({ postId, comment, post }) => {
         authorId: currentUser.uid,
         authorName: currentUser.displayName || currentUser.email,
         authorPhotoURL: currentUser.photoURL || null,
+        authorEmail: currentUser.email,
         parentCommentId: comment.id,
-        
+
       });
 
       // Send notification to the comment writer
@@ -891,8 +1126,10 @@ const Comment = ({ postId, comment, post }) => {
 
   return (
     <Box p={2} borderWidth="1px" borderRadius="md" mb={2} bg="gray.50">
-      <Flex align="center" mb={2}>
-        <Avatar size="sm" src={comment.authorPhotoURL} name={comment.authorName} mr={2} />
+      <Flex align="center" mb={4}>
+        <Link to={`/profile/${post.authorEmail}`}> {/* Add this Link */}
+          <Avatar size="md" src={post.authorPhotoURL} name={post.authorName} mr={2} />
+        </Link>
         <Text fontSize="sm" fontWeight="bold">{comment.authorName}</Text>
         {comment.authorId === currentUser.uid && (
           <IconButton

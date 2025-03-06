@@ -33,6 +33,7 @@ import AdminGenerateSeatPlan from "./pages/features/AdminManageSeatPlan.jsx";
 import LostAndFound from "./pages/features/LostAndFound.jsx";
 import FoodScanner from "./pages/event/Scanner.jsx";
 import UsersProfile from "./pages/features/UsersProfile.jsx";
+import UserProfileForum from "./pages/features/UserProfileForum.jsx";
 
 import Event from "./pages/event/Event.jsx";
 import Forum from './pages/forum/forum.jsx';
@@ -371,6 +372,7 @@ function App() {
             }
           />
         </Route>
+        <Route path="/profile/:email" element={<UserProfileForum />} />
       </Routes>
     </Router>
     </ChakraProvider >
