@@ -55,12 +55,12 @@ const UserEditModal = ({ isOpen, onClose, user, onUpdateField }) => {
             }
         });
 
-        toast({
-            title: "User updated successfully",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-        });
+        // toast({
+        //     title: "User updated successfully",
+        //     status: "success",
+        //     duration: 3000,
+        //     isClosable: true,
+        // });
 
         onClose(); // Close the modal
     };
