@@ -65,6 +65,7 @@ const AdminGenerateRoutine = () => {
   ];
 
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
   const allRooms = new Set([
     "1",
     "2",
