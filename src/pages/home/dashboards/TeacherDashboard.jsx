@@ -43,7 +43,7 @@ const TeacherDashboard = () => {
                     </Button>
                 </Link>
 
-                <Link to="/forum">
+                <Link to="/teacher-home/forum">
                     <Button
                         height="250px"
                         width="450px"
@@ -91,7 +91,7 @@ const TeacherDashboard = () => {
                     </Button>
                 </Link>
 
-                <Link to="/lost-and-found">
+                <Link to="/teacher-home/lost-and-found">
                     <Button
                         height="250px"
                         width="450px"

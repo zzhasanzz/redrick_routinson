@@ -11,6 +11,7 @@ import {
     FormControl,
     FormLabel,
     Input,
+    Select,
     VStack,
     useToast,
 } from "@chakra-ui/react";
@@ -23,6 +24,9 @@ const TeacherEditModal = ({ isOpen, onClose, user, onUpdateField }) => {
         room: user.room || "",
     });
     const toast = useToast();
+
+    // Department options
+    const departments = ["CSE", "EEE", "SWE", "IPE", "MPE", "CEE", "BTM", "TVE"];
 
     const handleSave = () => {
         if (!formData.dept || !formData.research || !formData.room) {
@@ -38,7 +42,7 @@ const TeacherEditModal = ({ isOpen, onClose, user, onUpdateField }) => {
 
         // Update fields in Firestore
         Object.entries(formData).forEach(([field, value]) => {
-            onUpdateField(user.id, field, value);
+            onUpdateField(user.email, field, value);
         });
 
         toast({
@@ -59,15 +63,25 @@ const TeacherEditModal = ({ isOpen, onClose, user, onUpdateField }) => {
                 <ModalCloseButton />
                 <ModalBody>
                     <VStack spacing={4}>
+                        {/* Department Dropdown */}
                         <FormControl isRequired>
                             <FormLabel>Department</FormLabel>
-                            <Input
+                            <Select
+                                placeholder="Select Department"
                                 value={formData.dept}
                                 onChange={(e) =>
                                     setFormData({ ...formData, dept: e.target.value })
                                 }
-                            />
+                            >
+                                {departments.map((dept) => (
+                                    <option key={dept} value={dept}>
+                                        {dept}
+                                    </option>
+                                ))}
+                            </Select>
                         </FormControl>
+
+                        {/* Research Domain Input */}
                         <FormControl isRequired>
                             <FormLabel>Research Domain</FormLabel>
                             <Input
@@ -77,6 +91,8 @@ const TeacherEditModal = ({ isOpen, onClose, user, onUpdateField }) => {
                                 }
                             />
                         </FormControl>
+
+                        {/* Room Input */}
                         <FormControl isRequired>
                             <FormLabel>Room</FormLabel>
                             <Input

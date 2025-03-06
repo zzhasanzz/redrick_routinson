@@ -1,19 +1,26 @@
 import React, { useState, useEffect, useRef } from "react";
 import { db, auth } from "../../firebase";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, collection, query, where, orderBy, getDocs } from "firebase/firestore";
 import "./UserProfile.css";
 import galleryIcon from "../../../images/gallery.png";
 import facebookIcon from "../../../images/facebook.png";
 import instagramIcon from "../../../images/instagram.png";
 import linkedinIcon from "../../../images/linkedin.png";
+import { useParams } from "react-router-dom";
+import { Box, Heading, Text, Image, VStack, HStack, Divider, Badge } from "@chakra-ui/react";
+import { FaThumbsUp, FaComment } from "react-icons/fa"; // Icons for reactions & comments
+
 
 const UsersProfile = () => {
+    const { email } = useParams();
     const currentUser = auth.currentUser;
     const [userData, setUserData] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [previewPic, setPreviewPic] = useState(null);
     const fileInputRef = useRef(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [userPosts, setUserPosts] = useState([]);
+
 
     const [profileDetails, setProfileDetails] = useState({
         bio: "",
@@ -24,9 +31,10 @@ const UsersProfile = () => {
     });
 
     useEffect(() => {
-        if (currentUser) {
+        if (email) {
+            console.log("Fetching data for email:", email);  // Debugging log
             const fetchUserData = async () => {
-                const userDocRef = doc(db, "users", currentUser.email);
+                const userDocRef = doc(db, "users", email);
                 const userSnapshot = await getDoc(userDocRef);
                 if (userSnapshot.exists()) {
                     const data = userSnapshot.data();
@@ -38,11 +46,40 @@ const UsersProfile = () => {
                         instagram: data.instagram || "",
                         linkedin: data.linkedin || "",
                     });
+                } else {
+                    console.log("User not found in Firestore.");
                 }
             };
+            const fetchUserPosts = async () => {
+                const postsRef = collection(db, "forumPosts");
+                const q = query(postsRef, where("authorEmail", "==", email));
+
+                const querySnapshot = await getDocs(q);
+
+                const postsArray = [];
+                for (let docSnap of querySnapshot.docs) {
+                    const postData = docSnap.data();
+
+                    // Fetch reactions count
+                    const reactionsRef = collection(db, "forumPosts", docSnap.id, "reactions");
+                    const reactionsSnap = await getDocs(reactionsRef);
+                    postData.reactionsCount = reactionsSnap.size;  // Store reactions count
+
+                    // Fetch comments count
+                    const commentsRef = collection(db, "forumPosts", docSnap.id, "comments");
+                    const commentsSnap = await getDocs(commentsRef);
+                    postData.commentsCount = commentsSnap.size;  // Store comments count
+
+                    postsArray.push({ id: docSnap.id, ...postData });
+                }
+
+                setUserPosts(postsArray);
+                console.log("Final posts array:", postsArray);
+            };
             fetchUserData();
+            fetchUserPosts();
         }
-    }, [currentUser]);
+    }, [email]);
 
     const handleProfilePicChange = (event) => {
         const file = event.target.files[0];
@@ -97,10 +134,7 @@ const UsersProfile = () => {
         };
 
         await updateDoc(doc(db, "users", currentUser.email), updatedData);
-        setUserData((prevData) => ({
-            ...prevData, // Retain existing data
-            ...updatedData, // Override with updated data
-        }));
+        setUserData(updatedData);
         setPreviewPic(null);
         setUploading(false);
         setIsEditing(false);
@@ -232,12 +266,76 @@ const UsersProfile = () => {
                     </>
                 )}
             </div>
-            <div className="btn-group">
-                {isEditing && <button onClick={handleSave} disabled={uploading} className="save-btn">Save</button>}
-                <button onClick={toggleEditing} className="edit-btn">{isEditing ? "Cancel" : "Edit"}</button>
+            <div className="user-posts-container">
+                <Heading size="lg" textAlign="center" color="teal.500" mb={6}>
+                    User's Forum Posts
+                </Heading>
+
+                <VStack spacing={6} align="stretch" width="100%">
+                    {userPosts.length === 0 ? (
+                        <Text textAlign="center" color="gray.500">
+                            No posts available
+                        </Text>
+                    ) : (
+                        userPosts.map((post) => (
+                            <Box
+                                key={post.id}
+                                p={5}
+                                borderWidth="1px"
+                                borderRadius="lg"
+                                bg="white"
+                                boxShadow="md"
+                                width="100%"
+                                maxW="600px"
+                                mx="auto"
+                            >
+                                {/* Post Title */}
+                                <Heading size="md" mb={2} color="gray.700">
+                                    {post.title}
+                                </Heading>
+
+                                {/* Post Content */}
+                                <Text mb={4} color="gray.600">
+                                    {post.content}
+                                </Text>
+
+                                {/* Display Image if Available */}
+                                {post.image && (
+                                    <Box
+                                        mt={2}
+                                        borderRadius="md"
+                                        overflow="hidden"
+                                        display="flex"
+                                        justifyContent="center"
+                                    >
+                                        <Image src={post.image} alt="Post Image" maxH="300px" objectFit="cover" />
+                                    </Box>
+                                )}
+
+                                <Divider my={4} />
+
+                                {/* Stats: Reactions & Comments */}
+                                <HStack justify="space-between" color="gray.500">
+                                    <HStack>
+                                        <FaThumbsUp />
+                                        <Text fontSize="sm">{post.reactionsCount} Reactions</Text>
+                                    </HStack>
+                                    <HStack>
+                                        <FaComment />
+                                        <Text fontSize="sm">{post.commentsCount} Comments</Text>
+                                    </HStack>
+                                </HStack>
+                            </Box>
+                        ))
+                    )}
+                </VStack>
             </div>
+
+
         </>
     );
 };
 
 export default UsersProfile;
+
+

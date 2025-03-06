@@ -8,6 +8,8 @@ import {
   HStack,
   IconButton,
   useToast,
+  Flex,
+  Badge
 } from "@chakra-ui/react";
 import { AddIcon, MinusIcon } from "@chakra-ui/icons";
 import { useEffect, useState } from "react";
@@ -45,28 +47,25 @@ const GenerateSeatPlan = () => {
   const [showLessStudent, setShowLessStudent] = useState(null);
 
   const handleGenerateClick = (shift) => {
-    if(totalStudentDay<= totalSeats && totalStudentMorning <= totalSeats)
-    {
+    if (totalStudentDay <= totalSeats && totalStudentMorning <= totalSeats) {
       setSelectedShift(shift);
       setShowConfirmation(true);
     }
-    else
-    {
+    else {
       setShowLessStudent(true);
     }
-    
+
   };
   const handleConfirmGeneration = async () => {
     setShowConfirmation(false);
-    if(selectedShift == "summer")
-    {
+    if (selectedShift == "summer") {
       handleSeatPlanSummerClick();
     }
-    if(selectedShift == "winter"){
+    if (selectedShift == "winter") {
       handleSeatPlanWinterClick();
     }
   };
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -77,7 +76,7 @@ const GenerateSeatPlan = () => {
           setTotalStudentDay(studentData.totalStudentDay || 0);
           setTotalStudentMorning(studentData.totalStudentMorning || 0);
         }
-  
+
         // Fetch total seats
         const querySnapshot = await getDocs(collection(db, "seat_plan_rooms"));
         let seatsCount = 0;
@@ -86,7 +85,7 @@ const GenerateSeatPlan = () => {
           seatsCount += Number(data.total_seats) || 0; // Sum total seats
           return { id: doc.id, ...data };
         });
-  
+
         setTotalSeats(seatsCount);
         setRooms(roomList.sort((a, b) => a.room_no.localeCompare(b.room_no)));
       } catch (error) {
@@ -95,10 +94,10 @@ const GenerateSeatPlan = () => {
         setRoomsLoading(false);
       }
     };
-  
+
     fetchData();
   }, [rooms]);
-  
+
 
   const handleSeatPlanSummerClick = async () => {
     setLoading(true);
@@ -296,24 +295,29 @@ const GenerateSeatPlan = () => {
     }
   };
   return (
-      
+
     <div className="container">
-      <HStack className="header">
+
+      <Flex align="center" justify="space-between" className="header">
         <h1 className="title">Generate Seat Plan</h1>
         <IconButton
-          icon={showAddRoom ? <MinusIcon /> : <AddIcon />}
+          variant="ghost"
+          icon={showAddRoom ? <MinusIcon boxSize={4} /> : <AddIcon boxSize={4} />}
           colorScheme={showAddRoom ? "red" : "green"}
           onClick={() => setShowAddRoom(!showAddRoom)}
+          width="80px"
+          marginBottom="20px"
         />
-      </HStack>
+      </Flex>
+
       {showConfirmation && (
         <div className="confirmation-popup">
           <Box className="popup-box">
             <Text fontSize="lg" fontWeight="bold">Confirm Generation</Text>
             <Text>Are you sure you want to generate the {selectedShift} semester seat plan?</Text>
             <HStack spacing={4} marginTop={3}>
-              <Button colorScheme="red" onClick={() => setShowConfirmation(false)}>Cancel</Button>
-              <Button colorScheme="green" onClick={handleConfirmGeneration}>Proceed</Button>
+              <Button backgroundColor="rgb(242, 140, 140)" onClick={() => setShowConfirmation(false)}>Cancel</Button>
+              <Button backgroundColor="rgb(138, 183, 147)" onClick={handleConfirmGeneration}>Proceed</Button>
             </HStack>
           </Box>
         </div>
@@ -328,7 +332,7 @@ const GenerateSeatPlan = () => {
           </Box>
         </div>
       )}
-    
+
       {showAddRoom && (
         <HStack className="add-room-container">
           <Input
@@ -345,7 +349,7 @@ const GenerateSeatPlan = () => {
             placeholder="Total seats"
             className="input-field"
           />
-          <Button colorScheme="blue" onClick={handleAddRoom}>
+          <Button colorScheme="blue" onClick={handleAddRoom} marginBottom="25px">
             Add Room
           </Button>
         </HStack>
@@ -357,19 +361,46 @@ const GenerateSeatPlan = () => {
           <p>Generating Seat Plan, please wait...</p>
         </div>
       )}
-      <HStack justify="space-between" width="100%" className="title-row">
-        <Box className="summary-box">
-        <Text fontSize="lg" fontWeight="bold">Total Day Students: {totalStudentDay}</Text>
-        <Text fontSize="lg" fontWeight="bold">Total Morning Students: {totalStudentMorning}</Text>
-          <Text fontSize="lg" fontWeight="bold">Total Seats: {totalSeats}</Text>
+      <Flex
+        align="center"
+        justify="space-between"
+        bg="blue.50"
+        p={4}
+        borderRadius="md"
+        boxShadow="sm"
+        className="header"
+      >
+        <Box textAlign="center" flex={1}>
+          <Text fontSize="lg" fontWeight="bold" color="blue.800">
+            Total Day Students:{" "}
+            <Badge colorScheme="blue" fontSize="lg" px={3} py={1}>
+              {totalStudentDay}
+            </Badge>
+          </Text>
         </Box>
-      </HStack>
+        <Box textAlign="center" flex={1}>
+          <Text fontSize="lg" fontWeight="bold" color="blue.800">
+            Total Morning Students:{" "}
+            <Badge colorScheme="green" fontSize="lg" px={3} py={1}>
+              {totalStudentMorning}
+            </Badge>
+          </Text>
+        </Box>
+        <Box textAlign="center" flex={1}>
+          <Text fontSize="lg" fontWeight="bold" color="blue.800">
+            Total Seats:{" "}
+            <Badge colorScheme="purple" fontSize="lg" px={3} py={1}>
+              {totalSeats}
+            </Badge>
+          </Text>
+        </Box>
+      </Flex>
 
 
       <HStack justify="space-between" width="100%" className="title-row">
         <h2 className="subtitle">Available Rooms</h2>
         {selectedRoom && (
-          <HStack spacing={3} className="room-actions">
+          <HStack spacing={2} className="room-actions">
             <Input
               type="text"
               value={newRoomNo}
@@ -384,13 +415,32 @@ const GenerateSeatPlan = () => {
               placeholder="Enter total seats"
               className="input-field"
             />
-            <Button colorScheme="yellow" onClick={handleEditRoom}>
+            <Button
+              backgroundColor="rgb(169, 195, 221)"
+              onClick={handleEditRoom}
+              size="md" 
+              _hover={{ opacity: 0.9 }} 
+              marginBottom="25px"
+              
+            >
               Save
             </Button>
-            <Button colorScheme="red" onClick={handleDeleteRoom}>
+            <Button
+              backgroundColor="rgb(238, 153, 153)"
+              onClick={handleEditRoom}
+              size="md" 
+              _hover={{ opacity: 0.9 }} 
+              marginBottom="25px"
+            >
               Remove
             </Button>
-            <Button colorScheme="gray" onClick={() => setSelectedRoom(null)}>
+            <Button
+              backgroundColor="rgb(195, 194, 194)"
+              onClick={handleEditRoom}
+              size="md" 
+              _hover={{ opacity: 0.9 }} 
+              marginBottom="25px"
+            >
               Cancel
             </Button>
           </HStack>
@@ -408,9 +458,8 @@ const GenerateSeatPlan = () => {
           {rooms.map((room) => (
             <Box
               key={room.id}
-              className={`room-box ${
-                selectedRoom?.id === room.id ? "selected" : ""
-              }`}
+              className={`room-box ${selectedRoom?.id === room.id ? "selected" : ""
+                }`}
               onClick={() => handleRoomSelect(room)}
             >
               <Text fontSize="lg" fontWeight="bold">
@@ -424,14 +473,14 @@ const GenerateSeatPlan = () => {
       <div className="button-container">
         <Button
           onClick={() => handleGenerateClick("summer")}
-          colorScheme="blue"
+          backgroundColor="rgb(169, 201, 245)"
           isLoading={loading}
         >
           Generate Summer Semester
         </Button>
         <Button
           onClick={() => handleGenerateClick("winter")}
-          colorScheme="green"
+          backgroundColor="rgb(211, 200, 248)"
           isLoading={loading}
         >
           Generate Winter Semester
@@ -440,7 +489,7 @@ const GenerateSeatPlan = () => {
 
       {message && <p className="status-message">{message}</p>}
     </div>
-    
+
   );
 };
 

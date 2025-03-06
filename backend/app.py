@@ -7,9 +7,9 @@ import json
 import csv
 import random
 import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import credentials, firestore, auth
 import logging
-
+from firebase_admin.exceptions import FirebaseError
 import time
 
 
@@ -697,6 +697,58 @@ def update_preferences():
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 ####################################################################################################################################
+
+
+@app.route("/deleteUser", methods=["DELETE"])
+def delete_user():
+    try:
+        # Log the request data
+        data = request.get_json()
+        print("Request data:", data)
+
+        user_identifier = data.get("userId")  # This can be UID or email
+        if not user_identifier:
+            return jsonify({"error": "User ID or email is required"}), 400
+
+        # Log the user identifier
+        print("Deleting user with identifier:", user_identifier)
+
+        # Check if the identifier is an email or UID
+        if "@" in user_identifier:
+            # If it's an email, fetch the user by email to get the UID
+            try:
+                user = auth.get_user_by_email(user_identifier)
+                user_id = user.uid
+                print("User found with email:", user_identifier, "UID:", user_id)
+            except auth.UserNotFoundError:
+                return jsonify({"error": "User not found in Firebase Authentication"}), 404
+        else:
+            # If it's a UID, use it directly
+            user_id = user_identifier
+
+        # Delete the user from Firebase Authentication
+        print("Deleting user from Firebase Authentication with UID:", user_id)
+        auth.delete_user(user_id)
+
+        # Delete the user document from Firestore
+        user_ref = db.collection("users").document(data.get("userId"))
+        if not user_ref.get().exists:
+            return jsonify({"error": "User document not found in Firestore"}), 404
+
+        print("Deleting user document from Firestore with UserID:", user_id)
+        user_ref.delete()
+
+        return jsonify({"message": "User deleted successfully"}), 200
+
+    except FirebaseError as e:
+        # Log the error
+        print("Firebase Error:", str(e))
+        return jsonify({"error": str(e)}), 500
+    except Exception as e:
+        # Log the error
+        print("Error:", str(e))
+        return jsonify({"error": "An unexpected error occurred"}), 500
+
 
 def generate_seat_plan(target_departments, semester):
     """

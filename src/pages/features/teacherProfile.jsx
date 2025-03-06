@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { db, auth } from "../../firebase";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import "./UserProfile.css";
+import { doc, getDoc, updateDoc, collection, getDocs } from "firebase/firestore";
+import "./teacherProfile.css";
 import galleryIcon from "../../../images/gallery.png";
 import facebookIcon from "../../../images/facebook.png";
 import instagramIcon from "../../../images/instagram.png";
@@ -14,6 +14,7 @@ const UsersProfile = () => {
     const [previewPic, setPreviewPic] = useState(null);
     const fileInputRef = useRef(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [courses, setCourses] = useState([]);
 
     const [profileDetails, setProfileDetails] = useState({
         bio: "",
@@ -38,6 +39,12 @@ const UsersProfile = () => {
                         instagram: data.instagram || "",
                         linkedin: data.linkedin || "",
                     });
+
+                    // Fetch courses
+                    const coursesCollectionRef = collection(db, "teachers", data.name, "courses");
+                    const coursesSnapshot = await getDocs(coursesCollectionRef);
+                    const coursesList = coursesSnapshot.docs.map(doc => doc.id);
+                    setCourses(coursesList);
                 }
             };
             fetchUserData();
@@ -156,14 +163,14 @@ const UsersProfile = () => {
             <div className="user-profile-container">
                 <label className="profile-label">
                     {isEditing && (
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleProfilePicChange}
-                            disabled={uploading}
-                            className="file-input"
-                            ref={fileInputRef}
-                            onClick={(e) => e.stopPropagation()}
+                        <input 
+                            type="file" 
+                            accept="image/*" 
+                            onChange={handleProfilePicChange} 
+                            disabled={uploading} 
+                            className="file-input" 
+                            ref={fileInputRef} 
+                            onClick={(e) => e.stopPropagation()} 
                         />
                     )}
 
@@ -176,61 +183,70 @@ const UsersProfile = () => {
                             <div className="no-profile-pic">No profile picture</div>
                         )}
 
-                        {isEditing && (<img
-                            src={galleryIcon}
-                            alt="Select Image"
-                            className="gallery-icon"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                fileInputRef.current?.click();
-                            }}
-                        />)}
+                        {isEditing  && (<img 
+                        src={galleryIcon} 
+                        alt="Select Image" 
+                        className="gallery-icon" 
+                        onClick={(e) => {
+                            e.preventDefault();  
+                            e.stopPropagation(); 
+                            fileInputRef.current?.click();
+                        }} 
+                    />)}
 
                     </div>
                 </label>
 
                 <div className="user-info-grid">
                     <div className="info-group">
-                        <p><strong>Student ID</strong></p>
-                        <p className="highlighted-text">{userData?.id || "N/A"}</p>
+                        <p><strong>Name</strong></p>
+                        <p className="highlighted-text">{userData?.name || "N/A"}</p>
                     </div>
                     <div className="info-group">
-                        <p><strong>Current AY</strong></p>
-                        <p className="highlighted-text">{userData?.academicYear || "2023-2024"}</p>
+                        <p><strong>Room</strong></p>
+                        <p className="highlighted-text">{userData?.room || "2023-2024"}</p>
                     </div>
                     <div className="info-group">
-                        <p><strong>Student Name</strong></p>
-                        <p className="bold-text">{userData?.displayName || "N/A"}</p>
+                        <p><strong>Department</strong></p>
+                        <p className="bold-text">{userData?.dept || "N/A"}</p>
                     </div>
                     <div className="info-group">
-                        <p><strong>Current Semester</strong></p>
-                        <p className="bold-text">{userData?.semester || "N/A"}</p>
+                        <p><strong>Research</strong></p>
+                        <p className="bold-text">{userData?.research || "N/A"}</p>
                     </div>
                 </div>
             </div>
             <div className="bio-skills-container">
-                {isEditing ? (
-                    <>
-                        <textarea placeholder="Write a short bio..." value={profileDetails.bio} onChange={(e) => setProfileDetails({ ...profileDetails, bio: e.target.value })} />
-                        <input type="text" placeholder="Skills (comma-separated)" value={profileDetails.skills} onChange={(e) => setProfileDetails({ ...profileDetails, skills: e.target.value })} />
-                    </>
-                ) : (
-                    <>
-                        <p><strong>Bio:</strong> {userData?.bio || "No bio available"}</p>
-                        <p className="skills-heading">
-                            <strong>Skills:</strong>
-                            <div className="skills-container">
-                                {userData?.skills
+                        {isEditing ? (
+                            <>
+                                <textarea placeholder="Write a short bio..." value={profileDetails.bio} onChange={(e) => setProfileDetails({ ...profileDetails, bio: e.target.value })} />
+                                <input type="text" placeholder="Skills (comma-separated)" value={profileDetails.skills} onChange={(e) => setProfileDetails({ ...profileDetails, skills: e.target.value })} />
+                            </>
+                        ) : (
+                            <>
+                                <p><strong>Bio:</strong> {userData?.bio || "No bio available"}</p>
+                                <p><strong>Skills:</strong></p>
+                                <div className="skills-container">
+                                {userData?.skills 
                                     ? userData.skills.split(",").map((skill, index) => (
                                         <span key={index} className="skill-block">{skill.trim()}</span>
-                                    ))
+                                    )) 
                                     : <span>No skills listed</span>
                                 }
-                            </div>
-                        </p>
-                    </>
-                )}
+                                </div>
+
+                            </>
+                        )}
+            </div>
+            <div className="courses-container">
+                <h3>Courses</h3>
+                <div className="courses-grid">
+                    {courses.map((course, index) => (
+                        <div key={index} className="course-box">
+                            {course}
+                        </div>
+                    ))}
+                </div>
             </div>
             <div className="btn-group">
                 {isEditing && <button onClick={handleSave} disabled={uploading} className="save-btn">Save</button>}
