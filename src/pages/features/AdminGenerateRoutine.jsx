@@ -76,7 +76,6 @@ const AdminGenerateRoutine = () => {
     "104",
     "105",
   ]);
-  let avRooms = new Set([...allRooms]);
 
   const revTimeMapping = {
     "8:00-9:15": 1,
@@ -127,7 +126,9 @@ const AdminGenerateRoutine = () => {
 
   const fetchAvailableRooms = async (timeSlot) => {
     try {
-      let avRooms = new Set([...allRooms]); // Reinitialize avRooms each time
+      console.log("Fetching available rooms for time slot: ", timeSlot);
+
+      let avRooms = new Set([...allRooms]);
 
       const roomsRef = collection(db, `time_slots/${timeSlot}/rooms`);
       const roomsSnapshot = await getDocs(roomsRef);
@@ -135,6 +136,8 @@ const AdminGenerateRoutine = () => {
         const roomID = doc.id.toString();
         avRooms.delete(roomID);
       });
+      console.log("Available Rooms: ", avRooms);
+      console.log("All Rooms: ", allRooms);
 
       // Convert Set to array and update availableRooms state
       const available = Array.from(avRooms);
@@ -268,10 +271,12 @@ const AdminGenerateRoutine = () => {
       teacher1 = parts[1];
       teacher2 = parts[2];
       currentRoom = parts[3];
-      courseType =
-        courseCode.endsWith("2") || courseCode.includes("LAB")
-          ? "lab"
-          : "theory";
+      const courseRef = doc(db, "courses", courseCode);
+      const courseDoc = await getDoc(courseRef);
+      const courseData = courseDoc.data();
+      const otherTeacher = teacher2;
+
+      courseType = courseData.course_type;
     }
     console.log("Course Code: ", courseCode);
     console.log("Teacher 1: ", teacher1);
@@ -361,7 +366,7 @@ const AdminGenerateRoutine = () => {
         selectedNewRoom
       );
       console.log("New Room Ref: ", newRoomRef);
-      console.log("New Room Data: ", semesterData);
+
       await setDoc(
         newRoomRef,
         {
@@ -375,6 +380,13 @@ const AdminGenerateRoutine = () => {
         },
         { merge: true }
       );
+      console.log("New Room Data: ", {
+        perm_course_code: courseCode,
+        perm_course_type: courseType,
+        perm_teacher_1: teacher1,
+        perm_teacher_2: teacher2,
+        section: section,
+      });
       const oldRoomRef = doc(db, `time_slots/${timeSlot}/rooms`, currentRoom);
       await deleteDoc(oldRoomRef);
 
@@ -397,6 +409,7 @@ const AdminGenerateRoutine = () => {
           });
         }
       }
+
       // // Update the semester document with the new room
       // await updateDoc(semesterRef, {
       //   perm_room: selectedNewRoom,
