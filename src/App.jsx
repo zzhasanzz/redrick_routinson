@@ -29,10 +29,12 @@ import AdminManageLabs from "./pages/features/AdminManageLabs.jsx";
 import AdminGenerateRoutine from "./pages/features/AdminGenerateRoutine.jsx";
 import AdminViewRoutine from "./pages/features/AdminViewRoutine.jsx";
 import AdminManageUsers from "./pages/features/AdminManageUsers.jsx";
+import AdminManageRooms from "./pages/features/AdminManageRooms.jsx";
 import AdminGenerateSeatPlan from "./pages/features/AdminManageSeatPlan.jsx";
 import LostAndFound from "./pages/features/LostAndFound.jsx";
 import FoodScanner from "./pages/event/Scanner.jsx";
 import UsersProfile from "./pages/features/UsersProfile.jsx";
+import UserProfileForum from "./pages/features/UserProfileForum.jsx";
 import TeacherProfile from "./pages/features/teacherProfile.jsx";
 
 import Event from "./pages/event/Event.jsx";
@@ -92,11 +94,29 @@ function App() {
               }
             />
 
+              <Route
+                  path="/admin-home/event"
+                  element={
+                         <RequireAuth allowedRoles={["admin"]}>
+                      <TeacherEvents />
+                        </RequireAuth>
+                  }
+              />
+
             <Route
               path="/admin-home/admin-manage-users"
               element={
                 <RequireAuth allowedRoles={["admin"]}>
                   <AdminManageUsers />
+                </RequireAuth>
+              }
+            />
+
+            <Route
+              path="/admin-home/admin-manage-rooms"
+              element={
+                <RequireAuth allowedRoles={["admin"]}>
+                  <AdminManageRooms />
                 </RequireAuth>
               }
             />
@@ -158,6 +178,11 @@ function App() {
                 </RequireAuth>
               }
             />
+            <Route path="/admin-home/forum" element={
+            <RequireAuth allowedRoles={["admin"]}>
+              <Forum />
+            </RequireAuth>
+          } />
             <Route
               path="/admin-home/logout"
               element={
@@ -328,17 +353,17 @@ function App() {
             <Route
               path="/teacher-home/event"
               element={
-                // <RequireAuth allowedRoles={["teacher"]}>
+                <RequireAuth allowedRoles={["teacher"]}>
                 <TeacherEvents />
-                // </RequireAuth>
+                </RequireAuth>
               }
             />
 
             <Route
-              path="/teacher-home/calendar"
+              path="/teacher-home/lost-and-found"
               element={
                 <RequireAuth allowedRoles={["teacher"]}>
-                  <Blank />
+                    <LostAndFound />
                 </RequireAuth>
               }
             />
@@ -360,6 +385,7 @@ function App() {
             }
           />
         </Route>
+        <Route path="/profile/:email" element={<UserProfileForum />} />
       </Routes>
     </Router>
     </ChakraProvider >

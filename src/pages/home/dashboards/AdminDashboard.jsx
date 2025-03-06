@@ -212,7 +212,7 @@ const AdminDashboard = () => {
             </Button>
           </Link>
 
-          <Link to="/event">
+          <Link to="/admin-home/event">
             <Button
               height="250px"
               width="450px"

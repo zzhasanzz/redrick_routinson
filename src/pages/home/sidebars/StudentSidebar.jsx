@@ -15,15 +15,15 @@ const sidebarNavItems = [
   {
     display: "My Events",
     icon: <i className="bx bx-star"></i>,
-    to: "/student-home/myevents", // Add full path
+    to: "/student-home/event", // Add full path
     section: "myevents",
   },
-  {
-    display: "Calendar",
-    icon: <i className="bx bx-calendar"></i>,
-    to: "/student-home/calendar", // Add full path
-    section: "calendar",
-  },
+  // {
+  //   display: "Calendar",
+  //   icon: <i className="bx bx-calendar"></i>,
+  //   to: "/student-home/calendar", // Add full path
+  //   section: "calendar",
+  // },
   {
     display: "Scanner",
     icon: <i className="bx bx-calendar"></i>,

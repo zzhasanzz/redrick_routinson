@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../../firebase";
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
 import {
   Box,
   Table,
@@ -22,6 +30,7 @@ import {
   Button,
   Flex,
   useToast,
+  Select,
 } from "@chakra-ui/react";
 import axios from "axios";
 
@@ -32,6 +41,18 @@ const AdminGenerateRoutine = () => {
   const [activeSemester, setActiveSemester] = useState("1");
   const [currentSeason, setCurrentSeason] = useState(null); // Track the last generated season
   const [lastGeneratedTimestamp, setLastGeneratedTimestamp] = useState(null); // Track the last generated timestamp
+  const [availableRooms, setAvailableRooms] = useState([]);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [selectedCell, setSelectedCell] = useState(null);
+  const [currentRoom, setCurrentRoom] = useState("");
+  const [currentTimeSlot, setCurrentTimeSlot] = useState();
+  const [newTimeSlot, setNewTimeSlot] = useState();
+  const [selectedNewRoom, setSelectedNewRoom] = useState("");
+  const [activeSection, setActiveSection] = useState("A");
+  const [rescheduleSource, setRescheduleSource] = useState(null);
+  const [rescheduleTarget, setRescheduleTarget] = useState(null);
+  const [selectedAction, setSelectedAction] = useState(null); // Add this state
+  const [rescheduleTargetRoom, setRescheduleTargetRoom] = useState(""); // Add this state
   const toast = useToast();
 
   const timeSlots = [
@@ -44,6 +65,38 @@ const AdminGenerateRoutine = () => {
   ];
 
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+  const allRooms = new Set([
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "301",
+    "302",
+    "304",
+    "204",
+    "104",
+    "105",
+  ]);
+
+  const revTimeMapping = {
+    "8:00-9:15": 1,
+    "9:15-10:30": 2,
+    "10:30-11:45": 3,
+    "11:45-1:00": 4,
+    "2:30-3:45": 5,
+    "3:45-5:00": 6,
+  };
+
+  const revDayMapping = {
+    Monday: 0,
+    Tuesday: 1,
+    Wednesday: 2,
+    Thursday: 3,
+    Friday: 4,
+  };
 
   useEffect(() => {
     // Fetch the last generated routine type and timestamp from Firestore
@@ -75,6 +128,36 @@ const AdminGenerateRoutine = () => {
     }
   }, [currentSeason]);
 
+  const fetchAvailableRooms = async (timeSlot) => {
+    try {
+      console.log("Fetching available rooms for time slot: ", timeSlot);
+
+      let avRooms = new Set([...allRooms]);
+
+      const roomsRef = collection(db, `time_slots/${timeSlot}/rooms`);
+      const roomsSnapshot = await getDocs(roomsRef);
+      roomsSnapshot.forEach((doc) => {
+        const roomID = doc.id.toString();
+        avRooms.delete(roomID);
+      });
+      console.log("Available Rooms: ", avRooms);
+      console.log("All Rooms: ", allRooms);
+
+      // Convert Set to array and update availableRooms state
+      const available = Array.from(avRooms);
+      setAvailableRooms(available);
+      console.log("Available Rooms: ", available);
+    } catch (error) {
+      console.error("Error fetching available rooms:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch available rooms.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
   const fetchAllRoutines = async () => {
     try {
       setLoading(true);
@@ -84,6 +167,10 @@ const AdminGenerateRoutine = () => {
           ? ["2", "4", "6", "8"]
           : ["1", "3", "5", "7"];
       const sections = ["A", "B"];
+      console.log("seasons: ", currentSeason);
+      setCurrentSeason(currentSeason);
+
+      setActiveSemester(currentSeason === "summer" ? "2" : "1");
 
       for (const semester of semesters) {
         processedData[semester] = {};
@@ -105,24 +192,21 @@ const AdminGenerateRoutine = () => {
           // Fill in the routine with actual data
           snapshot.forEach((doc) => {
             const data = doc.data();
-            
-              const courseInfo =  `${data.perm_course_code}\n${data.perm_teacher_1}\n${data.perm_teacher_2}\n${data.perm_room}`;
 
-              const dayIndex = days.indexOf( data.perm_day);
-              const timeIndex = timeSlots.indexOf(
-              data.perm_time_1
-              );
+            const courseInfo = `${data.perm_course_code}\n${data.perm_teacher_1}\n${data.perm_teacher_2}\n${data.perm_room}`;
 
-              if (dayIndex !== -1 && timeIndex !== -1) {
-                routineStructure[dayIndex][timeIndex + 1] = courseInfo;
+            const dayIndex = days.indexOf(data.perm_day);
+            const timeIndex = timeSlots.indexOf(data.perm_time_1);
 
-                // If it's a lab, fill the next slot too
-                const courseType = data.perm_course_type;
-                if (courseType === "lab" && timeIndex + 2 <= timeSlots.length) {
-                  routineStructure[dayIndex][timeIndex + 2] = courseInfo;
-                }
+            if (dayIndex !== -1 && timeIndex !== -1) {
+              routineStructure[dayIndex][timeIndex + 1] = courseInfo;
+
+              // If it's a lab, fill the next slot too
+              const courseType = data.perm_course_type;
+              if (courseType === "lab" && timeIndex + 2 <= timeSlots.length) {
+                routineStructure[dayIndex][timeIndex + 2] = courseInfo;
               }
-            
+            }
           });
 
           processedData[semester][section] = routineStructure;
@@ -176,14 +260,621 @@ const AdminGenerateRoutine = () => {
     }
   };
 
-  const renderCourseCell = (course) => {
-    if (!course) return null;
+  const handleCellClick = async (day, time, course) => {
+    // If in reschedule mode and source is already selected
+    if (selectedAction === "reschedule" && rescheduleSource) {
+      // Set target cell for rescheduling
+      setRescheduleTarget({ day, time });
+      return;
+    }
+    const timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
 
-    const [code, teacher1,teacher2, room] = course.split("\n");
+    let courseCode = "";
+    let teacher1 = "";
+    let teacher2 = "";
+    let currentRoom = "";
+    let courseType = "theory";
+
+    if (course) {
+      const parts = course.split("\n");
+      courseCode = parts[0];
+      teacher1 = parts[1];
+      teacher2 = parts[2];
+      currentRoom = parts[3];
+      const courseRef = doc(db, "courses", courseCode);
+      const courseDoc = await getDoc(courseRef);
+      const courseData = courseDoc.data();
+      const otherTeacher = teacher2;
+
+      courseType = courseData.course_type;
+    }
+    console.log("Course Code: ", courseCode);
+    console.log("Teacher 1: ", teacher1);
+    console.log("Teacher 2: ", teacher2);
+    console.log("Current Room: ", currentRoom);
+    console.log("Course Type: ", courseType);
+    console.log("Time Slot: ", timeSlot);
+    console.log("Day: ", day);
+    console.log("Time: ", time);
+
+    setSelectedCell({
+      day,
+      time,
+      courseCode,
+      teacher1,
+      teacher2,
+      currentRoom,
+      courseType,
+      semester: activeSemester,
+      section: activeSection,
+    });
+
+    await fetchAvailableRooms(timeSlot);
+  };
+
+  const updateRoomForTimeSlot = async (
+    timeSlot,
+    selectedNewRoom,
+    courseData
+  ) => {
+    const {
+      courseCode,
+      teacher1,
+      teacher2,
+      currentRoom,
+      courseType,
+      semester,
+      section,
+    } = courseData;
+
+    // Update semester document
+    const semesterRef = doc(
+      db,
+      `semester_${semester}_${section}`,
+      timeSlot.toString()
+    );
+    await updateDoc(semesterRef, { perm_room: selectedNewRoom });
+
+    // Delete old room document if it exists
+    if (currentRoom) {
+      const oldRoomRef = doc(db, `time_slots/${timeSlot}/rooms`, currentRoom);
+      await deleteDoc(oldRoomRef);
+    }
+
+    // Create new room document
+    const newRoomRef = doc(db, `time_slots/${timeSlot}/rooms`, selectedNewRoom);
+    await setDoc(
+      newRoomRef,
+      {
+        perm_course_code: courseCode,
+        temp_course_code: "",
+        perm_course_type: courseType,
+        perm_teacher_1: teacher1,
+        perm_teacher_2: teacher2,
+        section: section,
+        class_cancelled: 0,
+        rescheduled: 0,
+      },
+      { merge: true }
+    );
+
+    // Update teacher's course room assignment
+    const courseRef = doc(
+      db,
+      `teachers/${teacher1}/courses`,
+      `${courseCode}_${section}`
+    );
+    const courseDoc = await getDoc(courseRef);
+    const courseDocData = courseDoc.data();
+
+    if (courseDocData && courseDocData.assigned_room) {
+      const assignedRooms = [...courseDocData.assigned_room];
+      const roomIndex = assignedRooms.indexOf(currentRoom);
+      if (roomIndex !== -1) {
+        assignedRooms[roomIndex] = selectedNewRoom;
+        await updateDoc(courseRef, {
+          assigned_room: assignedRooms,
+        });
+      }
+    }
+  };
+
+  const handleReschedule = async () => {
+    if (!rescheduleSource || !rescheduleTarget || !rescheduleTargetRoom) return;
+
+    try {
+      const {
+        day: sourceDay,
+        time: sourceTime,
+        courseCode,
+        teacher1,
+        teacher2,
+        currentRoom,
+        courseType,
+        semester,
+        section,
+      } = rescheduleSource;
+
+      const { day: targetDay, time: targetTime } = rescheduleTarget;
+
+      // Calculate time slots
+      const sourceTimeSlot =
+        revDayMapping[sourceDay] * 6 + revTimeMapping[sourceTime];
+      const targetTimeSlot =
+        revDayMapping[targetDay] * 6 + revTimeMapping[targetTime];
+
+      // For labs, check if both target slots are available
+      if (courseType === "lab") {
+        if (revTimeMapping[targetTime] === 6) {
+          throw new Error(
+            "Cannot schedule lab in the last time slot of the day"
+          );
+        }
+
+        // Check both target slots
+        const targetRoomRef1 = doc(
+          db,
+          `time_slots/${targetTimeSlot}/rooms`,
+          rescheduleTargetRoom
+        );
+        const targetRoomRef2 = doc(
+          db,
+          `time_slots/${targetTimeSlot + 1}/rooms`,
+          rescheduleTargetRoom
+        );
+
+        const [targetRoomSnap1, targetRoomSnap2] = await Promise.all([
+          getDoc(targetRoomRef1),
+          getDoc(targetRoomRef2),
+        ]);
+
+        if (targetRoomSnap1.exists() || targetRoomSnap2.exists()) {
+          throw new Error(
+            "Selected room is already occupied in one or both target slots"
+          );
+        }
+      } else {
+        // For theory classes, check single slot
+        const targetRoomRef = doc(
+          db,
+          `time_slots/${targetTimeSlot}/rooms`,
+          rescheduleTargetRoom
+        );
+        const targetRoomSnap = await getDoc(targetRoomRef);
+
+        if (targetRoomSnap.exists()) {
+          throw new Error("Selected room is already occupied in target slot");
+        }
+      }
+
+      // Remove from source slots
+      if (courseType === "lab") {
+        await Promise.all([
+          deleteDoc(
+            doc(
+              db,
+              `semester_${semester}_${section}`,
+              sourceTimeSlot.toString()
+            )
+          ),
+          deleteDoc(
+            doc(
+              db,
+              `semester_${semester}_${section}`,
+              (sourceTimeSlot + 1).toString()
+            )
+          ),
+          deleteDoc(doc(db, `time_slots/${sourceTimeSlot}/rooms`, currentRoom)),
+          deleteDoc(
+            doc(db, `time_slots/${sourceTimeSlot + 1}/rooms`, currentRoom)
+          ),
+        ]);
+      } else {
+        await Promise.all([
+          deleteDoc(
+            doc(
+              db,
+              `semester_${semester}_${section}`,
+              sourceTimeSlot.toString()
+            )
+          ),
+          deleteDoc(doc(db, `time_slots/${sourceTimeSlot}/rooms`, currentRoom)),
+        ]);
+      }
+
+      // Add to target slots
+      const baseSlotData = {
+        class_cancelled: 0,
+        rescheduled: 0,
+        temp_course_code: "",
+        perm_course_code: courseCode,
+        perm_day: targetDay,
+        perm_teacher_1: teacher1,
+        perm_teacher_2: teacher2,
+        perm_room: rescheduleTargetRoom,
+        perm_course_type: courseType,
+      };
+
+      const baseRoomData = {
+        perm_course_code: courseCode,
+        perm_course_type: courseType,
+        perm_teacher_1: teacher1,
+        perm_teacher_2: teacher2,
+        section: section,
+        temp_course_code: "",
+        class_cancelled: 0,
+        rescheduled: 0,
+      };
+
+      if (courseType === "lab") {
+        // Update both slots for lab
+        await Promise.all([
+          setDoc(
+            doc(
+              db,
+              `semester_${semester}_${section}`,
+              targetTimeSlot.toString()
+            ),
+            {
+              ...baseSlotData,
+              perm_time_1: targetTime,
+            }
+          ),
+          setDoc(
+            doc(
+              db,
+              `semester_${semester}_${section}`,
+              (targetTimeSlot + 1).toString()
+            ),
+            {
+              ...baseSlotData,
+              perm_time_1: timeSlots[revTimeMapping[targetTime]],
+            }
+          ),
+          setDoc(
+            doc(db, `time_slots/${targetTimeSlot}/rooms`, rescheduleTargetRoom),
+            baseRoomData
+          ),
+          setDoc(
+            doc(
+              db,
+              `time_slots/${targetTimeSlot + 1}/rooms`,
+              rescheduleTargetRoom
+            ),
+            baseRoomData
+          ),
+        ]);
+      } else {
+        // Update single slot for theory
+        await Promise.all([
+          setDoc(
+            doc(
+              db,
+              `semester_${semester}_${section}`,
+              targetTimeSlot.toString()
+            ),
+            {
+              ...baseSlotData,
+              perm_time_1: targetTime,
+            }
+          ),
+          setDoc(
+            doc(db, `time_slots/${targetTimeSlot}/rooms`, rescheduleTargetRoom),
+            baseRoomData
+          ),
+        ]);
+      }
+
+      // Update teacher's course assignments
+      const courseRef = doc(
+        db,
+        `teachers/${teacher1}/courses`,
+        `${courseCode}_${section}`
+      );
+      const courseDoc = await getDoc(courseRef);
+      const courseDocData = courseDoc.data();
+
+      if (courseDocData && courseDocData.assigned_room) {
+        const assignedRooms = [...courseDocData.assigned_room];
+        const assignedTimeSlots = [...courseDocData.assigned_time_slots];
+        const roomIndex = assignedRooms.indexOf(currentRoom);
+
+        if (roomIndex !== -1) {
+          assignedRooms[roomIndex] = rescheduleTargetRoom;
+          assignedTimeSlots[roomIndex] = targetTimeSlot;
+
+          if (courseType === "lab" && roomIndex + 1 < assignedRooms.length) {
+            assignedRooms[roomIndex + 1] = rescheduleTargetRoom;
+            assignedTimeSlots[roomIndex + 1] = targetTimeSlot + 1;
+          }
+
+          await updateDoc(courseRef, {
+            assigned_room: assignedRooms,
+            assigned_time_slots: assignedTimeSlots,
+          });
+        }
+      }
+
+      toast({
+        title: "Success",
+        description: "Class rescheduled successfully",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      // Refresh data and reset states
+      await fetchAllRoutines();
+      setSelectedAction(null);
+      setRescheduleSource(null);
+      setRescheduleTarget(null);
+      setRescheduleTargetRoom("");
+      setSelectedCell(null);
+      setAvailableRooms([]);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleChangeRoom = async () => {
+    if (!selectedNewRoom || !selectedCell) {
+      toast({
+        title: "Error",
+        description: "Please select a room first",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    try {
+      const {
+        day,
+        time,
+        courseCode,
+        teacher1,
+        teacher2,
+        currentRoom,
+        courseType,
+        semester,
+        section,
+      } = selectedCell;
+
+      const timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
+      const courseData = {
+        courseCode,
+        teacher1,
+        teacher2,
+        currentRoom,
+        courseType,
+        semester,
+        section,
+      };
+
+      // Update the first time slot
+      await updateRoomForTimeSlot(timeSlot, selectedNewRoom, courseData);
+
+      // If it's a lab, update the next time slot as well
+      if (courseType === "lab") {
+        await updateRoomForTimeSlot(timeSlot + 1, selectedNewRoom, courseData);
+      }
+
+      toast({
+        title: "Success",
+        description: `Room changed to ${selectedNewRoom}`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      // Refresh the routine data
+      await fetchAllRoutines();
+
+      // Reset states
+      setSelectedNewRoom("");
+      setSelectedCell(null);
+      setSelectedAction(null);
+      setAvailableRooms([]);
+    } catch (error) {
+      console.error("Error changing room:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to change room",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const renderCourseCell = (course, day, time) => {
+    if (selectedAction === "reschedule") {
+      if (
+        rescheduleSource &&
+        rescheduleTarget?.day === day &&
+        rescheduleTarget?.time === time
+      ) {
+        return (
+          <Box bg="yellow.100" p={2} textAlign="center">
+            <Text mb={2}>Select room to reschedule:</Text>
+            <Select
+              placeholder="Select room"
+              value={rescheduleTargetRoom}
+              onChange={(e) => setRescheduleTargetRoom(e.target.value)}
+              size="sm"
+              mb={2}
+            >
+              {availableRooms.map((room) => (
+                <option key={room} value={room}>
+                  Room {room}
+                </option>
+              ))}
+            </Select>
+            <Button
+              size="xs"
+              colorScheme="green"
+              onClick={handleReschedule}
+              isDisabled={!rescheduleTargetRoom}
+              mr={2}
+            >
+              Confirm
+            </Button>
+            <Button
+              size="xs"
+              onClick={() => {
+                setRescheduleTarget(null);
+                setRescheduleTargetRoom("");
+                setAvailableRooms([]);
+              }}
+            >
+              Cancel
+            </Button>
+          </Box>
+        );
+      }
+
+      if (!course) {
+        return (
+          <Box
+            bg="green.50"
+            cursor="pointer"
+            onClick={async () => {
+              const timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
+              await fetchAvailableRooms(timeSlot);
+              setRescheduleTarget({ day, time });
+            }}
+          >
+            Select to reschedule here
+          </Box>
+        );
+      }
+    }
+
+    if (selectedCell?.day === day && selectedCell?.time === time) {
+      if (selectedAction === "changeRoom") {
+        return (
+          <Box
+            w="100%"
+            h="100%"
+            p={2}
+            display="flex"
+            flexDirection="column"
+            gap={2}
+          >
+            <Select
+              placeholder="Select new room"
+              value={selectedNewRoom}
+              onChange={(e) => setSelectedNewRoom(e.target.value)}
+              size="sm"
+            >
+              {availableRooms.map((room) => (
+                <option key={room} value={room}>
+                  Room {room}
+                </option>
+              ))}
+            </Select>
+            <Flex gap={2}>
+              <Button
+                size="xs"
+                colorScheme="teal"
+                onClick={handleChangeRoom}
+                isDisabled={!selectedNewRoom}
+              >
+                Confirm
+              </Button>
+              <Button
+                size="xs"
+                onClick={() => {
+                  setSelectedCell(null);
+                  setSelectedAction(null);
+                }}
+              >
+                Cancel
+              </Button>
+            </Flex>
+          </Box>
+        );
+      }
+
+      // Show action buttons when cell is selected
+      return (
+        <Box
+          w="100%"
+          h="100%"
+          p={2}
+          display="flex"
+          flexDirection="column"
+          gap={2}
+        >
+          {selectedCell.courseCode ? (
+            <>
+              <>
+                <Button
+                  size="sm"
+                  colorScheme="teal"
+                  onClick={() => setSelectedAction("changeRoom")}
+                >
+                  Change Room
+                </Button>
+                <Button
+                  size="sm"
+                  colorScheme="orange"
+                  onClick={() => {
+                    setSelectedAction("reschedule");
+                    setRescheduleSource(selectedCell);
+                  }}
+                >
+                  Reschedule
+                </Button>
+              </>
+            </>
+          ) : (
+            <Text fontSize="sm">No course in this slot</Text>
+          )}
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              setSelectedCell(null);
+              setSelectedAction(null);
+            }}
+          >
+            Cancel
+          </Button>
+        </Box>
+      );
+    }
+
+    if (!course) {
+      return (
+        <Box
+          cursor="pointer"
+          onClick={() => handleCellClick(day, time, null)}
+          w="100%"
+          h="100%"
+          p={2}
+          _hover={{ bg: "gray.100" }}
+        >
+          ---
+        </Box>
+      );
+    }
+
+    // Regular course display
+    const [code, teacher1, teacher2, room] = course.split("\n");
     const isLab = code.endsWith("2") || code.includes("LAB");
 
     return (
       <Tag
+        onClick={() => handleCellClick(day, time, course)}
+        cursor="pointer"
         colorScheme={isLab ? "purple" : "blue"}
         variant="subtle"
         borderRadius="md"
@@ -243,11 +934,11 @@ const AdminGenerateRoutine = () => {
                   >
                     {day}
                   </Td>
-                  {timeSlots.map((_, timeIndex) => {
+                  {timeSlots.map((time, timeIndex) => {
                     const course = dayData ? dayData[timeIndex + 1] : null;
                     return (
                       <Td key={timeIndex} textAlign="center" p={2}>
-                        {course ? renderCourseCell(course) : "---"}
+                        {renderCourseCell(course, day, time)}
                       </Td>
                     );
                   })}
@@ -287,6 +978,7 @@ const AdminGenerateRoutine = () => {
 
   const semesters =
     currentSeason === "summer" ? ["2", "4", "6", "8"] : ["1", "3", "5", "7"];
+  console.log("Semesters: ", semesters);
 
   return (
     <Box p={6}>
@@ -321,7 +1013,10 @@ const AdminGenerateRoutine = () => {
           </Text>
           <Tabs
             colorScheme="gray"
-            onChange={(index) => setActiveSemester(semesters[index])}
+            onChange={(index) => {
+              setActiveSemester(semesters[index]);
+              console.log("Active Semester: ", semesters[index]);
+            }}
           >
             <TabList mb={6}>
               {semesters.map((semester) => (
@@ -334,10 +1029,16 @@ const AdminGenerateRoutine = () => {
             <TabPanels>
               {semesters.map((semester) => (
                 <TabPanel key={semester} p={2}>
-                  <Tabs variant="enclosed" colorScheme="teal">
+                  <Tabs
+                    variant="enclosed"
+                    colorScheme="teal"
+                    onChange={(index) =>
+                      setActiveSection(index === 0 ? "A" : "B")
+                    }
+                  >
                     <TabList>
-                      <Tab _hover={{ bg: "gray.100" }}>Section A</Tab>
-                      <Tab _hover={{ bg: "gray.100" }}>Section B</Tab>
+                      <Tab>Section A</Tab>
+                      <Tab>Section B</Tab>
                     </TabList>
 
                     <TabPanels mt={4}>
