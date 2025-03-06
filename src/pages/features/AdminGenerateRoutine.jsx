@@ -302,6 +302,72 @@ const AdminGenerateRoutine = () => {
     await fetchAvailableRooms(timeSlot);
   };
 
+  const updateRoomForTimeSlot = async (
+    timeSlot,
+    selectedNewRoom,
+    courseData
+  ) => {
+    const {
+      courseCode,
+      teacher1,
+      teacher2,
+      currentRoom,
+      courseType,
+      semester,
+      section,
+    } = courseData;
+
+    // Update semester document
+    const semesterRef = doc(
+      db,
+      `semester_${semester}_${section}`,
+      timeSlot.toString()
+    );
+    await updateDoc(semesterRef, { perm_room: selectedNewRoom });
+
+    // Delete old room document if it exists
+    if (currentRoom) {
+      const oldRoomRef = doc(db, `time_slots/${timeSlot}/rooms`, currentRoom);
+      await deleteDoc(oldRoomRef);
+    }
+
+    // Create new room document
+    const newRoomRef = doc(db, `time_slots/${timeSlot}/rooms`, selectedNewRoom);
+    await setDoc(
+      newRoomRef,
+      {
+        perm_course_code: courseCode,
+        perm_course_type: courseType,
+        perm_teacher_1: teacher1,
+        perm_teacher_2: teacher2,
+        section: section,
+        class_cancelled: 0,
+        rescheduled: 0,
+      },
+      { merge: true }
+    );
+
+    // Update teacher's course room assignment
+    const courseRef = doc(
+      db,
+      `teachers/${teacher1}/courses`,
+      `${courseCode}_${section}`
+    );
+    const courseDoc = await getDoc(courseRef);
+    const courseDocData = courseDoc.data();
+
+    if (courseDocData && courseDocData.assigned_room) {
+      const assignedRooms = [...courseDocData.assigned_room];
+      const roomIndex = assignedRooms.indexOf(currentRoom);
+      if (roomIndex !== -1) {
+        assignedRooms[roomIndex] = selectedNewRoom;
+        await updateDoc(courseRef, {
+          assigned_room: assignedRooms,
+        });
+      }
+    }
+  };
+
   const handleChangeRoom = async () => {
     if (!selectedNewRoom || !selectedCell) {
       toast({
@@ -326,94 +392,25 @@ const AdminGenerateRoutine = () => {
         semester,
         section,
       } = selectedCell;
-      // Calculate timeSlot
 
-      console.log("Selected Cell: ", selectedCell);
-      console.log("Selected New Room: ", selectedNewRoom);
-      console.log("Current Room: ", currentRoom);
-      console.log("Course Code: ", courseCode);
-      console.log("Teacher 1: ", teacher1);
-      console.log("Teacher 2: ", teacher2);
-      console.log("Course Type: ", courseType);
-      console.log("Semester: ", semester);
-      console.log("Section: ", section);
+      const timeSlot = revDayMapping[day] * 6 + revTimeMapping[time];
+      const courseData = {
+        courseCode,
+        teacher1,
+        teacher2,
+        currentRoom,
+        courseType,
+        semester,
+        section,
+      };
 
-      const timeSlot =
-        revDayMapping[selectedCell.day] * 6 + revTimeMapping[selectedCell.time];
+      // Update the first time slot
+      await updateRoomForTimeSlot(timeSlot, selectedNewRoom, courseData);
 
-      // First, fetch the existing data from the current slot
-      const semesterRef = doc(
-        db,
-        `semester_${semester}_${section}`,
-        timeSlot.toString()
-      );
-      console.log("Semester Ref: ", semesterRef);
-
-      const semesterDoc = await getDoc(semesterRef);
-      const semesterData = semesterDoc.data();
-      console.log("Semester Data: ", semesterData);
-      await updateDoc(semesterRef, { perm_room: selectedNewRoom });
-      if (currentRoom) {
-        const oldRoomRef = doc(db, `time_slots/${timeSlot}/rooms`, currentRoom);
-        await deleteDoc(oldRoomRef);
+      // If it's a lab, update the next time slot as well
+      if (courseType === "lab") {
+        await updateRoomForTimeSlot(timeSlot + 1, selectedNewRoom, courseData);
       }
-      console.log("Time Slot: ", timeSlot);
-
-      // Create new room document with data from semester slot
-      const newRoomRef = doc(
-        db,
-        `time_slots/${timeSlot}/rooms`,
-        selectedNewRoom
-      );
-      console.log("New Room Ref: ", newRoomRef);
-
-      await setDoc(
-        newRoomRef,
-        {
-          perm_course_code: courseCode,
-          perm_course_type: courseType,
-          perm_teacher_1: teacher1,
-          perm_teacher_2: teacher2,
-          section: section,
-          class_cancelled: 0,
-          rescheduled: 0,
-        },
-        { merge: true }
-      );
-      console.log("New Room Data: ", {
-        perm_course_code: courseCode,
-        perm_course_type: courseType,
-        perm_teacher_1: teacher1,
-        perm_teacher_2: teacher2,
-        section: section,
-      });
-      const oldRoomRef = doc(db, `time_slots/${timeSlot}/rooms`, currentRoom);
-      await deleteDoc(oldRoomRef);
-
-      // // Update the room document with the new course
-      const courseRef = doc(
-        db,
-        `teachers/${teacher1}/courses`,
-        `${courseCode}_${section}`
-      );
-      const courseDoc = await getDoc(courseRef);
-      const courseData = courseDoc.data();
-      // Update assigned_perm_room in course data
-      if (courseData && courseData.assigned_room) {
-        const assignedRooms = [...courseData.assigned_room];
-        const roomIndex = assignedRooms.indexOf(currentRoom);
-        if (roomIndex !== -1) {
-          assignedRooms[roomIndex] = selectedNewRoom;
-          await updateDoc(courseRef, {
-            assigned_room: assignedRooms,
-          });
-        }
-      }
-
-      // // Update the semester document with the new room
-      // await updateDoc(semesterRef, {
-      //   perm_room: selectedNewRoom,
-      // });
 
       toast({
         title: "Success",
