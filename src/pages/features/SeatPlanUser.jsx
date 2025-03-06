@@ -69,13 +69,13 @@ const AdminManageSeatPlan = () => {
           await setDoc(roomRef, { dummy2: "dummy2" }, { merge: true });
         }
 
-        toast({
-          title: "Rooms initialized",
-          description: "Dummy fields added to all rooms.",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
+        // toast({
+        //   title: "Rooms initialized",
+        //   description: "Dummy fields added to all rooms.",
+        //   status: "success",
+        //   duration: 3000,
+        //   isClosable: true,
+        // });
       } catch (error) {
         console.error("Error initializing rooms:", error);
         setError("Failed to initialize rooms");
