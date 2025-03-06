@@ -394,19 +394,7 @@ const AdminGenerateRoutine = () => {
         section,
       } = rescheduleSource;
 
-      console.log("Reschedule Source: ", rescheduleSource);
-      console.log("Reschedule Target: ", rescheduleTarget);
-      console.log("Course Code: ", courseCode);
-      console.log("Teacher 1: ", teacher1);
-      console.log("Teacher 2: ", teacher2);
-      console.log("Current Room: ", currentRoom);
-      console.log("Course Type: ", courseType);
-      console.log("Semester: ", semester);
-      console.log("Section: ", section);
-
       const { day: targetDay, time: targetTime } = rescheduleTarget;
-      console.log("Target Day: ", targetDay);
-      console.log("Target Time: ", targetTime);
 
       // Calculate time slots
       const sourceTimeSlot =
@@ -414,68 +402,99 @@ const AdminGenerateRoutine = () => {
       const targetTimeSlot =
         revDayMapping[targetDay] * 6 + revTimeMapping[targetTime];
 
-      // Check if target slot is available
-      const targetRoomRef = doc(
-        db,
-        `time_slots/${targetTimeSlot}/rooms`,
-        rescheduleTargetRoom
-      );
-      const targetRoomSnap = await getDoc(targetRoomRef);
+      // For labs, check if both target slots are available
+      if (courseType === "lab") {
+        if (revTimeMapping[targetTime] === 6) {
+          throw new Error(
+            "Cannot schedule lab in the last time slot of the day"
+          );
+        }
 
-      if (targetRoomSnap.exists()) {
-        throw new Error("Selected room is already occupied in target slot");
+        // Check both target slots
+        const targetRoomRef1 = doc(
+          db,
+          `time_slots/${targetTimeSlot}/rooms`,
+          rescheduleTargetRoom
+        );
+        const targetRoomRef2 = doc(
+          db,
+          `time_slots/${targetTimeSlot + 1}/rooms`,
+          rescheduleTargetRoom
+        );
+
+        const [targetRoomSnap1, targetRoomSnap2] = await Promise.all([
+          getDoc(targetRoomRef1),
+          getDoc(targetRoomRef2),
+        ]);
+
+        if (targetRoomSnap1.exists() || targetRoomSnap2.exists()) {
+          throw new Error(
+            "Selected room is already occupied in one or both target slots"
+          );
+        }
+      } else {
+        // For theory classes, check single slot
+        const targetRoomRef = doc(
+          db,
+          `time_slots/${targetTimeSlot}/rooms`,
+          rescheduleTargetRoom
+        );
+        const targetRoomSnap = await getDoc(targetRoomRef);
+
+        if (targetRoomSnap.exists()) {
+          throw new Error("Selected room is already occupied in target slot");
+        }
       }
 
-      // Fetch available rooms for target slot
-      // await fetchAvailableRooms(targetTimeSlot);
+      // Remove from source slots
+      if (courseType === "lab") {
+        await Promise.all([
+          deleteDoc(
+            doc(
+              db,
+              `semester_${semester}_${section}`,
+              sourceTimeSlot.toString()
+            )
+          ),
+          deleteDoc(
+            doc(
+              db,
+              `semester_${semester}_${section}`,
+              (sourceTimeSlot + 1).toString()
+            )
+          ),
+          deleteDoc(doc(db, `time_slots/${sourceTimeSlot}/rooms`, currentRoom)),
+          deleteDoc(
+            doc(db, `time_slots/${sourceTimeSlot + 1}/rooms`, currentRoom)
+          ),
+        ]);
+      } else {
+        await Promise.all([
+          deleteDoc(
+            doc(
+              db,
+              `semester_${semester}_${section}`,
+              sourceTimeSlot.toString()
+            )
+          ),
+          deleteDoc(doc(db, `time_slots/${sourceTimeSlot}/rooms`, currentRoom)),
+        ]);
+      }
 
-      // if (!availableRooms.includes(currentRoom)) {
-      //   throw new Error("Room not available in target slot");
-      // }
-
-      // Update source slot (remove class)
-      const sourceSemesterRef = doc(
-        db,
-        `semester_${semester}_${section}`,
-        sourceTimeSlot.toString()
-      );
-      await deleteDoc(sourceSemesterRef);
-
-      // Update target slot (add class)
-      const targetSemesterRef = doc(
-        db,
-        `semester_${semester}_${section}`,
-        targetTimeSlot.toString()
-      );
-      await setDoc(targetSemesterRef, {
+      // Add to target slots
+      const baseSlotData = {
         class_cancelled: 0,
         rescheduled: 0,
         temp_course_code: "",
         perm_course_code: courseCode,
         perm_day: targetDay,
-        perm_time_1: targetTime,
         perm_teacher_1: teacher1,
         perm_teacher_2: teacher2,
-        perm_room: rescheduleTargetRoom, // Use the new selected room
+        perm_room: rescheduleTargetRoom,
         perm_course_type: courseType,
-      });
+      };
 
-      // Update time_slots collection
-      // Remove from source
-      const sourceRoomRef = doc(
-        db,
-        `time_slots/${sourceTimeSlot}/rooms`,
-        currentRoom
-      );
-      await deleteDoc(sourceRoomRef);
-
-      // Add to target
-      const newRoomRef = doc(
-        db,
-        `time_slots/${targetTimeSlot}/rooms`,
-        rescheduleTargetRoom
-      );
-      await setDoc(newRoomRef, {
+      const baseRoomData = {
         perm_course_code: courseCode,
         perm_course_type: courseType,
         perm_teacher_1: teacher1,
@@ -484,8 +503,68 @@ const AdminGenerateRoutine = () => {
         temp_course_code: "",
         class_cancelled: 0,
         rescheduled: 0,
-      });
+      };
 
+      if (courseType === "lab") {
+        // Update both slots for lab
+        await Promise.all([
+          setDoc(
+            doc(
+              db,
+              `semester_${semester}_${section}`,
+              targetTimeSlot.toString()
+            ),
+            {
+              ...baseSlotData,
+              perm_time_1: targetTime,
+            }
+          ),
+          setDoc(
+            doc(
+              db,
+              `semester_${semester}_${section}`,
+              (targetTimeSlot + 1).toString()
+            ),
+            {
+              ...baseSlotData,
+              perm_time_1: timeSlots[revTimeMapping[targetTime]],
+            }
+          ),
+          setDoc(
+            doc(db, `time_slots/${targetTimeSlot}/rooms`, rescheduleTargetRoom),
+            baseRoomData
+          ),
+          setDoc(
+            doc(
+              db,
+              `time_slots/${targetTimeSlot + 1}/rooms`,
+              rescheduleTargetRoom
+            ),
+            baseRoomData
+          ),
+        ]);
+      } else {
+        // Update single slot for theory
+        await Promise.all([
+          setDoc(
+            doc(
+              db,
+              `semester_${semester}_${section}`,
+              targetTimeSlot.toString()
+            ),
+            {
+              ...baseSlotData,
+              perm_time_1: targetTime,
+            }
+          ),
+          setDoc(
+            doc(db, `time_slots/${targetTimeSlot}/rooms`, rescheduleTargetRoom),
+            baseRoomData
+          ),
+        ]);
+      }
+
+      // Update teacher's course assignments
       const courseRef = doc(
         db,
         `teachers/${teacher1}/courses`,
@@ -498,9 +577,16 @@ const AdminGenerateRoutine = () => {
         const assignedRooms = [...courseDocData.assigned_room];
         const assignedTimeSlots = [...courseDocData.assigned_time_slots];
         const roomIndex = assignedRooms.indexOf(currentRoom);
+
         if (roomIndex !== -1) {
           assignedRooms[roomIndex] = rescheduleTargetRoom;
           assignedTimeSlots[roomIndex] = targetTimeSlot;
+
+          if (courseType === "lab" && roomIndex + 1 < assignedRooms.length) {
+            assignedRooms[roomIndex + 1] = rescheduleTargetRoom;
+            assignedTimeSlots[roomIndex + 1] = targetTimeSlot + 1;
+          }
+
           await updateDoc(courseRef, {
             assigned_room: assignedRooms,
             assigned_time_slots: assignedTimeSlots,
