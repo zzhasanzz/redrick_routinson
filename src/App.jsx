@@ -33,6 +33,7 @@ import AdminGenerateSeatPlan from "./pages/features/AdminManageSeatPlan.jsx";
 import LostAndFound from "./pages/features/LostAndFound.jsx";
 import FoodScanner from "./pages/event/Scanner.jsx";
 import UsersProfile from "./pages/features/UsersProfile.jsx";
+import TeacherProfile from "./pages/features/teacherProfile.jsx";
 
 import Event from "./pages/event/Event.jsx";
 import Forum from "./pages/forum/Forum.jsx";
@@ -334,26 +335,26 @@ function App() {
               }
             />
 
-            <Route
-              path="/teacher-home/user"
-              element={
-                <RequireAuth allowedRoles={["teacher"]}>
-                  <Blank />
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/teacher-home/logout"
-              element={
-                <RequireAuth allowedRoles={["teacher"]}>
-                  <Blank />
-                </RequireAuth>
-              }
-            />
-          </Route>
-        </Routes>
-      </Router>
-    </ChakraProvider>
+          <Route
+            path="/teacher-home/user"
+            element={
+              <RequireAuth allowedRoles={["teacher"]}>
+                <TeacherProfile />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/teacher-home/logout"
+            element={
+              <RequireAuth allowedRoles={["teacher"]}>
+                <Blank />
+              </RequireAuth>
+            }
+          />
+        </Route>
+      </Routes>
+    </Router>
+    </ChakraProvider >
   );
 }
 
