@@ -53,7 +53,7 @@ import { db } from "../../firebase";
 import { collection, addDoc, getDocs, getDoc, doc, deleteDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { AuthContext } from "../../context/AuthContext";
 import { QRCodeSVG, QRCodeCanvas } from "qrcode.react";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {
     FaCalendarPlus,
@@ -708,11 +708,11 @@ const Event = () => {
         onParticipantsOpen();
     };
 
-
+    
 
 
     return (
-        <Box p={5}>
+        <Box p={5} backgroundColor="rgb(255, 255, 255)">
             {isPresident && (
                 <>
                     <Button
@@ -751,9 +751,11 @@ const Event = () => {
                 <ModalOverlay backdropFilter="blur(10px)" />
                 <ModalContent borderRadius="2xl" overflow="hidden">
                     <Box
-                        bgGradient="linear(to-r, blue.600, purple.500)"
+                        backgroundColor="rgb(156, 201, 210)"
                         px={6}
                         py={4}
+                        padding="20px"
+                        borderColor="white"
                     >
                         <ModalHeader color="white" fontSize="2xl">
                             <HStack>
@@ -1006,11 +1008,11 @@ const Event = () => {
                     <Spinner size="xl" />
                 </Center>
             ) : (
-                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={5} padding="20px" marginTop="40px" >
                     {filteredEvents.map((event) => (
                         <Card
                             key={event.id}
-                            borderRadius="xl"
+                            borderRadius="lg"
                             overflow="hidden"
                             boxShadow="lg"
                             transition="all 0.3s"
@@ -1020,6 +1022,8 @@ const Event = () => {
                             }}
                             cursor="pointer"
                             onClick={() => handleCardClick(event)}
+                            height="400px"
+                            backgroundColor="rgb(200, 227, 232)"
                         >
                             <Flex direction={{ base: "column", md: "row" }} h="full">
                                 {/* Image Section with Hover Overlay */}
@@ -1029,12 +1033,14 @@ const Event = () => {
                                     w={{ base: "100%", md: "40%" }}
                                     h={{ base: "200px", md: "auto" }}
                                     overflow="hidden"
-                                    _after={{
-                                        content: '""',
-                                        position: "absolute",
-                                        inset: 0,
-                                        bgGradient: "linear(to-b, transparent 60%, blackAlpha.600)",
-                                    }}
+                                    // _after={{
+                                    //     content: '""',
+                                    //     position: "absolute",
+                                    //     inset: 0,
+                                    //     bgGradient: "linear(to-b, transparent 60%, blackAlpha.600)",
+                                    // }}
+                                    padding="8px"
+                                    backgroundColor="rgb(183, 209, 214)"
                                 >
                                     <Image
                                         src={event.image}
@@ -1044,11 +1050,12 @@ const Event = () => {
                                         objectFit="cover"
                                         transition="transform 0.3s"
                                         _hover={{ transform: "scale(1.05)" }}
+                                        borderRadius="5px"
                                     />
                                 </Box>
 
                                 {/* Content Section */}
-                                <Box flex={1} p={5} bg="white">
+                                <Box flex={1} p={5} bg="white" backgroundColor="rgb(183, 209, 214)">
                                     {/* Event Header */}
                                     <Heading
                                         size="lg"
@@ -1061,21 +1068,21 @@ const Event = () => {
 
                                     {/* Date Section */}
                                     <Flex gap={4} mb={4}>
-                                        <Box>
-                                            <Text fontSize="sm" fontWeight="semibold" color="gray.500">
+                                        <Box textAlign="center">
+                                            <Text fontSize="sm" fontWeight="semibold" color="gray.500" textAlign="center">
                                                 Starts
                                             </Text>
-                                            <Text fontSize="md" fontWeight="bold">
+                                            <Text fontSize="md" fontWeight="bold" textAlign="center">
                                                 {new Date(event.startDate).toLocaleDateString("en-US", {
                                                     dateStyle: "medium",
                                                 })}
                                             </Text>
                                         </Box>
                                         <Box>
-                                            <Text fontSize="sm" fontWeight="semibold" color="gray.500">
+                                            <Text fontSize="sm" fontWeight="semibold" color="gray.500" textAlign="center">
                                                 Ends
                                             </Text>
-                                            <Text fontSize="md" fontWeight="bold">
+                                            <Text fontSize="md" fontWeight="bold" textAlign="center">
                                                 {new Date(event.endDate).toLocaleDateString("en-US", {
                                                     dateStyle: "medium",
                                                 })}
@@ -1088,7 +1095,7 @@ const Event = () => {
                                         fontSize="sm"
                                         color="gray.600"
                                         mb={4}
-                                        noOfLines={3}
+                                        noOfLines={2}
                                         lineHeight="tall"
                                     >
                                         {event.description}
@@ -1105,7 +1112,7 @@ const Event = () => {
                                             {event.subscriptionFee ? `৳${event.subscriptionFee}` : "Free Entry"}
                                         </Badge>
                                         {event.enableVolunteer && (
-                                            <Badge px={3} py={1} borderRadius="full" colorScheme="orange">
+                                            <Badge px={3} py={1} borderRadius="full" backgroundColor="rgb(234, 237, 214) ">
                                                 👐 Volunteers Needed
                                             </Badge>
                                         )}
@@ -1113,50 +1120,58 @@ const Event = () => {
 
                                     {/* Action Buttons */}
                                     <Flex
-                                        gap={3}
+                                        gap={2}
                                         mt="auto"
                                         flexWrap="wrap"
                                         justify={{ base: "center", md: "flex-start" }}
                                     >
                                         {event.creatorEmail === currentUser.email ? (
                                             <>
-                                                <Button
-                                                    leftIcon={<FaUsers />}
-                                                    colorScheme="teal"
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleViewVolunteers(event);
-                                                    }}
-                                                >
-                                                    Volunteers
-                                                </Button>
-                                                <Button
-                                                    leftIcon={<FaUsers />}
-                                                    colorScheme="teal"
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleViewParticipants(event);
-                                                    }}
-                                                >
-                                                    Participants
-                                                </Button>
-                                                {/* New Invite Teachers button */}
-                                                <Button
-                                                    leftIcon={<FaChalkboardTeacher />}// Consider using FaUserPlus if available
-                                                    colorScheme="teal"
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        navigate(`/student-home/event/invite/${event.id}`);
-                                                    }}
-                                                >
-                                                    Invite Teachers
-                                                </Button>
+                                                {/* Volunteers and Participants in a single line */}
+                                                <Flex gap={2}>
+                                                    <Button
+                                                        leftIcon={<FaUsers />}
+                                                        colorScheme="teal"
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleViewVolunteers(event);
+                                                        }}
+                                                    >
+                                                        Volunteers
+                                                    </Button>
+                                                    <Button
+                                                        leftIcon={<FaUsers />}
+                                                        colorScheme="teal"
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleViewParticipants(event);
+                                                        }}
+                                                    >
+                                                        Participants
+                                                    </Button>
+
+                                                    <Button
+                                                        leftIcon={<FaChalkboardTeacher />}
+                                                        colorScheme="teal"
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            navigate(`/student-home/event/invite/${event.id}`);
+                                                        }}
+                                                    >
+                                                        Invite Teachers
+                                                    </Button>
+                                                </Flex>
+
+                                                {/* Other buttons */}
+
+
+
                                                 <Button
                                                     leftIcon={<FaEdit />}
                                                     colorScheme="blue"
@@ -1183,7 +1198,7 @@ const Event = () => {
                                                 </Button>
                                             </>
                                         ) : event.enableVolunteer &&
-                                        event.volunteerList?.some((v) => v.email === currentUser.email) ? (
+                                            event.volunteerList?.some((v) => v.email === currentUser.email) ? (
                                             <Button
                                                 leftIcon={<FaTimes />}
                                                 colorScheme="red"
@@ -1528,7 +1543,7 @@ const Event = () => {
                                 <Input
                                     placeholder="Enter your full name"
                                     value={formData.name}
-                                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 />
                             </FormControl>
                             <FormControl isRequired>
@@ -1536,7 +1551,7 @@ const Event = () => {
                                 <Input
                                     placeholder="Enter your student ID"
                                     value={formData.studentId}
-                                    onChange={(e) => setFormData({...formData, studentId: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, studentId: e.target.value })}
                                 />
                             </FormControl>
                             <FormControl isRequired>
@@ -1544,7 +1559,7 @@ const Event = () => {
                                 <Select
                                     placeholder="Select department"
                                     value={formData.department}
-                                    onChange={(e) => setFormData({...formData, department: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, department: e.target.value })}
                                 >
                                     {departments.map(dept => (
                                         <option key={dept} value={dept}>{dept}</option>
@@ -1561,7 +1576,7 @@ const Event = () => {
                                         if (file) {
                                             const reader = new FileReader();
                                             reader.onloadend = () => {
-                                                setFormData({...formData, image: reader.result});
+                                                setFormData({ ...formData, image: reader.result });
                                             };
                                             reader.readAsDataURL(file);
                                         }
@@ -1649,7 +1664,7 @@ const Event = () => {
                                 <Input
                                     placeholder="Enter your full name"
                                     value={volunteerFormData.name}
-                                    onChange={(e) => setVolunteerFormData({...volunteerFormData, name: e.target.value})}
+                                    onChange={(e) => setVolunteerFormData({ ...volunteerFormData, name: e.target.value })}
                                 />
                             </FormControl>
                             <FormControl isRequired>
@@ -1657,7 +1672,7 @@ const Event = () => {
                                 <Input
                                     placeholder="Enter your student ID"
                                     value={volunteerFormData.studentId}
-                                    onChange={(e) => setVolunteerFormData({...volunteerFormData, studentId: e.target.value})}
+                                    onChange={(e) => setVolunteerFormData({ ...volunteerFormData, studentId: e.target.value })}
                                 />
                             </FormControl>
                             <FormControl isRequired>
@@ -1665,7 +1680,7 @@ const Event = () => {
                                 <Select
                                     placeholder="Select department"
                                     value={volunteerFormData.department}
-                                    onChange={(e) => setVolunteerFormData({...volunteerFormData, department: e.target.value})}
+                                    onChange={(e) => setVolunteerFormData({ ...volunteerFormData, department: e.target.value })}
                                 >
                                     {departments.map(dept => (
                                         <option key={dept} value={dept}>{dept}</option>
@@ -1682,7 +1697,7 @@ const Event = () => {
                                         if (file) {
                                             const reader = new FileReader();
                                             reader.onloadend = () => {
-                                                setVolunteerFormData({...volunteerFormData, image: reader.result});
+                                                setVolunteerFormData({ ...volunteerFormData, image: reader.result });
                                             };
                                             reader.readAsDataURL(file);
                                         }
