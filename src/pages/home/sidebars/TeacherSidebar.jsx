@@ -79,9 +79,9 @@ const TeacherSidebar = () => {
 
     return (
         <div className='sidebar'>
-            <div className="sidebar__logo">
-                RoutineSon
-            </div>
+           <center>
+                <img src="../../assets/redrick_logo.png" alt="RoutineSon Logo" width="300px" height="auto" align="middle"  />
+            </center>
 
             {/* Display User Info (username, email, profile picture) */}
             {currentUser && (
@@ -105,7 +105,7 @@ const TeacherSidebar = () => {
                     className="sidebar__menu__indicator"
                     style={{
                         transform: `translateX(-50%) translateY(${activeIndex * stepHeight}px)`,
-                        backgroundColor: '#d9f3fc'
+                        backgroundColor: "#8bbfbd"
                     }}
                 ></div>
 

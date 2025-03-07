@@ -77,14 +77,14 @@ const firebaseConfig = {
 };
 // Initialize Firebase
 
-const firebaseConfig = {
-  apiKey: "AIzaSyClNkr9hhmE1bR7F29j_FK4l8pFILAxsMI",
-  authDomain: "ultimateredrickroutineson.firebaseapp.com",
-  projectId: "ultimateredrickroutineson",
-  storageBucket: "ultimateredrickroutineson.firebasestorage.app",
-  messagingSenderId: "367705034515",
-  appId: "1:367705034515:web:3d12a469867fb8785ad4e6"
-};
+// const firebaseConfig = {
+//   apiKey: "AIzaSyClNkr9hhmE1bR7F29j_FK4l8pFILAxsMI",
+//   authDomain: "ultimateredrickroutineson.firebaseapp.com",
+//   projectId: "ultimateredrickroutineson",
+//   storageBucket: "ultimateredrickroutineson.firebasestorage.app",
+//   messagingSenderId: "367705034515",
+//   appId: "1:367705034515:web:3d12a469867fb8785ad4e6"
+// };
 
 
 const app = initializeApp(firebaseConfig);
