@@ -312,9 +312,12 @@ const AdminManageLabs = () => {
                     index={labs.findIndex(sem => sem.semester === currentSemester)}
                     onChange={index => setCurrentSemester(labs[index]?.semester)}
                 >
-                    <TabList>
+                    <TabList >
                         {labs.map(semester => (
-                            <Tab key={semester.semester} fontSize="lg">
+                            <Tab key={semester.semester} fontSize="lg" _hover={{
+                                bg: "#8bbfbd", // Light gray on hover
+                                transition: "background 0.4s ease-in-out",
+                            }}>
                                 Semester {semester.semester}
                             </Tab>
                         ))}
@@ -328,7 +331,7 @@ const AdminManageLabs = () => {
                                     <Box mb={6}>
                                         <Heading fontSize="xl" mb={4}>Semester {semester.semester}</Heading>
                                         <Box overflowX="auto" minWidth="800px">
-                                            <Table variant="striped" colorScheme="gray">
+                                            <Table variant="striped" bgColor="#dfeded">
                                                 <Thead>
                                                     <Tr>
                                                         <Th width="20%" textAlign="center">Lab Code</Th>
