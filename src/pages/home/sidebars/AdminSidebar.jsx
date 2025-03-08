@@ -13,12 +13,6 @@ const sidebarNavItems = [
     section: "dashboard",
   },
   {
-    display: "Manage Users",
-    icon: <i className="bx bx-star"></i>,
-    to: "/admin-home/admin-manage-users", // Add full path
-    section: "myevents",
-  },
-  {
     display: "Courses",
     icon: <i className="bx bx-calendar"></i>,
     to: "/admin-home/admin-manage-courses", // Add full path
@@ -102,9 +96,11 @@ const AdminSidebar = () => {
 
   return (
     <div className="sidebar">
-      <div className="sidebar__logo">RoutineSon</div>
-
-      {/* Display User Info (username, email, profile picture) */}
+      <center>
+        <img src="../../assets/redrick_logo.png" alt="RoutineSon Logo" width="300px" height="auto" align="middle"  />
+      </center>
+        
+      {/* Display User Info (username, email, profile picture)
       {currentUser && (
         <div className="sidebar__user-info">
           <img
@@ -117,7 +113,7 @@ const AdminSidebar = () => {
             <p className="sidebar__user-info__email">{currentUser.email}</p>
           </div>
         </div>
-      )}
+      )} */}
 
       <div ref={sidebarRef} className="sidebar__menu">
         {/* Indicator bar */}
@@ -128,7 +124,7 @@ const AdminSidebar = () => {
             transform: `translateX(-50%) translateY(${
               activeIndex * stepHeight
             }px)`,
-            backgroundColor: "#d9f3fc",
+            backgroundColor: "#8bbfbd",
           }}
         ></div>
 

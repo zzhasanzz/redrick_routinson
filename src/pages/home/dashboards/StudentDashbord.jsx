@@ -143,7 +143,7 @@ const StudentDashboard = () => {
                     </Button>
                 </Link>
 
-                <Link to="/others">
+                <Link to="/student-home/others">
                     <Button
                         height="250px"
                         width="450px"

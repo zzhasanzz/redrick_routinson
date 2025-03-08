@@ -84,12 +84,12 @@ const AdminManageUsers = () => {
     // Handle adding a new user
     const handleAddUser = async (userData) => {
         const { email, password, role, name, dept, research, semester, section, room, isPresident, id } = userData;
-    
+
         try {
             // Step 1: Check if the user already exists in Firestore
             const userDocRef = doc(db, "users", email);
             const userDoc = await getDoc(userDocRef);
-    
+
             if (userDoc.exists()) {
                 toast({
                     title: "User already exists",
@@ -100,11 +100,11 @@ const AdminManageUsers = () => {
                 });
                 return;
             }
-    
+
             // Step 2: Create the user in Firebase Authentication
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-    
+
             // Step 3: Add the user to Firestore
             await setDoc(userDocRef, {
                 email,
@@ -118,7 +118,7 @@ const AdminManageUsers = () => {
                 isPresident: isPresident || false,
                 id: role === "student" ? id : null
             });
-    
+
             // Update local state
             setUsers((prevUsers) => [
                 ...prevUsers,
@@ -135,14 +135,14 @@ const AdminManageUsers = () => {
                     isPresident: isPresident || false,
                 },
             ]);
-    
+
             toast({
                 title: "User added successfully",
                 status: "success",
                 duration: 3000,
                 isClosable: true,
             });
-    
+
             onClose(); // Close the modal
         } catch (error) {
             toast({
@@ -166,14 +166,14 @@ const AdminManageUsers = () => {
                 },
                 body: JSON.stringify({ userId }),
             });
-    
+
             if (!response.ok) {
                 throw new Error("Failed to delete user");
             }
-    
+
             // Remove user from local state
             setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
-    
+
             toast({
                 title: "User deleted successfully",
                 status: "success",
@@ -246,13 +246,17 @@ const AdminManageUsers = () => {
             <Heading as="h1" size="xl" mb={5}>
                 Manage Users
             </Heading>
-            <Box display="flex" justifyContent="flex-end" mb={5}>
+            <Box display="flex" justifyContent="flex-end" mb={9} padding="20px">
                 <Select
                     placeholder="Select Department"
                     value={filterDept}
                     onChange={(e) => setFilterDept(e.target.value)}
                     mr={2}
-                    width="200px"
+                    width="600px"
+                    marginTop="10px"
+                    borderColor="#8bbfbd"
+                    borderWidth="2px"
+
                 >
                     <option value="CSE">CSE</option>
                     <option value="EEE">EEE</option>
@@ -269,21 +273,33 @@ const AdminManageUsers = () => {
                         value={filterId}
                         onChange={(e) => setFilterId(e.target.value)}
                         mr={2}
-                        width="200px"
+                        width="600px"
+                        marginTop="10px"
+                        borderColor="#8bbfbd"
+                        borderWidth="2px"
                     />
                 )}
-                <Button backgroundColor="rgb(181, 227, 228)" onClick={handleFilterUsers}>
+                <Button backgroundColor="#8bbfbd" onClick={handleFilterUsers} width="900px">
                     Filter
                 </Button>
             </Box>
-            <Tabs variant="enclosed" onChange={(index) => setTabIndex(index)}>
-                <TabList>
-                    <Tab>Admins</Tab>
-                    <Tab>Teachers</Tab>
-                    <Tab>Students</Tab>
+            <Tabs variant="enclosed" onChange={(index) => setTabIndex(index)} >
+                <TabList marginRight="10px" marginLeft="10px">
+                    <Tab _hover={{
+                        bg: "#8bbfbd", // Light gray on hover
+                        transition: "background 0.4s ease-in-out",
+                    }}>Admins</Tab>
+                    <Tab _hover={{
+                        bg: "#8bbfbd", // Light gray on hover
+                        transition: "background 0.4s ease-in-out",
+                    }}>Teachers</Tab>
+                    <Tab _hover={{
+                        bg: "#8bbfbd", // Light gray on hover
+                        transition: "background 0.4s ease-in-out",
+                    }}>Students</Tab>
                 </TabList>
                 <TabPanels>
-                    <TabPanel>
+                    <TabPanel >
                         {usersToDisplay.length > 0 ? (
                             <UserTable
                                 users={usersToDisplay}
@@ -327,7 +343,7 @@ const AdminManageUsers = () => {
                     </TabPanel>
                 </TabPanels>
             </Tabs>
-            <Button backgroundColor="rgb(181, 227, 228)" mb={5} border="aqua" onClick={onOpen}>
+            <Button backgroundColor="#8bbfbd" mb={5} border="aqua" onClick={onOpen}>
                 Add User
             </Button>
 
