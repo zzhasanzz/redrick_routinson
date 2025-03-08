@@ -18,12 +18,12 @@ const sidebarNavItems = [
         to: '/teacher-home/myevents', // Add full path
         section: 'myevents'
     },
-    {
-        display: 'Calendar',
-        icon: <i className='bx bx-calendar'></i>,
-        to: '/teacher-home/calendar', // Add full path
-        section: 'calendar'
-    },
+    // {
+    //     display: 'Calendar',
+    //     icon: <i className='bx bx-calendar'></i>,
+    //     to: '/teacher-home/calendar', // Add full path
+    //     section: 'calendar'
+    // },
     {
         display: 'User',
         icon: <i className='bx bx-user'></i>,
