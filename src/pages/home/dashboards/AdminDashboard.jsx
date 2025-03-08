@@ -33,7 +33,15 @@ import { db, collection, doc, setDoc } from "../../../firebase.js";
 const AdminDashboard = () => {
   return (
     <>
-      <Box p={8}>
+      <Box 
+        p={0} // Removes all padding from Box
+        m={0} // Removes all margin from Box
+        height="100vh" // Full viewport height
+        backgroundImage="url('../assets/background2.png')" // Path to your background image
+        backgroundSize="cover" // Ensures the image covers the entire container
+        backgroundPosition="center" // Centers the image
+        backgroundRepeat="no-repeat" // Prevents repeating
+      >
         <SimpleGrid columns={[1, 2, 3]} spacing={8} justifyItems="center">
           <Link to="/admin-home/admin-view-routine">
             <Button
@@ -110,15 +118,15 @@ const AdminDashboard = () => {
             </Button>
           </Link>
 
-          <Link to="/admin-home/admin-lost-andfound">
-          <Button
+          <Link to="/admin-home/admin-manage-users">
+            <Button
               height="250px"
               width="450px"
               flexDirection="column"
               justifyContent="center"
               borderRadius="30px"
               backgroundColor="#edf8fb"
-              backgroundImage="url('../assets/lost_and_found.png')"
+              backgroundImage="url('../assets/manage_users.png')"
               backgroundSize="cover"
               border="2px solid rgba(255, 255, 255, 0.7)"
               color="black"
@@ -136,7 +144,7 @@ const AdminDashboard = () => {
           </Link>
 
           <Link to="/admin-home/admin-generate-seat-plan">
-          <Button
+            <Button
               height="250px"
               width="450px"
               flexDirection="column"
@@ -161,7 +169,7 @@ const AdminDashboard = () => {
           </Link>
 
           <Link to="/admin-home/admin-generate-routine">
-          <Button
+            <Button
               height="250px"
               width="450px"
               flexDirection="column"

@@ -5,11 +5,13 @@
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #dfeded; /* Light teal background */
 
   h1 {
-    font-size: 24px;
-    color: rgb(43, 65, 98);
+    font-size: 34px;
+    color: #6b9392; /* Soft red for headings */
     text-align: center;
+    margin-top: 20px;
     margin-bottom: 30px;
   }
 
@@ -19,34 +21,39 @@
     gap: 15px;
     justify-content: center;
     padding: 20px;
-    background-color: #f4f4f4;
+    background-color: #dfeded; /* Soft peach for form background */
     border-radius: 8px;
 
     input {
-      padding: 10px 15px;
+      padding: 0px 15px;
       border: 1px solid #ddd;
       border-radius: 4px;
       font-size: 16px;
       min-width: 200px;
+      background-color: white; /* White input background */
+      margin-top: 10px;
+      width: 400px;
+      height:50px;
 
       &:focus {
         outline: none;
-        border-color: rgb(43, 65, 98);
-        box-shadow: 0 0 5px rgba(43, 65, 98, 0.2);
+        border-color: #8bbfbd; /* Soft teal for focus border */
+        box-shadow: 0 0 5px rgba(139, 191, 189, 0.2); /* Soft teal shadow */
       }
     }
 
     button {
-      padding: 10px 20px;
-      background-color: rgb(43, 65, 98);
+      height:50px;
+      background-color: #8bbfbd; /* Soft teal for button */
       color: white;
       border: none;
       border-radius: 4px;
       cursor: pointer;
       transition: background-color 0.3s ease;
+      margin-bottom: 20px;
 
       &:hover {
-        background-color: darken(rgb(43, 65, 98), 10%);
+        background-color: darken(#8bbfbd, 10%); /* Darken teal on hover */
       }
     }
   }
@@ -55,10 +62,10 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
-    padding: 20px 0;
+    padding: 0px 0;
 
     .room-item {
-      background-color: white;
+      background-color: white; /* White background for room items */
       padding: 20px;
       border-radius: 8px;
       border: 1px solid #ddd;
@@ -66,6 +73,7 @@
       justify-content: space-between;
       align-items: center;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+      margin-left: 20px;
 
       &:hover {
         transform: translateY(-2px);
@@ -73,22 +81,25 @@
       }
 
       span {
-        font-size: 16px;
+        font-size: 18px;
+        text-align: center;
         font-weight: 500;
-        color: rgb(43, 65, 98);
+        color: #46665a; 
       }
 
       button {
         padding: 8px 15px;
-        background-color: #999999;
+        background-color: #d98584; /* Soft red for button */
         color: white;
         border: none;
         border-radius: 4px;
         cursor: pointer;
         transition: background-color 0.3s ease;
+        width:90px;
+        margin-bottom: 10px;
 
         &:hover {
-          background-color: darken(#555555, 10%);
+          background-color: darken(#d98584, 10%); /* Darken red on hover */
         }
       }
     }

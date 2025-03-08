@@ -60,16 +60,16 @@ const AdminManageCourses = () => {
     try {
       const response = await fetch(`http://localhost:5000/api/offered-courses?t=${Date.now()}`);
       if (!response.ok) throw new Error('Failed to fetch courses');
-  
+
       const data = await response.json();
       if (!data?.semesters) throw new Error('Invalid data structure');
-  
+
       // Create a map of all semesters (1 to 8)
       const allSemesters = Array.from({ length: 8 }, (_, i) => i + 1).map(semester => ({
         semester,
         courses: [],
       }));
-  
+
       // Merge the fetched data into the allSemesters array
       data.semesters.forEach(sem => {
         const index = allSemesters.findIndex(s => s.semester === sem.semester);
@@ -77,7 +77,7 @@ const AdminManageCourses = () => {
           allSemesters[index].courses = (sem.courses || []).filter(c => c.assigned);
         }
       });
-  
+
       setCourses(allSemesters);
       if (allSemesters.length > 0) setCurrentSemester(allSemesters[0].semester);
       setLoading(false);
@@ -109,12 +109,12 @@ const AdminManageCourses = () => {
     try {
       console.log(`Fetching unassigned courses for semester: ${semester}`);
       const response = await fetch(`http://localhost:5000/api/unassigned-courses/${semester}`);
-      
+
       if (!response.ok) {
         console.error('API response not OK:', response.status, response.statusText);
         throw new Error('Failed to fetch unassigned courses');
       }
-  
+
       const data = await response.json();
       console.log('Unassigned courses data:', data);
       setUnassignedCourses(data);
@@ -284,7 +284,11 @@ const AdminManageCourses = () => {
         >
           <TabList>
             {courses.map((semester) => (
-              <Tab key={semester.semester} fontSize="lg">
+              <Tab key={semester.semester} fontSize="lg" _hover={{
+                bg: "#8bbfbd", // Light gray on hover
+                transition: "background 0.4s ease-in-out",
+              }}>
+
                 Semester {semester.semester}
               </Tab>
             ))}
@@ -294,7 +298,7 @@ const AdminManageCourses = () => {
             {courses.map((semester) => (
               <TabPanel key={semester.semester}>
                 <Box overflowX="auto" minWidth="800px">
-                  <Table variant="striped" colorScheme="gray">
+                  <Table variant="striped" bgColor="#dfeded">
                     <Thead>
                       <Tr>
                         <Th width="20%" textAlign="center">

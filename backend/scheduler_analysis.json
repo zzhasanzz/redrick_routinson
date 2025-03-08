@@ -2,11 +2,11 @@
   "total_courses": 230,
   "theory_courses": 98,
   "lab_courses": 132,
-  "theory_full_matches": 77,
+  "theory_full_matches": 75,
   "lab_full_matches": 123,
   "lab_partial_matches": 9,
-  "no_matches": 21,
-  "theory_success_rate": 78.6,
+  "no_matches": 23,
+  "theory_success_rate": 76.5,
   "lab_full_match_percent": 93.2,
   "lab_partial_match_percent": 6.8,
   "faculty_details": {
@@ -617,13 +617,25 @@
       "total_courses": 4,
       "theory": {
         "total": 4,
-        "full_matches": 3,
-        "match_percent": 75.0,
+        "full_matches": 1,
+        "match_percent": 25.0,
         "issues": [
+          {
+            "course": "CSE4501",
+            "day": "Thursday",
+            "time": "11:45-1:00",
+            "type": "theory_no_match"
+          },
           {
             "course": "CSE4501",
             "day": "Friday",
             "time": "10:30-11:45",
+            "type": "theory_no_match"
+          },
+          {
+            "course": "CSE4501",
+            "day": "Monday",
+            "time": "2:30-3:45",
             "type": "theory_no_match"
           }
         ]

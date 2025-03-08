@@ -31,8 +31,8 @@ const UserTable = ({ users, onDeleteUser, onUpdateField, role }) => {
 
     return (
         <>
-            <Table variant="striped" bgColor="rgb(181, 227, 228)">
-                <Thead backgroundColor = "rgb(181, 227, 228)" height="60px">
+            <Table variant="striped" bgColor="#dfeded">
+                <Thead backgroundColor = "#dfeded" height="60px">
                     <Tr>
                         <Th>User ID/Email</Th>
                         <Th>Role</Th>
@@ -105,7 +105,7 @@ const UserTable = ({ users, onDeleteUser, onUpdateField, role }) => {
                                     aria-label="Edit User"
                                     icon={<EditIcon />}
                                     size="sm"
-                                    colorScheme="blue"
+                                    backgroundColor="#8bbfbd"
                                     mr={2}
                                     onClick={() => handleEditClick(user)}
                                 />
@@ -113,7 +113,7 @@ const UserTable = ({ users, onDeleteUser, onUpdateField, role }) => {
                                     aria-label="Delete User"
                                     icon={<DeleteIcon />}
                                     size="sm"
-                                    colorScheme="red"
+                                    backgroundColor="#d98584"
                                     onClick={() => onDeleteUser(user.email)}
                                 />
                             </Td>
