@@ -11,15 +11,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Thursday",
-                  "time": "8:00-9:15",
-                  "room": "105",
+                  "day": "Friday",
+                  "time": "3:45-5:00",
+                  "room": "301",
                   "teacher": "MM"
                 },
                 {
-                  "day": "Monday",
-                  "time": "9:15-10:30",
-                  "room": "302",
+                  "day": "Thursday",
+                  "time": "3:45-5:00",
+                  "room": "508",
                   "teacher": "MM"
                 }
               ]
@@ -29,9 +29,9 @@
               "credit": 1,
               "schedule": [
                 {
-                  "day": "Monday",
-                  "time": "10:30-11:45",
-                  "room": "304",
+                  "day": "Tuesday",
+                  "time": "3:45-5:00",
+                  "room": "205",
                   "teacher": "AH"
                 }
               ]
@@ -41,15 +41,15 @@
               "credit": 4,
               "schedule": [
                 {
-                  "day": "Wednesday",
-                  "time": "9:15-10:30",
-                  "room": "105",
+                  "day": "Monday",
+                  "time": "10:30-11:45",
+                  "room": "304",
                   "teacher": "MUA"
                 },
                 {
-                  "day": "Monday",
+                  "day": "Thursday",
                   "time": "2:30-3:45",
-                  "room": "104",
+                  "room": "301",
                   "teacher": "MUA"
                 }
               ]
@@ -59,15 +59,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Friday",
-                  "time": "10:30-11:45",
-                  "room": "105",
+                  "day": "Thursday",
+                  "time": "3:45-5:00",
+                  "room": "301",
                   "teacher": "KH"
                 },
                 {
-                  "day": "Thursday",
+                  "day": "Monday",
                   "time": "2:30-3:45",
-                  "room": "304",
+                  "room": "104",
                   "teacher": "KH"
                 }
               ]
@@ -78,14 +78,14 @@
               "schedule": [
                 {
                   "day": "Friday",
-                  "time": "2:30-3:45",
-                  "room": "103",
+                  "time": "11:45-1:00",
+                  "room": "205",
                   "teacher": "MMH"
                 },
                 {
-                  "day": "Monday",
-                  "time": "10:30-11:45",
-                  "room": "510",
+                  "day": "Tuesday",
+                  "time": "11:45-1:00",
+                  "room": "509",
                   "teacher": "MMH"
                 }
               ]
@@ -95,15 +95,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Tuesday",
-                  "time": "2:30-3:45",
+                  "day": "Wednesday",
+                  "time": "10:30-11:45",
                   "room": "105",
                   "teacher": "BS"
                 },
                 {
-                  "day": "Tuesday",
-                  "time": "11:45-1:00",
-                  "room": "508",
+                  "day": "Thursday",
+                  "time": "9:15-10:30",
+                  "room": "205",
                   "teacher": "BS"
                 }
               ]
@@ -113,15 +113,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Friday",
-                  "time": "2:30-3:45",
-                  "room": "508",
+                  "day": "Thursday",
+                  "time": "11:45-1:00",
+                  "room": "103",
                   "teacher": "FAK"
                 },
                 {
-                  "day": "Friday",
-                  "time": "8:00-9:15",
-                  "room": "105",
+                  "day": "Monday",
+                  "time": "3:45-5:00",
+                  "room": "205",
                   "teacher": "FAK"
                 }
               ]
@@ -136,15 +136,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Tuesday",
-                  "time": "9:15-10:30",
+                  "day": "Monday",
+                  "time": "11:45-1:00",
                   "room": "103",
                   "teacher": "MM"
                 },
                 {
                   "day": "Thursday",
-                  "time": "2:30-3:45",
-                  "room": "204",
+                  "time": "9:15-10:30",
+                  "room": "510",
                   "teacher": "MM"
                 }
               ]
@@ -155,7 +155,7 @@
               "schedule": [
                 {
                   "day": "Friday",
-                  "time": "11:45-1:00",
+                  "time": "2:30-3:45",
                   "room": "509",
                   "teacher": "AH"
                 }
@@ -166,15 +166,15 @@
               "credit": 4,
               "schedule": [
                 {
-                  "day": "Thursday",
-                  "time": "9:15-10:30",
-                  "room": "103",
+                  "day": "Tuesday",
+                  "time": "8:00-9:15",
+                  "room": "509",
                   "teacher": "MUA"
                 },
                 {
-                  "day": "Monday",
-                  "time": "8:00-9:15",
-                  "room": "105",
+                  "day": "Wednesday",
+                  "time": "9:15-10:30",
+                  "room": "302",
                   "teacher": "MUA"
                 }
               ]
@@ -185,13 +185,13 @@
               "schedule": [
                 {
                   "day": "Thursday",
-                  "time": "8:00-9:15",
-                  "room": "302",
+                  "time": "2:30-3:45",
+                  "room": "204",
                   "teacher": "KH"
                 },
                 {
-                  "day": "Tuesday",
-                  "time": "2:30-3:45",
+                  "day": "Friday",
+                  "time": "10:30-11:45",
                   "room": "510",
                   "teacher": "KH"
                 }
@@ -202,15 +202,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Friday",
-                  "time": "3:45-5:00",
-                  "room": "509",
+                  "day": "Monday",
+                  "time": "8:00-9:15",
+                  "room": "204",
                   "teacher": "MMH"
                 },
                 {
                   "day": "Tuesday",
-                  "time": "9:15-10:30",
-                  "room": "205",
+                  "time": "10:30-11:45",
+                  "room": "105",
                   "teacher": "MMH"
                 }
               ]
@@ -220,15 +220,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Friday",
-                  "time": "2:30-3:45",
-                  "room": "510",
+                  "day": "Wednesday",
+                  "time": "8:00-9:15",
+                  "room": "304",
                   "teacher": "BS"
                 },
                 {
                   "day": "Tuesday",
-                  "time": "9:15-10:30",
-                  "room": "301",
+                  "time": "11:45-1:00",
+                  "room": "104",
                   "teacher": "BS"
                 }
               ]
@@ -239,14 +239,14 @@
               "schedule": [
                 {
                   "day": "Tuesday",
-                  "time": "11:45-1:00",
-                  "room": "204",
+                  "time": "9:15-10:30",
+                  "room": "103",
                   "teacher": "FAK"
                 },
                 {
-                  "day": "Monday",
-                  "time": "9:15-10:30",
-                  "room": "509",
+                  "day": "Wednesday",
+                  "time": "8:00-9:15",
+                  "room": "205",
                   "teacher": "FAK"
                 }
               ]
@@ -266,15 +266,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Tuesday",
-                  "time": "8:00-9:15",
-                  "room": "205",
+                  "day": "Monday",
+                  "time": "9:15-10:30",
+                  "room": "304",
                   "teacher": "SHR"
                 },
                 {
-                  "day": "Tuesday",
-                  "time": "10:30-11:45",
-                  "room": "205",
+                  "day": "Friday",
+                  "time": "8:00-9:15",
+                  "room": "508",
                   "teacher": "SHR"
                 }
               ]
@@ -285,14 +285,14 @@
               "schedule": [
                 {
                   "day": "Friday",
-                  "time": "3:45-5:00",
-                  "room": "302",
+                  "time": "9:15-10:30",
+                  "room": "509",
                   "teacher": "SA"
                 },
                 {
-                  "day": "Monday",
-                  "time": "10:30-11:45",
-                  "room": "103",
+                  "day": "Tuesday",
+                  "time": "3:45-5:00",
+                  "room": "302",
                   "teacher": "SA"
                 }
               ]
@@ -303,14 +303,14 @@
               "schedule": [
                 {
                   "day": "Monday",
-                  "time": "8:00-9:15",
-                  "room": "304",
+                  "time": "9:15-10:30",
+                  "room": "302",
                   "teacher": "MHA"
                 },
                 {
-                  "day": "Tuesday",
-                  "time": "10:30-11:45",
-                  "room": "510",
+                  "day": "Thursday",
+                  "time": "11:45-1:00",
+                  "room": "105",
                   "teacher": "MHA"
                 }
               ]
@@ -320,15 +320,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Wednesday",
-                  "time": "9:15-10:30",
-                  "room": "509",
+                  "day": "Friday",
+                  "time": "2:30-3:45",
+                  "room": "304",
                   "teacher": "ARMK"
                 },
                 {
-                  "day": "Thursday",
-                  "time": "10:30-11:45",
-                  "room": "302",
+                  "day": "Friday",
+                  "time": "11:45-1:00",
+                  "room": "103",
                   "teacher": "ARMK"
                 }
               ]
@@ -338,14 +338,14 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Tuesday",
+                  "day": "Wednesday",
                   "time": "11:45-1:00",
-                  "room": "304",
+                  "room": "105",
                   "teacher": "FH"
                 },
                 {
-                  "day": "Monday",
-                  "time": "10:30-11:45",
+                  "day": "Tuesday",
+                  "time": "2:30-3:45",
                   "room": "205",
                   "teacher": "FH"
                 }
@@ -356,15 +356,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Monday",
-                  "time": "11:45-1:00",
-                  "room": "105",
+                  "day": "Wednesday",
+                  "time": "8:00-9:15",
+                  "room": "104",
                   "teacher": "MKS"
                 },
                 {
                   "day": "Wednesday",
-                  "time": "8:00-9:15",
-                  "room": "304",
+                  "time": "11:45-1:00",
+                  "room": "205",
                   "teacher": "MKS"
                 }
               ]
@@ -379,14 +379,14 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Friday",
-                  "time": "2:30-3:45",
-                  "room": "302",
+                  "day": "Thursday",
+                  "time": "11:45-1:00",
+                  "room": "104",
                   "teacher": "SHR"
                 },
                 {
                   "day": "Friday",
-                  "time": "8:00-9:15",
+                  "time": "10:30-11:45",
                   "room": "301",
                   "teacher": "SHR"
                 }
@@ -397,15 +397,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Friday",
-                  "time": "9:15-10:30",
-                  "room": "104",
+                  "day": "Tuesday",
+                  "time": "8:00-9:15",
+                  "room": "508",
                   "teacher": "SA"
                 },
                 {
-                  "day": "Monday",
-                  "time": "11:45-1:00",
-                  "room": "509",
+                  "day": "Friday",
+                  "time": "10:30-11:45",
+                  "room": "508",
                   "teacher": "SA"
                 }
               ]
@@ -416,14 +416,14 @@
               "schedule": [
                 {
                   "day": "Friday",
-                  "time": "11:45-1:00",
-                  "room": "103",
+                  "time": "9:15-10:30",
+                  "room": "205",
                   "teacher": "MHA"
                 },
                 {
-                  "day": "Tuesday",
-                  "time": "11:45-1:00",
-                  "room": "104",
+                  "day": "Friday",
+                  "time": "8:00-9:15",
+                  "room": "510",
                   "teacher": "MHA"
                 }
               ]
@@ -433,15 +433,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Monday",
-                  "time": "9:15-10:30",
-                  "room": "510",
+                  "day": "Thursday",
+                  "time": "8:00-9:15",
+                  "room": "302",
                   "teacher": "ARMK"
                 },
                 {
-                  "day": "Tuesday",
-                  "time": "11:45-1:00",
-                  "room": "103",
+                  "day": "Wednesday",
+                  "time": "10:30-11:45",
+                  "room": "509",
                   "teacher": "ARMK"
                 }
               ]
@@ -453,13 +453,13 @@
                 {
                   "day": "Thursday",
                   "time": "3:45-5:00",
-                  "room": "205",
+                  "room": "103",
                   "teacher": "FH"
                 },
                 {
                   "day": "Monday",
-                  "time": "3:45-5:00",
-                  "room": "509",
+                  "time": "2:30-3:45",
+                  "room": "301",
                   "teacher": "FH"
                 }
               ]
@@ -471,13 +471,13 @@
                 {
                   "day": "Thursday",
                   "time": "11:45-1:00",
-                  "room": "508",
+                  "room": "302",
                   "teacher": "MKS"
                 },
                 {
                   "day": "Monday",
                   "time": "10:30-11:45",
-                  "room": "204",
+                  "room": "103",
                   "teacher": "MKS"
                 }
               ]
@@ -498,14 +498,14 @@
               "schedule": [
                 {
                   "day": "Monday",
-                  "time": "8:00-9:15",
-                  "room": "301",
+                  "time": "2:30-3:45",
+                  "room": "508",
                   "teacher": "MRK"
                 },
                 {
-                  "day": "Thursday",
-                  "time": "11:45-1:00",
-                  "room": "509",
+                  "day": "Tuesday",
+                  "time": "3:45-5:00",
+                  "room": "104",
                   "teacher": "MRK"
                 }
               ]
@@ -516,14 +516,14 @@
               "schedule": [
                 {
                   "day": "Friday",
-                  "time": "10:30-11:45",
-                  "room": "509",
+                  "time": "9:15-10:30",
+                  "room": "204",
                   "teacher": "FH"
                 },
                 {
-                  "day": "Thursday",
+                  "day": "Wednesday",
                   "time": "8:00-9:15",
-                  "room": "103",
+                  "room": "105",
                   "teacher": "FH"
                 }
               ]
@@ -533,15 +533,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Tuesday",
+                  "day": "Friday",
                   "time": "10:30-11:45",
-                  "room": "302",
+                  "room": "103",
                   "teacher": "SAH"
                 },
                 {
-                  "day": "Friday",
-                  "time": "3:45-5:00",
-                  "room": "204",
+                  "day": "Thursday",
+                  "time": "10:30-11:45",
+                  "room": "103",
                   "teacher": "SAH"
                 }
               ]
@@ -551,15 +551,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Thursday",
-                  "time": "10:30-11:45",
-                  "room": "509",
+                  "day": "Tuesday",
+                  "time": "3:45-5:00",
+                  "room": "103",
                   "teacher": "AKA"
                 },
                 {
-                  "day": "Friday",
-                  "time": "8:00-9:15",
-                  "room": "302",
+                  "day": "Monday",
+                  "time": "3:45-5:00",
+                  "room": "510",
                   "teacher": "AKA"
                 }
               ]
@@ -569,15 +569,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Wednesday",
-                  "time": "11:45-1:00",
-                  "room": "205",
+                  "day": "Friday",
+                  "time": "9:15-10:30",
+                  "room": "304",
                   "teacher": "OR"
                 },
                 {
-                  "day": "Monday",
-                  "time": "9:15-10:30",
-                  "room": "508",
+                  "day": "Thursday",
+                  "time": "8:00-9:15",
+                  "room": "204",
                   "teacher": "OR"
                 }
               ]
@@ -588,14 +588,14 @@
               "schedule": [
                 {
                   "day": "Monday",
-                  "time": "11:45-1:00",
-                  "room": "302",
+                  "time": "9:15-10:30",
+                  "room": "205",
                   "teacher": "FI"
                 },
                 {
-                  "day": "Wednesday",
-                  "time": "8:00-9:15",
-                  "room": "302",
+                  "day": "Tuesday",
+                  "time": "9:15-10:30",
+                  "room": "204",
                   "teacher": "FI"
                 }
               ]
@@ -611,14 +611,14 @@
               "schedule": [
                 {
                   "day": "Thursday",
-                  "time": "3:45-5:00",
-                  "room": "509",
+                  "time": "9:15-10:30",
+                  "room": "103",
                   "teacher": "MRK"
                 },
                 {
-                  "day": "Friday",
-                  "time": "3:45-5:00",
-                  "room": "301",
+                  "day": "Tuesday",
+                  "time": "2:30-3:45",
+                  "room": "304",
                   "teacher": "MRK"
                 }
               ]
@@ -628,15 +628,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Monday",
-                  "time": "11:45-1:00",
-                  "room": "205",
+                  "day": "Tuesday",
+                  "time": "3:45-5:00",
+                  "room": "508",
                   "teacher": "FH"
                 },
                 {
-                  "day": "Monday",
-                  "time": "2:30-3:45",
-                  "room": "301",
+                  "day": "Thursday",
+                  "time": "8:00-9:15",
+                  "room": "510",
                   "teacher": "FH"
                 }
               ]
@@ -646,15 +646,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Friday",
-                  "time": "9:15-10:30",
-                  "room": "302",
+                  "day": "Monday",
+                  "time": "2:30-3:45",
+                  "room": "105",
                   "teacher": "SAH"
                 },
                 {
-                  "day": "Monday",
+                  "day": "Tuesday",
                   "time": "3:45-5:00",
-                  "room": "304",
+                  "room": "510",
                   "teacher": "SAH"
                 }
               ]
@@ -664,15 +664,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Thursday",
-                  "time": "8:00-9:15",
-                  "room": "104",
+                  "day": "Friday",
+                  "time": "2:30-3:45",
+                  "room": "205",
                   "teacher": "AKA"
                 },
                 {
-                  "day": "Friday",
+                  "day": "Tuesday",
                   "time": "2:30-3:45",
-                  "room": "204",
+                  "room": "105",
                   "teacher": "AKA"
                 }
               ]
@@ -683,14 +683,14 @@
               "schedule": [
                 {
                   "day": "Tuesday",
-                  "time": "8:00-9:15",
-                  "room": "302",
+                  "time": "2:30-3:45",
+                  "room": "103",
                   "teacher": "OR"
                 },
                 {
-                  "day": "Monday",
+                  "day": "Friday",
                   "time": "2:30-3:45",
-                  "room": "304",
+                  "room": "510",
                   "teacher": "OR"
                 }
               ]
@@ -701,14 +701,14 @@
               "schedule": [
                 {
                   "day": "Friday",
-                  "time": "3:45-5:00",
-                  "room": "105",
+                  "time": "11:45-1:00",
+                  "room": "509",
                   "teacher": "FI"
                 },
                 {
-                  "day": "Monday",
-                  "time": "3:45-5:00",
-                  "room": "104",
+                  "day": "Wednesday",
+                  "time": "9:15-10:30",
+                  "room": "105",
                   "teacher": "FI"
                 }
               ]
@@ -728,15 +728,15 @@
               "credit": 2,
               "schedule": [
                 {
-                  "day": "Monday",
-                  "time": "8:00-9:15",
-                  "room": "204",
+                  "day": "Wednesday",
+                  "time": "11:45-1:00",
+                  "room": "104",
                   "teacher": "ZR"
                 },
                 {
-                  "day": "Friday",
-                  "time": "11:45-1:00",
-                  "room": "302",
+                  "day": "Tuesday",
+                  "time": "10:30-11:45",
+                  "room": "510",
                   "teacher": "ZR"
                 }
               ]
@@ -746,15 +746,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Monday",
-                  "time": "11:45-1:00",
-                  "room": "301",
+                  "day": "Friday",
+                  "time": "8:00-9:15",
+                  "room": "105",
                   "teacher": "MMA"
                 },
                 {
-                  "day": "Wednesday",
-                  "time": "9:15-10:30",
-                  "room": "104",
+                  "day": "Friday",
+                  "time": "10:30-11:45",
+                  "room": "304",
                   "teacher": "MMA"
                 }
               ]
@@ -764,15 +764,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Thursday",
+                  "day": "Friday",
                   "time": "3:45-5:00",
-                  "room": "304",
+                  "room": "105",
                   "teacher": "AZM"
                 },
                 {
-                  "day": "Wednesday",
-                  "time": "10:30-11:45",
-                  "room": "304",
+                  "day": "Thursday",
+                  "time": "11:45-1:00",
+                  "room": "301",
                   "teacher": "AZM"
                 }
               ]
@@ -782,15 +782,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Monday",
-                  "time": "10:30-11:45",
-                  "room": "104",
+                  "day": "Wednesday",
+                  "time": "8:00-9:15",
+                  "room": "301",
                   "teacher": "MAMR"
                 },
                 {
-                  "day": "Thursday",
+                  "day": "Tuesday",
                   "time": "9:15-10:30",
-                  "room": "205",
+                  "room": "301",
                   "teacher": "MAMR"
                 }
               ]
@@ -802,13 +802,13 @@
                 {
                   "day": "Thursday",
                   "time": "3:45-5:00",
-                  "room": "510",
+                  "room": "105",
                   "teacher": "NY"
                 },
                 {
-                  "day": "Wednesday",
-                  "time": "9:15-10:30",
-                  "room": "302",
+                  "day": "Monday",
+                  "time": "10:30-11:45",
+                  "room": "204",
                   "teacher": "NY"
                 }
               ]
@@ -819,14 +819,14 @@
               "schedule": [
                 {
                   "day": "Friday",
-                  "time": "10:30-11:45",
-                  "room": "103",
+                  "time": "9:15-10:30",
+                  "room": "104",
                   "teacher": "MBH"
                 },
                 {
-                  "day": "Wednesday",
-                  "time": "11:45-1:00",
-                  "room": "509",
+                  "day": "Thursday",
+                  "time": "8:00-9:15",
+                  "room": "205",
                   "teacher": "MBH"
                 }
               ]
@@ -841,14 +841,14 @@
               "credit": 2,
               "schedule": [
                 {
-                  "day": "Tuesday",
-                  "time": "3:45-5:00",
-                  "room": "302",
+                  "day": "Friday",
+                  "time": "9:15-10:30",
+                  "room": "105",
                   "teacher": "ZR"
                 },
                 {
-                  "day": "Thursday",
-                  "time": "3:45-5:00",
+                  "day": "Monday",
+                  "time": "8:00-9:15",
                   "room": "301",
                   "teacher": "ZR"
                 }
@@ -860,14 +860,14 @@
               "schedule": [
                 {
                   "day": "Tuesday",
-                  "time": "3:45-5:00",
+                  "time": "9:15-10:30",
                   "room": "510",
                   "teacher": "MMA"
                 },
                 {
-                  "day": "Tuesday",
-                  "time": "2:30-3:45",
-                  "room": "204",
+                  "day": "Monday",
+                  "time": "8:00-9:15",
+                  "room": "105",
                   "teacher": "MMA"
                 }
               ]
@@ -877,15 +877,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Thursday",
-                  "time": "8:00-9:15",
-                  "room": "301",
+                  "day": "Friday",
+                  "time": "9:15-10:30",
+                  "room": "302",
                   "teacher": "AZM"
                 },
                 {
-                  "day": "Tuesday",
+                  "day": "Monday",
                   "time": "10:30-11:45",
-                  "room": "301",
+                  "room": "104",
                   "teacher": "AZM"
                 }
               ]
@@ -895,15 +895,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Friday",
-                  "time": "11:45-1:00",
-                  "room": "301",
+                  "day": "Tuesday",
+                  "time": "10:30-11:45",
+                  "room": "205",
                   "teacher": "MAMR"
                 },
                 {
-                  "day": "Wednesday",
-                  "time": "8:00-9:15",
-                  "room": "205",
+                  "day": "Friday",
+                  "time": "3:45-5:00",
+                  "room": "508",
                   "teacher": "MAMR"
                 }
               ]
@@ -913,14 +913,14 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Tuesday",
-                  "time": "9:15-10:30",
-                  "room": "302",
+                  "day": "Wednesday",
+                  "time": "8:00-9:15",
+                  "room": "509",
                   "teacher": "NY"
                 },
                 {
-                  "day": "Monday",
-                  "time": "9:15-10:30",
+                  "day": "Tuesday",
+                  "time": "8:00-9:15",
                   "room": "103",
                   "teacher": "NY"
                 }
@@ -931,15 +931,15 @@
               "credit": 3,
               "schedule": [
                 {
-                  "day": "Monday",
-                  "time": "11:45-1:00",
-                  "room": "508",
+                  "day": "Wednesday",
+                  "time": "10:30-11:45",
+                  "room": "302",
                   "teacher": "MBH"
                 },
                 {
-                  "day": "Friday",
-                  "time": "3:45-5:00",
-                  "room": "304",
+                  "day": "Thursday",
+                  "time": "9:15-10:30",
+                  "room": "302",
                   "teacher": "MBH"
                 }
               ]

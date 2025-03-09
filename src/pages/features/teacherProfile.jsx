@@ -200,7 +200,7 @@ const UsersProfile = () => {
                 <div className="user-info-grid">
                     <div className="info-group">
                         <p><strong>Name</strong></p>
-                        <p className="highlighted-text">{userData?.name || "N/A"}</p>
+                        <p className="highlighted-text">{userData?.displayName || userData?.name}</p>
                     </div>
                     <div className="info-group">
                         <p><strong>Room</strong></p>
@@ -208,7 +208,7 @@ const UsersProfile = () => {
                     </div>
                     <div className="info-group">
                         <p><strong>Department</strong></p>
-                        <p className="bold-text">{userData?.dept || "N/A"}</p>
+                        <p className="bold-text">{userData?.department || "N/A"}</p>
                     </div>
                     <div className="info-group">
                         <p><strong>Research</strong></p>
