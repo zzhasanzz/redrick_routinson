@@ -1305,12 +1305,12 @@ const TeacherRoutine = () => {
           th, td {
             padding: 12px 15px;
             text-align: center;
-            border-bottom: 1px solid #dddddd;
+            border-bottom: 1px solid #8bbfbd;
           }
 
           th {
-            background-color:rgb(127, 163, 190);
-            color: white;
+            background-color:#8bbfbd;
+            color: black;
             font-weight: bold;
             text-transform: uppercase;
             text-align: center;
@@ -1346,13 +1346,15 @@ const TeacherRoutine = () => {
           }
 
           button:nth-child(1) {
-            background-color:rgba(107, 71, 71, 0.59);
+            background-color:#5c8d8c;
             color: white;
+            
           }
 
           button:nth-child(2) {
-            background-color:rgba(136, 127, 173, 0.75);
-            color: white;
+            background-color:#8bbfbd;
+            color: rgb(0, 0, 0);
+            
           }
         `}
       </style>
