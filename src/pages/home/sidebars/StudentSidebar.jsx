@@ -90,7 +90,7 @@ const Sidebar = () => {
   return (
     <div className="sidebar">
       <center>
-        <img src="../../assets/redrick_logo.png" alt="RoutineSon Logo" width="300px" height="auto" align="middle"  />
+        <img src="../../assets/redrick_logo.png" alt="RoutineSon Logo" width="220px" height="auto" align="middle"  />
       </center>
 
       {/* Display User Info (username, email, profile picture) */}

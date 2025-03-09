@@ -97,10 +97,10 @@ const AdminSidebar = () => {
   return (
     <div className="sidebar">
       <center>
-        <img src="../../assets/redrick_logo.png" alt="RoutineSon Logo" width="300px" height="auto" align="middle"  />
+        <img src="../../assets/redrick_logo.png" alt="RoutineSon Logo" width="220px" height="auto" align="middle"  />
       </center>
         
-      {/* Display User Info (username, email, profile picture)
+      {/* Display User Info (username, email, profile picture) */}
       {currentUser && (
         <div className="sidebar__user-info">
           <img
@@ -113,7 +113,7 @@ const AdminSidebar = () => {
             <p className="sidebar__user-info__email">{currentUser.email}</p>
           </div>
         </div>
-      )} */}
+      )}
 
       <div ref={sidebarRef} className="sidebar__menu">
         {/* Indicator bar */}

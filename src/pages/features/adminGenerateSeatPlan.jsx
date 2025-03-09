@@ -552,7 +552,7 @@ const GenerateSeatPlan = () => {
             </Button>
             <Button
               backgroundColor="rgb(195, 194, 194)"
-              onClick={handleEditRoom}
+              onClick={() => setSelectedRoom(null)}
               size="md" 
               _hover={{ opacity: 0.9 }} 
               marginBottom="25px"
