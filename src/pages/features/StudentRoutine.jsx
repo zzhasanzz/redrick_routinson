@@ -276,25 +276,28 @@ const StudentRoutine = () => {
     <Box position="absolute" top="4" right="4" zIndex="1">
       <Popover placement="bottom-end">
         <PopoverTrigger>
-          <IconButton
-            icon={<BellIcon />}
-            aria-label="Notifications"
-            size="lg"
-            variant="ghost"
-            position="relative"
-          >
+          <Box position="relative" display="inline-block">
+            <IconButton
+              icon={<BellIcon />}
+              aria-label="Notifications"
+              size="lg"
+              variant="ghost"
+            />
             {unreadCount > 0 && (
               <Badge
                 position="absolute"
-                top="-1"
-                right="-1"
+                top="-2px"
+                right="-2px"
                 colorScheme="red"
                 borderRadius="full"
+                fontSize="xs"
+                zIndex="2"
+                transform="translate(30%, -30%)"
               >
                 {unreadCount}
               </Badge>
             )}
-          </IconButton>
+          </Box>
         </PopoverTrigger>
         <PopoverContent maxH="300px" overflowY="auto" width="300px">
           <PopoverBody>
@@ -351,6 +354,7 @@ const StudentRoutine = () => {
       </Popover>
     </Box>
   );
+
   if (loading) {
     return (
       <Box textAlign="center" p={8}>
