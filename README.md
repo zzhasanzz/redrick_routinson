@@ -16,6 +16,7 @@ Simplify your university life.
 - Input **routine preferences** for scheduling.
 - Check **upcoming classes** and manage schedule.
   - **Cancel or reschedule** classes if needed.
+- View and respond to event invitations 
 
 ### **Student**
 - Check **class schedules** and updates.
@@ -61,6 +62,9 @@ npm install react-datepicker
 ```
 ```sh
 npm install html2canvas --legacy-peer-deps
+```
+```sh
+npm install react-qr-reader
 ```
 ```sh
 npm install recharts --legacy-peer-deps
