@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../../../context/AuthContext"; // Import the AuthContext
-import "./studentSIdebar.scss";
+import "./adminSidebar.scss";
 import { db } from "../../../firebase.js"; // Import Firestore
 import { doc, getDoc } from "firebase/firestore";
 

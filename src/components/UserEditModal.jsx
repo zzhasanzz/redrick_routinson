@@ -19,7 +19,7 @@ import {
 
 const UserEditModal = ({ isOpen, onClose, user, onUpdateField }) => {
     const [formData, setFormData] = useState({
-        dept: user.dept || "",
+        department: user.department || "",
         semester: user.semester || "",
         section: user.section || "",
         room: user.room || "",
@@ -37,7 +37,7 @@ const UserEditModal = ({ isOpen, onClose, user, onUpdateField }) => {
     const sections = ["A", "B", "C"]
 
     const handleSave = () => {
-        if (!formData.dept || (user.role !== "student" && !formData.room)) {
+        if (!formData.department || (user.role !== "student" && !formData.room)) {
             toast({
                 title: "Missing fields",
                 description: "Please fill out all required fields.",
@@ -78,14 +78,14 @@ const UserEditModal = ({ isOpen, onClose, user, onUpdateField }) => {
                             <FormLabel>Department</FormLabel>
                             <Select
                                 placeholder="Select Department"
-                                value={formData.dept}
+                                value={formData.department}
                                 onChange={(e) =>
-                                    setFormData({ ...formData, dept: e.target.value })
+                                    setFormData({ ...formData, department: e.target.value })
                                 }
                             >
-                                {departments.map((dept) => (
-                                    <option key={dept} value={dept}>
-                                        {dept}
+                                {departments.map((department) => (
+                                    <option key={department} value={department}>
+                                        {department}
                                     </option>
                                 ))}
                             </Select>

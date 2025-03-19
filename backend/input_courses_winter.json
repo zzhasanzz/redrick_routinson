@@ -4,11 +4,6 @@
       "semester": 1,
       "courses": [
         {
-          "course": "CSE4107",
-          "credit": 3,
-          "teacher": "MM"
-        },
-        {
           "course": "HUM4142",
           "credit": 1,
           "teacher": "AH"
@@ -37,6 +32,11 @@
           "course": "Phy4141",
           "credit": 3,
           "teacher": "FAK"
+        },
+        {
+          "course": "CSE4107",
+          "credit": 3,
+          "teacher": "MM"
         }
       ]
     },
