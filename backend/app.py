@@ -896,7 +896,7 @@ def generate_seating_arrangement(
         ]
 
         # Sort rooms numerically
-        ROOMS.sort(key=lambda x: int(x["room_no"]) if str(x["room_no"]).isdigit() else x["room_no"])
+        ROOMS.sort(key=lambda x: int(x["room_no"]) if str(x["room_no"]).isdigit() else float('inf'))
 
         if not ROOMS:
             print("❌ No rooms found in seat_plan_rooms!")

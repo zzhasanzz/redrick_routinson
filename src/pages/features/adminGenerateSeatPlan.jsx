@@ -172,6 +172,8 @@ const GenerateSeatPlan = () => {
   };
   const handleConfirmGeneration = async () => {
     setShowConfirmation(false);
+    await new Promise(resolve => setTimeout(resolve, 0));
+    
     if (selectedShift == "summer") {
       handleSeatPlanSummerClick();
     }
@@ -259,23 +261,7 @@ const GenerateSeatPlan = () => {
     }
   }, [message, navigate]);
 
-  // Fetch rooms from Firebase
-  // useEffect(() => {
-  //   const fetchRooms = async () => {
-  //     try {
-  //       const querySnapshot = await getDocs(collection(db, "seat_plan_rooms"));
-  //       const roomList = querySnapshot.docs
-  //         .map((doc) => ({ id: doc.id, ...doc.data() }))
-  //         .sort((a, b) => a.room_no.localeCompare(b.room_no)); // Sort rooms as string
-  //       setRooms(roomList);
-  //     } catch (error) {
-  //       console.error("Error fetching rooms:", error);
-  //     } finally {
-  //       setRoomsLoading(false);
-  //     }
-  //   };
-  //   fetchRooms();
-  // }, []);
+
 
   // Handle selecting/deselecting a room
   const handleRoomSelect = (room) => {

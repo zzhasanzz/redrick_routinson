@@ -64,6 +64,9 @@ npm install react-datepicker
 npm install html2canvas --legacy-peer-deps
 ```
 ```sh
+npm install react-qr-reader
+```
+```sh
 npm install recharts --legacy-peer-deps
 ```
 
